@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, Center } from 'native-base';
+import { Image, Center, NativeBaseProvider } from 'native-base';
 import{StyleSheet,Text,TouchableOpacity,View, ScrollView, TextInput,getPick, Alert, TouchableWithoutFeedbackBase} from 'react-native';
 import call from 'react-native-phone-call';
 import { useNavigation } from '@react-navigation/native';
@@ -100,7 +100,7 @@ const NewSellerSelection = ({route}) => {
 
    return (
 
-    <View>
+    <NativeBaseProvider>
       <TouchableOpacity>
         <View style={styles.normal}>
           <Text style={styles.text}>Seller Pickups  {route.params.Forward} </Text>
@@ -217,7 +217,7 @@ const NewSellerSelection = ({route}) => {
               width:150, 
               height:150
               }}
-                   source={require('../file/image.png')} alt={"Logo Image"}
+                   source={require('../../assets/image.png')} alt={"Logo Image"}
             />
             
            
@@ -225,7 +225,7 @@ const NewSellerSelection = ({route}) => {
         </Center>
 
 
-</View>
+</NativeBaseProvider>
     );
 };
 

@@ -324,7 +324,7 @@ const ShipmentBarcode = ({route}) => {
           			width:150, 
           			height:100
           			}}
-          		       source={require('../file/image.png')} alt={"Logo Image"}
+          		       source={require('../../assets/image.png')} alt={"Logo Image"}
             	/>
           </Center>
  </NativeBaseProvider>
@@ -817,7 +817,7 @@ Container1:{
 //           			width:150, 
 //           			height:100
 //           			}}
-//           		       source={require('../file/image.png')} alt={"Logo Image"}
+//           		       source={require('../assets/image.png')} alt={"Logo Image"}
 //             	/>
      		 		
      				

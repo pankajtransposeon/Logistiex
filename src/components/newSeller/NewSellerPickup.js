@@ -221,7 +221,7 @@ return (
               width:150,
               height:150
               }}
-                   source={require('../file/image.png')} alt={"Logo Image"}
+                   source={require('../../assets/image.png')} alt={"Logo Image"}
             />
       </Center>
     </NativeBaseProvider>

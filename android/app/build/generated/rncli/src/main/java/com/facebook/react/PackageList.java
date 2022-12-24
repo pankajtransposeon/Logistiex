@@ -17,6 +17,8 @@ import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.reactnativecommunity.art.ARTPackage;
 // @react-native-community/geolocation
 import com.reactnativecommunity.geolocation.GeolocationPackage;
+// @react-native-community/masked-view
+import org.reactnative.maskedview.RNCMaskedViewPackage;
 // @react-native-community/netinfo
 import com.reactnativecommunity.netinfo.NetInfoPackage;
 // @react-native-community/progress-bar-android
@@ -37,6 +39,8 @@ import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
 import com.airbnb.android.react.maps.MapsPackage;
 // react-native-permissions
 import com.zoontek.rnpermissions.RNPermissionsPackage;
+// react-native-reanimated
+import com.swmansion.reanimated.ReanimatedPackage;
 // react-native-safe-area-context
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 // react-native-screens
@@ -95,6 +99,7 @@ public class PackageList {
       new AsyncStoragePackage(),
       new ARTPackage(),
       new GeolocationPackage(),
+      new RNCMaskedViewPackage(),
       new NetInfoPackage(),
       new RNCProgressBarPackage(),
       new RNCPickerPackage(),
@@ -105,6 +110,7 @@ public class PackageList {
       new ReactNativeLocalizationPackage(),
       new MapsPackage(),
       new RNPermissionsPackage(),
+      new ReanimatedPackage(),
       new SafeAreaContextPackage(),
       new RNScreensPackage(),
       new SQLitePluginPackage(),
