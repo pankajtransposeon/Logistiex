@@ -167,7 +167,7 @@ return (
   </ScrollView>
   </View>
   <Center>
-    <Image style={{nwidth:150, height:150}} source={require('../file/image.png')} alt={"Logo Image"} />
+    <Image style={{nwidth:150, height:150}} source={require('../../assets/image.png')} alt={"Logo Image"} />
   </Center>
 </View>
 );
