@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import 'react-native-gesture-handler';
-import { NativeBaseProvider, Box, Text, Image, Avatar, Heading, Button, Select, Divider, Icon } from 'native-base';
+import { NativeBaseProvider, Box, Text, Image, Avatar, Heading, Button, Select, Divider, Icon, Center } from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Login from './src/components/Login';
-import Main from './src/components/Main';
+import Main from './src/components/Main1';
 import NewSellerPickup from './src/components/newSeller/NewSellerPickup';
 import NewSellerSelection from './src/components/newSeller/NewSellerSelection';
 import ShipmentBarcode from './src/components/newSeller/ShipmentBarcode';
@@ -25,7 +25,7 @@ function StackNavigators({navigation}){
     <Stack.Navigator initialRouteName={'Login'} screenOptions={{
       headerStyle: {
         backgroundColor: "#004aad",
-        elevation: 0,
+        // elevation: 0,
       },
       headerTintColor: "white",
       headerTitleStyle: {
@@ -45,6 +45,11 @@ function StackNavigators({navigation}){
           //     <Image style={{ width: 250, height: 80, marginTop: 10 }} source={require('./src/assets/logo.png')} alt={"Logo Image"} />
           //   </NativeBaseProvider>
           // ),
+          headerTitle: (props) => (
+            <NativeBaseProvider>
+              <Heading style={{color: 'white'}} size="md">Dashboard</Heading>
+            </NativeBaseProvider>
+          ),
           headerLeft: () => (
             <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>navigation.toggleDrawer()} />
           ),
@@ -136,6 +141,9 @@ function CustomDrawerContent({navigation}) {
           <Select.Item label="Tamil (TL)" value="Tamil" />
         </Select>
       </Box>
+      <Center style={{bottom: 0, position: 'absolute', left: '15%'}}>
+        <Image style={{ width: 200, height: 150 }} source={require('./src/assets/image.png')} alt={"Logo Image"} />
+      </Center>
     </NativeBaseProvider>
   )
 }

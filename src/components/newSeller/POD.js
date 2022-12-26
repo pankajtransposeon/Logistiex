@@ -1,76 +1,32 @@
-import { ArrowForwardIcon, NativeBaseProvider, Box, Image, Center,Input} from 'native-base';
+import { ArrowForwardIcon, NativeBaseProvider, Box, Image, Center,Input, Modal, Heading} from 'native-base';
 import{StyleSheet ,Text ,TouchableOpacity ,View ,ScrollView ,TextInput ,getPick ,Alert} from 'react-native';
 import axios from 'axios';
 import { HStack ,Button } from 'native-base';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GetLocation from 'react-native-get-location';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-
+import OTPTextInput from 'react-native-otp-textinput';
 
 const POD = ({route}) => {
 
+  var otpInput = useRef(null)
 
-  const [value, setValue] = useState('');
   const [name, setName] = useState('');
-  const [OTP, setOTP] = useState('');
-  const [mobileNumber, setMobileNumber] = useState('');
+  const [inputOtp, setInputOtp] = useState('');
+  const [mobileNumber, setMobileNumber] = useState(route.params.phone);
   const [latitude, setLatitude] = useState(0);
   const [longitude , setLongitude] = useState(0);
-  const[data, setData] = React.useState({})
-  const navigation = useNavigation();
+  const [showModal, setShowModal] = useState(false);
 
-  console.log(latitude, longitude);
-  console.log(route.params.phone, mobileNumber, name, route.params.rejected, new Date().toLocaleString());
-
-//   const handleChange = (event) => {
-//     console.log("input");
-//     console.log(event.target.value);
-//     setValue(event.target.value);
-// };
-
-  const generateOTP = async(phone) => {
-    const url ='https://bked.logistiex.com/SMS/msg';
-    let returnData;
-    const bodyData ={
-      "moblieNumber":mobileNumber,
-    };
-    const response=await axios.post(url,bodyData);
-    if(response.status ===200){
-      returnData={
-        status:'Success',
-        ...response.data,
-      };
-    }else{
-      returnData ={
-        status:'Failure',
-      };
-    }
+  const clearText = () => {
+    otpInput.current.clear();
   }
-   
 
-const sendSmsOtp = async (phone, otp) => {
-const url = 'https://bked.logistiex.com/SMS/OTPValidate';
-let returnData;
-console.log('send sms otp', phone, otp);
-const bodyData = {
-  "mobileNumber" : phone,
-  "otp" :  OTP
-};
-const response = await axios.post(url, bodyData);
-console.log('send sms response', response);
-if (response.status === 200) {
-  returnData = {
-    status: 'Success',
-    ...response.data,
-  };
-} else {
-  returnData = {
-    status: 'Failure',
-  };
-}
-};
+  const setText = () => {
+    otpInput.current.setValue("1234");
+  }
 
 useEffect(() => {
   const current_location = () => {
@@ -129,10 +85,60 @@ const submitForm = () => {
     });
 }
 
+  const sendSmsOtp = async () => {
+    console.log(mobileNumber);
+    const response = await axios.post('https://bked.logistiex.com/SMS/msg', {
+      "mobileNumber": mobileNumber,
+    });
+    if(response.status === 200) {
+      setShowModal(true);
+    } 
+    else {
+      console.log("Otp not send", response);
+    }
+  }
+
+  function validateOTP(){
+    axios.post("https://bked.logistiex.com/SMS/OTPValidate", {
+      mobileNumber: mobileNumber,
+      otp: inputOtp
+    })
+    .then(response => {
+      if(response.data.return){
+        submitForm();
+        setInputOtp("");
+        setShowModal(false);
+      }
+      else{
+        alert("Invalid OTP, please try again !!");
+      }
+    })
+    .catch(error => {
+      alert("Invalid OTP, please try again !!");
+      console.log(error);
+    })
+  }
 
   return (
 
       <NativeBaseProvider>
+        <Modal w="100%" isOpen={showModal} onClose={() => setShowModal(false)}>
+          <Modal.Content w="100%" bg={'#eee'}>
+            <Modal.CloseButton />
+            <Modal.Body w="100%">
+              <Modal.Header>Enter the OTP</Modal.Header>
+              <OTPTextInput
+                ref={e => (otpInput = e)}
+                inputCount={6}
+                handleTextChange={(e)=>setInputOtp(e)}
+              />
+              <Box flexDir="row" justifyContent="space-between" mt={3}>
+                <Button w="40%" bg="gray.500" onPress={()=>sendSmsOtp()}>Resend</Button>
+                <Button w="40%" bg="#004aad" onPress={()=>validateOTP()}>Submit</Button>
+              </Box>
+            </Modal.Body>
+          </Modal.Content>
+        </Modal>
       <ScrollView showsVerticalScrollIndicator={false} px="3">
           <Box flex={1} bg="#fff">
 
@@ -195,56 +201,20 @@ const submitForm = () => {
                   <Text style={styles.containerText}>Not Handed Over      0  </Text>
               </View>
           </TouchableOpacity>
-          <HStack space={3} alignItems="center">
-          <TextInput style={{backgroundColor:'#eee',margin:10}} 
-              w={{
-                 base: "45%",
-                 md: "25%",
-                }}
-                onChangeText={newText => setName(newText)}
-                
-          placeholder="Enter Receiver Name"
-          />
-          <TextInput style={{backgroundColor:'#eee', color:'#000'}}
-              w={{
-                 base: "45%",
-                 md: "25%",
-                }}
-                onChangeText={newPhone => setMobileNumber(newPhone)}
-                defaultValue={route.params.phone}
-          placeholder="Enter Receiver Mobile Number"
-          />
-          </HStack>
-          <HStack space={5} alignItems="center" marginLeft={3} >
-          <Button style={{backgroundColor:'#004aad', color:'#fff'}} onPress={() => generateOTP()}> Generate OTP</Button>
-          <TextInput style={{backgroundColor:'#eee', color:'#000'}} 
-              w={{
-                 base: "55%",
-                 md: "25%",
-                }}
-          
-          placeholder="Enter OTP"
-          />
-          </HStack>
           <Center>
-              <Button style={{backgroundColor:'#004aad', color:'#fff', marginTop:10}}  title="Submit"  onPress={() => submitForm()} >Submit</Button>
+            <Input mx="3" mt={4} placeholder="Receiver Name" w="90%" bg="gray.200" size="lg" value={name} onChangeText={(e)=>setName(e)} />
+            <Input mx="3" my={4} placeholder="Mobile Number" w="90%" bg="gray.200" size="lg" value={mobileNumber} onChangeText={(e)=>setMobileNumber(e)} />
+            <Button w="90%" size="lg" style={{backgroundColor:'#004aad', color:'#fff'}}  title="Submit"  onPress={() => sendSmsOtp()} >Submit</Button>
           </Center>
-     
-    
-     
-
-      {/* <Center>
+      <Center>
             <Image 
               style={{
               width:150, 
               height:150
               }}
-                   source={require('../assets/image.png')} alt={"Logo Image"}
+                   source={require('../../assets/image.png')} alt={"Logo Image"}
             />
-            
-           
-           
-        </Center> */}
+        </Center>
       </Box>
       </ScrollView>
     </NativeBaseProvider>
