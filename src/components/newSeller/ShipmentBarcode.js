@@ -27,7 +27,6 @@ const ShipmentBarcode = ({route}) => {
     const [expected, setExpected] = useState(0)
     const [newaccepted, setnewAccepted] = useState(0)
     const [newrejected, setnewRejected] = useState(0);  
-    const [valuedekho, setvaluedekho] = useState('tanmay');
     const [barcode, setBarcode] = useState("");
     const [len, setLen] = useState(0);
     const [data, setData] = useState();
