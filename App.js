@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'react-native-gesture-handler';
 import { NativeBaseProvider, Box, Text, Image, Avatar, Heading, Button, Select, Divider, Icon, Center } from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -16,6 +16,7 @@ import Reject from './src/components/RejectReason';
 import POD from './src/components/newSeller/POD';
 import { TouchableOpacity, View } from 'react-native';
 import Dashboard from './src/components/Dashboard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -119,6 +120,33 @@ function StackNavigators({navigation}){
 function CustomDrawerContent({navigation}) {
 
   const [language, setLanguage] = useState("");
+  const [email, SetEmail] = useState('');
+  const [name, setName] = useState('');
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@storage_Key')
+      if(value !== null) {
+        const data = JSON.parse(value);
+        setName(data.UserName);
+        SetEmail(data.UserEmail);
+      }
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const LogoutHandle = async() => {
+      try {
+        await AsyncStorage.removeItem('@storage_Key')
+      } catch(e) {
+        console.log(e);
+      }
+  }
+
 
   return (
     <NativeBaseProvider>
@@ -126,9 +154,9 @@ function CustomDrawerContent({navigation}) {
         <Avatar bg="#004aad" alignSelf="center" size="xl">
           <MaterialIcons name="account" style={{fontSize: 60, color: 'white'}}/>
         </Avatar>
-        <Heading alignSelf="center" mt={2}>Pankaj Kumar</Heading>
-        <Text alignSelf="center">pankaj@gmail.com</Text>
-        <Button onPress={()=>{navigation.navigate('Login'), navigation.closeDrawer()}} mt={2} style={{backgroundColor: '#004aad',}}>Logout</Button>
+        <Heading alignSelf="center" mt={2}>{name}</Heading>
+        <Text alignSelf="center">{email}</Text>
+        <Button onPress={()=>{LogoutHandle() ,navigation.navigate('Login'), navigation.closeDrawer()}} mt={2} style={{backgroundColor: '#004aad',}}>Logout</Button>
       </Box>
       <Divider my="4" />
       <Box px={4}>

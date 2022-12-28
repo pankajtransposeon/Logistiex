@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {NativeBaseProvider, Box, Image, Center, VStack, Button, Icon, Input, Heading, Alert, Text, Modal } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Pressable } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Login() {
 
@@ -15,13 +16,46 @@ export default function Login() {
   const [loginClicked, setLoginClicked] = useState(false);
   const navigation = useNavigation();
 
-  const handleLogin = () => {
+  const storeData = async(data) => {
+    try {
+      const jsonValue = JSON.stringify(data)
+      await AsyncStorage.setItem('@storage_Key', jsonValue);
+      console.log(jsonValue, 'asas');
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@storage_Key')
+      if(value !== null) {
+        const data = JSON.parse(value);
+        navigation.navigate('Main', {	
+          userId : data.userId	
+        });
+      }
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const handleLogin = async() => {
     setLoginClicked(true);
-    axios.post("https://bked.logistiex.com/Login/login", { email: email, password: password })
-    .then((response) => {
+    await axios.post("https://bked.logistiex.com/Login/login", { email: email, password: password })
+    .then(async(response) => {
       setLoginClicked(false);
       setMessage(1);
       setShowModal(true);
+      await storeData({
+        UserName : response.data.userDetails.userFirstName + ' ' + response.data.userDetails.userLastName,
+        UserEmail : response.data.userDetails.userPersonalEmailId,
+        userId : response.data.userDetails.userId
+      });
       setTimeout(()=>{
         setShowModal(false);
         navigation.navigate('Main', {	
@@ -34,7 +68,7 @@ export default function Login() {
       setMessage(2);
       setShowModal(true);
     });
-  }
+  };
 
   return (
     <NativeBaseProvider>
