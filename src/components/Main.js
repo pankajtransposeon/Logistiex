@@ -146,11 +146,10 @@ useEffect(() =>
         res.data.map(m => {
           axios.get(`https://bked.logistiex.com/SellerMainScreen/getSellerDetails/${m.consignorCode}`).then((d) => {
             d.data.totalPickups.map((val) => {
-              addCategory(val.clientShipmentReferenceNumber, val.packagingId, val.packagingStatus,m.consignorCode,m.consignorContact, m.PRSNumber, m.ForwardPickups, 0, 0)
+              addCategory(val.clientShipmentReferenceNumber, val.packagingId, val.packagingStatus,m.consignorCode,m.consignorContact, m.PRSNumber, m.ForwardPickups, 0, 0);
             })
           })
         })
-
 }, (error) => {
     alert(error);
 }); 
@@ -166,7 +165,6 @@ useEffect(() =>
         setData2(res.data.CustomerPickupsList);
         console.log(res.data.CustomerPickupsList);
         console.log(res.data.consignorPickupsList);
-        // createTables();
       }, 
       (error) => {
         Alert.alert(error);
