@@ -25,6 +25,8 @@ import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.reactnativecommunity.androidprogressbar.RNCProgressBarPackage;
 // @react-native-picker/picker
 import com.reactnativecommunity.picker.RNCPickerPackage;
+// react-native-a-beep
+import com.trietho.RNReactNativeABeepPackage;
 // react-native-android-location-enabler
 import com.heanoria.library.reactnative.locationenabler.RNAndroidLocationEnablerPackage;
 // react-native-camera
@@ -103,6 +105,7 @@ public class PackageList {
       new NetInfoPackage(),
       new RNCProgressBarPackage(),
       new RNCPickerPackage(),
+      new RNReactNativeABeepPackage(),
       new RNAndroidLocationEnablerPackage(),
       new RNCameraPackage(),
       new RNGestureHandlerPackage(),

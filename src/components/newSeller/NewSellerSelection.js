@@ -99,7 +99,7 @@ return (
         <Text style={styles.text}>Seller Pickups  {route.params.Forward} </Text>
       </View>
     </TouchableOpacity>
-    <View style={{paddingVertical: 15, flexDirection: 'row',width: 350, justifyContent: 'space-between',justifyContent:'center',alignItems:'center'}}>
+    <View style={{paddingVertical: 15, flexDirection: 'row',width: 350,justifyContent:'center',alignItems:'center'}}>
       <Pie radius={80}
         sections={[
           {

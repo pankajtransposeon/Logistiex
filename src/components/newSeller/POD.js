@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { ArrowForwardIcon, NativeBaseProvider, Box, Image, Center,Input, Modal, Heading} from 'native-base';
 import{StyleSheet ,Text ,TouchableOpacity ,View ,ScrollView ,TextInput ,getPick ,Alert} from 'react-native';
 import axios from 'axios';

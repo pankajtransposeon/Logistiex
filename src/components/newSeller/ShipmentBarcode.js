@@ -2,7 +2,7 @@
 import { Container, NativeBaseProvider, Image, Box } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import{StyleSheet,Text,TouchableOpacity,View, ScrollView, TextInput,getPick, Alert, Vibration} from 'react-native';
+import{StyleSheet,Text,TouchableOpacity,View, ScrollView, TextInput,getPick, Alert, Vibration, ToastAndroid} from 'react-native';
 import { Button, Center,Input, Modal } from "native-base";
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,6 +11,7 @@ import { RNCamera } from 'react-native-camera';
 import { openDatabase } from "react-native-sqlite-storage";
 import { background } from 'styled-system';
 import NetInfo from "@react-native-community/netinfo";
+import RNBeep from 'react-native-a-beep';
 
 const db = openDatabase({
   name: "rn_sqlite",
@@ -84,6 +85,8 @@ const ShipmentBarcode = ({route}) => {
       if (len) {	
         ContinueHandle();	
         Vibration.vibrate(100);	
+        RNBeep.beep();
+        ToastAndroid.show("OK",ToastAndroid.SHORT);
         setLen(false);	
         updateCategories(barcode);	
       } 

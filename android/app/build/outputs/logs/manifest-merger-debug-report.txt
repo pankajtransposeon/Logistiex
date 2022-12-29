@@ -16,6 +16,7 @@ MERGED from [:react-native-community_masked-view] C:\Users\himan\projects11\Logi
 MERGED from [:react-native-community_netinfo] C:\Users\himan\projects11\Logistiex\node_modules\@react-native-community\netinfo\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-12:12
 MERGED from [:react-native-community_progress-bar-android] C:\Users\himan\projects11\Logistiex\node_modules\@react-native-community\progress-bar-android\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
 MERGED from [:react-native-picker_picker] C:\Users\himan\projects11\Logistiex\node_modules\@react-native-picker\picker\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-a-beep] C:\Users\himan\projects11\Logistiex\node_modules\react-native-a-beep\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
 MERGED from [:react-native-android-location-enabler] C:\Users\himan\projects11\Logistiex\node_modules\react-native-android-location-enabler\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
 MERGED from [:react-native-gesture-handler] C:\Users\himan\projects11\Logistiex\node_modules\react-native-gesture-handler\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-9:12
 MERGED from [:react-native-get-location] C:\Users\himan\projects11\Logistiex\node_modules\react-native-get-location\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-11:12
@@ -316,6 +317,8 @@ MERGED from [:react-native-community_progress-bar-android] C:\Users\himan\projec
 MERGED from [:react-native-community_progress-bar-android] C:\Users\himan\projects11\Logistiex\node_modules\@react-native-community\progress-bar-android\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:react-native-picker_picker] C:\Users\himan\projects11\Logistiex\node_modules\@react-native-picker\picker\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:react-native-picker_picker] C:\Users\himan\projects11\Logistiex\node_modules\@react-native-picker\picker\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-a-beep] C:\Users\himan\projects11\Logistiex\node_modules\react-native-a-beep\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-a-beep] C:\Users\himan\projects11\Logistiex\node_modules\react-native-a-beep\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:react-native-android-location-enabler] C:\Users\himan\projects11\Logistiex\node_modules\react-native-android-location-enabler\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:react-native-android-location-enabler] C:\Users\himan\projects11\Logistiex\node_modules\react-native-android-location-enabler\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
 MERGED from [:react-native-gesture-handler] C:\Users\himan\projects11\Logistiex\node_modules\react-native-gesture-handler\android\build\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-7:41
