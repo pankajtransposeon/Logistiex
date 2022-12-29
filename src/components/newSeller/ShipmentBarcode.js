@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Container, NativeBaseProvider, Image, Box } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -86,6 +87,7 @@ const ShipmentBarcode = ({route}) => {
         setLen(false);	
         updateCategories(barcode);	
       } 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [len]);
   
 
@@ -436,23 +438,23 @@ Container1:{
     buttonTouchable: {
       padding: 16
     },
-    centerText: {
-      flex: 1,
-      fontSize: 18,
-      padding: 32,
-      color: '#777'
-    },
-    textBold: {
-      fontWeight: '500',
-      color: '#000'
-    },
-    buttonText: {
-      fontSize: 21,
-      color: 'rgb(0,122,255)'
-    },
-    buttonTouchable: {
-      padding: 16
-    },
+    // centerText: {
+    //   flex: 1,
+    //   fontSize: 18,
+    //   padding: 32,
+    //   color: '#777'
+    // },
+    // textBold: {
+    //   fontWeight: '500',
+    //   color: '#000'
+    // },
+    // buttonText: {
+    //   fontSize: 21,
+    //   color: 'rgb(0,122,255)'
+    // },
+    // buttonTouchable: {
+    //   padding: 16
+    // },
 
     bt1:{
       fontFamily:'open sans',

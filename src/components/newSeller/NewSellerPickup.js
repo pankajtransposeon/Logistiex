@@ -1,4 +1,7 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable react-hooks/exhaustive-deps */
 import {DataTable} from 'react-native-paper';
+import {ProgressBar} from '@react-native-community/progress-bar-android';
 import {ArrowForwardIcon, NativeBaseProvider, Box, Image, Center,Input,HStack,SearchIcon,} from 'native-base';
 import {StyleSheet,Text,TouchableOpacity,View,ScrollView,TextInput,getPick,ActivityIndicator,ToastAndroid,Alert} from 'react-native';
 import NetInfo from "@react-native-community/netinfo";
@@ -54,7 +57,7 @@ const toggleLoading = () => {
         });
     })();
 
-setIsLoading ? navigation.navigate('loading1') : null;
+// setIsLoading ? navigation.navigate('loading1') : null;
 setTimeout(() => 
 {
     setIsLoading(false);
@@ -121,6 +124,7 @@ const searched = (keyword) => (c) => {
 };
 
 return (
+    <>
     <NativeBaseProvider>
         <Box flex={1} bg="#fff"  width="auto" maxWidth="100%">
         <TouchableOpacity>
@@ -187,6 +191,15 @@ return (
             <Image style={{ width:150, height:150 }} source={require('../../assets/image.png')} alt={"Logo Image"} />
         </Center>
     </NativeBaseProvider>
+     {isLoading ? (
+        <View style={[StyleSheet.absoluteFillObject, styles.container222]}>
+           <Text>Loading Please Wait...</Text>
+           <ProgressBar width={70}/>
+       </View>
+       ) : (
+           <Text></Text>
+       )}
+   </>
   );
 };
 export default NewSellerPickup;
@@ -202,6 +215,13 @@ tableHeader: {
     fontSize: 15,
     color: 'white',
     margin: 1,
+    },
+    container222: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex:1,
+        backgroundColor:'rgba(0,0,0,0.2 )',
     },
 normal: {
     fontFamily: 'open sans',

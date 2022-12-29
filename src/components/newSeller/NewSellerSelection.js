@@ -1,5 +1,6 @@
+/* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
-import { Image, Center } from 'native-base';
+import { Image, Center,NativeBaseProvider } from 'native-base';
 import{StyleSheet,Text,TouchableOpacity,View, ScrollView, TextInput,getPick, Alert, TouchableWithoutFeedbackBase} from 'react-native';
 import call from 'react-native-phone-call';
 import { useNavigation } from '@react-navigation/native';
@@ -44,6 +45,7 @@ const NewSellerSelection = ({route}) => {
         });	
       }) ();	
      }	
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     ,[]);
  	
   const toggleLoading = () => {
@@ -86,9 +88,11 @@ const NewSellerSelection = ({route}) => {
       addresss += route.params.consignorAddress.consignorPincode
     } 
      setType(addresss);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 return (
+  <NativeBaseProvider >
   <View>
     <TouchableOpacity>
       <View style={styles.normal}>
@@ -170,6 +174,7 @@ return (
     <Image style={{nwidth:150, height:150}} source={require('../../assets/image.png')} alt={"Logo Image"} />
   </Center>
 </View>
+    </NativeBaseProvider>
 );
 };
 
@@ -192,7 +197,7 @@ scanbtn2:{
   color:'white',
   borderBottomColor:'green',
   borderBottomWidth:2,
-  color:'white',
+  // color:'white',
   marginLeft:2,
   alignItems:'center',
   justifyContent:'center',
@@ -241,7 +246,7 @@ text1:{
   fontSize:18
 },
 bt1:{
-  fontFamily:'open sans',
+  fontFamily :'open sans',
   fontSize:15,
   lineHeight:10,
   marginTop:30,
@@ -281,11 +286,11 @@ bt3:{
   paddingLeft:0,
   marginLeft:220
 },
-containter:{
-  marginTop:30,
-  marginVertical:0,
-  alignSelf:'center',
-},
+// containter:{
+//   marginTop:30,
+//   marginVertical:0,
+//   alignSelf:'center',
+// },
 mainbox:{
   width: 340,
   height:'auto',
@@ -344,5 +349,5 @@ gaugeText: {
   backgroundColor: 'transparent',
   color: '#000',
   fontSize: 24,
-}
+},
 });
