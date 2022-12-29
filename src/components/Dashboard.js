@@ -1,10 +1,11 @@
+/* eslint-disable prettier/prettier */
 import React, { useEffect , useState } from 'react';
 import { StyleSheet, ScrollView , StatusBarr, Text, View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import PieChart from 'react-native-pie-chart';
 import Pie from 'react-native-pie';
 import { marginBottom } from 'styled-system';
-
+import axios from 'axios';
 
 const getData = "https://bked.logistiex.com/SellerMainScreen/getMSD/HADWFE01";
 const shipmentData = "https://bked.logistiex.com/SellerMainScreen/getSellerDetails/MOKA209401";

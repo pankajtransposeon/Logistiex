@@ -1,3 +1,7 @@
+/* eslint-disable prettier/prettier */
+
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable prettier/prettier */
 import React, { useEffect, useState,Alert } from "react";
 import NetInfo from "@react-native-community/netinfo";
 import { Text, TouchableOpacity, View, ToastAndroid } from 'react-native';
@@ -72,6 +76,7 @@ export default function Main({navigation, route}) {
   useEffect(() => {
     // removeUser();
     storeUser();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   {
