@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Pressable } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { decode } from "react-native-pure-jwt";
 
 export default function Login() {
 
@@ -16,11 +17,25 @@ export default function Login() {
   const [loginClicked, setLoginClicked] = useState(false);
   const navigation = useNavigation();
 
+  // function isAuthenticated({refreshToken}) {
+  //   try {
+  //     console.log(decode(refreshToken), 'adcsdcsdc')
+  //     const { exp } = decode(refreshToken);
+  //     if (Date.now() >= exp * 1000) {
+  //       return false;
+  //     }
+  //   } catch (err) {
+  //     return false;
+  //   }
+  //   return true;
+  // }
+
   const storeData = async(data) => {
     try {
       const jsonValue = JSON.stringify(data)
       await AsyncStorage.setItem('@storage_Key', jsonValue);
       console.log(jsonValue, 'asas');
+      // isAuthenticated(data.token);
     } catch (e) {
       console.log(e);
     }
@@ -54,7 +69,8 @@ export default function Login() {
       await storeData({
         UserName : response.data.userDetails.userFirstName + ' ' + response.data.userDetails.userLastName,
         UserEmail : response.data.userDetails.userPersonalEmailId,
-        userId : response.data.userDetails.userId
+        userId : response.data.userDetails.userId,
+        token : response.data.userDetails.token
       });
       setTimeout(()=>{
         setShowModal(false);

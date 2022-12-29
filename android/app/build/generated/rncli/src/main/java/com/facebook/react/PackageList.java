@@ -39,6 +39,8 @@ import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
 import com.airbnb.android.react.maps.MapsPackage;
 // react-native-permissions
 import com.zoontek.rnpermissions.RNPermissionsPackage;
+// react-native-pure-jwt
+import com.zaguiini.RNPureJwt.RNPureJwtPackage;
 // react-native-reanimated
 import com.swmansion.reanimated.ReanimatedPackage;
 // react-native-safe-area-context
@@ -110,6 +112,7 @@ public class PackageList {
       new ReactNativeLocalizationPackage(),
       new MapsPackage(),
       new RNPermissionsPackage(),
+      new RNPureJwtPackage(),
       new ReanimatedPackage(),
       new SafeAreaContextPackage(),
       new RNScreensPackage(),

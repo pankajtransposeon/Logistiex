@@ -4,7 +4,7 @@ import { NativeBaseProvider, Box, Text, Image, Avatar, Heading, Button, Select, 
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentScrollView } from '@react-navigation/drawer';
 import Login from './src/components/Login';
 import Main from './src/components/Main1';
 import NewSellerPickup from './src/components/newSeller/NewSellerPickup';
@@ -22,6 +22,7 @@ const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 function StackNavigators({navigation}){
+
   return(
     <Stack.Navigator initialRouteName={'Login'} screenOptions={{
       headerStyle: {
@@ -40,19 +41,24 @@ function StackNavigators({navigation}){
         }} 
       />
       <Stack.Screen name="Main" component={Main}
+      
         options={{
           // headerTitle: (props) => (
           //   <NativeBaseProvider>
           //     <Image style={{ width: 250, height: 80, marginTop: 10 }} source={require('./src/assets/logo.png')} alt={"Logo Image"} />
           //   </NativeBaseProvider>
           // ),
+          
           headerTitle: (props) => (
             <NativeBaseProvider>
               <Heading style={{color: 'white'}} size="md">Dashboard</Heading>
             </NativeBaseProvider>
           ),
-          headerLeft: () => (
-            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>navigation.toggleDrawer()} />
+          headerLeft: ({}) => (
+            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>{
+            navigation.openDrawer();
+            <CustomDrawerContent />
+            }} />
           ),
           // headerRight: () => (
           //   <NativeBaseProvider>
@@ -69,7 +75,7 @@ function StackNavigators({navigation}){
             </NativeBaseProvider>
           ),
           headerLeft: () => (
-            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>navigation.toggleDrawer()} />
+            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>navigation.openDrawer()} />
           ),
           // headerRight: () => (
           //   <NativeBaseProvider>
@@ -120,8 +126,10 @@ function StackNavigators({navigation}){
 function CustomDrawerContent({navigation}) {
 
   const [language, setLanguage] = useState("");
+  
   const [email, SetEmail] = useState('');
   const [name, setName] = useState('');
+
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem('@storage_Key')
@@ -129,23 +137,28 @@ function CustomDrawerContent({navigation}) {
         const data = JSON.parse(value);
         setName(data.UserName);
         SetEmail(data.UserEmail);
+      }else{
+        setName('');
+        SetEmail('');
       }
     } catch(e) {
       console.log(e);
     }
   }
 
-  useEffect(() => {
-    getData();
-  }, []);
-
   const LogoutHandle = async() => {
-      try {
-        await AsyncStorage.removeItem('@storage_Key')
-      } catch(e) {
-        console.log(e);
-      }
-  }
+    try {
+      await AsyncStorage.removeItem('@storage_Key');
+      getData();
+      navigation.toggleDrawer();
+    } catch(e) {
+      console.log(e);
+    }
+}
+
+  useEffect(() => {
+      getData();
+  }, []);
 
 
   return (
@@ -156,7 +169,7 @@ function CustomDrawerContent({navigation}) {
         </Avatar>
         <Heading alignSelf="center" mt={2}>{name}</Heading>
         <Text alignSelf="center">{email}</Text>
-        <Button onPress={()=>{LogoutHandle() ,navigation.navigate('Login'), navigation.closeDrawer()}} mt={2} style={{backgroundColor: '#004aad',}}>Logout</Button>
+        <Button onPress={()=>{LogoutHandle(),navigation.navigate('Login')}} mt={2} style={{backgroundColor: '#004aad',}}>Logout</Button>
       </Box>
       <Divider my="4" />
       <Box px={4}>
