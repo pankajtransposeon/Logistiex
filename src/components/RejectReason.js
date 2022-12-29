@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Container,ArrowForwardIcon, NativeBaseProvider, Box, Image, Center } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';

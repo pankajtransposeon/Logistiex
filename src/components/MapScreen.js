@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useRef } from 'react';
 import { Button, Image, TextInput, TouchableOpacity, PermissionsAndroid, StyleSheet, Text, View } from 'react-native';
 import {enableLatestRenderer, Marker} from 'react-native-maps';

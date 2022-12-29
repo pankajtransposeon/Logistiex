@@ -1,3 +1,6 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable prettier/prettier */
 import React, { useEffect, useState,Alert } from "react";
 import NetInfo from "@react-native-community/netinfo";
 import { Text, TouchableOpacity, View, ToastAndroid, Dimensions, ScrollView } from 'react-native';
