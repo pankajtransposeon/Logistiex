@@ -29,10 +29,16 @@ import com.reactnativecommunity.picker.RNCPickerPackage;
 import com.heanoria.library.reactnative.locationenabler.RNAndroidLocationEnablerPackage;
 // react-native-camera
 import org.reactnative.camera.RNCameraPackage;
+// react-native-camera-kit
+import com.rncamerakit.RNCameraKitPackage;
 // react-native-gesture-handler
 import com.swmansion.gesturehandler.RNGestureHandlerPackage;
 // react-native-get-location
 import com.github.douglasjunior.reactNativeGetLocation.ReactNativeGetLocationPackage;
+// react-native-image-marker
+import com.jimmydaddy.imagemarker.ImageMarkerPackage;
+// react-native-image-picker
+import com.imagepicker.ImagePickerPackage;
 // react-native-localization
 import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
 // react-native-maps
@@ -107,8 +113,11 @@ public class PackageList {
       new RNCPickerPackage(),
       new RNAndroidLocationEnablerPackage(),
       new RNCameraPackage(),
+      new RNCameraKitPackage(),
       new RNGestureHandlerPackage(),
       new ReactNativeGetLocationPackage(),
+      new ImageMarkerPackage(),
+      new ImagePickerPackage(),
       new ReactNativeLocalizationPackage(),
       new MapsPackage(),
       new RNPermissionsPackage(),

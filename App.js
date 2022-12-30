@@ -17,6 +17,7 @@ import POD from './src/components/newSeller/POD';
 import { TouchableOpacity, View } from 'react-native';
 import Dashboard from './src/components/Dashboard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import StartTrip from './src/components/StartTrip';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -24,7 +25,7 @@ const Drawer = createDrawerNavigator();
 function StackNavigators({navigation}){
 
   return(
-    <Stack.Navigator initialRouteName={'Login'} screenOptions={{
+    <Stack.Navigator initialRouteName={'StartTrip'} screenOptions={{
       headerStyle: {
         backgroundColor: "#004aad",
         // elevation: 0,
@@ -36,6 +37,11 @@ function StackNavigators({navigation}){
       },
     }}>
       <Stack.Screen name="Login" component={Login}
+        options={{
+          header: () => null
+        }} 
+      />
+       <Stack.Screen name="StartTrip" component={StartTrip}
         options={{
           header: () => null
         }} 

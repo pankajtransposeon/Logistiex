@@ -46,7 +46,7 @@ export default function Login() {
       const value = await AsyncStorage.getItem('@storage_Key')
       if(value !== null) {
         const data = JSON.parse(value);
-        navigation.navigate('Main', {	
+        navigation.navigate('StartTrip', {	
           userId : data.userId	
         });
       }
@@ -74,7 +74,7 @@ export default function Login() {
       });
       setTimeout(()=>{
         setShowModal(false);
-        navigation.navigate('Main', {	
+        navigation.navigate('StartTrip', {	
           userId : response.data.userDetails.userId	
         });
       }, 1000);
