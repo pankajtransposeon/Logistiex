@@ -1,14 +1,14 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable react-hooks/exhaustive-deps */
-import {DataTable} from 'react-native-paper';
 import {ProgressBar} from '@react-native-community/progress-bar-android';
-import {ArrowForwardIcon, NativeBaseProvider, Box, Image, Center,Input,HStack,SearchIcon,} from 'native-base';
-import {StyleSheet,Text,TouchableOpacity,View,ScrollView,TextInput,getPick,ActivityIndicator,ToastAndroid,Alert} from 'react-native';
+import {NativeBaseProvider, Box, Image, Center, Fab, Icon,} from 'native-base';
+import {StyleSheet,View,ScrollView,ToastAndroid,Alert} from 'react-native';
+import {DataTable, Button, Searchbar, Text, Card } from 'react-native-paper';
 import NetInfo from "@react-native-community/netinfo";
 import {openDatabase} from "react-native-sqlite-storage";
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
+import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 const db = openDatabase({name: "rn_sqlite"});
 
 const NewSellerPickup = ({route}) => {
@@ -124,82 +124,59 @@ const searched = (keyword) => (c) => {
 };
 
 return (
-    <>
-    <NativeBaseProvider>
-        <Box flex={1} bg="#fff"  width="auto" maxWidth="100%">
-        <TouchableOpacity>
-            <View style={styles.normal}>
-                <Text style={styles.text}>Seller Pickups ( {route.params.count} ) </Text>
-            </View>
-        </TouchableOpacity>
-        <HStack  marginTop={2}>
-            <View style={styles.searchbar}>
-              {/* <SearchIcon size="5" mt="0.5" color="#004aad" /> */}
-              <Input type="search" placeholder=" Search by Seller Name " SearchIcon value={keyword} className="form-control mb-4 container pt-4" onChangeText={(e) => setKeyword(e)} />
-            </View>
-        </HStack>
-        <ScrollView style={styles.homepage} showsVerticalScrollIndicator={true} showsHorizontalScrollIndicator={false}>
-            <DataTable.Header style={styles.tableHeader}>
-		        <DataTable.Title style={{backgroundColor:'#004aad',Color:'white', flex:1}}><Text style={styles.textbox}>Seller Name</Text></DataTable.Title>
-		        <DataTable.Title  style={{backgroundColor:'#004aad',Color:'white',flex:1}} ><Text style={styles.textbox}>Forward Pickups</Text></DataTable.Title>
-		        <DataTable.Title style={{backgroundColor:'#004aad',Color:'white',flex:1}} ><Text style={styles.textbox}>Reverse Deliveries</Text></DataTable.Title>
+  <NativeBaseProvider>
+    <Box flex={1} bg="#fff"  width="auto" maxWidth="100%">
+      <Searchbar
+        placeholder="Search Seller Name"
+        onChangeText={(e) => setKeyword(e)}
+        value={keyword}
+        style={{marginHorizontal: 15, marginTop: 10}}
+      />
+      <ScrollView style={styles.homepage} showsVerticalScrollIndicator={true} showsHorizontalScrollIndicator={false}>
+        <Card>
+          <DataTable>
+            <DataTable.Header style={{height:'auto', backgroundColor: '#004aad', borderTopLeftRadius: 5, borderTopRightRadius: 5}} >
+              <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Seller Name</Text></DataTable.Title>
+              <DataTable.Title><Text style={{ textAlign: 'center', color:'white'}}>Forward Pickups</Text></DataTable.Title>
+              <DataTable.Title><Text style={{ textAlign: 'center', color:'white'}}>Reverse Deliveries</Text></DataTable.Title>
             </DataTable.Header>
-        {data && data.length > 0 ? (
-        data.filter(searched(keyword)).map((single, i) => (
-        <TouchableOpacity key={i}  style={styles.mainbox} onPress={()=> navigation.navigate('NewSellerSelection',{
-        paramKey : single.consignorCode,
-        Forward : single.ForwardPickups,
-        consignorAddress : single.consignorAddress,
-        consignorName : single.consignorName,
-        PRSNumber : single.PRSNumber,
-        consignorCode : single.consignorCode,
-        userId : route.params.userId,
-        phone : single.consignorContact,
-        })}>
-        <View style={styles.innerdown}>
-            <DataTable style={styles.container112}>
-	        <DataTable.Row>
-		        <DataTable.Cell style={{flex: 2}}> <Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
-		        <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{single.ForwardPickups}</Text></DataTable.Cell>
-		        <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{single.ReverseDeliveries}</Text></DataTable.Cell>
-                <ArrowForwardIcon style={{color:"#004aad",marginTop:15}} />
-	        </DataTable.Row>
-	        </DataTable>
-        </View>
-        </TouchableOpacity>
-        ))
-    ) : ( <Text />
-    )}
-    </ScrollView>
-        <TouchableOpacity>
-        <View style={styles.container}>
-          <View style={styles.bt1}>
-            <Text style={styles.btnText}>Language</Text>
-          </View>
-        </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={sync11}>
-        <View style={[styles.container, styles.horizontal]}>
-          <View style={styles.bt2}>
-          {isLoading && <ActivityIndicator size="small" color="#00ff00" />}
-          <Text style={styles.btnText}>Sync</Text>
-        </View>
-        </View>
-        </TouchableOpacity>
-        </Box>
-        <Center>
-            <Image style={{ width:150, height:150 }} source={require('../../assets/image.png')} alt={"Logo Image"} />
-        </Center>
+            {data && data.length > 0 ?
+            data.filter(searched(keyword)).map((single, i) => (
+              <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} onPress={() =>{navigation.navigate('NewSellerSelection',{
+                paramKey : single.consignorCode,
+                Forward : single.ForwardPickups,
+                consignorAddress : single.consignorAddress,
+                consignorName : single.consignorName,
+                PRSNumber : single.PRSNumber,
+                consignorCode : single.consignorCode,
+                userId : route.params.userId,
+                phone : single.consignorContact,
+              })}}>
+                <DataTable.Cell style={{flex: 1.7}}>{single.consignorName}</DataTable.Cell>
+                <DataTable.Cell>{single.ForwardPickups}</DataTable.Cell>
+                <DataTable.Cell>{single.ReverseDeliveries}</DataTable.Cell>
+              </DataTable.Row>
+            )) 
+          :
+            null
+          }
+          </DataTable>
+        </Card>
+      </ScrollView>
+      <Center>
+          <Image style={{ width:150, height:150}} source={require('../../assets/image.png')} alt={"Logo Image"} />
+      </Center>
+    </Box>
+    <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} />
+    {isLoading ?
+      <View style={[StyleSheet.absoluteFillObject, styles.container222]}>
+        <Text>Loading Please Wait...</Text>
+        <ProgressBar width={70}/>
+      </View>
+    :
+      null
+    }
     </NativeBaseProvider>
-     {isLoading ? (
-        <View style={[StyleSheet.absoluteFillObject, styles.container222]}>
-           <Text>Loading Please Wait...</Text>
-           <ProgressBar width={70}/>
-       </View>
-       ) : (
-           <Text></Text>
-       )}
-   </>
   );
 };
 export default NewSellerPickup;
@@ -255,6 +232,7 @@ textbox: {
     color: '#fff',
 },
 homepage: { 
+    margin:10
       // backgroundColor:"blue",
 },
 mainbox: {
@@ -296,13 +274,18 @@ fontvalue1: {
     marginRight: -10,
 },
 searchbar: {
-    width: '100%',
+    width: '95%',
+    borderWidth:2,
+    borderColor:'white',
+    borderRadius:1,
+    marginLeft:10,
+    marginRight:10,
 },
 bt1: {
     fontFamily: 'open sans',
     fontSize: 15,
     lineHeight: 0,
-    marginTop:-45,
+    marginTop:0,
     paddingTop: 10,
     paddingBottom: 10,
     backgroundColor: '#004aad',
@@ -341,4 +324,3 @@ horizontal: {
     padding: 0,
 },
 });
-

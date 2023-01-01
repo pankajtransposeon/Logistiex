@@ -1,22 +1,20 @@
-/* eslint-disable prettier/prettier */
-import { Container, NativeBaseProvider, Image, Box } from 'native-base';
+import { NativeBaseProvider, Image, Box, Fab, Icon, Button } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import{StyleSheet,Text,TouchableOpacity,View, ScrollView, TextInput,getPick, Alert, Vibration, ToastAndroid} from 'react-native';
-import { Button, Center,Input, Modal } from "native-base";
+import{Text,View, ScrollView, Vibration, ToastAndroid} from 'react-native';
+import { Center } from "native-base";
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { openDatabase } from "react-native-sqlite-storage";
-import { background } from 'styled-system';
+import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import NetInfo from "@react-native-community/netinfo";
 import RNBeep from 'react-native-a-beep';
 
 const db = openDatabase({
   name: "rn_sqlite",
 });
-
 
 const ShipmentBarcode = ({route}) => {
     const [barcodeValue,setBarcodeValue] = useState("");
@@ -172,323 +170,80 @@ const ShipmentBarcode = ({route}) => {
       unsubscribe();	
     }
   
-    return (
-    
-     <NativeBaseProvider>
-     <Box flex={1} bg="#fff"  alignSelf="center" justifyContent='space-evenly' py="8" px="0" rounded="md" width='95%' maxWidth="100%">
-     <Container style={styles.containter}>
-     {/* <TouchableOpacity>
-              <View style={styles.normal} >
-                 <Text style={styles.text}>Scan Shipment Barcode</Text>
+  return (
+    <NativeBaseProvider>
+      <ScrollView style={{paddingTop: 20, paddingBottom: 50}} showsVerticalScrollIndicator={false}>
+        <QRCodeScanner
+          onRead={onSuccess}
+          reactivate={true}
+          reactivateTimeout={3000}
+          flashMode={RNCamera.Constants.FlashMode.off}
+          containerStyle={{width: '100%', alignSelf: 'center', backgroundColor: 'white'}}
+          cameraStyle={{width: '90%', alignSelf: 'center'}}
+          topContent={
+            <View><Text>okay</Text></View>
+          }
+        />
+        <View>
+          <View style={{backgroundColor: 'white'}}>
+            <View style={{alignItems: 'center', marginTop: 15}}>
+
+              <View style={{backgroundColor: 'lightgray', padding: 10, flexDirection: 'row', justifyContent: 'space-between', width: '90%', borderRadius: 5}}>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>shipment ID: </Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{barcode}</Text>
               </View>
-    </TouchableOpacity> */}
-   
 
-     <ScrollView  style={styles.homepage}  showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-      <View style={{height:'auto', width:'auto'}} >
-      <QRCodeScanner
-    onRead={onSuccess}
-    reactivate={true}
-    reactivateTimeout={10000}
-    flashMode={RNCamera.Constants.FlashMode.off}
-    cameraProps={{ ratio: '1:1' }}
-    // ratio={'3:3'}
-  />
-    </View>
-    <View style={[styles.normal, {
-        marginTop:10,
-        marginBottom:10
-      }]}>
-        <Text style={styles.text}>shipment ID ----  {barcode}</Text>
+              <Button onPress={()=>navigation.navigate('reject',{
+                barcode : barcode,	
+                PRSNumber : route.params.PRSNumber,	
+                consignorCode : route.params.consignorCode,
+                userId : route.params.userId,
+                packagingId : route.params.packagingId
+              })} w="90%" size="lg" bg="#004aad" mb={4} mt={4}>Reject Shipment</Button>
 
-    </View>
-
-      
-    {/* </TouchableOpacity> */}
-
-    {/* <TouchableOpacity onPress={() => {
-       setvaluedekho('package');
-       navigation.navigate('NewBarcode');
-    }}> */}
-      {/* <View style={[styles.normal, {
-        marginTop:10,
-        marginBottom:40
-      }]}>
-        <Text style={styles.text}>package ID   ----  {packageValue}</Text>
-
-      </View> */}
-    {/* </TouchableOpacity> */}
-
-    
-
-
-      <TouchableOpacity onPress={()=>navigation.navigate('reject',{
-         barcode : barcode,	
-         PRSNumber : route.params.PRSNumber,	
-         consignorCode : route.params.consignorCode,
-         userId : route.params.userId,
-         packagingId : route.params.packagingId
-      })}>
-              <View style={styles.btn} >
-                 <Text style={styles.btntext}>Reject Shipment</Text>
+              <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>Expected</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.Forward}</Text>
               </View>
-    </TouchableOpacity>
-      
-      <View style={styles.mainbox}>
-             <View style={styles.smallbox}>
-                <Text style={styles.text1}>Expected </Text>
-                <Text style={styles.text1}>{route.params.Forward}</Text>
+              <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>Accepted</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{newaccepted}</Text>
               </View>
-              <View style={styles.smallbox}>
-                <Text style={styles.text2}>Accepted</Text>
-                <Text style={styles.text2}>{ newaccepted }</Text>
+              <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>     
+                <Text style={{fontSize: 18, fontWeight: '500'}}>Rejected</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{newrejected}</Text>
               </View>
-              <View style={styles.smallbox}>
-                <Text style={styles.text3}>Rejected</Text>
-                <Text style={styles.text3}>{ newrejected }</Text>
-              </View>
-              <View style={styles.smallbox}>
-                <Text style={styles.text3}>Not Handed Over</Text>
-                <Text style={styles.text3}>{0}</Text>
+              <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: 'lightgray', borderBottomLeftRadius: 5, borderBottomRightRadius: 5, padding: 10}}>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>Not Handed Over</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{0}</Text>
               </View>
             </View>
-
-
-            <TouchableOpacity onPress={() => handleSync()}>
-      <View style={styles.Container1}>
-        <View style={styles.bt1}>
-          <Text style={styles.btnText}>Sync</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-    <TouchableOpacity onPress={()=>navigation.navigate('POD',{
-      Forward : route.params.Forward,
-      accepted : newaccepted,
-      rejected : newrejected,
-      phone : route.params.phone,
-      userId : route.params.userId,
-    })}>  
-      <View style={styles.Container1}>
-    
-        <View style={styles.bt2}>
-          <Text style={styles.btnText}>Continue</Text>
-        </View>
-
-      </View>
-    </TouchableOpacity>	
-
-            {/* <TouchableOpacity>
-      	
-      		<View style={styles.bt1}>
-                   <FontAwesomeIcon icon={faQrcode } color="black" size={25} style={{marginLeft:8,marginTop:8}} />
-      			<Text style={styles.text1}>Scan</Text>
-      		</View>
-          
-    </TouchableOpacity> */}
-    {/* <TouchableOpacity  > 
-            <View style={styles.bt2}>
-      			<Text style={styles.text1}>Open Bag</Text>
-      		</View>
-          disabled={!barcodeValue && !packageValue} 
-    </TouchableOpacity>
-    <TouchableOpacity onPress={() => ContinueHandle()} > 
-            <View style={styles.bt3}>
-      			<Text style={styles.text1}>Continue</Text>
-      		</View>
-            
-    </TouchableOpacity> */}
-            
-        </ScrollView>
-           {/* content end */}
-
-     
-      {/* save button */}
-      <View style={styles.iconbar}>
- 
-        {/* <Button  startIcon={<FontAwesomeIcon icon={faCheckCircle} color="white" size={20} />} colorScheme="dark" >
-         Sync
-      </Button>
-        <Button ml={109} startIcon={<FontAwesomeIcon icon={ faCheckCircle } color="white" size={20} />} onPress={() => navigation.navigate('pickupbarcode')}>
-        Continue
-      </Button> */}
-     
-     </View>
-        {/* save button end */}
-
-
-
-</Container>
-</Box>
+          </View>
 
           <Center>
-          		<Image 
-          			style={{
-          			width:150, 
-          			height:100
-          			}}
-          		       source={require('../../assets/image.png')} alt={"Logo Image"}
-            	/>
+            <Button onPress={()=>navigation.navigate('POD',{
+              Forward : route.params.Forward,
+              accepted : newaccepted,
+              rejected : newrejected,
+              phone : route.params.phone,
+              userId : route.params.userId,
+            })} w="90%" size="lg" bg="#004aad">Continue</Button>
           </Center>
- </NativeBaseProvider>
-
-    );
+          <Center>
+            <Image 
+              style={{
+              width:150, 
+              height:100
+              }}
+              source={require('../../assets/image.png')} alt={"Logo Image"}
+            />
+          </Center>
+        </View>
+        <Fab onPress={() => handleSync()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} />
+      </ScrollView>
+    </NativeBaseProvider>
+  );
 };
 
 export default ShipmentBarcode;
 
-//Styles CSS
-
-export const styles = StyleSheet.create({
-  containter:{
-    
-    margin:0,
-    marginVertical:0,
-    alignSelf:'center',
-},
-
-Container1:{
-  flex:1,
-  flexDirection:'row',
-  justifyContent:'space-between',
-
-},
-
-
-   normal:{
-
-    fontFamily:'open sans',
-    fontWeight:'normal',
-    fontSize:15,
-    color:'#eee',
-    marginTop:20,
-    paddingTop:10,
-    paddingBottom:10,
-    backgroundColor:'#eee',
-    width:'90%',
-    borderRadius:0
-    
-  },
-
-    text:{
-    
-      color:'#000',
-      fontWeight:'normal',
-      paddingLeft:20,
-      textAlign:'left',
-      justifyContent:'space-around',
-      fontSize:18
-
-    },  
-
-    btn:{
-
-      
-      marginTop:20,
-      paddingBottom:10,
-      paddingTop:10,
-      backgroundColor:'#004aad',
-      width: '75%',
-      borderRadius:20,
-      
-      
-    },
-  
-      btntext:{
-        paddingLeft:30,
-        paddingRight:30,
-        color:'#fff',
-        fontWeight:'normal',
-        textAlign: 'center',
-        fontSize:16
-  
-      },  
-    
-  mainbox:{
-      marginTop:1,
-      width:'70%'
-    },
-  smallbox:{
-      
-      textAlign:'left',
-      flex:1,
-      flexDirection:'row',
-      justifyContent:'space-between',
-      
-    },
-  text1:{
-      color:'#000'
-    },
-  text2:{
-      color:'#000'
-    },
-  text3:{
-      color:'#000'
-    },
-    centerText: {
-      flex: 1,
-      fontSize: 18,
-      padding: 32,
-      color: '#777'
-    },
-    textBold: {
-      fontWeight: '500',
-      color: '#000'
-    },
-    buttonText: {
-      fontSize: 21,
-      color: 'rgb(0,122,255)'
-    },
-    buttonTouchable: {
-      padding: 16
-    },
-    // centerText: {
-    //   flex: 1,
-    //   fontSize: 18,
-    //   padding: 32,
-    //   color: '#777'
-    // },
-    // textBold: {
-    //   fontWeight: '500',
-    //   color: '#000'
-    // },
-    // buttonText: {
-    //   fontSize: 21,
-    //   color: 'rgb(0,122,255)'
-    // },
-    // buttonTouchable: {
-    //   padding: 16
-    // },
-
-    bt1:{
-      fontFamily:'open sans',
-      fontSize:15,
-      lineHeight:10,
-      marginTop:5,
-      paddingTop:10,
-      paddingBottom:10,
-      backgroundColor:'#004aad',
-      width:110,
-      borderRadius:10,
-      paddingLeft:0,
-},
-bt2:{
-      fontFamily:'open sans',
-      color:'#000',
-      fontWeight:'bold',
-      fontSize:15,
-      lineHeight:10,
-      marginTop:-40,
-      paddingTop:10,
-      paddingBottom:10,
-      backgroundColor:'#004aad',
-      width:110,
-      borderRadius:10,
-      paddingLeft:0,
-      marginLeft:150
-},
-btnText:{
-  alignSelf: 'center',
-  color:'#fff',
-  fontSize:15
-}
-});

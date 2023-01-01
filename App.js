@@ -1,22 +1,19 @@
-/* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
 import 'react-native-gesture-handler';
-import { NativeBaseProvider, Box, Text, Image, Avatar, Heading, Button, Select, Divider, Icon, Center } from 'native-base';
+import { NativeBaseProvider, Box, Text, Image, Avatar, Heading, Button, Select, Divider, Center } from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DrawerActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Login from './src/components/Login';
-import Main from './src/components/Main1';
+import Main from './src/components/Main';
 import NewSellerPickup from './src/components/newSeller/NewSellerPickup';
 import NewSellerSelection from './src/components/newSeller/NewSellerSelection';
 import ShipmentBarcode from './src/components/newSeller/ShipmentBarcode';
-import { Graph } from './src/components/Graph';
 import MapScreen from './src/components/MapScreen';
 import Reject from './src/components/RejectReason';
 import POD from './src/components/newSeller/POD';
-import { TouchableOpacity, View } from 'react-native';
-import Dashboard from './src/components/Dashboard';
+import StartTrip from './src/components/StartTrip';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createStackNavigator();
@@ -40,28 +37,20 @@ function StackNavigators({navigation}){
           header: () => null
         }} 
       />
+
       <Stack.Screen name="Main" component={Main}
         options={{
-          // headerTitle: (props) => (
-          //   <NativeBaseProvider>
-          //     <Image style={{ width: 250, height: 80, marginTop: 10 }} source={require('./src/assets/logo.png')} alt={"Logo Image"} />
-          //   </NativeBaseProvider>
-          // ),
           headerTitle: (props) => (
             <NativeBaseProvider>
               <Heading style={{color: 'white'}} size="md">Dashboard</Heading>
             </NativeBaseProvider>
           ),
           headerLeft: () => (
-            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>navigation.toggleDrawer()} />
+            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>{console.log("dashboard menu clicked"), navigation.dispatch(DrawerActions.openDrawer())}} />
           ),
-          // headerRight: () => (
-          //   <NativeBaseProvider>
-          //     <Button style={{backgroundColor: 'white', color: 'blue'}} leftIcon={<Icon as={MaterialIcons} name="sync" size="sm" />} > Sync</Button>
-          //   </NativeBaseProvider>
-          // )
         }}
       />
+
       <Stack.Screen name="NewSellerPickup" component={NewSellerPickup}
         options={{
           headerTitle: (props) => (
@@ -72,48 +61,80 @@ function StackNavigators({navigation}){
           headerLeft: () => (
             <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>navigation.toggleDrawer()} />
           ),
-          // headerRight: () => (
-          //   <NativeBaseProvider>
-          //     <Button style={{backgroundColor: 'white', color: 'blue'}} leftIcon={<Icon as={MaterialIcons} name="sync" size="sm" />} > Sync</Button>
-          //   </NativeBaseProvider>
-          // )
         }}
       />
 
       <Stack.Screen name="NewSellerSelection" component={NewSellerSelection} 
         options={{
-        header: () => null
-      }} />
+          headerTitle: (props) => (
+            <NativeBaseProvider>
+              <Heading style={{color: 'white'}} size="md">Seller Summary</Heading>
+            </NativeBaseProvider>
+          ),
+          headerLeft: () => (
+            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>navigation.toggleDrawer()} />
+          ),
+        }}
+      />
 
       <Stack.Screen name="ShipmentBarcode" component={ShipmentBarcode}
         options={{
-          header: () => null
-        }} /> 
-
-      {/* <Stack.Screen name="Graph" component={Graph}
-        options={{
-          header: () => null
-        }} /> */}
+          headerTitle: (props) => (
+            <NativeBaseProvider>
+              <Heading style={{color: 'white'}} size="md">Scan Products</Heading>
+            </NativeBaseProvider>
+          ),
+          headerLeft: () => (
+            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>navigation.toggleDrawer()} />
+          ),
+        }}
+      />
 
       <Stack.Screen name="MapScreen" component={MapScreen}
         options={{
-          header: () => null
-        }} 
+          headerTitle: (props) => (
+            <NativeBaseProvider>
+              <Heading style={{color: 'white'}} size="md">Map Navigation</Heading>
+            </NativeBaseProvider>
+          ),
+          headerLeft: () => (
+            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>navigation.toggleDrawer()} />
+          ),
+        }}
       />
+
       <Stack.Screen name="reject" component={Reject} 
         options={{
           header: () => null
         }} 
       />
+
       <Stack.Screen name="POD" component={POD} 
         options={{
-          header: () => null
-        }} 
+          headerTitle: (props) => (
+            <NativeBaseProvider>
+              <Heading style={{color: 'white'}} size="md">Pickup Summary</Heading>
+            </NativeBaseProvider>
+          ),
+          headerLeft: () => (
+            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>navigation.toggleDrawer()} />
+          ),
+        }}
       />
-      {/* <Stack.Screen name="Dashboard" component={Dashboard}
+
+      <Stack.Screen name="StartTrip" component={StartTrip} 
         options={{
-          header: () => null
-      }} />      */}
+          headerTitle: (props) => (
+            <NativeBaseProvider>
+              <Heading style={{color: 'white'}} size="md">Start Trip</Heading>
+            </NativeBaseProvider>
+          ),
+          headerLeft: () => (
+            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>navigation.toggleDrawer()} />
+          ),
+        }}
+      />
+
     </Stack.Navigator>
   )
 }
@@ -123,6 +144,7 @@ function CustomDrawerContent({navigation}) {
   const [language, setLanguage] = useState("");
   const [email, SetEmail] = useState('');
   const [name, setName] = useState('');
+  
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem('@storage_Key')
@@ -131,7 +153,8 @@ function CustomDrawerContent({navigation}) {
         setName(data.UserName);
         SetEmail(data.UserEmail);
       }
-    } catch(e) {
+    } 
+    catch(e) {
       console.log(e);
     }
   }
@@ -141,27 +164,38 @@ function CustomDrawerContent({navigation}) {
   }, []);
 
   const LogoutHandle = async() => {
-      try {
-        await AsyncStorage.removeItem('@storage_Key')
-      } catch(e) {
-        console.log(e);
-      }
+    try {
+      await AsyncStorage.removeItem('@storage_Key');
+    } 
+    catch(e) {
+      console.log(e);
+    }
   }
-
 
   return (
     <NativeBaseProvider>
-      <Box pt={4} px={4}>
-        <Avatar bg="#004aad" alignSelf="center" size="xl">
-          <MaterialIcons name="account" style={{fontSize: 60, color: 'white'}}/>
-        </Avatar>
-        <Heading alignSelf="center" mt={2}>{name}</Heading>
-        <Text alignSelf="center">{email}</Text>
-        <Button onPress={()=>{LogoutHandle() ,navigation.navigate('Login'), navigation.closeDrawer()}} mt={2} style={{backgroundColor: '#004aad',}}>Logout</Button>
+      {email ?
+        <Box pt={4} px={4}>
+          <Avatar bg="#004aad" alignSelf="center" size="xl">
+            <MaterialIcons name="account" style={{fontSize: 60, color: 'white'}}/>
+          </Avatar>
+          <Heading alignSelf="center" mt={2}>{name}</Heading>
+          <Text alignSelf="center">{email}</Text>
+          <Button onPress={()=>{LogoutHandle(), navigation.navigate('Login'), navigation.closeDrawer()}} mt={2} style={{backgroundColor: '#004aad',}}>Logout</Button>
+        </Box>
+      :
+        <Box pt={4} px={4}>
+          <Button onPress={()=>{navigation.navigate('Login'), navigation.closeDrawer()}} mt={2} style={{backgroundColor: '#004aad',}}>Login</Button>
+        </Box>
+      }
+      <Divider my="4" />
+      <Box px={4}>
+        <Button variant="outline" onPress={()=>{navigation.navigate('Main'), navigation.closeDrawer()}} style={{color: '#004aad', borderColor: '#004aad'}}><Text style={{color: '#004aad'}}>Home</Text></Button>
+        <Button variant="outline" onPress={()=>{navigation.navigate('StartTrip'), navigation.closeDrawer()}} mt={4} style={{color: '#004aad', borderColor: '#004aad'}}><Text style={{color: '#004aad'}}>Start Trip</Text></Button>
       </Box>
       <Divider my="4" />
       <Box px={4}>
-        <Select selectedValue={language} minWidth="200" accessibilityLabel="Choose Language" placeholder="Choose Language" _selectedItem={{bg: "#004aad", color: 'white'}} mt={1} onValueChange={itemValue => setLanguage(itemValue)}>
+        <Select selectedValue={language} minWidth="200" accessibilityLabel="Choose Language" placeholder="Choose Language" _selectedItem={{bg: "#004aad", color: 'white'}} mt={0} onValueChange={itemValue => setLanguage(itemValue)}>
           <Select.Item label="English (EN)" value="English" />
           <Select.Item label="Hindi (HI)" value="Hindi" />
           <Select.Item label="Marathi (MT)" value="Marathi" />

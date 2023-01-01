@@ -121,103 +121,54 @@ const submitForm = () => {
   }
 
   return (
-
-      <NativeBaseProvider>
-        <Modal w="100%" isOpen={showModal} onClose={() => setShowModal(false)}>
-          <Modal.Content w="100%" bg={'#eee'}>
-            <Modal.CloseButton />
-            <Modal.Body w="100%">
-              <Modal.Header>Enter the OTP</Modal.Header>
-              <OTPTextInput
-                ref={e => (otpInput = e)}
-                inputCount={6}
-                handleTextChange={(e)=>setInputOtp(e)}
-              />
-              <Box flexDir="row" justifyContent="space-between" mt={3}>
-                <Button w="40%" bg="gray.500" onPress={()=>sendSmsOtp()}>Resend</Button>
-                <Button w="40%" bg="#004aad" onPress={()=>validateOTP()}>Submit</Button>
-              </Box>
-            </Modal.Body>
-          </Modal.Content>
-        </Modal>
-      <ScrollView showsVerticalScrollIndicator={false} px="3">
-          <Box flex={1} bg="#fff">
-
-          <TouchableOpacity>
-           <View style={styles.normal}>
-               <Text style={styles.text}>Seller Deliveries (Completed/Total)</Text>
-           </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity>
-              <View style={styles.container}>
-                 <Text style={styles.containerText}>Expected   </Text>
-              </View>
-          </TouchableOpacity>
-    
-          <TouchableOpacity>
-              <View style={styles.container}>
-                   <Text style={styles.containerText}>Delivered </Text>
-              </View>
-          </TouchableOpacity>
-    
-          <TouchableOpacity>
-              <View style={styles.container}>
-                  <Text style={styles.containerText}>Tagged </Text>
-              </View>
-          </TouchableOpacity>
-    
-          <TouchableOpacity>
-              <View style={styles.container}>
-                  <Text style={styles.containerText}>Not Handed Over </Text>
-              </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity>
-           <View style={styles.normal}>
-               <Text style={styles.text}>Seller Pickups ( {route.params.Forward} )</Text>
-           </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity>
-              <View style={styles.container}>
-                 <Text style={styles.containerText}>Expected                    {route.params.Forward}</Text>
-              </View>
-          </TouchableOpacity>
-    
-          <TouchableOpacity>
-              <View style={styles.container}>
-                   <Text style={styles.containerText}>Accepted                   {route.params.accepted}</Text>
-              </View> 
-          </TouchableOpacity>
-    
-          <TouchableOpacity>
-              <View style={styles.container}>     
-                  <Text style={styles.containerText}>Rejected                     {route.params.rejected} </Text>
-              </View>
-          </TouchableOpacity>
-    
-          <TouchableOpacity>
-              <View style={styles.container}>
-                  <Text style={styles.containerText}>Not Handed Over      0  </Text>
-              </View>
-          </TouchableOpacity>
+    <NativeBaseProvider>
+      <Modal w="100%" isOpen={showModal} onClose={() => setShowModal(false)}>
+        <Modal.Content w="100%" bg={'#eee'}>
+          <Modal.CloseButton />
+          <Modal.Body w="100%">
+            <Modal.Header>Enter the OTP</Modal.Header>
+            <OTPTextInput
+              ref={e => (otpInput = e)}
+              inputCount={6}
+              handleTextChange={(e)=>setInputOtp(e)}
+            />
+            <Box flexDir="row" justifyContent="space-between" mt={3}>
+              <Button w="40%" bg="gray.500" onPress={()=>sendSmsOtp()}>Resend</Button>
+              <Button w="40%" bg="#004aad" onPress={()=>validateOTP()}>Submit</Button>
+            </Box>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal>
+      <View style={{backgroundColor: 'white', flex: 1, paddingTop: 30}}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={{alignItems: 'center'}}>
+            <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
+              <Text style={{fontSize: 18, fontWeight: '500'}}>Expected</Text>
+              <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.Forward}</Text>
+            </View>
+            <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
+              <Text style={{fontSize: 18, fontWeight: '500'}}>Accepted</Text>
+              <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.accepted}</Text>
+            </View>
+            <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>     
+              <Text style={{fontSize: 18, fontWeight: '500'}}>Rejected</Text>
+              <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.rejected}</Text>
+            </View>
+            <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: 'lightgray', borderBottomLeftRadius: 5, borderBottomRightRadius: 5, padding: 10}}>
+              <Text style={{fontSize: 18, fontWeight: '500'}}>Not Handed Over</Text>
+              <Text style={{fontSize: 18, fontWeight: '500'}}>{0}</Text>
+            </View>
+          </View>
           <Center>
             <Input mx="3" mt={4} placeholder="Receiver Name" w="90%" bg="gray.200" size="lg" value={name} onChangeText={(e)=>setName(e)} />
             <Input mx="3" my={4} placeholder="Mobile Number" w="90%" bg="gray.200" size="lg" value={mobileNumber} onChangeText={(e)=>setMobileNumber(e)} />
             <Button w="90%" size="lg" style={{backgroundColor:'#004aad', color:'#fff'}}  title="Submit"  onPress={() => sendSmsOtp()} >Submit</Button>
           </Center>
-      <Center>
-            <Image 
-              style={{
-              width:150, 
-              height:150
-              }}
-                   source={require('../../assets/image.png')} alt={"Logo Image"}
-            />
-        </Center>
-      </Box>
-      </ScrollView>
+          <Center>
+            <Image style={{ width:150, height:150 }} source={require('../../assets/image.png')} alt={"Logo Image"} />
+          </Center>
+        </ScrollView>
+      </View>
     </NativeBaseProvider>
   );
 };

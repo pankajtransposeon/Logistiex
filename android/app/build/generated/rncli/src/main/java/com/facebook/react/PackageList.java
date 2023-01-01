@@ -25,6 +25,8 @@ import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.reactnativecommunity.androidprogressbar.RNCProgressBarPackage;
 // @react-native-picker/picker
 import com.reactnativecommunity.picker.RNCPickerPackage;
+// lottie-react-native
+import com.airbnb.android.react.lottie.LottiePackage;
 // react-native-a-beep
 import com.trietho.RNReactNativeABeepPackage;
 // react-native-android-location-enabler
@@ -35,6 +37,10 @@ import org.reactnative.camera.RNCameraPackage;
 import com.swmansion.gesturehandler.RNGestureHandlerPackage;
 // react-native-get-location
 import com.github.douglasjunior.reactNativeGetLocation.ReactNativeGetLocationPackage;
+// react-native-image-marker
+import com.jimmydaddy.imagemarker.ImageMarkerPackage;
+// react-native-image-picker
+import com.imagepicker.ImagePickerPackage;
 // react-native-localization
 import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
 // react-native-maps
@@ -105,11 +111,14 @@ public class PackageList {
       new NetInfoPackage(),
       new RNCProgressBarPackage(),
       new RNCPickerPackage(),
+      new LottiePackage(),
       new RNReactNativeABeepPackage(),
       new RNAndroidLocationEnablerPackage(),
       new RNCameraPackage(),
       new RNGestureHandlerPackage(),
       new ReactNativeGetLocationPackage(),
+      new ImageMarkerPackage(),
+      new ImagePickerPackage(),
       new ReactNativeLocalizationPackage(),
       new MapsPackage(),
       new RNPermissionsPackage(),

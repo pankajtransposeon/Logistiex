@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
-import { Image, Center,NativeBaseProvider } from 'native-base';
+import { Image, Center,NativeBaseProvider, Fab, Icon, Button, Box, Heading } from 'native-base';
 import{StyleSheet,Text,TouchableOpacity,View, ScrollView, TextInput,getPick, Alert, TouchableWithoutFeedbackBase} from 'react-native';
 import call from 'react-native-phone-call';
 import { useNavigation } from '@react-navigation/native';
@@ -10,14 +10,14 @@ import { openDatabase } from "react-native-sqlite-storage";
 const db = openDatabase({	
   name: "rn_sqlite",	
 });	
-
+import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import PieChart from 'react-native-pie-chart';
 
 const NewSellerSelection = ({route}) => {
   const [barcodeValue,setBarcodeValue] = useState("");
-  const [showline, setLine] = useState(true)
   const shipmentData = `https://bked.logistiex.com/SellerMainScreen/getSellerDetails/${route.params.paramKey}`;	
   const [acc, setAcc] = useState(0);	
-  const [pending, setPending] = useState(0);	
+  const [pending, setPending] = useState(route.params.Forward);	
   const [reject, setReject] = useState(0);
   const [data,setData] = useState([]);
   const [order, setOrder] = useState([]);
@@ -94,87 +94,73 @@ const NewSellerSelection = ({route}) => {
 return (
   <NativeBaseProvider >
   <View>
-    <TouchableOpacity>
-      <View style={styles.normal}>
-        <Text style={styles.text}>Seller Pickups  {route.params.Forward} </Text>
-      </View>
-    </TouchableOpacity>
-    <View style={{paddingVertical: 15, flexDirection: 'row',width: 350,justifyContent:'center',alignItems:'center'}}>
-      <Pie radius={80}
-        sections={[
-          {
-            percentage: ((acc/(route.params.Forward))*100),
-            color: '#C70039',
-          },
-          {
-            percentage: ((pending/(route.params.Forward))*100),
-            color: '#44CD40',
-          },
-          ]}
-          strokeCap={'butt'}
-          />
-      </View>
+    <View style={{width: '100%', justifyContent: 'center', flexDirection: 'row', marginTop: 30}}>
+      <PieChart
+        widthAndHeight={160}
+        series={[acc, pending]}
+        sliceColor={['#F44336', '#4CAF50' ]}
+        doughnut={true}
+        coverRadius={0.6}
+        coverFill={'#FFF'}
+      />
+    </View>
+    <View style={{flexDirection: 'row', width: '85%', marginTop: 30, marginBottom: 10, alignSelf: 'center', justifyContent: 'space-between'}}>
+      <View style={{backgroundColor: '#4CAF50', width: '48%', padding: 10, borderRadius: 10}}><Text style={{color:'white', alignSelf: 'center'}}>{pending}</Text></View>
+      <View style={{backgroundColor: '#F44336', width: '48%', padding: 10, borderRadius: 10}}><Text style={{color:'white', alignSelf: 'center'}}>{acc}</Text></View>
+    </View>
       <View style={styles.containter}>
         <ScrollView style={styles.homepage} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>       
-        <View style={styles.searchbar}></View>
-        <View style={styles.iconbar}>
-          <TouchableOpacity style={[styles.scanbtn,{backgroundColor:'#44CD40'}]}
-            onPress={()=>setLine(true)} ><Text style={{color:'#000'}}>{pending}</Text></TouchableOpacity>
-          <TouchableOpacity style={[styles.scanbtn2,{backgroundColor:'#C70039'}]} 
-            onPress={()=>setLine(false)}><Text style={{color:'blue'}}>{acc}</Text></TouchableOpacity>
-        </View>
         <ScrollView>
           <View style={styles.containter}>
             <View  style={styles.mainbox}>
-              <TouchableOpacity>
-                <View style={styles.innerdown}>
-                  <Text style={styles.fontvalue}>Seller Name</Text>
-                  <Text style={styles.fontvalue}>{route.params.consignorName}</Text>
-                </View>
-                <View style={styles.innerdown}>
-                  <Text style={styles.fontvalue}>Address</Text>
-                  <Text style={styles.fontvalue}>{type} </Text>
-                </View>
-              </TouchableOpacity>
-                <View style={styles.outerdown}>
+              <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingTop: 15}}>
+                <Text style={{fontWeight: '500', fontSize: 18, color: 'black'}}>Seller Name</Text>
+                <Text style={{fontWeight: '500', fontSize: 18, color: 'gray'}}>{route.params.consignorName}</Text>
+              </View>
+              <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingTop: 15, paddingBottom: 15}}>
+                <Text style={{fontWeight: '500', fontSize: 18, color: 'black'}}>Address</Text>
+                <Text style={{fontWeight: '500', fontSize: 14, color: 'gray'}}>{type}</Text>
+              </View>
+              <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingTop: 15, paddingBottom: 15, borderTopColor: 'lightgray', borderTopWidth: 1}}>
                 <View style={styles.outer1}><Text style={{color:'#6DB1E1',fontWeight:'700'}} onPress={triggerCall}>Call Seller</Text></View>
                 <TouchableOpacity onPress={() => navigation.navigate('MapScreen', {
-                        address : type,
-                        latitude : 0,
-                        longitude : 0
-                  })} >
-                <View style={styles.outer1}><Text style={{color:'#6DB1E1',fontWeight:'700'}}>Get Direction</Text></View>
+                    address : type,
+                    latitude : 0,
+                    longitude : 0
+                  })}
+                >
+                  <View style={styles.outer1}><Text style={{color:'#6DB1E1',fontWeight:'700'}}>Get Direction</Text></View>
                 </TouchableOpacity>
-                </View>
+              </View>
             </View>
-         </View>
+          </View>
          </ScrollView>
-      <TouchableOpacity onPress={()=>navigation.navigate('ShipmentBarcode',{
-      Forward : route.params.Forward,
-      PRSNumber : route.params.PRSNumber,
-      consignorCode : route.params.consignorCode,
-      userId : route.params.userId,
-      phone : route.params.phone,
-      packagingId : route.params.packagingId
-    //   TotalpickUp : newdata[0].totalPickups
-     })}>
-      <View style={styles.bt1}>
-        {/* <FontAwesomeIcon icon={faQrcode } color="black" size={25} style={{marginLeft:8,marginTop:8}} /> */}
-      	<Text style={styles.text1}>Scan</Text>
-      </View>
-    </TouchableOpacity>
-    <TouchableOpacity  onPress={toggleLoading}> 
+         <Button style={{backgroundColor: '#004aad', width: '100%', alignSelf: 'center'}} leftIcon={<Icon color="white" as={<MaterialIcons name="barcode-scan" />} size="sm" />} 
+          onPress={()=>navigation.navigate('ShipmentBarcode',{
+            Forward : route.params.Forward,
+            PRSNumber : route.params.PRSNumber,
+            consignorCode : route.params.consignorCode,
+            userId : route.params.userId,
+            phone : route.params.phone,
+            packagingId : route.params.packagingId
+            // TotalpickUp : newdata[0].totalPickups
+          })}
+         >
+          Scan Products
+        </Button>
+    {/* <TouchableOpacity  onPress={toggleLoading}> 
       <View style={styles.bt3}>
       	<Text style={styles.text1}>Sync</Text>
       </View>
-    </TouchableOpacity>
+    </TouchableOpacity> */}
   </ScrollView>
   </View>
   <Center>
     <Image style={{nwidth:150, height:150}} source={require('../../assets/image.png')} alt={"Logo Image"} />
   </Center>
 </View>
-    </NativeBaseProvider>
+<Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} />
+</NativeBaseProvider>
 );
 };
 
@@ -297,7 +283,7 @@ mainbox:{
   backgroundColor:'white',
   alignSelf:'center',
   marginVertical:20,
-  borderRadius:20,
+  borderRadius: 5,
   shadowColor: "#000",
   shadowOffset: {
     width: 0,
