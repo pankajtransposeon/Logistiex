@@ -23,6 +23,23 @@ export default function Main({navigation, route}) {
     Rejected: 0
   };
 
+  useEffect(() => {
+    axios.get("https://bked.logistiex.com/SellerMainScreen/sellerList/HADWFE01")
+    .then(res=>{
+      console.log(res.data);
+    })
+    .catch(err=>{
+      console.log(data);
+    })
+    axios.get("https://bked.logistiex.com/SellerMainScreen/details/HADWFE01")
+    .then(res=>{
+      console.log(res.data);
+    })
+    .catch(err=>{
+      console.log(err);
+    })
+  }, []);
+
   const createTables = () => {
     db.transaction(txn => {
       txn.executeSql('DROP TABLE IF EXISTS categories', []);
@@ -135,7 +152,6 @@ useEffect(() =>
        await axios.get(`https://bked.logistiex.com/SellerMainScreen/getMSD/${route.params.userId}`)
        .then((res) => {
            setData(res.data.consignorPickupsList)
-           console.log(res.data);
    }, (error) => {
        alert(error);
    }); 

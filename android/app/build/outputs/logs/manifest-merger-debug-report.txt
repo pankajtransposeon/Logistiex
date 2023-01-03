@@ -1,42 +1,42 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:1:1-37:12
-INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:1:1-37:12
-INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:1:1-37:12
-INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:1:1-37:12
-MERGED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:1:1-37:12
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:1:1-37:12
+INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:1:1-37:12
+INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:1:1-37:12
+INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:1:1-37:12
+MERGED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:1:1-37:12
 MERGED from [com.facebook.flipper:flipper:0.125.0] /home/pankaj/.gradle/caches/transforms-3/03f04a3f11198ce3b7c6cedb9b41266b/transformed/jetified-flipper-0.125.0/AndroidManifest.xml:8:1-18:12
 MERGED from [com.facebook.flipper:flipper-network-plugin:0.125.0] /home/pankaj/.gradle/caches/transforms-3/e32b7eeb3398efff4e100fae60e161ae/transformed/jetified-flipper-network-plugin-0.125.0/AndroidManifest.xml:8:1-15:12
 MERGED from [com.facebook.flipper:flipper-fresco-plugin:0.125.0] /home/pankaj/.gradle/caches/transforms-3/d00cb5af49214c127447117a850c65b4/transformed/jetified-flipper-fresco-plugin-0.125.0/AndroidManifest.xml:8:1-15:12
-MERGED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:2:1-18:12
-MERGED from [:react-native-async-storage_async-storage] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-async-storage/async-storage/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-community_art] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/art/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-community_geolocation] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/geolocation/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-community_masked-view] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/masked-view/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-community_netinfo] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-12:12
-MERGED from [:react-native-community_progress-bar-android] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/progress-bar-android/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-picker_picker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-picker/picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:lottie-react-native] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/lottie-react-native/src/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-11:12
-MERGED from [:react-native-a-beep] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-a-beep/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-android-location-enabler] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-android-location-enabler/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-gesture-handler] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-gesture-handler/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-get-location] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-get-location/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-11:12
-MERGED from [:react-native-image-marker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-marker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-11:12
-MERGED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-21:12
-MERGED from [:react-native-localization] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-localization/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-maps] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-maps/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-permissions] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-permissions/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-safe-area-context] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-safe-area-context/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-screens] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-screens/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-sqlite-storage] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-sqlite-storage/platforms/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-svg] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-svg/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-vector-icons] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-vector-icons/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:2:1-18:12
+MERGED from [:react-native-async-storage_async-storage] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-async-storage/async-storage/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-community_art] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/art/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-community_geolocation] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/geolocation/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-community_masked-view] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/masked-view/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-community_netinfo] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-12:12
+MERGED from [:react-native-community_progress-bar-android] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/progress-bar-android/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-picker_picker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-picker/picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:lottie-react-native] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/lottie-react-native/src/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-11:12
+MERGED from [:react-native-a-beep] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-a-beep/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-android-location-enabler] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-android-location-enabler/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-gesture-handler] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-gesture-handler/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-get-location] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-get-location/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-11:12
+MERGED from [:react-native-image-marker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-marker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-11:12
+MERGED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-21:12
+MERGED from [:react-native-localization] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-localization/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-maps] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-maps/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-permissions] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-permissions/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-safe-area-context] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-safe-area-context/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-screens] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-screens/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-sqlite-storage] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-sqlite-storage/platforms/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-svg] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-svg/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-vector-icons] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-vector-icons/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
 MERGED from [com.facebook.react:react-native:0.70.6] /home/pankaj/.gradle/caches/transforms-3/0b825f9a3cd84cf1738e48fbfed11fea/transformed/jetified-react-native-0.70.6-debug/AndroidManifest.xml:2:1-11:12
 MERGED from [androidx.legacy:legacy-support-v4:1.0.0] /home/pankaj/.gradle/caches/transforms-3/9b1d1682e0bb356fdc4d0ed8314d2cfe/transformed/legacy-support-v4-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] /home/pankaj/.gradle/caches/transforms-3/fbd1686efa7cdb780fd9fba00ca130bf/transformed/legacy-support-core-ui-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] /home/pankaj/.gradle/caches/transforms-3/4aa3daa4c119e5ebf154ad11d072f485/transformed/swiperefreshlayout-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [com.facebook.react:hermes-engine:0.70.6] /home/pankaj/.gradle/caches/transforms-3/9d7eb90167c45c49ac02b1539a4fe443/transformed/jetified-hermes-engine-0.70.6-debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-reanimated] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-reanimated/android/build/.transforms/58408fd1856ede804907b20a9c42e09a/transformed/jetified-react-native-reanimated-70-hermes/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-reanimated] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-reanimated/android/build/.transforms/807c983725db5f72697c784e6090d5af/transformed/jetified-react-native-reanimated-70-hermes/AndroidManifest.xml:2:1-9:12
 MERGED from [com.facebook.fresco:flipper:2.6.0] /home/pankaj/.gradle/caches/transforms-3/254be36e6f6eb176e072fd687d368667/transformed/jetified-flipper-2.6.0/AndroidManifest.xml:2:1-9:12
 MERGED from [com.facebook.fresco:stetho:2.6.0] /home/pankaj/.gradle/caches/transforms-3/e90babe485946eeebe0b18572938e7fb/transformed/jetified-stetho-2.6.0/AndroidManifest.xml:2:1-9:12
 MERGED from [com.facebook.fresco:fresco:2.6.0] /home/pankaj/.gradle/caches/transforms-3/6bf0185b9b85a5b617e433ea49b9063b/transformed/jetified-fresco-2.6.0/AndroidManifest.xml:2:1-9:12
@@ -121,82 +121,82 @@ MERGED from [com.google.maps.android:android-maps-utils:0.5] /home/pankaj/.gradl
 MERGED from [com.facebook.fresco:fbcore:2.6.0] /home/pankaj/.gradle/caches/transforms-3/fe525e62d2b9e85c0d777a0bb14f7298/transformed/jetified-fbcore-2.6.0/AndroidManifest.xml:2:1-9:12
 MERGED from [com.google.android.odml:image:1.0.0-beta1] /home/pankaj/.gradle/caches/transforms-3/e9f088bff215fd05825858422c032237/transformed/jetified-image-1.0.0-beta1/AndroidManifest.xml:2:1-9:12
 MERGED from [androidx.annotation:annotation-experimental:1.1.0] /home/pankaj/.gradle/caches/transforms-3/54294f5f857978835a11e24fc1422778/transformed/jetified-annotation-experimental-1.1.0/AndroidManifest.xml:17:1-24:12
-INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml:2:1-13:12
-INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml:2:1-13:12
-INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml:2:1-13:12
+INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml:2:1-13:12
+INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml:2:1-13:12
+INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml:2:1-13:12
 	package
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:2:3-28
-		INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:2:3-28
-		INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:2:3-28
+		INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:2:3-28
+		INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml
 	android:versionName
-		INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:1:1-37:12
-		INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml
+		INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:1:1-37:12
+		INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml
 	xmlns:tools
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml:3:5-51
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml:3:5-51
 	android:versionCode
-		INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:1:1-37:12
-		INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml
+		INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:1:1-37:12
+		INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml
 	xmlns:android
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:1:11-69
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:1:11-69
 uses-permission#android.permission.INTERNET
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:4:5-67
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:4:5-67
 MERGED from [com.facebook.flipper:flipper:0.125.0] /home/pankaj/.gradle/caches/transforms-3/03f04a3f11198ce3b7c6cedb9b41266b/transformed/jetified-flipper-0.125.0/AndroidManifest.xml:15:5-67
 MERGED from [com.facebook.flipper:flipper:0.125.0] /home/pankaj/.gradle/caches/transforms-3/03f04a3f11198ce3b7c6cedb9b41266b/transformed/jetified-flipper-0.125.0/AndroidManifest.xml:15:5-67
-MERGED from [:lottie-react-native] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/lottie-react-native/src/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-67
-MERGED from [:lottie-react-native] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/lottie-react-native/src/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-67
+MERGED from [:lottie-react-native] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/lottie-react-native/src/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-67
+MERGED from [:lottie-react-native] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/lottie-react-native/src/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-67
 MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /home/pankaj/.gradle/caches/transforms-3/4e0a6d33173da115ab805e3c43770aba/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:26:5-67
 MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /home/pankaj/.gradle/caches/transforms-3/4e0a6d33173da115ab805e3c43770aba/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:26:5-67
 MERGED from [com.google.android.gms:play-services-maps:18.0.2] /home/pankaj/.gradle/caches/transforms-3/5b94eed69c74e072e7c17c8facb87462/transformed/jetified-play-services-maps-18.0.2/AndroidManifest.xml:24:5-67
 MERGED from [com.google.android.gms:play-services-maps:18.0.2] /home/pankaj/.gradle/caches/transforms-3/5b94eed69c74e072e7c17c8facb87462/transformed/jetified-play-services-maps-18.0.2/AndroidManifest.xml:24:5-67
 	android:name
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:4:22-64
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:4:22-64
 uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:5:5-80
-MERGED from [:react-native-image-marker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-marker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-81
-MERGED from [:react-native-image-marker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-marker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-81
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:5:5-80
+MERGED from [:react-native-image-marker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-marker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-81
+MERGED from [:react-native-image-marker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-marker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-81
 	android:name
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:5:22-78
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:5:22-78
 uses-permission#android.permission.CAMERA
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:6:5-65
-MERGED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:9:5-65
-MERGED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:9:5-65
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:6:5-65
+MERGED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:9:5-65
+MERGED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:9:5-65
 	android:name
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:6:22-62
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:6:22-62
 uses-permission#android.permission.RECORD_AUDIO
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:7:5-70
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:7:5-70
 	android:name
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:7:22-68
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:7:22-68
 uses-permission#android.permission.READ_EXTERNAL_STORAGE
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:8:5-79
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:8:5-79
 	android:name
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:8:22-77
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:8:22-77
 uses-permission#android.permission.VIBRATE
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:9:5-65
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:9:5-65
 	android:name
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:9:22-63
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:9:22-63
 uses-permission#android.permission.ACCESS_FINE_LOCATION
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:10:5-79
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:10:5-79
 	android:name
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:10:22-76
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:10:22-76
 uses-permission#android.permission.CALL_PHONE
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:11:5-69
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:11:5-69
 	android:name
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:11:22-66
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:11:22-66
 uses-permission#android.permission.ACCESS_COARSE_LOCATION
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:12:5-80
-MERGED from [:react-native-get-location] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-get-location/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-81
-MERGED from [:react-native-get-location] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-get-location/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-81
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:12:5-80
+MERGED from [:react-native-get-location] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-get-location/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-81
+MERGED from [:react-native-get-location] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-get-location/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-81
 	android:name
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:12:22-78
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:12:22-78
 application
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:14:5-36:19
-MERGED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:14:5-36:19
-MERGED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:14:5-36:19
-MERGED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-19:19
-MERGED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-19:19
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:14:5-36:19
+MERGED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:14:5-36:19
+MERGED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:14:5-36:19
+MERGED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-19:19
+MERGED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-19:19
 MERGED from [com.facebook.react:react-native:0.70.6] /home/pankaj/.gradle/caches/transforms-3/0b825f9a3cd84cf1738e48fbfed11fea/transformed/jetified-react-native-0.70.6-debug/AndroidManifest.xml:9:5-20
 MERGED from [com.facebook.react:react-native:0.70.6] /home/pankaj/.gradle/caches/transforms-3/0b825f9a3cd84cf1738e48fbfed11fea/transformed/jetified-react-native-0.70.6-debug/AndroidManifest.xml:9:5-20
 MERGED from [com.facebook.soloader:soloader:0.10.4] /home/pankaj/.gradle/caches/transforms-3/87826452408345e9fcde9828ee0fb34c/transformed/jetified-soloader-0.10.4/AndroidManifest.xml:11:5-20
@@ -250,115 +250,115 @@ MERGED from [com.google.android.odml:image:1.0.0-beta1] /home/pankaj/.gradle/cac
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.7.0] /home/pankaj/.gradle/caches/transforms-3/63a3df243d2d102452600006144a86df/transformed/core-1.7.0/AndroidManifest.xml:24:18-86
 	android:label
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:16:7-39
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:16:7-39
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:16:7-39
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:16:7-39
 	tools:ignore
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml:10:9-48
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml:10:9-48
 	android:roundIcon
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:18:7-52
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:18:7-52
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:18:7-52
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:18:7-52
 	tools:targetApi
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml:9:9-29
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml:9:9-29
 	android:icon
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:17:7-41
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:17:7-41
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:17:7-41
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:17:7-41
 	android:allowBackup
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:19:7-34
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:19:7-34
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:19:7-34
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:19:7-34
 	android:theme
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:20:7-38
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:20:7-38
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:20:7-38
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:20:7-38
 	android:usesCleartextTraffic
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml:8:9-44
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml:8:9-44
 	android:name
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:15:7-38
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:15:7-38
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:15:7-38
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:15:7-38
 meta-data#com.google.android.geo.API_KEY
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:21:7-23:67
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:21:7-23:67
 	android:value
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:23:9-64
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:23:9-64
 	android:name
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:22:9-54
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:22:9-54
 activity#com.demoproject.MainActivity
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:24:7-35:18
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:24:7-35:18
 	android:label
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:26:9-41
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:26:9-41
 	android:launchMode
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:28:9-40
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:28:9-40
 	android:windowSoftInputMode
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:29:9-51
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:29:9-51
 	android:exported
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:30:9-32
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:30:9-32
 	android:configChanges
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:27:9-118
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:27:9-118
 	android:name
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:25:9-37
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:25:9-37
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:31:9-34:25
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:31:9-34:25
 action#android.intent.action.MAIN
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:32:13-65
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:32:13-65
 	android:name
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:32:21-62
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:32:21-62
 category#android.intent.category.LAUNCHER
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:33:13-73
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:33:13-73
 	android:name
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml:33:23-70
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml:33:23-70
 uses-sdk
-INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml
-INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml
+INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml
+INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml
 MERGED from [com.facebook.flipper:flipper:0.125.0] /home/pankaj/.gradle/caches/transforms-3/03f04a3f11198ce3b7c6cedb9b41266b/transformed/jetified-flipper-0.125.0/AndroidManifest.xml:11:5-13:41
 MERGED from [com.facebook.flipper:flipper:0.125.0] /home/pankaj/.gradle/caches/transforms-3/03f04a3f11198ce3b7c6cedb9b41266b/transformed/jetified-flipper-0.125.0/AndroidManifest.xml:11:5-13:41
 MERGED from [com.facebook.flipper:flipper-network-plugin:0.125.0] /home/pankaj/.gradle/caches/transforms-3/e32b7eeb3398efff4e100fae60e161ae/transformed/jetified-flipper-network-plugin-0.125.0/AndroidManifest.xml:11:5-13:41
 MERGED from [com.facebook.flipper:flipper-network-plugin:0.125.0] /home/pankaj/.gradle/caches/transforms-3/e32b7eeb3398efff4e100fae60e161ae/transformed/jetified-flipper-network-plugin-0.125.0/AndroidManifest.xml:11:5-13:41
 MERGED from [com.facebook.flipper:flipper-fresco-plugin:0.125.0] /home/pankaj/.gradle/caches/transforms-3/d00cb5af49214c127447117a850c65b4/transformed/jetified-flipper-fresco-plugin-0.125.0/AndroidManifest.xml:11:5-13:41
 MERGED from [com.facebook.flipper:flipper-fresco-plugin:0.125.0] /home/pankaj/.gradle/caches/transforms-3/d00cb5af49214c127447117a850c65b4/transformed/jetified-flipper-fresco-plugin-0.125.0/AndroidManifest.xml:11:5-13:41
-MERGED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-async-storage_async-storage] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-async-storage/async-storage/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-async-storage_async-storage] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-async-storage/async-storage/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-community_art] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/art/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-community_art] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/art/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-community_geolocation] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/geolocation/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-community_geolocation] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/geolocation/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-community_masked-view] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/masked-view/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-community_masked-view] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/masked-view/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-community_netinfo] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-community_netinfo] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-community_progress-bar-android] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/progress-bar-android/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-community_progress-bar-android] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/progress-bar-android/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-picker_picker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-picker/picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-picker_picker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-picker/picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:lottie-react-native] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/lottie-react-native/src/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:lottie-react-native] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/lottie-react-native/src/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-a-beep] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-a-beep/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-a-beep] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-a-beep/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-android-location-enabler] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-android-location-enabler/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-android-location-enabler] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-android-location-enabler/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-gesture-handler] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-gesture-handler/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-gesture-handler] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-gesture-handler/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-get-location] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-get-location/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-get-location] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-get-location/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-image-marker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-marker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-image-marker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-marker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-localization] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-localization/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-localization] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-localization/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-maps] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-maps/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-maps] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-maps/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-permissions] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-permissions/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-permissions] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-permissions/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-safe-area-context] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-safe-area-context/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-safe-area-context] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-safe-area-context/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-screens] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-screens/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-screens] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-screens/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-sqlite-storage] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-sqlite-storage/platforms/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-sqlite-storage] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-sqlite-storage/platforms/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-svg] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-svg/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-svg] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-svg/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-vector-icons] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-vector-icons/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-vector-icons] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-vector-icons/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-async-storage_async-storage] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-async-storage/async-storage/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-async-storage_async-storage] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-async-storage/async-storage/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-community_art] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/art/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-community_art] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/art/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-community_geolocation] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/geolocation/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-community_geolocation] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/geolocation/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-community_masked-view] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/masked-view/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-community_masked-view] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/masked-view/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-community_netinfo] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-community_netinfo] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-community_progress-bar-android] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/progress-bar-android/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-community_progress-bar-android] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/progress-bar-android/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-picker_picker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-picker/picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-picker_picker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-picker/picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:lottie-react-native] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/lottie-react-native/src/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:lottie-react-native] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/lottie-react-native/src/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-a-beep] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-a-beep/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-a-beep] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-a-beep/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-android-location-enabler] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-android-location-enabler/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-android-location-enabler] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-android-location-enabler/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-gesture-handler] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-gesture-handler/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-gesture-handler] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-gesture-handler/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-get-location] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-get-location/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-get-location] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-get-location/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-image-marker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-marker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-image-marker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-marker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-localization] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-localization/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-localization] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-localization/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-maps] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-maps/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-maps] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-maps/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-permissions] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-permissions/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-permissions] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-permissions/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-safe-area-context] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-safe-area-context/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-safe-area-context] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-safe-area-context/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-screens] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-screens/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-screens] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-screens/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-sqlite-storage] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-sqlite-storage/platforms/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-sqlite-storage] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-sqlite-storage/platforms/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-svg] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-svg/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-svg] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-svg/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-vector-icons] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-vector-icons/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-vector-icons] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-vector-icons/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
 MERGED from [com.facebook.react:react-native:0.70.6] /home/pankaj/.gradle/caches/transforms-3/0b825f9a3cd84cf1738e48fbfed11fea/transformed/jetified-react-native-0.70.6-debug/AndroidManifest.xml:5:5-7:41
 MERGED from [com.facebook.react:react-native:0.70.6] /home/pankaj/.gradle/caches/transforms-3/0b825f9a3cd84cf1738e48fbfed11fea/transformed/jetified-react-native-0.70.6-debug/AndroidManifest.xml:5:5-7:41
 MERGED from [androidx.legacy:legacy-support-v4:1.0.0] /home/pankaj/.gradle/caches/transforms-3/9b1d1682e0bb356fdc4d0ed8314d2cfe/transformed/legacy-support-v4-1.0.0/AndroidManifest.xml:20:5-44
@@ -369,8 +369,8 @@ MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] /home/pankaj/
 MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] /home/pankaj/.gradle/caches/transforms-3/4aa3daa4c119e5ebf154ad11d072f485/transformed/swiperefreshlayout-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [com.facebook.react:hermes-engine:0.70.6] /home/pankaj/.gradle/caches/transforms-3/9d7eb90167c45c49ac02b1539a4fe443/transformed/jetified-hermes-engine-0.70.6-debug/AndroidManifest.xml:5:5-7:41
 MERGED from [com.facebook.react:hermes-engine:0.70.6] /home/pankaj/.gradle/caches/transforms-3/9d7eb90167c45c49ac02b1539a4fe443/transformed/jetified-hermes-engine-0.70.6-debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-reanimated] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-reanimated/android/build/.transforms/58408fd1856ede804907b20a9c42e09a/transformed/jetified-react-native-reanimated-70-hermes/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-reanimated] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-reanimated/android/build/.transforms/58408fd1856ede804907b20a9c42e09a/transformed/jetified-react-native-reanimated-70-hermes/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-reanimated] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-reanimated/android/build/.transforms/807c983725db5f72697c784e6090d5af/transformed/jetified-react-native-reanimated-70-hermes/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-reanimated] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-reanimated/android/build/.transforms/807c983725db5f72697c784e6090d5af/transformed/jetified-react-native-reanimated-70-hermes/AndroidManifest.xml:5:5-7:41
 MERGED from [com.facebook.fresco:flipper:2.6.0] /home/pankaj/.gradle/caches/transforms-3/254be36e6f6eb176e072fd687d368667/transformed/jetified-flipper-2.6.0/AndroidManifest.xml:5:5-7:41
 MERGED from [com.facebook.fresco:flipper:2.6.0] /home/pankaj/.gradle/caches/transforms-3/254be36e6f6eb176e072fd687d368667/transformed/jetified-flipper-2.6.0/AndroidManifest.xml:5:5-7:41
 MERGED from [com.facebook.fresco:stetho:2.6.0] /home/pankaj/.gradle/caches/transforms-3/e90babe485946eeebe0b18572938e7fb/transformed/jetified-stetho-2.6.0/AndroidManifest.xml:5:5-7:41
@@ -539,44 +539,44 @@ MERGED from [com.google.android.odml:image:1.0.0-beta1] /home/pankaj/.gradle/cac
 MERGED from [com.google.android.odml:image:1.0.0-beta1] /home/pankaj/.gradle/caches/transforms-3/e9f088bff215fd05825858422c032237/transformed/jetified-image-1.0.0-beta1/AndroidManifest.xml:5:5-44
 MERGED from [androidx.annotation:annotation-experimental:1.1.0] /home/pankaj/.gradle/caches/transforms-3/54294f5f857978835a11e24fc1422778/transformed/jetified-annotation-experimental-1.1.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.annotation:annotation-experimental:1.1.0] /home/pankaj/.gradle/caches/transforms-3/54294f5f857978835a11e24fc1422778/transformed/jetified-annotation-experimental-1.1.0/AndroidManifest.xml:20:5-22:41
-INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml
-INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml
+INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml
+INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml
 	android:targetSdkVersion
-		INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml
-		INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml
+		INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml
+		INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/main/AndroidManifest.xml
-		INJECTED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml
+		INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/main/AndroidManifest.xml
+		INJECTED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml
 uses-permission#android.permission.SYSTEM_ALERT_WINDOW
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml:5:5-77
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml:5:5-77
 	android:name
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml:5:22-75
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml:5:22-75
 activity#com.facebook.react.devsupport.DevSettingsActivity
-ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml:11:9-111
+ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml:11:9-111
 	android:exported
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml:11:84-108
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml:11:84-108
 	android:name
-		ADDED from /home/pankaj/TransposeOn/logistix/React native/Logistiex/android/app/src/debug/AndroidManifest.xml:11:19-83
+		ADDED from /home/pankaj/TransposeOn/logistix/Logistiex/android/app/src/debug/AndroidManifest.xml:11:19-83
 uses-permission#android.permission.ACCESS_WIFI_STATE
 ADDED from [com.facebook.flipper:flipper:0.125.0] /home/pankaj/.gradle/caches/transforms-3/03f04a3f11198ce3b7c6cedb9b41266b/transformed/jetified-flipper-0.125.0/AndroidManifest.xml:16:5-76
-MERGED from [:react-native-community_netinfo] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:10:5-76
-MERGED from [:react-native-community_netinfo] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:10:5-76
+MERGED from [:react-native-community_netinfo] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:10:5-76
+MERGED from [:react-native-community_netinfo] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:10:5-76
 	android:name
 		ADDED from [com.facebook.flipper:flipper:0.125.0] /home/pankaj/.gradle/caches/transforms-3/03f04a3f11198ce3b7c6cedb9b41266b/transformed/jetified-flipper-0.125.0/AndroidManifest.xml:16:22-73
 uses-feature#android.hardware.camera
-ADDED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:11:5-13:36
+ADDED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:11:5-13:36
 	android:required
-		ADDED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:13:9-33
+		ADDED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:13:9-33
 	android:name
-		ADDED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:12:9-47
+		ADDED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:12:9-47
 uses-feature#android.hardware.camera.autofocus
-ADDED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:14:5-16:36
+ADDED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:14:5-16:36
 	android:required
-		ADDED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:16:9-33
+		ADDED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:16:9-33
 	android:name
-		ADDED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:15:9-57
+		ADDED from [:react-native-camera] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-camera/android/build/intermediates/merged_manifest/generalDebug/AndroidManifest.xml:15:9-57
 uses-permission#android.permission.ACCESS_NETWORK_STATE
-ADDED from [:react-native-community_netinfo] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-79
+ADDED from [:react-native-community_netinfo] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-79
 MERGED from [androidx.work:work-runtime:2.7.1] /home/pankaj/.gradle/caches/transforms-3/3bc811facf50ede55bc8298072e0374d/transformed/work-runtime-2.7.1/AndroidManifest.xml:26:5-79
 MERGED from [androidx.work:work-runtime:2.7.1] /home/pankaj/.gradle/caches/transforms-3/3bc811facf50ede55bc8298072e0374d/transformed/work-runtime-2.7.1/AndroidManifest.xml:26:5-79
 MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] /home/pankaj/.gradle/caches/transforms-3/4e0a6d33173da115ab805e3c43770aba/transformed/jetified-transport-backend-cct-2.3.3/AndroidManifest.xml:25:5-79
@@ -586,23 +586,23 @@ MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] /home/pan
 MERGED from [com.google.android.gms:play-services-maps:18.0.2] /home/pankaj/.gradle/caches/transforms-3/5b94eed69c74e072e7c17c8facb87462/transformed/jetified-play-services-maps-18.0.2/AndroidManifest.xml:23:5-79
 MERGED from [com.google.android.gms:play-services-maps:18.0.2] /home/pankaj/.gradle/caches/transforms-3/5b94eed69c74e072e7c17c8facb87462/transformed/jetified-play-services-maps-18.0.2/AndroidManifest.xml:23:5-79
 	android:name
-		ADDED from [:react-native-community_netinfo] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:22-76
+		ADDED from [:react-native-community_netinfo] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:22-76
 provider#com.imagepicker.ImagePickerProvider
-ADDED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:10:9-18:20
+ADDED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:10:9-18:20
 	android:grantUriPermissions
-		ADDED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:14:13-47
+		ADDED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:14:13-47
 	android:authorities
-		ADDED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:12:13-71
+		ADDED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:12:13-71
 	android:exported
-		ADDED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:13:13-37
+		ADDED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:13:13-37
 	android:name
-		ADDED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:11:13-63
+		ADDED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:11:13-63
 meta-data#android.support.FILE_PROVIDER_PATHS
-ADDED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:15:13-17:70
+ADDED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:15:13-17:70
 	android:resource
-		ADDED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:17:17-67
+		ADDED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:17:17-67
 	android:name
-		ADDED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/React native/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:16:17-67
+		ADDED from [:react-native-image-picker] /home/pankaj/TransposeOn/logistix/Logistiex/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:16:17-67
 uses-permission#android.permission.WAKE_LOCK
 ADDED from [androidx.work:work-runtime:2.7.1] /home/pankaj/.gradle/caches/transforms-3/3bc811facf50ede55bc8298072e0374d/transformed/work-runtime-2.7.1/AndroidManifest.xml:25:5-68
 	android:name

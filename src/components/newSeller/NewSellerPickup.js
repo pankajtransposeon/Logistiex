@@ -17,7 +17,7 @@ const NewSellerPickup = ({route}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [keyword, setKeyword] = useState("");
 
-const getData = `https://bked.logistiex.com/SellerMainScreen/getSellerList/${route.params.userId}`;
+const getData = `https://bked.logistiex.com/SellerMainScreen/sellerList/${route.params.userId}`;
 const userId = route.params.userId;
 const navigation = useNavigation();
 const toggleLoading = () => {

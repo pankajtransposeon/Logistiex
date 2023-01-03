@@ -15,6 +15,8 @@ import Reject from './src/components/RejectReason';
 import POD from './src/components/newSeller/POD';
 import StartTrip from './src/components/StartTrip';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { TouchableOpacity, View } from 'react-native';
+import { Badge } from 'react-native-paper';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -47,6 +49,17 @@ function StackNavigators({navigation}){
           ),
           headerLeft: () => (
             <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>{console.log("dashboard menu clicked"), navigation.dispatch(DrawerActions.openDrawer())}} />
+          ),
+          headerRight: () => (
+            <View style={{flexDirection: 'row', marginRight: 10}}>
+              <TouchableOpacity style={{marginRight: 15}} onPress={()=>{console.log("dashboard menu clicked"), navigation.dispatch(DrawerActions.openDrawer())}}>
+                <MaterialIcons name="sync" style={{fontSize: 30, color: 'white'}} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={()=>{console.log("dashboard menu clicked"), navigation.dispatch(DrawerActions.openDrawer())}}>
+                <MaterialIcons name="bell-outline" style={{fontSize: 30, color: 'white', marginRight: 5}} />
+                <Badge style={{position: 'absolute', fontSize: 15, borderColor: 'white', borderWidth: 1}}>3</Badge>
+              </TouchableOpacity>
+            </View>
           ),
         }}
       />

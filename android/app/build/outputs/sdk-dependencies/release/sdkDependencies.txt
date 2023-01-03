@@ -484,10 +484,10 @@ library {
   maven_library {
     groupId: "androidx.exifinterface"
     artifactId: "exifinterface"
-    version: "1.3.2"
+    version: "1.3.3"
   }
   digests {
-    sha256: "\207p\301\200\020>\v\214\004\240~\264\305\221S\257c\233\t\354\242]\352\351\275\315\257\206\235\036[k"
+    sha256: "\231h\024\230L\263=\220\222\020d\310g\320\254A\337\372\020\241\004\212\332e(\201\302\023&`#\227"
   }
   repo_index {
     value: 1
@@ -1286,6 +1286,18 @@ library {
 }
 library {
   maven_library {
+    groupId: "com.airbnb.android"
+    artifactId: "lottie"
+    version: "5.1.1"
+  }
+  digests {
+    sha256: "jFl\037\330\313m\270H\344.\212\275\274\202\027\267\355\253,\372,\245\022c\f\335\255\351M\377&"
+  }
+  repo_index {
+  }
+}
+library {
+  maven_library {
     groupId: "androidx.core"
     artifactId: "core-ktx"
     version: "1.6.0"
@@ -2055,89 +2067,94 @@ library_dependencies {
 }
 library_dependencies {
   library_index: 102
+  library_dep_index: 44
+  library_dep_index: 78
+}
+library_dependencies {
+  library_index: 103
   library_dep_index: 79
   library_dep_index: 2
   library_dep_index: 10
 }
 library_dependencies {
-  library_index: 103
+  library_index: 104
   library_dep_index: 19
   library_dep_index: 8
   library_dep_index: 30
 }
 library_dependencies {
-  library_index: 105
+  library_index: 106
   library_dep_index: 11
   library_dep_index: 18
   library_dep_index: 23
   library_dep_index: 49
   library_dep_index: 10
-  library_dep_index: 106
-  library_dep_index: 109
-  library_dep_index: 108
-  library_dep_index: 10
-  library_dep_index: 110
-}
-library_dependencies {
-  library_index: 106
   library_dep_index: 107
-  library_dep_index: 108
+  library_dep_index: 110
   library_dep_index: 109
-  library_dep_index: 13
+  library_dep_index: 10
+  library_dep_index: 111
 }
 library_dependencies {
   library_index: 107
-  library_dep_index: 2
+  library_dep_index: 108
+  library_dep_index: 109
+  library_dep_index: 110
+  library_dep_index: 13
 }
 library_dependencies {
   library_index: 108
   library_dep_index: 2
-  library_dep_index: 109
 }
 library_dependencies {
   library_index: 109
   library_dep_index: 2
+  library_dep_index: 110
 }
 library_dependencies {
   library_index: 110
-  library_dep_index: 12
+  library_dep_index: 2
 }
 library_dependencies {
   library_index: 111
-  library_dep_index: 2
-  library_dep_index: 44
-  library_dep_index: 112
-  library_dep_index: 96
-  library_dep_index: 10
-  library_dep_index: 19
   library_dep_index: 12
-  library_dep_index: 113
-  library_dep_index: 114
-  library_dep_index: 41
-  library_dep_index: 115
 }
 library_dependencies {
   library_index: 112
   library_dep_index: 2
+  library_dep_index: 44
+  library_dep_index: 113
+  library_dep_index: 96
+  library_dep_index: 10
+  library_dep_index: 19
+  library_dep_index: 12
+  library_dep_index: 114
+  library_dep_index: 115
+  library_dep_index: 41
+  library_dep_index: 116
 }
 library_dependencies {
   library_index: 113
+  library_dep_index: 2
+}
+library_dependencies {
+  library_index: 114
   library_dep_index: 2
   library_dep_index: 10
   library_dep_index: 21
   library_dep_index: 9
 }
 library_dependencies {
-  library_index: 114
+  library_index: 115
   library_dep_index: 2
   library_dep_index: 10
   library_dep_index: 9
 }
 library_dependencies {
-  library_index: 115
+  library_index: 116
   library_dep_index: 2
   library_dep_index: 19
-  library_dep_index: 113
+  library_dep_index: 114
   library_dep_index: 10
   library_dep_index: 9
 }
@@ -2155,17 +2172,19 @@ module_dependencies {
   dependency_index: 89
   dependency_index: 99
   dependency_index: 101
-  dependency_index: 44
   dependency_index: 102
-  dependency_index: 79
-  dependency_index: 8
+  dependency_index: 44
   dependency_index: 103
+  dependency_index: 79
+  dependency_index: 10
+  dependency_index: 8
   dependency_index: 104
   dependency_index: 105
+  dependency_index: 106
   dependency_index: 84
   dependency_index: 19
   dependency_index: 96
-  dependency_index: 111
+  dependency_index: 112
 }
 repositories {
   maven_repo {
