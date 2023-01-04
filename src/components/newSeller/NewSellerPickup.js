@@ -15,129 +15,6 @@ import Lottie from 'lottie-react-native';
 const db = openDatabase({name: "rn_sqlite"});
 export const Syncsellerpickup112 = () => {
     ToastAndroid.show("Sync Button Pressed",ToastAndroid.SHORT);
-    const [data,setData] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-  
-    // const userId = route.params.userId;
-    const userId = 'HADWFE01';
-
-    const getData = `https://bked.logistiex.com/SellerMainScreen/sellerList/HADWFE01`;
-    sync11();
-    const toggleLoading = () => {
-        setIsLoading(!isLoading);
-        (async () => {
-            await axios.get(getData).then((res) => 
-            {
-                setData(res.data);
-                console.log("Size of data : " + res.data.length);
-                for (let i = 0; i < res.data.length; i++) 
-                {
-                    console.log(res.data[i].consignorCode);
-                    let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
-                    db.transaction(txn => {
-                        txn.executeSql(`INSERT OR REPLACE INTO SyncSellerPickUp( consignorCode ,userId ,consignorName , consignorAddress,
-                        consignorLocation ,consignorContact ,ReverseDeliveries ,PRSNumber ,ForwardPickups) VALUES (?,?,?,?,?,?,?,?,?)`, [
-                            res.data[i].consignorCode,
-                            userId,
-                            res.data[i].consignorName,
-                            m21,
-                            res.data[i].consignorLocation,
-                            res.data[i].consignorContact,
-                            res.data[i].ReverseDeliveries,
-                            res.data[i].PRSNumber,
-                            res.data[i].ForwardPickups,
-                        ], (sqlTxn, res) => {
-                            console.log(`\n Data Added to local db successfully`);
-                            console.log(res);
-                        }, error => {
-                            console.log("error on adding data " + error.message);
-                        },);
-                    });
-                }
-                viewDetails();
-                setIsLoading(false);
-            }, (error) => {
-                Alert.alert(error);
-            });
-        })();
-    
-    // setIsLoading ? navigation.navigate('loading1') : null;
-    // setTimeout(() => 
-    // {
-    //     setIsLoading(false);
-    //     // navigation.navigate('NewSellerPickup');
-    // }, 4000);
-    };
-    const sync11 = () => {
-    NetInfo.fetch().then(state => {
-        if (state.isConnected && state.isInternetReachable) {
-            console.log("You are online!");
-            // ToastAndroid.show('You are Online!', ToastAndroid.SHORT);
-            createTables();
-            //ToastAndroid.show('Adding Data to Local DB!', ToastAndroid.SHORT);
-            toggleLoading();
-        } else {
-            console.log("You are offline!");
-            ToastAndroid.show('You are Offline!', ToastAndroid.SHORT);
-            console.log('Your Details from Local DB is');
-            viewDetails();
-        }
-    });
-    };
-    const createTables = () => {
-        db.transaction(txn => {
-            txn.executeSql('DROP TABLE IF EXISTS SyncSellerPickUp', []);
-            txn.executeSql(`CREATE TABLE IF NOT EXISTS SyncSellerPickUp( consignorCode ID VARCHAR(200) PRIMARY KEY ,userId VARCHAR(100), consignorName VARCHAR(200),consignorAddress VARCHAR(500),
-                consignorLocation VARCHAR(200),consignorContact VARCHAR(200),ReverseDeliveries INT(20) ,PRSNumber VARCHAR(200),ForwardPickups INT(20))`, [], (sqlTxn, res) => {
-                console.log("table created successfully");
-            }, error => {
-                console.log("error on creating table " + error.message);
-            },);
-        });
-    };
-    
-    const viewDetails = () => {
-        db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
-                let temp = [];
-                console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++ i) {
-                    temp.push(results.rows.item(i));
-                    console.log(results.rows.item(i).consignorName);
-                    var address121 = results.rows.item(i).consignorAddress;
-                    var address_json = JSON.parse(address121);
-                    // console.log(typeof (address_json));
-                    console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
-                    // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
-                }
-                
-                ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
-                console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
-            });
-        });
-    };
-    return (
-        <NativeBaseProvider>
-             {isLoading ?
-    //   <View style={[StyleSheet.absoluteFillObject, styles.container222]}>
-    //     <Text>Loading Please Wait...</Text>
-    //     <ProgressBar width={70}/>
-    //   </View>
-     // sync11(),
-     <View style={[StyleSheet.absoluteFillObject, styles.container222]}>
-     <Text style={{color:'white'}}>Syncing Please Wait...</Text>
-     <Lottie
-source={require('../../assets/loading11.json')} autoPlay loop speed={1}
-//   progress={animationProgress.current}
-/>
-     <ProgressBar width={70}/>
-     
- </View> 
-    :
-      null
-    }
-    </NativeBaseProvider>
-  );
   };
 
 const NewSellerPickup = ({route}) => {
@@ -149,43 +26,43 @@ const NewSellerPickup = ({route}) => {
 const getData = `https://bked.logistiex.com/SellerMainScreen/sellerList/${route.params.userId}`;
 const userId = route.params.userId;
 const navigation = useNavigation();
-// const toggleLoading = () => {
-//     setIsLoading(!isLoading);
-//     (async () => {
-//         await axios.get(getData).then((res) => 
-//         {
-//             setData(res.data);
-//             console.log("Size of data : " + res.data.length);
-//             for (let i = 0; i < res.data.length; i++) 
-//             {
-//                 console.log(res.data[i].consignorCode);
-//                 let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
-//                 db.transaction(txn => {
-//                     txn.executeSql(`INSERT OR REPLACE INTO SyncSellerPickUp( consignorCode ,userId ,consignorName , consignorAddress,
-//                     consignorLocation ,consignorContact ,ReverseDeliveries ,PRSNumber ,ForwardPickups) VALUES (?,?,?,?,?,?,?,?,?)`, [
-//                         res.data[i].consignorCode,
-//                         userId,
-//                         res.data[i].consignorName,
-//                         m21,
-//                         res.data[i].consignorLocation,
-//                         res.data[i].consignorContact,
-//                         res.data[i].ReverseDeliveries,
-//                         res.data[i].PRSNumber,
-//                         res.data[i].ForwardPickups,
-//                     ], (sqlTxn, res) => {
-//                         console.log(`\n Data Added to local db successfully`);
-//                         console.log(res);
-//                     }, error => {
-//                         console.log("error on adding data " + error.message);
-//                     },);
-//                 });
-//             }
-//             viewDetails();
-//             setIsLoading(false);
-//         }, (error) => {
-//             Alert.alert(error);
-//         });
-//     })();
+const toggleLoading = () => {
+    setIsLoading(!isLoading);
+    (async () => {
+        await axios.get(getData).then((res) => 
+        {
+            setData(res.data);
+            console.log("Size of data : " + res.data.length);
+            for (let i = 0; i < res.data.length; i++) 
+            {
+                console.log(res.data[i].consignorCode);
+                let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
+                db.transaction(txn => {
+                    txn.executeSql(`INSERT OR REPLACE INTO SyncSellerPickUp( consignorCode ,userId ,consignorName , consignorAddress,
+                    consignorLocation ,consignorContact ,ReverseDeliveries ,PRSNumber ,ForwardPickups) VALUES (?,?,?,?,?,?,?,?,?)`, [
+                        res.data[i].consignorCode,
+                        userId,
+                        res.data[i].consignorName,
+                        m21,
+                        res.data[i].consignorLocation,
+                        res.data[i].consignorContact,
+                        res.data[i].ReverseDeliveries,
+                        res.data[i].PRSNumber,
+                        res.data[i].ForwardPickups,
+                    ], (sqlTxn, res) => {
+                        console.log(`\n Data Added to local db successfully`);
+                        console.log(res);
+                    }, error => {
+                        console.log("error on adding data " + error.message);
+                    },);
+                });
+            }
+            viewDetails();
+            setIsLoading(false);
+        }, (error) => {
+            Alert.alert(error);
+        });
+    })();
 
 // // setIsLoading ? navigation.navigate('loading1') : null;
 // // setTimeout(() => 
@@ -193,55 +70,55 @@ const navigation = useNavigation();
 // //     setIsLoading(false);
 // //     // navigation.navigate('NewSellerPickup');
 // // }, 4000);
-// };
-// const sync11 = () => {
-// NetInfo.fetch().then(state => {
-//     if (state.isConnected && state.isInternetReachable) {
-//         console.log("You are online!");
-//         // ToastAndroid.show('You are Online!', ToastAndroid.SHORT);
-//         createTables();
-//         //ToastAndroid.show('Adding Data to Local DB!', ToastAndroid.SHORT);
-//         toggleLoading();
-//     } else {
-//         console.log("You are offline!");
-//         ToastAndroid.show('You are Offline!', ToastAndroid.SHORT);
-//         console.log('Your Details from Local DB is');
-//         viewDetails();
-//     }
-// });
-// };
-// const createTables = () => {
-//     db.transaction(txn => {
-//         txn.executeSql('DROP TABLE IF EXISTS SyncSellerPickUp', []);
-//         txn.executeSql(`CREATE TABLE IF NOT EXISTS SyncSellerPickUp( consignorCode ID VARCHAR(200) PRIMARY KEY ,userId VARCHAR(100), consignorName VARCHAR(200),consignorAddress VARCHAR(500),
-// 			consignorLocation VARCHAR(200),consignorContact VARCHAR(200),ReverseDeliveries INT(20) ,PRSNumber VARCHAR(200),ForwardPickups INT(20))`, [], (sqlTxn, res) => {
-//             console.log("table created successfully");
-//         }, error => {
-//             console.log("error on creating table " + error.message);
-//         },);
-//     });
-// };
+};
+const sync11 = () => {
+NetInfo.fetch().then(state => {
+    if (state.isConnected && state.isInternetReachable) {
+        console.log("You are online!");
+        // ToastAndroid.show('You are Online!', ToastAndroid.SHORT);
+        createTables();
+        //ToastAndroid.show('Adding Data to Local DB!', ToastAndroid.SHORT);
+        toggleLoading();
+    } else {
+        console.log("You are offline!");
+        ToastAndroid.show('You are Offline!', ToastAndroid.SHORT);
+        console.log('Your Details from Local DB is');
+        viewDetails();
+    }
+});
+};
+const createTables = () => {
+    db.transaction(txn => {
+        txn.executeSql('DROP TABLE IF EXISTS SyncSellerPickUp', []);
+        txn.executeSql(`CREATE TABLE IF NOT EXISTS SyncSellerPickUp( consignorCode ID VARCHAR(200) PRIMARY KEY ,userId VARCHAR(100), consignorName VARCHAR(200),consignorAddress VARCHAR(500),
+			consignorLocation VARCHAR(200),consignorContact VARCHAR(200),ReverseDeliveries INT(20) ,PRSNumber VARCHAR(200),ForwardPickups INT(20))`, [], (sqlTxn, res) => {
+            console.log("table created successfully");
+        }, error => {
+            console.log("error on creating table " + error.message);
+        },);
+    });
+};
 
-// const viewDetails = () => {
-//     db.transaction((tx) => {
-//         tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
-//             let temp = [];
-//             console.log(results.rows.length);
-//             for (let i = 0; i < results.rows.length; ++ i) {
-//                 temp.push(results.rows.item(i));
-//                 console.log(results.rows.item(i).consignorName);
-//                 var address121 = results.rows.item(i).consignorAddress;
-//                 var address_json = JSON.parse(address121);
-//                 // console.log(typeof (address_json));
-//                 console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
-//                 // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
-//             }
+const viewDetails = () => {
+    db.transaction((tx) => {
+        tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
+            let temp = [];
+            console.log(results.rows.length);
+            for (let i = 0; i < results.rows.length; ++ i) {
+                temp.push(results.rows.item(i));
+                console.log(results.rows.item(i).consignorName);
+                var address121 = results.rows.item(i).consignorAddress;
+                var address_json = JSON.parse(address121);
+                // console.log(typeof (address_json));
+                console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
+                // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+            }
             
-//             ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
-//             console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
-//         });
-//     });
-// };
+            ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
+            console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+        });
+    });
+};
 
 useEffect(() => {
     (async () => {
@@ -302,7 +179,7 @@ return (
           <Image style={{ width:150, height:150}} source={require('../../assets/image.png')} alt={"Logo Image"} />
       </Center>
     </Box>
-    {/* <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} /> */}
+    <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} />
     {isLoading ?
     //   <View style={[StyleSheet.absoluteFillObject, styles.container222]}>
     //     <Text>Loading Please Wait...</Text>
