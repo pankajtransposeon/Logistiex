@@ -1,6 +1,8 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable comma-dangle */
 import React, { useEffect, useState } from 'react';
 import 'react-native-gesture-handler';
-import { NativeBaseProvider, Box, Text, Image, Avatar, Heading, Button, Select, Divider, Center } from 'native-base';
+import { NativeBaseProvider, Box, Text, Image, Avatar, Heading, Button, Select, Divider, Center,Icon } from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NavigationContainer, DrawerActions } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -15,6 +17,7 @@ import Reject from './src/components/RejectReason';
 import POD from './src/components/newSeller/POD';
 import StartTrip from './src/components/StartTrip';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as newseller112 from "./src/components/newSeller/NewSellerPickup";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -61,6 +64,23 @@ function StackNavigators({navigation}){
           headerLeft: () => (
             <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>navigation.toggleDrawer()} />
           ),
+          headerRight: () => (
+            <NativeBaseProvider>
+          {/* //     <Button  leftIcon={<Icon as={MaterialIcons} name="sync" size="sm" />} > Sync</Button> */}
+          <Button leftIcon={<Icon as={MaterialIcons} name="sync" size="sm" color="white" />}onPress={() => newseller112.Syncsellerpickup112()
+          
+          
+        
+        
+        
+        }
+           style={{
+            marginTop:8.5,marginBottom:8, marginLeft: 10,marginRight:12,backgroundColor: '#004aad',width:30,height:38,alignSelf: 'center',
+            borderRadius: 10,
+    }}
+    title="sync" name='Sync' ></Button>
+           </NativeBaseProvider>
+          )
         }}
       />
 
