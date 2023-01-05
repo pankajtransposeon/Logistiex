@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { NativeBaseProvider, Image, Box, Fab, Icon, Button } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
