@@ -52,7 +52,7 @@ useEffect(() => {
             setData(res.data);
             console.log(res.data);
             createTables();
-            toggleLoading1();
+            toggleLoading();
         }, (error) => {
             Alert.alert(error);
         });
@@ -89,44 +89,44 @@ const createTables = () => {
       },);
   });
 };
-const toggleLoading1 = () => {
-  // setIsLoading(!isLoading);
-  (async () => {
-      await axios.get(getData).then((res) => 
-      {
-          setData(res.data);
-          console.log("Size of data : " + res.data.length);
-          for (let i = 0; i < res.data.length; i++) 
-          {
-              console.log(res.data[i].consignorCode);
-              let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
-              db.transaction(txn => {
-                  txn.executeSql(`INSERT OR REPLACE INTO SyncSellerPickUp( consignorCode ,userId ,consignorName , consignorAddress,
-                  consignorLocation ,consignorContact ,ReverseDeliveries ,PRSNumber ,ForwardPickups) VALUES (?,?,?,?,?,?,?,?,?)`, [
-                      res.data[i].consignorCode,
-                      userId,
-                      res.data[i].consignorName,
-                      m21,
-                      res.data[i].consignorLocation,
-                      res.data[i].consignorContact,
-                      res.data[i].ReverseDeliveries,
-                      res.data[i].PRSNumber,
-                      res.data[i].ForwardPickups,
-                  ], (sqlTxn, res) => {
-                      console.log(`\n Data Added to local db successfully1212`);
-                      console.log(res);
-                  }, error => {
-                      console.log("error on adding data " + error.message);
-                  },);
-              });
-          }
-          // viewDetails();
-          // setIsLoading(false);
-      }, (error) => {
-          Alert.alert(error);
-      });
-  })();
-};
+// const toggleLoading1 = () => {
+//   // setIsLoading(!isLoading);
+//   (async () => {
+//       await axios.get(getData).then((res) => 
+//       {
+//           setData(res.data);
+//           console.log("Size of data : " + res.data.length);
+//           for (let i = 0; i < res.data.length; i++) 
+//           {
+//               console.log(res.data[i].consignorCode);
+//               let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
+//               db.transaction(txn => {
+//                   txn.executeSql(`INSERT OR REPLACE INTO SyncSellerPickUp( consignorCode ,userId ,consignorName , consignorAddress,
+//                   consignorLocation ,consignorContact ,ReverseDeliveries ,PRSNumber ,ForwardPickups) VALUES (?,?,?,?,?,?,?,?,?)`, [
+//                       res.data[i].consignorCode,
+//                       userId,
+//                       res.data[i].consignorName,
+//                       m21,
+//                       res.data[i].consignorLocation,
+//                       res.data[i].consignorContact,
+//                       res.data[i].ReverseDeliveries,
+//                       res.data[i].PRSNumber,
+//                       res.data[i].ForwardPickups,
+//                   ], (sqlTxn, res) => {
+//                       console.log(`\n Data Added to local db successfully1212`);
+//                       console.log(res);
+//                   }, error => {
+//                       console.log("error on adding data " + error.message);
+//                   },);
+//               });
+//           }
+//           // viewDetails();
+//           // setIsLoading(false);
+//       }, (error) => {
+//           Alert.alert(error);
+//       });
+//   })();
+// };
 const toggleLoading = () => {
   setIsLoading(!isLoading);
   (async () => {
