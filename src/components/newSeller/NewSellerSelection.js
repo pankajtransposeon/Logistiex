@@ -48,6 +48,31 @@ const NewSellerSelection = ({route}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     ,[]);
  	
+
+    const loadDetails = () => {
+      // setIsLoading(!isLoading);
+      db.transaction((tx) => {
+          tx.executeSql('SELECT * FROM SellerDetails11', [], (tx1, results) => {
+              // ToastAndroid.show("Loading...", ToastAndroid.SHORT);
+              let temp = [];
+              console.log(results.rows.length);
+              for (let i = 0; i < results.rows.length; ++i) {
+                  temp.push(results.rows.item(i));
+                  console.log(results.rows.item(i).consignorName);
+                  // var address121 = results.rows.item(i).consignorAddress;
+                  // var address_json = JSON.parse(address121);
+                  // console.log(typeof (address_json));
+                  // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
+                  // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+              }
+              console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+              setData(temp);
+          //   setIsLoading(false);
+          });
+      });
+  };
+
+
   const toggleLoading = () => {
     setIsLoading(!isLoading);
       (async() => {

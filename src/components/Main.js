@@ -11,7 +11,7 @@ import PieChart from 'react-native-pie-chart';
 
 export default function Main({navigation, route}) {
 
-  const shipmentData = `https://bked.logistiex.com/SellerMainScreen/getSellerList/${route.params.userId}`;
+  const shipmentData = `https://bked.logistiex.com/SellerMainScreen/sellerList/${route.params.userId}`;
   const userId = route.params.userId;
 
   const [data, setData]   = useState(0);
