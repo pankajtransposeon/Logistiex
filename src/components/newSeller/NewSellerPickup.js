@@ -67,7 +67,7 @@ const sync11 = () => {
 NetInfo.fetch().then(state => {
     if (state.isConnected && state.isInternetReachable) {
         console.log("You are online!");
-        ToastAndroid.show('You are Online!', ToastAndroid.SHORT);
+        // ToastAndroid.show('You are Online!', ToastAndroid.SHORT);
         createTables();
         //ToastAndroid.show('Adding Data to Local DB!', ToastAndroid.SHORT);
         toggleLoading();
@@ -103,9 +103,9 @@ const viewDetails = () => {
                 var address_json = JSON.parse(address121);
                 // console.log(typeof (address_json));
                 console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
-               ToastAndroid.show("Sync successful", ToastAndroid.SHORT);
                 // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
             }
+            ToastAndroid.show("Sync successful", ToastAndroid.SHORT);
             console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
         });
     });
