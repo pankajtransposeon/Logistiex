@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable react-hooks/exhaustive-deps */
 import {ProgressBar} from '@react-native-community/progress-bar-android';
 import {NativeBaseProvider, Box, Image, Center, Fab, Icon,} from 'native-base';
 import {StyleSheet,View,ScrollView,ToastAndroid,Alert} from 'react-native';
@@ -8,6 +10,7 @@ import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Lottie from 'lottie-react-native';
 
 const db = openDatabase({name: "rn_sqlite"});
 
@@ -52,17 +55,15 @@ const toggleLoading = () => {
                 });
             }
             viewDetails();
+            setIsLoading(false);
         }, (error) => {
             Alert.alert(error);
         });
     })();
 
 // setIsLoading ? navigation.navigate('loading1') : null;
-setTimeout(() => 
-{
-    setIsLoading(false);
-    navigation.navigate('NewSellerPickup');
-}, 4000);};const sync11 = () => {
+};
+const sync11 = () => {
 NetInfo.fetch().then(state => {
     if (state.isConnected && state.isInternetReachable) {
         console.log("You are online!");
@@ -102,7 +103,8 @@ const viewDetails = () => {
                 var address_json = JSON.parse(address121);
                 // console.log(typeof (address_json));
                 console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
-                ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+               ToastAndroid.show("Sync successful", ToastAndroid.SHORT);
+                // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
             }
             console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
         });
@@ -169,14 +171,28 @@ return (
     </Box>
     <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} />
     {isLoading ?
-      <View style={[StyleSheet.absoluteFillObject, styles.container222]}>
-        <Text>Loading Please Wait...</Text>
-        <ProgressBar width={70}/>
-      </View>
-    :
-      null
-    }
-    </NativeBaseProvider>
+        //   <View style={[StyleSheet.absoluteFillObject, styles.container222]}>
+        //     <Text>Loading Please Wait...</Text>
+        //     <ProgressBar width={70}/>
+        //   </View>
+         // sync11(),
+         <View style={[StyleSheet.absoluteFillObject,{ flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex:1,
+          backgroundColor:'rgba(0,0,0,0.65)',}]}>
+         <Text style={{color:'white'}}>Syncing Please Wait...</Text>
+         <Lottie
+    source={require('../../assets/loading11.json')} autoPlay loop speed={1}
+    //   progress={animationProgress.current}
+    />
+         <ProgressBar width={70}/>
+         
+     </View> 
+        :
+          null
+        }
+        </NativeBaseProvider>
   );
 };
 export default NewSellerPickup;
