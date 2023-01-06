@@ -21,7 +21,6 @@ export default function Login() {
     try {
       const jsonValue = JSON.stringify(data)
       await AsyncStorage.setItem('@storage_Key', jsonValue);
-      console.log(jsonValue, 'asas');
     } catch (e) {
       console.log(e);
     }
