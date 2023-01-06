@@ -40,24 +40,138 @@ const Drawer = createDrawerNavigator();
 
 function StackNavigators({navigation}){
   const [data,setData] = useState([]);
+  const [data2,setData2] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  
 const getData = `https://bked.logistiex.com/SellerMainScreen/sellerList/HADWFE01`;
+const getData2 = 'https://bked.logistiex.com/SellerMainScreen/details/HADWFE01';
 // const userId = route.params.userId;
 const userId = 'HADWFE01';
+
 
 useEffect(() => {
     (async () => {
         await axios.get(getData).then((res) => {
             setData(res.data);
-            console.log(res.data);
-            createTables();
-            toggleLoading();
+            // console.log(res.data);
+            // createTables();
+            // toggleLoading();
         }, (error) => {
             Alert.alert(error);
         });
+        await axios.get(getData2).then((res) => {
+          setData2(res.data);
+          // console.log(JSON.stringify(res.data, null, 4));
+          // createTables2();
+          toggleLoading2();
+      }, (error) => {
+          Alert.alert(error);
+      });
     })();
 }, []);
+
+
+
+const createTables2 = () => {
+  db.transaction(txn => {
+      txn.executeSql('DROP TABLE IF EXISTS SellerMainScreenDetails', []);
+      txn.executeSql(`CREATE TABLE IF NOT EXISTS SellerMainScreenDetails( 
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        clientShipmentReferenceNumber VARCHAR(200),
+        clientRefId VARCHAR(200),
+        awbNo VARCHAR(200),
+        consignorCode VARCHAR(200),
+        packagingStatus VARCHAR(200),
+        packagingId VARCHAR(200),
+        runSheetNumber VARCHAR(200),
+        shipmentStatus VARCHAR(200),
+        shipmentAction VARCHAR(200),
+        rejectedReason VARCHAR(200),
+        actionTime VARCHAR(200),
+        status VARCHAR(200)
+      )`, [], (sqlTxn, res) => {
+          console.log("table created successfully details213 ");
+          // toggleLoading();
+      }, error => {
+          console.log("error on creating table " + error.message);
+      },);
+  });
+};
+
+const toggleLoading2 = () => {
+  setIsLoading(!isLoading);
+  (async () => {
+      await axios.get(getData2).then((res) => 
+      {
+        console.log("Data : " + JSON.stringify(res.data.data, null, 4));
+          setData2(res.data);
+          createTables2();
+          console.log("Size of data : " + res.data.data.length);
+          for (let i = 0; i < res.data.data.length; i++) 
+          {
+              console.log(res.data.data[i].consignorCode);
+              db.transaction(txn => {
+                  txn.executeSql(`INSERT OR REPLACE INTO SellerMainScreenDetails( 
+                    clientShipmentReferenceNumber ,
+                    clientRefId ,
+                    awbNo ,
+                    consignorCode ,
+                    packagingStatus ,
+                    packagingId ,
+                    runSheetNumber ,
+                    shipmentStatus ,
+                    shipmentAction ,
+                    rejectedReason ,
+                    actionTime ,
+                    status 
+                  ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`, [
+                    res.data.data[i].clientShipmentReferenceNumber ,
+                    res.data.data[i].clientRefId ,
+                    res.data.data[i].awbNo ,
+                    res.data.data[i].consignorCode ,
+                    res.data.data[i].packagingStatus ,
+                    res.data.data[i].packagingId ,
+                    res.data.data[i].runSheetNumber ,
+                    res.data.data[i].shipmentStatus ,
+                    res.data.data[i].shipmentAction ,
+                    res.data.data[i].rejectedReason ,
+                    res.data.data[i].actionTime ,
+                    res.data.data[i].status ,
+                  ], (sqlTxn, res) => {
+                      console.log(`\n Data Added to local db successfully 213`);
+                      console.log(res);
+                  }, error => {
+                      console.log("error on adding data " + error.message);
+                  },);
+              });
+          }
+          viewDetails2();
+          setIsLoading(false);
+      }, (error) => {
+          Alert.alert(error);
+      });
+  })();
+};
+
+const viewDetails2 = () => {
+  db.transaction((tx) => {
+      tx.executeSql('SELECT * FROM SellerMainScreenDetails', [], (tx1, results) => {
+          let temp = [];
+          console.log(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++ i) {
+              temp.push(results.rows.item(i));
+              console.log(results.rows.item(i).awbNo);
+              // var address121 = results.rows.item(i).consignorAddress;
+              // var address_json = JSON.parse(address121);
+              // console.log(typeof (address_json));
+              // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
+              // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+          }
+          ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
+          console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+      });
+  });
+};
+
 
 const sync11 = () => {
   NetInfo.fetch().then(state => {
@@ -89,44 +203,7 @@ const createTables = () => {
       },);
   });
 };
-// const toggleLoading1 = () => {
-//   // setIsLoading(!isLoading);
-//   (async () => {
-//       await axios.get(getData).then((res) => 
-//       {
-//           setData(res.data);
-//           console.log("Size of data : " + res.data.length);
-//           for (let i = 0; i < res.data.length; i++) 
-//           {
-//               console.log(res.data[i].consignorCode);
-//               let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
-//               db.transaction(txn => {
-//                   txn.executeSql(`INSERT OR REPLACE INTO SyncSellerPickUp( consignorCode ,userId ,consignorName , consignorAddress,
-//                   consignorLocation ,consignorContact ,ReverseDeliveries ,PRSNumber ,ForwardPickups) VALUES (?,?,?,?,?,?,?,?,?)`, [
-//                       res.data[i].consignorCode,
-//                       userId,
-//                       res.data[i].consignorName,
-//                       m21,
-//                       res.data[i].consignorLocation,
-//                       res.data[i].consignorContact,
-//                       res.data[i].ReverseDeliveries,
-//                       res.data[i].PRSNumber,
-//                       res.data[i].ForwardPickups,
-//                   ], (sqlTxn, res) => {
-//                       console.log(`\n Data Added to local db successfully1212`);
-//                       console.log(res);
-//                   }, error => {
-//                       console.log("error on adding data " + error.message);
-//                   },);
-//               });
-//           }
-//           // viewDetails();
-//           // setIsLoading(false);
-//       }, (error) => {
-//           Alert.alert(error);
-//       });
-//   })();
-// };
+
 const toggleLoading = () => {
   setIsLoading(!isLoading);
   (async () => {

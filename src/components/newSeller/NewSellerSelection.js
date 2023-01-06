@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Image, Center,NativeBaseProvider, Fab, Icon, Button, Box, Heading } from 'native-base';
 import{StyleSheet,Text,TouchableOpacity,View, ScrollView, TextInput,getPick, Alert, TouchableWithoutFeedbackBase} from 'react-native';
@@ -27,6 +28,32 @@ const NewSellerSelection = ({route}) => {
   const [type,setType] = useState('');
   const navigation = useNavigation();
     
+
+
+
+  useEffect(() => {
+    (async () => {
+        loadSellerPickupDetails();
+    })();
+}, []);
+
+const loadSellerPickupDetails = () => {
+db.transaction((tx) => {
+  tx.executeSql('SELECT * FROM SellerMainScreenDetails where consignorCode=? AND status="pending"', [route.params.consignorCode], (tx1, results) => {
+      let temp = [];
+      console.log(results.rows.length);
+      setAcc(results.rows.length);
+      for (let i = 0; i < results.rows.length; ++i) {
+          temp.push(results.rows.item(i));
+      }
+      console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+      setData(temp);
+  });
+});
+};
+
+
+
   let r = [];	
     useEffect(() => 	
      {	
@@ -38,7 +65,7 @@ const NewSellerSelection = ({route}) => {
             (tx, results) => {	
               var len = results.rows.length;	
               console.log(len);	
-              setAcc(len);	
+              // setAcc(len);	
               setPending(route.params.Forward - len);	
             }	
           );	
@@ -184,7 +211,7 @@ return (
     <Image style={{nwidth:150, height:150}} source={require('../../assets/image.png')} alt={"Logo Image"} />
   </Center>
 </View>
-<Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} />
+{/* <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} /> */}
 </NativeBaseProvider>
 );
 };

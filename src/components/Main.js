@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState,Alert } from "react";
 import NetInfo from "@react-native-community/netinfo";
 import { Text, View, ToastAndroid, ScrollView } from 'react-native';
@@ -17,6 +19,76 @@ export default function Main({navigation, route}) {
   const [data, setData]   = useState(0);
   const [data1, setData1] = useState(0);
   const [data2, setData2] = useState("");
+
+  const [spts,setSpts] = useState(0);
+  const [spc, setSpc] = useState(1);                 //default is putting 1 to overcome render problem in pie chart
+  const [spp, setSpp] = useState(0);
+  const [spnp, setSpnp] = useState(0);
+  const [spr, setSpr] = useState(0);
+
+  useEffect(() => {
+    (async () => {
+        loadSellerPickupDetails();
+    })();
+}, []);
+
+const loadSellerPickupDetails = () => {
+  db.transaction((tx) => {
+      tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
+          console.log(results.rows.length);
+          setSpts(results.rows.length);
+      });
+  });
+  db.transaction((tx) => {
+    tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="completed"', [], (tx1, results) => {
+        let temp = [];
+        console.log(results.rows.length);
+        // setSpc(results.rows.length);             //uncomment this line if wanted to show completed shipments in pie chart
+        for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+        }
+        console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+        setData(temp);
+    });
+});
+db.transaction((tx) => {
+  tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="pending"', [], (tx1, results) => {
+      let temp = [];
+      console.log(results.rows.length);
+      setSpp(results.rows.length);
+      for (let i = 0; i < results.rows.length; ++i) {
+          temp.push(results.rows.item(i));
+      }
+      console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+      setData(temp);
+  });
+});
+db.transaction((tx) => {
+  tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="notPicked"', [], (tx1, results) => {
+      let temp = [];
+      console.log(results.rows.length);
+      setSpnp(results.rows.length);
+      for (let i = 0; i < results.rows.length; ++i) {
+          temp.push(results.rows.item(i));
+      }
+      console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+      setData(temp);
+  });
+});
+db.transaction((tx) => {
+  tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="rejected"', [], (tx1, results) => {
+      let temp = [];
+      console.log(results.rows.length);
+      setSpr(results.rows.length);
+      for (let i = 0; i < results.rows.length; ++i) {
+          temp.push(results.rows.item(i));
+      }
+      console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+      setData(temp);
+  });
+});
+};
+
 
   const value = {
     Accepted: 0,
@@ -211,9 +283,8 @@ useEffect(() =>
       }
     });
   };
-
   const dashboardData = [
-    {title: 'Seller Pickups', totalUsers: 20, pendingOrder: data1, completedOrder: 534, rejectedOrder: 200, notPicked: 140 },
+    {title: 'Seller Pickups', totalUsers: spts, pendingOrder: spp, completedOrder: spc, rejectedOrder: spr, notPicked: spnp },
     {title: 'Seller Deliveries', totalUsers: 14, pendingOrder: 200, completedOrder: 204, rejectedOrder: 83, notPicked: 70 },
     {title: 'Customer Pickups', totalUsers: 21, pendingOrder: 23, completedOrder: 123, rejectedOrder: 112, notPicked: 70 },
     {title: 'Customer Deliveries', totalUsers: 9, pendingOrder: 200, completedOrder: 303, rejectedOrder: 32, notPicked: 70 }
