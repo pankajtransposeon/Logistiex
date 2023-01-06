@@ -9,8 +9,7 @@ import { decode } from "react-native-pure-jwt";
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Marker from 'react-native-image-marker';
 
-
-export default function StartTrip() {
+export default function EndTrip() {
 
   const [vehicle, setVehicle] = useState('');
   const [password, setPassword] = useState('');
@@ -19,8 +18,6 @@ export default function StartTrip() {
   const [message, setMessage] = useState(0);
   const [loginClicked, setLoginClicked] = useState(false);
   const [ImageUrl, setImageUrl] = useState('');
-  const [tripValue, setTripValue] = useState('Start Trip');
-  const [tripID, setTripID] = useState("");
   const navigation = useNavigation();
 
   const requestCameraPermission = async () => {
@@ -56,35 +53,6 @@ export default function StartTrip() {
     return data;
   };
 
-  const storeData = async(data) => {
-    try {
-      await AsyncStorage.setItem('@TripID', JSON.stringify(data));
-      getData();
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  const storeDataTripValue = async() => {
-    try {
-      await AsyncStorage.setItem('@StartEndTrip', JSON.stringify('End Trip'));
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('@TripID')
-      if(value !== null) {
-        const data = JSON.parse(value);
-        setTripID(data);
-      }
-    } catch(e) {
-      console.log(e);
-    }
-  }
-
   const takePhoto= async()=>{
     let options = {
         mediaType:'photo',
@@ -106,6 +74,7 @@ export default function StartTrip() {
     if(result.assets !== undefined){          
       fetch('https://bked.logistiex.com/DSQCPicture/uploadPicture', {
         method: 'POST',
+      
         body: createFormData(result.assets[0], {
                 useCase : "DSQC",
                 type : "front",
@@ -114,36 +83,29 @@ export default function StartTrip() {
                 hubCode :"HC001"
               }),
       })
-      .then((data) => data.json())
-      .then((res) => {
-        setImageUrl(res.publicURL);
-        console.log('upload succes', res);
-      })
-      .catch((error) => {
-        console.log('upload error', error);
-      });
+        .then((data) => data.json())
+        .then((res) => {
+          setImageUrl(res.publicURL);
+          console.log('upload succes', res);
+        })
+        .catch((error) => {
+          console.log('upload error', error);
+        });
     }
 }
-
-useEffect(() => {
-  storeData(new Date() + "UI001");
-}, []);
 
 const ImageHandle = () => 
   {
     (async() => {
-        await axios.post('https://bked.logistiex.com/UserTripInfo/userTripDetails', {
-        tripID : tripID, 
-        userID : "UI001", 
-        date : new Date(), 
-        startTime : "10:00AM", 
-        vehicleNumber : vehicle, 
-        startKilometer : password, 
-        startVehicleImageUrl : ImageUrl
+      await axios.post('https://bked.logistiex.com/UserTripInfo/updateUserTripEndDetails', {
+        tripID : "TI001", 
+        endTime : "6:00PM", 
+        endkilometer : password, 
+        endVehicleImageUrl : ImageUrl
         })
         .then(function (res) {
-          console.log('dscsdc', res.data);
-          storeDataTripValue();
+          console.log(res.data, "data send successfully");
+          navigation.navigate('StartEndDetails');
         })
         .catch(function (error) {
           console.log(error);
@@ -151,19 +113,20 @@ const ImageHandle = () =>
     }) ();
    }
 
+  
   return (
     <NativeBaseProvider>
         <Box flex={1} bg="#004aad" alignItems="center" pt={'40%'}>
             <Box justifyContent="space-between" py={10} px={6} bg="#fff" rounded="xl" width={"90%"} maxWidth="100%" _text={{fontWeight: "medium",}}>
             <VStack space={6}>
-                <Input value={vehicle} onChangeText={setVehicle} size="lg" placeholder="Enter your vehical no." />
-                <Input keyboardType="numeric" value={password} onChangeText={setPassword} size="lg" type={"number"} placeholder="Input vehicle KMs" />
-                <Button title="Login" marginX={6}  variant="outline"  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={20} mr="2" color="#004aad">Image</MaterialIcons></Button>
+                <Input value={password} keyboardType="numeric" onChangeText={setPassword} size="lg" type={"number"} placeholder="Input vehicle KMs" />
+                <Button  marginX={6}  variant="outline" title="Login" _text={{ color: '#004aad', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={20} mr="2" color="#004aad">Image</MaterialIcons></Button>
                 {
-                  password && vehicle && ImageUrl && tripID ? (
-                    <Button  title="Login" backgroundColor= {'#004aad'} _text={{ color: 'white', fontSize: 20 }} onPress={()=>ImageHandle()}>Start Trip</Button>
+                  password && ImageUrl ? (
+                    <Button marginTop={20} marginX={6}  title="Login" backgroundColor='#004aad'  _text={{ color: 'white', fontSize: 20 }} onPress={()=>ImageHandle()}>End</Button>
                   ) : (
-                    <Button marginTop={20} marginX={8} opacity={0.5}  disabled={true} title="Login" backgroundColor= {'#004aad'} _text={{ color: 'white', fontSize: 20 }}>Start Trip</Button>
+                    <Button marginTop={20} marginX={8} opacity={0.5} disabled={true} title="Login" backgroundColor='#004aad' _text={{ color: 'white', fontSize: 20 }}>End</Button>
+                    
                   )
                 }
             </VStack>
@@ -176,4 +139,3 @@ const ImageHandle = () =>
     </NativeBaseProvider>
   );
 }
-   

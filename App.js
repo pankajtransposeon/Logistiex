@@ -1,5 +1,3 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import 'react-native-gesture-handler';
 import { NativeBaseProvider, Box, Text, Image, Avatar, Heading, Button, Select, Divider, Center } from 'native-base';
@@ -33,6 +31,9 @@ import NetInfo from "@react-native-community/netinfo";
 import axios from 'axios';
 
 import {openDatabase} from "react-native-sqlite-storage";
+import NewSellerAdditionNotification from './src/components/NewSellerAdditionNotification';
+import StartEndDetails from './src/components/StartEndDetails';
+import EndTrip from './src/components/EndTrip';
 const db = openDatabase({name: "rn_sqlite"});
 
 const Stack = createStackNavigator();
@@ -221,7 +222,7 @@ const toggleLoading = () => {
               <TouchableOpacity style={{marginRight: 15}} onPress={()=>{console.log("dashboard menu clicked"), navigation.dispatch(DrawerActions.openDrawer())}}>
                 <MaterialIcons name="sync" style={{fontSize: 30, color: 'white'}} />
               </TouchableOpacity>
-              <TouchableOpacity onPress={()=>{console.log("dashboard menu clicked"), navigation.dispatch(DrawerActions.openDrawer())}}>
+              <TouchableOpacity onPress={()=>{navigation.navigate('NewSellerAdditionNotification'), navigation.dispatch(DrawerActions.openDrawer())}}>
                 <MaterialIcons name="bell-outline" style={{fontSize: 30, color: 'white', marginRight: 5}} />
                 <Badge style={{position: 'absolute', fontSize: 15, borderColor: 'white', borderWidth: 1}}>3</Badge>
               </TouchableOpacity>
@@ -325,6 +326,45 @@ const toggleLoading = () => {
         }}
       />
 
+    <Stack.Screen name="EndTrip" component={EndTrip} 
+        options={{
+          headerTitle: (props) => (
+            <NativeBaseProvider>
+              <Heading style={{color: 'white'}} size="md">End Trip</Heading>
+            </NativeBaseProvider>
+          ),
+          headerLeft: () => (
+            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>navigation.toggleDrawer()} />
+          ),
+        }}
+      />
+
+    <Stack.Screen name="StartEndDetails" component={StartEndDetails} 
+        options={{
+          headerTitle: (props) => (
+            <NativeBaseProvider>
+              <Heading style={{color: 'white'}} size="md">Get Detail</Heading>
+            </NativeBaseProvider>
+          ),
+          headerLeft: () => (
+            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>navigation.toggleDrawer()} />
+          ),
+        }}
+      />
+
+    <Stack.Screen name="NewSellerAdditionNotification" component={NewSellerAdditionNotification} 
+        options={{
+          headerTitle: (props) => (
+            <NativeBaseProvider>
+              <Heading style={{color: 'white'}} size="md">Notification</Heading>
+            </NativeBaseProvider>
+          ),
+          headerLeft: () => (
+            <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>navigation.toggleDrawer()} />
+          ),
+        }}
+      />
+
     </Stack.Navigator>
          {isLoading ?
           //   <View style={[StyleSheet.absoluteFillObject, styles.container222]}>
@@ -357,7 +397,7 @@ function CustomDrawerContent({navigation}) {
   const [language, setLanguage] = useState("");
   const [email, SetEmail] = useState('');
   const [name, setName] = useState('');
-  
+  const [TripValue, setTripValue] = useState('Start Trip');
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem('@storage_Key')
@@ -365,6 +405,17 @@ function CustomDrawerContent({navigation}) {
         const data = JSON.parse(value);
         setName(data.UserName);
         SetEmail(data.UserEmail);
+      }else{
+        setName(" ");
+        SetEmail(" ");
+      }
+      const StartEndTrip = await AsyncStorage.getItem('@StartEndTrip');
+      if(StartEndTrip !== null) {
+        const data = JSON.parse(StartEndTrip);
+        setTripValue(data);
+        await AsyncStorage.removeItem('@StartEndTrip');
+      }else{
+        setTripValue('Start Trip');
       }
     } 
     catch(e) {
@@ -373,12 +424,18 @@ function CustomDrawerContent({navigation}) {
   }
 
   useEffect(() => {
-    getData();
+    const StartValue = setInterval(() => {
+      getData();
+    }, 100);
+    return () => clearInterval(StartValue);
   }, []);
+
+
 
   const LogoutHandle = async() => {
     try {
       await AsyncStorage.removeItem('@storage_Key');
+      await AsyncStorage.removeItem('@StartEndTrip');
     } 
     catch(e) {
       console.log(e);
@@ -404,7 +461,7 @@ function CustomDrawerContent({navigation}) {
       <Divider my="4" />
       <Box px={4}>
         <Button variant="outline" onPress={()=>{navigation.navigate('Main'), navigation.closeDrawer()}} style={{color: '#004aad', borderColor: '#004aad'}}><Text style={{color: '#004aad'}}>Home</Text></Button>
-        <Button variant="outline" onPress={()=>{navigation.navigate('StartTrip'), navigation.closeDrawer()}} mt={4} style={{color: '#004aad', borderColor: '#004aad'}}><Text style={{color: '#004aad'}}>Start Trip</Text></Button>
+        <Button variant="outline" onPress={()=>{TripValue === 'Start Trip' ? navigation.navigate('StartTrip') : navigation.navigate('EndTrip') , navigation.closeDrawer()}} mt={4} style={{color: '#004aad', borderColor: '#004aad'}}><Text style={{color: '#004aad'}}>{TripValue}</Text></Button>
       </Box>
       <Divider my="4" />
       <Box px={4}>
@@ -423,6 +480,7 @@ function CustomDrawerContent({navigation}) {
     </NativeBaseProvider>
   )
 }
+
 
 export default function App({navigation}) {
   return (
