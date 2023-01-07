@@ -159,13 +159,13 @@ db.transaction((tx) => {
   useEffect(() => {
     let addresss = "";
     if(route && route.params){
-      addresss += route.params.consignorAddress.consignorAddress1;
+      addresss += route.params.consignorAddress?.consignorAddress1;
       addresss += " ";
-      addresss += route.params.consignorAddress.consignorAddress2;
+      addresss += route.params.consignorAddress?.consignorAddress2;
       addresss += " ";
-      addresss += route.params.consignorAddress.consignorCity;
+      addresss += route.params.consignorAddress?.consignorCity;
       addresss += " ";
-      addresss += route.params.consignorAddress.consignorPincode
+      addresss += route.params.consignorAddress?.consignorPincode
     } 
      setType(addresss);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -223,10 +223,6 @@ return (
           >X</Button>
         <Center>
         <Text style={{color:'#000', fontWeight:'bold', fontSize:18, textAlign:'center', width:'80%',marginTop:0}}>Could Not Attempt Reason </Text>
-        {/* {NotAttemptData.map((d) => (
-        <Button  w="80%" size="lg" bg="#004aad" marginBottom={1} marginTop={1} title={d.pickupFailureReasonName} onPress={() => handleButtonPress2(d.pickupFailureReasonName)} >
-        </Button>
-        ))} */}
         </Center>    
         </View>
         </View>
@@ -272,39 +268,30 @@ return (
             </View>
           </View>
          </ScrollView>
-         <Button style={{backgroundColor: '#004aad', width: '100%', alignSelf: 'center'}} leftIcon={<Icon color="white" as={<MaterialIcons name="barcode-scan" />} size="sm" />} 
-          onPress={()=>navigation.navigate('ShipmentBarcode',{
-            Forward : route.params.Forward,
-            PRSNumber : route.params.PRSNumber,
-            consignorCode : route.params.consignorCode,
-            userId : route.params.userId,
-            phone : route.params.phone,
-            packagingId : route.params.packagingId
-            // TotalpickUp : newdata[0].totalPickups
-          })}
-         >
-          Scan Products
-        </Button>
-        {DropDownValue==null?
-        <Button onPress={() => setModalVisible(true)} style={{backgroundColor: '#004aad', width: '100%', alignSelf: 'center', marginTop:10}}>
-          Close Pickup
-        </Button>:
-        <Button onPress={() => setModalVisible(true)} style={{backgroundColor: '#004aad', width: '100%', alignSelf: 'center', marginTop:10}}>
-         {DropDownValue}
-        </Button>
-        }
-    {/* <TouchableOpacity  onPress={toggleLoading}> 
-      <View style={styles.bt3}>
-      	<Text style={styles.text1}>Sync</Text>
-      </View>
-    </TouchableOpacity> */}
+         <View style={{flexDirection: 'row', width: '92%', justifyContent: 'space-between', marginTop:10, alignSelf: 'center'}}>
+          <Button leftIcon={<Icon color="white" as={<MaterialIcons name="close-circle-outline" />} size="sm" />} onPress={() => setModalVisible(true)} style={{backgroundColor: '#004aad', width: '48%'}}>
+            Close Pickup
+          </Button>
+          <Button style={{backgroundColor: '#004aad', width: '50%', alignSelf: 'center'}} leftIcon={<Icon color="white" as={<MaterialIcons name="barcode-scan" />} size="sm" />} 
+            onPress={()=>navigation.navigate('ShipmentBarcode',{
+              Forward : route.params.Forward,
+              PRSNumber : route.params.PRSNumber,
+              consignorCode : route.params.consignorCode,
+              userId : route.params.userId,
+              phone : route.params.phone,
+              packagingId : route.params.packagingId
+              // TotalpickUp : newdata[0].totalPickups
+            })}
+          >
+            Scan
+          </Button>
+        </View>
   </ScrollView>
   </View>
   <Center>
     <Image style={{nwidth:150, height:150}} source={require('../../assets/image.png')} alt={"Logo Image"} />
   </Center>
 </View>
-{/* <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} /> */}
 </NativeBaseProvider>
 );
 };

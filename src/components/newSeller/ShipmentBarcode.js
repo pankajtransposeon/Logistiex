@@ -361,18 +361,7 @@ const ShipmentBarcode = ({route}) => {
                 userId : route.params.userId,
                 packagingId : route.params.packagingId
               })} w="90%" size="lg" bg="#004aad" mb={4} mt={4}>Reject Shipment</Button> */}
-              {DropDownValue== null?
-              <Button
-                title="Reject Shipment"
-                onPress={() => setModalVisible(true)}
-                w="90%" size="lg" bg="#004aad" mb={4} mt={4}
-                >Reject Shipment</Button>:
-                <Button
-                title="Reject Shipment"
-                onPress={() => setModalVisible(true)}
-                w="90%" size="lg" bg="#004aad" mb={4} mt={4}
-                >{DropDownValue}</Button>
-            }
+              <Button title="Reject Shipment" onPress={() => setModalVisible(true)} w="90%" size="lg" bg="#004aad" mb={4} mt={4}>Reject Shipment</Button>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Expected</Text>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.Forward}</Text>
@@ -391,15 +380,16 @@ const ShipmentBarcode = ({route}) => {
               </View>
             </View>
           </View>
-          <Center>
+          <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
             <Button onPress={()=>navigation.navigate('POD',{
               Forward : route.params.Forward,
               accepted : newaccepted,
               rejected : newrejected,
               phone : route.params.phone,
               userId : route.params.userId,
-            })} w="90%" size="lg" bg="#004aad">Continue</Button>
-          </Center>
+            })} w="48%" size="lg" bg="#004aad">End Scan</Button>
+            <Button w="48%" size="lg" bg="#004aad">Close bag</Button>
+          </View>
           <Center>
             <Image 
               style={{
@@ -410,7 +400,7 @@ const ShipmentBarcode = ({route}) => {
             />
           </Center>
         </View>
-        <Fab onPress={() => handleSync()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} />
+        {/* <Fab onPress={() => handleSync()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} /> */}
       </ScrollView>
     </NativeBaseProvider>
   );
