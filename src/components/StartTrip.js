@@ -158,12 +158,23 @@ const ImageHandle = () =>
             <VStack space={6}>
                 <Input value={vehicle} onChangeText={setVehicle} size="lg" placeholder="Enter your vehical no." />
                 <Input keyboardType="numeric" value={password} onChangeText={setPassword} size="lg" type={"number"} placeholder="Input vehicle KMs" />
-                <Button title="Login" marginX={6}  variant="outline"  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={20} mr="2" color="#004aad">Image</MaterialIcons></Button>
+                <Button title="Login" backgroundColor= {'#004aad'}  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">Image</MaterialIcons></Button>
+                {
+                  ImageUrl ? (
+                    <Image 
+                      source={{ uri: ImageUrl }} 
+                      style={{ width: 300, height: 200 }} 
+                      alt = 'image not shown'
+                    />
+                  ):(
+                    null
+                  )
+                }
                 {
                   password && vehicle && ImageUrl && tripID ? (
-                    <Button  title="Login" backgroundColor= {'#004aad'} _text={{ color: 'white', fontSize: 20 }} onPress={()=>ImageHandle()}>Start Trip</Button>
+                    <Button title="Login" backgroundColor= {'#004aad'} _text={{ color: 'white', fontSize: 20 }} onPress={()=>ImageHandle()}>Start Trip</Button>
                   ) : (
-                    <Button marginTop={20} marginX={8} opacity={0.5}  disabled={true} title="Login" backgroundColor= {'#004aad'} _text={{ color: 'white', fontSize: 20 }}>Start Trip</Button>
+                    <Button opacity={0.5}  disabled={true} title="Login" backgroundColor= {'#004aad'} _text={{ color: 'white', fontSize: 20 }}>Start Trip</Button>
                   )
                 }
             </VStack>

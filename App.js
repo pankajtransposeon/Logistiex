@@ -18,18 +18,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TouchableOpacity, View } from 'react-native';
 import { Badge } from 'react-native-paper';
 
-// import  {  useState } from 'react';
 import 'react-native-gesture-handler';
 import {StyleSheet,ScrollView,ToastAndroid,Alert} from 'react-native';
 import { Icon } from 'native-base';
 // import * as newseller112 from "./src/components/newSeller/NewSellerPickup";
 import Lottie from 'lottie-react-native';
 import {ProgressBar} from '@react-native-community/progress-bar-android';
-
 import NetInfo from "@react-native-community/netinfo";
-
 import axios from 'axios';
-
 import {openDatabase} from "react-native-sqlite-storage";
 import NewSellerAdditionNotification from './src/components/NewSellerAdditionNotification';
 import StartEndDetails from './src/components/StartEndDetails';
@@ -412,10 +408,9 @@ function CustomDrawerContent({navigation}) {
       const StartEndTrip = await AsyncStorage.getItem('@StartEndTrip');
       if(StartEndTrip !== null) {
         const data = JSON.parse(StartEndTrip);
+        console.log(data, 'dasdas')
         setTripValue(data);
         await AsyncStorage.removeItem('@StartEndTrip');
-      }else{
-        setTripValue('Start Trip');
       }
     } 
     catch(e) {
@@ -426,7 +421,7 @@ function CustomDrawerContent({navigation}) {
   useEffect(() => {
     const StartValue = setInterval(() => {
       getData();
-    }, 100);
+    }, 1000);
     return () => clearInterval(StartValue);
   }, []);
 
@@ -461,7 +456,7 @@ function CustomDrawerContent({navigation}) {
       <Divider my="4" />
       <Box px={4}>
         <Button variant="outline" onPress={()=>{navigation.navigate('Main'), navigation.closeDrawer()}} style={{color: '#004aad', borderColor: '#004aad'}}><Text style={{color: '#004aad'}}>Home</Text></Button>
-        <Button variant="outline" onPress={()=>{TripValue === 'Start Trip' ? navigation.navigate('StartTrip') : navigation.navigate('EndTrip') , navigation.closeDrawer()}} mt={4} style={{color: '#004aad', borderColor: '#004aad'}}><Text style={{color: '#004aad'}}>{TripValue}</Text></Button>
+        <Button variant="outline" onPress={()=>{TripValue === 'Start Trip' ? navigation.navigate('StartTrip') : TripValue === 'End Trip' ?  navigation.navigate('EndTrip') :  navigation.navigate('StartEndDetails') , navigation.closeDrawer()}} mt={4} style={{color: '#004aad', borderColor: '#004aad'}}><Text style={{color: '#004aad'}}>{TripValue}</Text></Button>
       </Box>
       <Divider my="4" />
       <Box px={4}>
