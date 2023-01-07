@@ -98,6 +98,7 @@ export default function EndTrip() {
 const storeDataTripValue = async() => {
   try {
     await AsyncStorage.setItem('@StartEndTrip', JSON.stringify('End'));
+    navigation.navigate('StartEndDetails')
   } catch (e) {
     console.log(e);
   }
@@ -125,11 +126,11 @@ const ImageHandle = () =>
   
   return (
     <NativeBaseProvider>
-        <Box flex={1} bg="#004aad" alignItems="center" pt={'40%'}>
+        <Box flex={1} bg="#004aad" alignItems="center" pt={'4%'}>
             <Box justifyContent="space-between" py={10} px={6} bg="#fff" rounded="xl" width={"90%"} maxWidth="100%" _text={{fontWeight: "medium",}}>
             <VStack space={6}>
                 <Input value={password} keyboardType="numeric" onChangeText={setPassword} size="lg" type={"number"} placeholder="Input vehicle KMs" />
-                <Button title="Login" backgroundColor= {'#004aad'}  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">Image</MaterialIcons></Button>
+                <Button py={3} variant='outline' title="Login"  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons></Button>
                 {
                   ImageUrl ? (
                     <Image 
@@ -146,7 +147,6 @@ const ImageHandle = () =>
                     <Button title="Login" backgroundColor='#004aad'  _text={{ color: 'white', fontSize: 20 }} onPress={()=>ImageHandle()}>End Trip</Button>
                   ) : (
                     <Button opacity={0.5} disabled={true} title="Login" backgroundColor='#004aad' _text={{ color: 'white', fontSize: 20 }}>End Trip</Button>
-                    
                   )
                 }
             </VStack>
