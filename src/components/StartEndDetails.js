@@ -38,7 +38,7 @@ const getDataLocal = async () => {
     if(value !== null) {
       const datavalue = JSON.parse(value);
       console.log(datavalue, 'data')
-      if(res && res.data){
+      if(datavalue && data){
         const arr = data.res_data.filter((res) => res.tripID === datavalue);
         setPrintData(arr);
       }
@@ -51,15 +51,15 @@ const getDataLocal = async () => {
 
   return (
     <NativeBaseProvider>
-        <Box flex={1} bg="#004aad" alignItems="center" pt={'40%'} height={"100%"} >
-            <Box justifyContent="space-between" py={2} px={6} height={"50%"} bg="#fff" rounded="xl" width={"90%"} maxWidth="100%" _text={{fontWeight: "medium",}}>
+        <Box flex={1} bg="#004aad" alignItems="center" pt={'4%'} height={"100%"} >
+            <Box justifyContent="space-between" py={2} px={6} height={"80%"} bg="#fff" rounded="xl" width={"90%"} maxWidth="100%" _text={{fontWeight: "medium",}}>
             <ScrollView>
             {
                 printData &&
                 printData.map((res, i) =>{
                     return(
                       <View>
-                        <Button key={i} title="Login" backgroundColor='#004aad'  _text={{ color: 'white', fontSize: 20 }} onPress={()=>ImageHandle()}>{res.tripID}</Button>
+                        <Button key={i} title="Login" backgroundColor='#004aad'  _text={{ color: 'white', fontSize: 20 }}>{res.tripID}</Button>
                       <View style={styles.container}>
                         <Image
                           style={styles.stretch}
@@ -87,8 +87,8 @@ const styles = StyleSheet.create({
     paddingTop: 50,
   },
   stretch: {
-    width: 150,
-    height: 150,
+    width: 170,
+    height: 200,
     resizeMode: 'stretch',
   },
 });

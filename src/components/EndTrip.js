@@ -54,6 +54,7 @@ export default function EndTrip() {
   };
 
   const takePhoto= async()=>{
+    setImageUrl("");
     let options = {
         mediaType:'photo',
         quality:1,
@@ -94,6 +95,14 @@ export default function EndTrip() {
     }
 }
 
+const storeDataTripValue = async() => {
+  try {
+    await AsyncStorage.setItem('@StartEndTrip', JSON.stringify('End'));
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 const ImageHandle = () => 
   {
     (async() => {
@@ -105,7 +114,7 @@ const ImageHandle = () =>
         })
         .then(function (res) {
           console.log(res.data, "data send successfully");
-          navigation.navigate('StartEndDetails');
+          storeDataTripValue();
         })
         .catch(function (error) {
           console.log(error);
@@ -120,12 +129,23 @@ const ImageHandle = () =>
             <Box justifyContent="space-between" py={10} px={6} bg="#fff" rounded="xl" width={"90%"} maxWidth="100%" _text={{fontWeight: "medium",}}>
             <VStack space={6}>
                 <Input value={password} keyboardType="numeric" onChangeText={setPassword} size="lg" type={"number"} placeholder="Input vehicle KMs" />
-                <Button  marginX={6}  variant="outline" title="Login" _text={{ color: '#004aad', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={20} mr="2" color="#004aad">Image</MaterialIcons></Button>
+                <Button title="Login" backgroundColor= {'#004aad'}  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">Image</MaterialIcons></Button>
+                {
+                  ImageUrl ? (
+                    <Image 
+                      source={{ uri: ImageUrl }} 
+                      style={{ width: 300, height: 200 }} 
+                      alt = 'image not shown'
+                    />
+                  ):(
+                    null
+                  )
+                }
                 {
                   password && ImageUrl ? (
-                    <Button marginTop={20} marginX={6}  title="Login" backgroundColor='#004aad'  _text={{ color: 'white', fontSize: 20 }} onPress={()=>ImageHandle()}>End</Button>
+                    <Button title="Login" backgroundColor='#004aad'  _text={{ color: 'white', fontSize: 20 }} onPress={()=>ImageHandle()}>End Trip</Button>
                   ) : (
-                    <Button marginTop={20} marginX={8} opacity={0.5} disabled={true} title="Login" backgroundColor='#004aad' _text={{ color: 'white', fontSize: 20 }}>End</Button>
+                    <Button opacity={0.5} disabled={true} title="Login" backgroundColor='#004aad' _text={{ color: 'white', fontSize: 20 }}>End Trip</Button>
                     
                   )
                 }
