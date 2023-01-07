@@ -33,10 +33,9 @@ const ShipmentBarcode = ({route}) => {
     const [newrejected, setnewRejected] = useState(0);  
     const [barcode, setBarcode] = useState("");
     const [len, setLen] = useState(0);
-    const [data, setData] = useState();
     const [DropDownValue, setDropDownValue] = useState(null);
-    const [DriverData, setDriverData] = useState([]);
-    const DriverName = 'https://bked.logistiex.com/ADupdatePrams/getUPFR';
+    const [rejectedData, setRejectedData] = useState([]);
+    const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
     const [latitude, setLatitude] = useState(0);
     const [longitude , setLongitude] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
@@ -101,11 +100,11 @@ const ShipmentBarcode = ({route}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [len]);
   
-    const datadekho = async() => {
-      await fetch(DriverName)
+    const displaydata = async() => {
+      await fetch(RejectReason)
       .then((response) => response.json()) 
       .then((json) => {
-        setDriverData(json);
+        setRejectedData(json);
       })
       .catch((error) => alert(error)) 
     }
@@ -187,7 +186,7 @@ const ShipmentBarcode = ({route}) => {
       unsubscribe();	
     }
     useEffect(() => {
-      datadekho();   
+      displaydata();   
     }, []);
     useEffect(() => {
       const current_location = () => {
@@ -242,10 +241,10 @@ const ShipmentBarcode = ({route}) => {
           console.log(error);
         });
     }
-    const toggleModal = () => setModalVisible(!isModalVisible);
     function handleButtonPress(item) {
       setDropDownValue(item);
       setModalVisible(false);
+      submitForm()
     }
     
   
@@ -266,27 +265,28 @@ const ShipmentBarcode = ({route}) => {
         />
         
         <View>
-      <Center>
+        <Center>
       
-      <Modal visible={modalVisible} transparent={true} animationIn="slideInLeft" animationOut="slideOutRight">
-        <View style={{
-             backgroundColor: 'rgba(0,0,0,0.6)',
+        <Modal visible={modalVisible} transparent={true} animationIn="slideInLeft" animationOut="slideOutRight">
+          <View style={{
+            backgroundColor: 'rgba(0,0,0,0.6)',
             flex: 1,
           }}>
-        <View style={styles.modalContent}>
-        <Button
+          <View style={styles.modalContent}>
+          <Button
             title="Close"
             style={styles.closeButton}
             onPress={() => setModalVisible(false)}
           >X</Button>
-        <Center>
-        {DriverData.map((d) => (
-        <Button key={d.pickupFailureReasonUserID} w="80%" size="lg" bg="#004aad" marginBottom={1} marginTop={1} title={d.pickupFailureReasonName} onPress={() => handleButtonPress(d.pickupFailureReasonName)} >
-        {d.pickupFailureReasonName}</Button>
-      ))}
-        </Center>
-        </View>
-        </View>
+          <Center>
+            <Text style={{color:'#000', fontWeight:'bold', fontSize:18, textAlign:'center', width:'80%',marginBottom:10}}>Reject Reason Code</Text>
+            {rejectedData.map((d) => (
+            <Button key={d.shipmentExceptionReasonUserID} w="80%" size="lg" bg="#004aad" marginBottom={1.5} marginTop={1.5} title={d.shipmentExceptionReasonName} onPress={() => handleButtonPress(d.shipmentExceptionReasonName)} >
+            {d.shipmentExceptionReasonName}</Button>
+            ))}
+          </Center>
+          </View>
+          </View>
       </Modal>
       </Center>
     </View>
@@ -336,9 +336,6 @@ const ShipmentBarcode = ({route}) => {
               </View>
             </View>
           </View>
-          <Center>
-            <Button onPress={()=>submitForm()} w="90%" size="lg" bg="#004aad" marginBottom={1}>Submit Reject</Button>
-          </Center>
           <Center>
             <Button onPress={()=>navigation.navigate('POD',{
               Forward : route.params.Forward,
@@ -460,16 +457,13 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
   },
   modalContent: {
-    flex:0.6,
+    flex:0.57,
     justifyContent:'center',
-    height:'50%',
     width:'85%',
     backgroundColor:'white',
-    
     borderRadius:20,
     shadowOpacity: 0.3,
     shadowRadius: 10,
-    
     elevation: 5,
     marginLeft:28,
     marginTop:175,
@@ -481,7 +475,9 @@ export const styles = StyleSheet.create({
     backgroundColor:'rgba(0,0,0,0.3)',
     borderRadius:100,
     margin:5.5,
-    color:'rgba(0,0,0,1)'
+    color:'rgba(0,0,0,1)',
+    alignContent:'center'
+
   },
 
   });
