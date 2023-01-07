@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { decode } from "react-native-pure-jwt";
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Marker from 'react-native-image-marker';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 export default function StartTrip() {
@@ -68,6 +69,7 @@ export default function StartTrip() {
   const storeDataTripValue = async() => {
     try {
       await AsyncStorage.setItem('@StartEndTrip', JSON.stringify('End Trip'));
+      navigation.navigate('Main');
     } catch (e) {
       console.log(e);
     }
@@ -153,12 +155,14 @@ const ImageHandle = () =>
 
   return (
     <NativeBaseProvider>
-        <Box flex={1} bg="#004aad" alignItems="center" pt={'40%'}>
+        <Box flex={1} bg="#004aad" alignItems="center" pt={'4%'}>
+            
             <Box justifyContent="space-between" py={10} px={6} bg="#fff" rounded="xl" width={"90%"} maxWidth="100%" _text={{fontWeight: "medium",}}>
+            <ScrollView>
             <VStack space={6}>
                 <Input value={vehicle} onChangeText={setVehicle} size="lg" placeholder="Enter your vehical no." />
                 <Input keyboardType="numeric" value={password} onChangeText={setPassword} size="lg" type={"number"} placeholder="Input vehicle KMs" />
-                <Button title="Login" backgroundColor= {'#004aad'}  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">Image</MaterialIcons></Button>
+                <Button py={3} title="Login" variant='outline'  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons></Button>
                 {
                   ImageUrl ? (
                     <Image 
@@ -178,7 +182,9 @@ const ImageHandle = () =>
                   )
                 }
             </VStack>
+            </ScrollView>
         </Box>
+            
         <Center>
             <Image style={{ width: 200, height: 200 }} source={require('../assets/logo.png')} alt={"Logo Image"} />
             

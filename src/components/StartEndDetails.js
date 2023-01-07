@@ -8,14 +8,9 @@ import { Image, StyleSheet, View } from 'react-native';
 
 export default function StartEndDetails() {
 
-  const [vehicle, setVehicle] = useState('');
-  const [password, setPassword] = useState('');
-  const [show, setShow] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [message, setMessage] = useState(0);
+  
   const [data, setData] = useState();
   const [printData, setPrintData] = useState([]);
-  const [loginClicked, setLoginClicked] = useState(false);
   const navigation = useNavigation();
 
     const getData = 'https://bked.logistiex.com/UserTripInfo/getUserTripInfo';
@@ -24,20 +19,18 @@ export default function StartEndDetails() {
         (async () => {
             await axios.get(getData).then((res) => {
                 setData(res.data);
-                console.log(res.data);
                 getDataLocal();
             }, (error) => {
                 Alert.alert(error);
             });
         })();
-    }, []);
+    }, [printData, data]);
 
 const getDataLocal = async () => {
   try {
     const value = await AsyncStorage.getItem('@TripID')
     if(value !== null) {
       const datavalue = JSON.parse(value);
-      console.log(datavalue, 'data')
       if(datavalue && data){
         const arr = data.res_data.filter((res) => res.tripID === datavalue);
         setPrintData(arr);
@@ -58,8 +51,12 @@ const getDataLocal = async () => {
                 printData &&
                 printData.map((res, i) =>{
                     return(
-                      <View>
-                        <Button key={i} title="Login" backgroundColor='#004aad'  _text={{ color: 'white', fontSize: 20 }}>{res.tripID}</Button>
+                      <ScrollView key={i}>
+                        <View>
+                        <Button title="Login" backgroundColor='#004aad'  _text={{ color: 'white', fontSize: 20 }}>{res.tripID}</Button>
+                        <Button title="Login" backgroundColor='#004aad'  _text={{ color: 'white', fontSize: 20 }}>Vehicle Number {res.vehicleNumber}</Button>
+                        <Button title="Login" backgroundColor='#004aad'  _text={{ color: 'white', fontSize: 20 }}>startTime {res.startTime}</Button>
+                        <Button title="Login" backgroundColor='#004aad'  _text={{ color: 'white', fontSize: 20 }}>startKilometer {res.startKilometer}</Button>
                       <View style={styles.container}>
                         <Image
                           style={styles.stretch}
@@ -67,6 +64,7 @@ const getDataLocal = async () => {
                         />
                       </View>
                       </View>
+                      </ScrollView>
                     )
                 })
             }
