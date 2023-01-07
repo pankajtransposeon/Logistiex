@@ -21,11 +21,11 @@ export default function Main({navigation, route}) {
   const [data2, setData2] = useState("");
 
   const [spts,setSpts] = useState(0);
-  const [spc, setSpc] = useState(1);                 //default is putting 1 to overcome render problem in pie chart
-  const [spp, setSpp] = useState(0);
+  const [spc, setSpc] = useState(0);                 //default is putting 1 to overcome render problem in pie chart
+  const [spp, setSpp] = useState(1);
   const [spnp, setSpnp] = useState(0);
   const [spr, setSpr] = useState(0);
-
+  var let11 = "accepted";
   useEffect(() => {
     (async () => {
         loadSellerPickupDetails();
@@ -40,10 +40,10 @@ const loadSellerPickupDetails = () => {
       });
   });
   db.transaction((tx) => {
-    tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="completed"', [], (tx1, results) => {
+    tx.executeSql('SELECT * FROM SellerMainScreenDetails where status=?', [let11], (tx1, results) => {
         let temp = [];
         console.log(results.rows.length);
-        // setSpc(results.rows.length);             //uncomment this line if wanted to show completed shipments in pie chart
+        setSpc(results.rows.length);
         for (let i = 0; i < results.rows.length; ++i) {
             temp.push(results.rows.item(i));
         }
@@ -52,7 +52,7 @@ const loadSellerPickupDetails = () => {
     });
 });
 db.transaction((tx) => {
-  tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="pending"', [], (tx1, results) => {
+  tx.executeSql('SELECT * FROM SellerMainScreenDetails ', [], (tx1, results) => {
       let temp = [];
       console.log(results.rows.length);
       setSpp(results.rows.length);
@@ -210,7 +210,7 @@ db.transaction((tx) => {
             setData2(results.rows.item(i).CustomerPickupsList);
             ToastAndroid.show("consignorPickupsList :" + results.rows.item(i).consignorPickupsList + "\n" + "CustomerPickupsList : " + results.rows.item(i).CustomerPickupsList , ToastAndroid.SHORT);
           }
-          console.log(temp);
+          // console.log(temp);
           // console.log(tx1);
         }
       );

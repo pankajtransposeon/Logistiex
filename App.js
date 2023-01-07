@@ -86,7 +86,7 @@ const createTables2 = () => {
         actionTime VARCHAR(200),
         status VARCHAR(200)
       )`, [], (sqlTxn, res) => {
-          console.log("table created successfully details213 ");
+          // console.log("table created successfully details213 ");
           // toggleLoading();
       }, error => {
           console.log("error on creating table " + error.message);
@@ -99,7 +99,7 @@ const toggleLoading2 = () => {
   (async () => {
       await axios.get(getData2).then((res) => 
       {
-        console.log("Data : " + JSON.stringify(res.data.data, null, 4));
+        // console.log("Data : " + JSON.stringify(res.data.data, null, 4));
           setData2(res.data);
           createTables2();
           console.log("Size of data : " + res.data.data.length);
@@ -134,8 +134,8 @@ const toggleLoading2 = () => {
                     res.data.data[i].actionTime ,
                     res.data.data[i].status ,
                   ], (sqlTxn, res) => {
-                      console.log(`\n Data Added to local db successfully 213`);
-                      console.log(res);
+                      // console.log(`\n Data Added to local db successfully 213`);
+                      // console.log(res);
                   }, error => {
                       console.log("error on adding data " + error.message);
                   },);
@@ -156,7 +156,7 @@ const viewDetails2 = () => {
           console.log(results.rows.length);
           for (let i = 0; i < results.rows.length; ++ i) {
               temp.push(results.rows.item(i));
-              console.log(results.rows.item(i).awbNo);
+              console.log("hhh "+results.rows.item(i).awbNo);
               // var address121 = results.rows.item(i).consignorAddress;
               // var address_json = JSON.parse(address121);
               // console.log(typeof (address_json));
@@ -164,7 +164,7 @@ const viewDetails2 = () => {
               // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
           }
           ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
-          console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+          // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
       });
   });
 };
@@ -183,7 +183,7 @@ const sync11 = () => {
       } else {
           console.log("You are offline!");
           ToastAndroid.show('You are Offline!', ToastAndroid.SHORT);
-          console.log('Your Details from Local DB is');
+          // console.log('Your Details from Local DB is');
           viewDetails();
       }
   });
@@ -210,7 +210,7 @@ const toggleLoading = () => {
           console.log("Size of data : " + res.data.length);
           for (let i = 0; i < res.data.length; i++) 
           {
-              console.log(res.data[i].consignorCode);
+              // console.log(res.data[i].consignorCode);
               let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
               db.transaction(txn => {
                   txn.executeSql(`INSERT OR REPLACE INTO SyncSellerPickUp( consignorCode ,userId ,consignorName , consignorAddress,
@@ -225,8 +225,8 @@ const toggleLoading = () => {
                       res.data[i].PRSNumber,
                       res.data[i].ForwardPickups,
                   ], (sqlTxn, res) => {
-                      console.log(`\n Data Added to local db successfully1212`);
-                      console.log(res);
+                      // console.log(`\n Data Added to local db successfully1212`);
+                      // console.log(res);
                   }, error => {
                       console.log("error on adding data " + error.message);
                   },);
@@ -244,19 +244,19 @@ const toggleLoading = () => {
     db.transaction((tx) => {
         tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
             let temp = [];
-            console.log(results.rows.length);
+            // console.log(results.rows.length);
             for (let i = 0; i < results.rows.length; ++ i) {
                 temp.push(results.rows.item(i));
-                console.log(results.rows.item(i).consignorName);
+                // console.log(results.rows.item(i).consignorName);
                 var address121 = results.rows.item(i).consignorAddress;
                 var address_json = JSON.parse(address121);
                 // console.log(typeof (address_json));
-                console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
+                // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
                 // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
             }
             
             ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
-            console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+            // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
         });
     });
 };

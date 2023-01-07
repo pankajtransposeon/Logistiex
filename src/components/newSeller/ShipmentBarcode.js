@@ -1,4 +1,5 @@
-import { NativeBaseProvider, Image, Box, Fab, Icon, Button } from 'native-base';
+/* eslint-disable prettier/prettier */
+import { NativeBaseProvider, Image, Box, Fab, Icon, Button ,Alert} from 'native-base';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import{Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet, Modal} from 'react-native';
@@ -40,6 +41,60 @@ const ShipmentBarcode = ({route}) => {
     const [latitude, setLatitude] = useState(0);
     const [longitude , setLongitude] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
+
+
+    +   useEffect(() => {
+          (async () => {
+               updateDetails2();
+           })();
+        }, []);
+      
+      
+         const updateDetails2 = () => {
+           console.log("scan 4545454");
+        
+            db.transaction((tx) => {
+                tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" WHERE awbNo=?', [barcode], (tx1, results) => {
+                    // let temp = [];
+                    console.log("ddsds4545",tx1);
+                    console.log('Results', results.rowsAffected);
+                    // if (results.rowsAffected > 0) {
+                    //   Alert.alert("Record Updated Successfully...");
+                    // } else {
+                    //   Alert.alert('Error');
+                    // }
+                    // console.log(results.rows.length);
+                   // for (let i = 0; i < results.rows.length; ++ i) {
+                    //     temp.push(results.rows.item(i));
+                    //     console.log(results.rows.item(i).awbNo);
+                  //     // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+                    // }
+                    // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+                    viewDetails2();
+                });
+            });
+          };
+          const viewDetails2 = () => {
+            db.transaction((tx) => {
+                tx.executeSql('SELECT * FROM SellerMainScreenDetails', [], (tx1, results) => {
+                    let temp = [];
+                    console.log(results.rows.length);
+                    for (let i = 0; i < results.rows.length; ++ i) {
+                        temp.push(results.rows.item(i));
+                        console.log("barcode "+results.rows.item(i).awbNo);
+                        // var address121 = results.rows.item(i).consignorAddress;
+                        // var address_json = JSON.parse(address121);
+                        // console.log(typeof (address_json));
+                        // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
+                        // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+                    }
+                    ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
+                    console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+                });
+            });
+          };
+      
+
 
     const getCategories = (data) => {	
       db.transaction(txn => {	
