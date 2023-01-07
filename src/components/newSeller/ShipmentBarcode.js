@@ -1,7 +1,7 @@
 import { NativeBaseProvider, Image, Box, Fab, Icon, Button } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import{Text,View, ScrollView, Vibration, ToastAndroid} from 'react-native';
+import{Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet, Modal} from 'react-native';
 import { Center } from "native-base";
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,6 +11,10 @@ import { openDatabase } from "react-native-sqlite-storage";
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import NetInfo from "@react-native-community/netinfo";
 import RNBeep from 'react-native-a-beep';
+import { Picker } from '@react-native-picker/picker';
+import GetLocation from 'react-native-get-location';
+import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
+import { backgroundColor, borderColor, height, marginTop, style } from 'styled-system';
 
 const db = openDatabase({
   name: "rn_sqlite",
@@ -30,7 +34,13 @@ const ShipmentBarcode = ({route}) => {
     const [barcode, setBarcode] = useState("");
     const [len, setLen] = useState(0);
     const [data, setData] = useState();
-    
+    const [DropDownValue, setDropDownValue] = useState(null);
+    const [DriverData, setDriverData] = useState([]);
+    const DriverName = 'https://bked.logistiex.com/ADupdatePrams/getUPFR';
+    const [latitude, setLatitude] = useState(0);
+    const [longitude , setLongitude] = useState(0);
+    const [modalVisible, setModalVisible] = useState(false);
+
     const getCategories = (data) => {	
       db.transaction(txn => {	
         txn.executeSql(	
@@ -91,7 +101,14 @@ const ShipmentBarcode = ({route}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [len]);
   
-
+    const datadekho = async() => {
+      await fetch(DriverName)
+      .then((response) => response.json()) 
+      .then((json) => {
+        setDriverData(json);
+      })
+      .catch((error) => alert(error)) 
+    }
     const navigation = useNavigation();
     const [count, setcount] = useState(0);
 
@@ -169,9 +186,72 @@ const ShipmentBarcode = ({route}) => {
       // Unsubscribe	
       unsubscribe();	
     }
+    useEffect(() => {
+      datadekho();   
+    }, []);
+    useEffect(() => {
+      const current_location = () => {
+        return GetLocation.getCurrentPosition({
+            enableHighAccuracy: true,
+            timeout: 10000,
+        })
+        .then(latestLocation => {
+            console.log('latest location '+JSON.stringify(latestLocation))
+            return latestLocation;
+        }).then(location => {
+            const currentLoc = { latitude: location.latitude, longitude: location.longitude };
+            setLatitude(location.latitude);
+            setLongitude(location.longitude);
+            return currentLoc;
+        }).catch(error => {
+            RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+                interval: 10000,
+                fastInterval: 5000,
+            })
+            .then(status=>{
+                if(status)
+                    console.log('Location enabled');
+            }).catch(err=>{
+            })
+            return false;
+        })
+    };
+    current_location();
+    }, []);
+
+    const submitForm = () => {
+      axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
+        clientShipmentReferenceNumber : route.params.barcode,
+        feUserID: route.params.userId,
+        isAccepted : "false",
+        rejectionReason : DropDownValue,
+        consignorCode : route.params.consignorCode,
+        pickupTime : new Date().toJSON().slice(0,10).replace(/-/g,'/'),
+        latitude : latitude,
+        longitude : longitude,
+        packagingId : "PL00000026",
+        packageingStatus : 1,
+        PRSNumber : route.params.PRSNumber
+      })
+        .then(function (response) {
+          console.log(response.data, "Data has been pushed");
+          ContinueHandle();
+          // navigation.navigate('ShipmentBarcode');
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+    const toggleModal = () => setModalVisible(!isModalVisible);
+    function handleButtonPress(item) {
+      setDropDownValue(item);
+      setModalVisible(false);
+    }
+    
   
   return (
     <NativeBaseProvider>
+      
       <ScrollView style={{paddingTop: 20, paddingBottom: 50}} showsVerticalScrollIndicator={false}>
         <QRCodeScanner
           onRead={onSuccess}
@@ -184,6 +264,32 @@ const ShipmentBarcode = ({route}) => {
             <View><Text>okay</Text></View>
           }
         />
+        
+        <View>
+      <Center>
+      
+      <Modal visible={modalVisible} transparent={true} animationIn="slideInLeft" animationOut="slideOutRight">
+        <View style={{
+             backgroundColor: 'rgba(0,0,0,0.6)',
+            flex: 1,
+          }}>
+        <View style={styles.modalContent}>
+        <Button
+            title="Close"
+            style={styles.closeButton}
+            onPress={() => setModalVisible(false)}
+          >X</Button>
+        <Center>
+        {DriverData.map((d) => (
+        <Button key={d.pickupFailureReasonUserID} w="80%" size="lg" bg="#004aad" marginBottom={1} marginTop={1} title={d.pickupFailureReasonName} onPress={() => handleButtonPress(d.pickupFailureReasonName)} >
+        {d.pickupFailureReasonName}</Button>
+      ))}
+        </Center>
+        </View>
+        </View>
+      </Modal>
+      </Center>
+    </View>
         <View>
           <View style={{backgroundColor: 'white'}}>
             <View style={{alignItems: 'center', marginTop: 15}}>
@@ -193,14 +299,25 @@ const ShipmentBarcode = ({route}) => {
                 <Text style={{fontSize: 18, fontWeight: '500'}}>{barcode}</Text>
               </View>
 
-              <Button onPress={()=>navigation.navigate('reject',{
+              {/* <Button onPress={()=>navigation.navigate('reject',{
                 barcode : barcode,	
                 PRSNumber : route.params.PRSNumber,	
                 consignorCode : route.params.consignorCode,
                 userId : route.params.userId,
                 packagingId : route.params.packagingId
-              })} w="90%" size="lg" bg="#004aad" mb={4} mt={4}>Reject Shipment</Button>
-
+              })} w="90%" size="lg" bg="#004aad" mb={4} mt={4}>Reject Shipment</Button> */}
+              {DropDownValue== null?
+              <Button
+                title="Reject Shipment"
+                onPress={() => setModalVisible(true)}
+                w="90%" size="lg" bg="#004aad" mb={4} mt={4}
+                >Reject Shipment</Button>:
+                <Button
+                title="Reject Shipment"
+                onPress={() => setModalVisible(true)}
+                w="90%" size="lg" bg="#004aad" mb={4} mt={4}
+                >{DropDownValue}</Button>
+            }
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Expected</Text>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.Forward}</Text>
@@ -219,7 +336,9 @@ const ShipmentBarcode = ({route}) => {
               </View>
             </View>
           </View>
-
+          <Center>
+            <Button onPress={()=>submitForm()} w="90%" size="lg" bg="#004aad" marginBottom={1}>Submit Reject</Button>
+          </Center>
           <Center>
             <Button onPress={()=>navigation.navigate('POD',{
               Forward : route.params.Forward,
@@ -247,3 +366,122 @@ const ShipmentBarcode = ({route}) => {
 
 export default ShipmentBarcode;
 
+export const styles = StyleSheet.create({
+  normal:{
+    fontFamily:'open sans',
+    fontWeight:'normal',
+    fontSize:20,
+    color:'#eee',
+    marginTop:27,
+    paddingTop:15,
+    marginLeft:10,
+    marginRight:10,
+    paddingBottom:15,
+    backgroundColor:'#eee',
+    width: 'auto',
+    borderRadius:0
+  },
+  container:{
+   flexDirection:'row',
+  },
+  text:{
+    color:'#000',
+    fontWeight:'bold',
+    fontSize:18,
+    textAlign:'center'
+  },
+  main1:{
+    backgroundColor:'#004aad',
+    fontFamily:'open sans',
+    fontWeight:'normal',
+    fontSize:20,
+    marginTop:27,
+    paddingTop:15,
+    marginLeft:10,
+    marginRight:10,
+    paddingBottom:15,
+    width: 'auto',
+    borderRadius:20
+  },
+  textbox1:{
+    color:'#fff',
+    fontWeight:'bold',
+    fontSize:18,
+    width:'auto',
+    flexDirection: "column",
+    textAlign:'center'
+  },
+
+  textbtn:{
+    alignSelf: 'center',
+    color:'#fff',
+    fontWeight:'bold',
+    fontSize:18
+  },
+  btn:{
+    fontFamily:'open sans',
+    fontSize:15,
+    lineHeight:10,
+    marginTop:80,
+    paddingTop:10,
+    paddingBottom:10,
+    backgroundColor:'#004aad',
+    width:100,
+    borderRadius:10,
+    paddingLeft:0,
+    marginLeft:60
+  },
+  bt3: {
+    fontFamily: 'open sans',
+    color:'#fff',
+    fontWeight: 'bold',
+    fontSize: 15,
+    lineHeight: 10,
+    marginTop: 10,
+    backgroundColor: '#004aad',
+    width: 'auto',
+    borderRadius: 10,
+    paddingLeft: 0,
+    marginLeft: 10,
+    marginRight:15,
+    width:'95%',
+    marginTop:60
+  },
+  picker:{
+    color:'white'
+  },
+  pickerItem: {
+    fontSize: 20,
+    height: 50,
+    color: '#ffffff',
+    backgroundColor: '#2196f3',
+    textAlign: 'center',
+    margin: 10,
+    borderRadius: 10,
+  },
+  modalContent: {
+    flex:0.6,
+    justifyContent:'center',
+    height:'50%',
+    width:'85%',
+    backgroundColor:'white',
+    
+    borderRadius:20,
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    
+    elevation: 5,
+    marginLeft:28,
+    marginTop:175,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor:'rgba(0,0,0,0.3)',
+    borderRadius:100,
+    margin:5.5,
+    color:'rgba(0,0,0,1)'
+  },
+
+  });
