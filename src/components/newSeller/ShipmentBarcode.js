@@ -1,7 +1,8 @@
-import { NativeBaseProvider, Image, Box, Fab, Icon, Button } from 'native-base';
+/* eslint-disable prettier/prettier */
+import { NativeBaseProvider, Image, Box, Fab, Icon, Button ,Alert, Modal, Input} from 'native-base';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import{Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet, Modal} from 'react-native';
+import{Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet} from 'react-native';
 import { Center } from "native-base";
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -33,13 +34,79 @@ const ShipmentBarcode = ({route}) => {
     const [newrejected, setnewRejected] = useState(0);  
     const [barcode, setBarcode] = useState("");
     const [len, setLen] = useState(0);
-    const [data, setData] = useState();
     const [DropDownValue, setDropDownValue] = useState(null);
-    const [DriverData, setDriverData] = useState([]);
-    const DriverName = 'https://bked.logistiex.com/ADupdatePrams/getUPFR';
+    const [rejectedData, setRejectedData] = useState([]);
+    const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
     const [latitude, setLatitude] = useState(0);
     const [longitude , setLongitude] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
+    const [bagId, setBagId] = useState("");
+    const [bagIdNo, setBagIdNo] = useState(1);
+    const [showCloseBagModal, setShowCloseBagModal] = useState(false);
+    const [bagSeal, setBagSeal] = useState("");
+
+    useEffect(() => {
+      setBagId();
+    }, [bagId]);
+
+    useEffect(() => {
+      (async () => {
+          updateDetails2();
+        })();
+    }, []);
+
+    function CloseBag(){
+      console.log(bagId);
+      console.log(bagSeal);
+      setBagId("");
+      setBagIdNo(bagIdNo+1);
+    }
+  
+      const updateDetails2 = () => {
+        console.log("scan 4545454");
+    
+        db.transaction((tx) => {
+            tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" WHERE awbNo=?', [barcode], (tx1, results) => {
+                // let temp = [];
+                console.log("ddsds4545",tx1);
+                console.log('Results', results.rowsAffected);
+                // if (results.rowsAffected > 0) {
+                //   Alert.alert("Record Updated Successfully...");
+                // } else {
+                //   Alert.alert('Error');
+                // }
+                // console.log(results.rows.length);
+                // for (let i = 0; i < results.rows.length; ++ i) {
+                //     temp.push(results.rows.item(i));
+                //     console.log(results.rows.item(i).awbNo);
+              //     // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+                // }
+                // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+                viewDetails2();
+            });
+        });
+      };
+
+      const viewDetails2 = () => {
+        db.transaction((tx) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails', [], (tx1, results) => {
+                let temp = [];
+                console.log(results.rows.length);
+                for (let i = 0; i < results.rows.length; ++ i) {
+                    temp.push(results.rows.item(i));
+                    console.log("barcode "+results.rows.item(i).awbNo);
+                    // var address121 = results.rows.item(i).consignorAddress;
+                    // var address_json = JSON.parse(address121);
+                    // console.log(typeof (address_json));
+                    // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
+                    // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+                }
+                ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
+                console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+            });
+        });
+      };
+
 
     const getCategories = (data) => {	
       db.transaction(txn => {	
@@ -101,11 +168,11 @@ const ShipmentBarcode = ({route}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [len]);
   
-    const datadekho = async() => {
-      await fetch(DriverName)
+    const displaydata = async() => {
+      await fetch(RejectReason)
       .then((response) => response.json()) 
       .then((json) => {
-        setDriverData(json);
+        setRejectedData(json);
       })
       .catch((error) => alert(error)) 
     }
@@ -187,7 +254,7 @@ const ShipmentBarcode = ({route}) => {
       unsubscribe();	
     }
     useEffect(() => {
-      datadekho();   
+      displaydata();   
     }, []);
     useEffect(() => {
       const current_location = () => {
@@ -242,15 +309,26 @@ const ShipmentBarcode = ({route}) => {
           console.log(error);
         });
     }
-    const toggleModal = () => setModalVisible(!isModalVisible);
     function handleButtonPress(item) {
       setDropDownValue(item);
       setModalVisible(false);
+      submitForm()
     }
     
   
   return (
     <NativeBaseProvider>
+
+      <Modal isOpen={showCloseBagModal} onClose={() => setShowCloseBagModal(false)} size="lg">
+        <Modal.Content maxWidth="350">
+          <Modal.CloseButton />
+          <Modal.Header>Close Bag</Modal.Header>
+          <Modal.Body>
+            <Input placeholder="Enter Bag Seal" size="md" onChangeText={(text)=>setBagSeal(text)} />
+            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(), setShowCloseBagModal(false); }}>Submit</Button>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal>
       
       <ScrollView style={{paddingTop: 20, paddingBottom: 50}} showsVerticalScrollIndicator={false}>
         <QRCodeScanner
@@ -266,28 +344,29 @@ const ShipmentBarcode = ({route}) => {
         />
         
         <View>
-      <Center>
+        <Center>
       
-      <Modal visible={modalVisible} transparent={true} animationIn="slideInLeft" animationOut="slideOutRight">
-        <View style={{
-             backgroundColor: 'rgba(0,0,0,0.6)',
+        {/* <Modal visible={modalVisible} transparent={true} animationIn="slideInLeft" animationOut="slideOutRight">
+          <View style={{
+            backgroundColor: 'rgba(0,0,0,0.6)',
             flex: 1,
           }}>
-        <View style={styles.modalContent}>
-        <Button
+          <View style={styles.modalContent}>
+          <Button
             title="Close"
             style={styles.closeButton}
             onPress={() => setModalVisible(false)}
           >X</Button>
-        <Center>
-        {DriverData.map((d) => (
-        <Button key={d.pickupFailureReasonUserID} w="80%" size="lg" bg="#004aad" marginBottom={1} marginTop={1} title={d.pickupFailureReasonName} onPress={() => handleButtonPress(d.pickupFailureReasonName)} >
-        {d.pickupFailureReasonName}</Button>
-      ))}
-        </Center>
-        </View>
-        </View>
-      </Modal>
+          <Center>
+            <Text style={{color:'#000', fontWeight:'bold', fontSize:18, textAlign:'center', width:'80%',marginBottom:10}}>Reject Reason Code</Text>
+            {rejectedData.map((d) => (
+            <Button key={d.shipmentExceptionReasonUserID} w="80%" size="lg" bg="#004aad" marginBottom={1.5} marginTop={1.5} title={d.shipmentExceptionReasonName} onPress={() => handleButtonPress(d.shipmentExceptionReasonName)} >
+            {d.shipmentExceptionReasonName}</Button>
+            ))}
+          </Center>
+          </View>
+          </View>
+      </Modal> */}
       </Center>
     </View>
         <View>
@@ -306,18 +385,7 @@ const ShipmentBarcode = ({route}) => {
                 userId : route.params.userId,
                 packagingId : route.params.packagingId
               })} w="90%" size="lg" bg="#004aad" mb={4} mt={4}>Reject Shipment</Button> */}
-              {DropDownValue== null?
-              <Button
-                title="Reject Shipment"
-                onPress={() => setModalVisible(true)}
-                w="90%" size="lg" bg="#004aad" mb={4} mt={4}
-                >Reject Shipment</Button>:
-                <Button
-                title="Reject Shipment"
-                onPress={() => setModalVisible(true)}
-                w="90%" size="lg" bg="#004aad" mb={4} mt={4}
-                >{DropDownValue}</Button>
-            }
+              <Button title="Reject Shipment" onPress={() => setModalVisible(true)} w="90%" size="lg" bg="#004aad" mb={4} mt={4}>Reject Shipment</Button>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Expected</Text>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.Forward}</Text>
@@ -336,18 +404,16 @@ const ShipmentBarcode = ({route}) => {
               </View>
             </View>
           </View>
-          <Center>
-            <Button onPress={()=>submitForm()} w="90%" size="lg" bg="#004aad" marginBottom={1}>Submit Reject</Button>
-          </Center>
-          <Center>
+          <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
             <Button onPress={()=>navigation.navigate('POD',{
               Forward : route.params.Forward,
               accepted : newaccepted,
               rejected : newrejected,
               phone : route.params.phone,
               userId : route.params.userId,
-            })} w="90%" size="lg" bg="#004aad">Continue</Button>
-          </Center>
+            })} w="48%" size="lg" bg="#004aad">End Scan</Button>
+            <Button w="48%" size="lg" bg="#004aad" onPress={() => setShowCloseBagModal(true)} >Close bag</Button>
+          </View>
           <Center>
             <Image 
               style={{
@@ -358,7 +424,7 @@ const ShipmentBarcode = ({route}) => {
             />
           </Center>
         </View>
-        <Fab onPress={() => handleSync()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} />
+        {/* <Fab onPress={() => handleSync()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} /> */}
       </ScrollView>
     </NativeBaseProvider>
   );
@@ -460,16 +526,13 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
   },
   modalContent: {
-    flex:0.6,
+    flex:0.57,
     justifyContent:'center',
-    height:'50%',
     width:'85%',
     backgroundColor:'white',
-    
     borderRadius:20,
     shadowOpacity: 0.3,
     shadowRadius: 10,
-    
     elevation: 5,
     marginLeft:28,
     marginTop:175,
@@ -481,7 +544,9 @@ export const styles = StyleSheet.create({
     backgroundColor:'rgba(0,0,0,0.3)',
     borderRadius:100,
     margin:5.5,
-    color:'rgba(0,0,0,1)'
+    color:'rgba(0,0,0,1)',
+    alignContent:'center'
+
   },
 
   });

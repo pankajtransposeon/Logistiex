@@ -21,96 +21,82 @@ export default function Main({navigation, route}) {
   const [data2, setData2] = useState("");
 
   const [spts,setSpts] = useState(0);
-  const [spc, setSpc] = useState(1);                 //default is putting 1 to overcome render problem in pie chart
-  const [spp, setSpp] = useState(0);
+  const [spc, setSpc] = useState(0);                 //default is putting 1 to overcome render problem in pie chart
+  const [spp, setSpp] = useState(1);
   const [spnp, setSpnp] = useState(0);
   const [spr, setSpr] = useState(0);
-
+  var let11 = "accepted";
   useEffect(() => {
     (async () => {
         loadSellerPickupDetails();
     })();
 }, []);
 
-const loadSellerPickupDetails = () => {
-  db.transaction((tx) => {
+  const loadSellerPickupDetails = () => {
+    db.transaction((tx) => {
       tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
-          console.log(results.rows.length);
-          setSpts(results.rows.length);
+        console.log(results.rows.length);
+        setSpts(results.rows.length);
       });
-  });
-  db.transaction((tx) => {
-    tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="completed"', [], (tx1, results) => {
+    });
+
+    db.transaction((tx) => {
+      tx.executeSql('SELECT * FROM SellerMainScreenDetails where status=?', [let11], (tx1, results) => {
         let temp = [];
         console.log(results.rows.length);
-        // setSpc(results.rows.length);             //uncomment this line if wanted to show completed shipments in pie chart
+        setSpc(results.rows.length);
         for (let i = 0; i < results.rows.length; ++i) {
-            temp.push(results.rows.item(i));
+          temp.push(results.rows.item(i));
         }
         console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
         setData(temp);
+      });
     });
-});
-db.transaction((tx) => {
-  tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="pending"', [], (tx1, results) => {
-      let temp = [];
-      console.log(results.rows.length);
-      setSpp(results.rows.length);
-      for (let i = 0; i < results.rows.length; ++i) {
-          temp.push(results.rows.item(i));
-      }
-      console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
-      setData(temp);
-  });
-});
-db.transaction((tx) => {
-  tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="notPicked"', [], (tx1, results) => {
-      let temp = [];
-      console.log(results.rows.length);
-      setSpnp(results.rows.length);
-      for (let i = 0; i < results.rows.length; ++i) {
-          temp.push(results.rows.item(i));
-      }
-      console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
-      setData(temp);
-  });
-});
-db.transaction((tx) => {
-  tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="rejected"', [], (tx1, results) => {
-      let temp = [];
-      console.log(results.rows.length);
-      setSpr(results.rows.length);
-      for (let i = 0; i < results.rows.length; ++i) {
-          temp.push(results.rows.item(i));
-      }
-      console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
-      setData(temp);
-  });
-});
-};
 
+    db.transaction((tx) => {
+      tx.executeSql('SELECT * FROM SellerMainScreenDetails ', [], (tx1, results) => {
+        let temp = [];
+        console.log(results.rows.length);
+        setSpp(results.rows.length);
+        for (let i = 0; i < results.rows.length; ++i) {
+          temp.push(results.rows.item(i));
+        }
+        console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+        setData(temp);
+      });
+    });
+
+    db.transaction((tx) => {
+      tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="notPicked"', [], (tx1, results) => {
+        let temp = [];
+        console.log(results.rows.length);
+        setSpnp(results.rows.length);
+        for (let i = 0; i < results.rows.length; ++i) {
+          temp.push(results.rows.item(i));
+        }
+        console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+        setData(temp);
+      });
+    });
+
+    db.transaction((tx) => {
+      tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="rejected"', [], (tx1, results) => {
+        let temp = [];
+        console.log(results.rows.length);
+        setSpr(results.rows.length);
+        for (let i = 0; i < results.rows.length; ++i) {
+          temp.push(results.rows.item(i));
+        }
+        console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+        setData(temp);
+      });
+    });
+  };
 
   const value = {
     Accepted: 0,
     Rejected: 0
   };
-
-  useEffect(() => {
-    axios.get("https://bked.logistiex.com/SellerMainScreen/sellerList/HADWFE01")
-    .then(res=>{
-      console.log(res.data);
-    })
-    .catch(err=>{
-      console.log(data);
-    })
-    axios.get("https://bked.logistiex.com/SellerMainScreen/details/HADWFE01")
-    .then(res=>{
-      console.log(res.data);
-    })
-    .catch(err=>{
-      console.log(err);
-    })
-  }, []);
 
   const createTables = () => {
     db.transaction(txn => {
@@ -119,7 +105,7 @@ db.transaction((tx) => {
         `CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, clientShipmentReferenceNumber VARCHAR(50), packagingId VARCHAR(50), packagingStatus VARCHAR(50), consignorCode VARCHAR(50), consignorContact VARCHAR(50), PRSNumber VARCHAR(50), ForwardPickups VARCHAR(50), ScanStatus INT(10), UploadStatus INT(10))`,
         [],
         (sqlTxn, res) => {
-          console.log("table created successfully");
+          // console.log("table created successfully");
         },
         error => {
           console.log("error on creating table " + error.message);
@@ -210,7 +196,7 @@ db.transaction((tx) => {
             setData2(results.rows.item(i).CustomerPickupsList);
             ToastAndroid.show("consignorPickupsList :" + results.rows.item(i).consignorPickupsList + "\n" + "CustomerPickupsList : " + results.rows.item(i).CustomerPickupsList , ToastAndroid.SHORT);
           }
-          console.log(temp);
+          // console.log(temp);
           // console.log(tx1);
         }
       );

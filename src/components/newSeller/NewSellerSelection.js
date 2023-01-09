@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Image, Center,NativeBaseProvider, Fab, Icon, Button, Box, Heading } from 'native-base';
-import{StyleSheet,Text,TouchableOpacity,View, ScrollView, TextInput,getPick, Alert, TouchableWithoutFeedbackBase} from 'react-native';
+import{StyleSheet,Modal,Text,TouchableOpacity,View, ScrollView, TextInput,getPick, Alert, TouchableWithoutFeedbackBase} from 'react-native';
 import call from 'react-native-phone-call';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
@@ -26,10 +26,38 @@ const NewSellerSelection = ({route}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [phone, setPhone] = useState(route.params.phone);
   const [type,setType] = useState('');
+  const [DropDownValue, setDropDownValue] = useState(null);
+  const [CloseData, setCloseData] = useState([]);
+  const [NotAttemptData, setNotAttemptData] = useState([]);
+  const ClosePickup = 'https://bked.logistiex.com/ADupdatePrams/getUPFR';
+  const NotAttemptReason='https://bked.logistiex.com/ADupdatePrams/getNotAttemptedReasons';
   const navigation = useNavigation();
-    
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible2, setModalVisible2] = useState(false);
 
+  const DisplayData = async() => {
+    await fetch(ClosePickup)
+    .then((response) => response.json()) 
+    .then((json) => {
+      setCloseData(json);
+    })
+    .catch((error) => alert(error)) 
+  }
+  const DisplayData2 = async() => {
+    await fetch(NotAttemptReason)
+    .then((response) => response.json()) 
+    .then((json) => {
+      setNotAttemptData(json);
+    })
+    .catch((error) => alert(error)) 
+  }
+  useEffect(() => {
+    DisplayData();   
+  }, []);
 
+  useEffect(() => {
+    DisplayData2();   
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -131,21 +159,74 @@ db.transaction((tx) => {
   useEffect(() => {
     let addresss = "";
     if(route && route.params){
-      addresss += route.params.consignorAddress.consignorAddress1;
+      addresss += route.params.consignorAddress?.consignorAddress1;
       addresss += " ";
-      addresss += route.params.consignorAddress.consignorAddress2;
+      addresss += route.params.consignorAddress?.consignorAddress2;
       addresss += " ";
-      addresss += route.params.consignorAddress.consignorCity;
+      addresss += route.params.consignorAddress?.consignorCity;
       addresss += " ";
-      addresss += route.params.consignorAddress.consignorPincode
+      addresss += route.params.consignorAddress?.consignorPincode
     } 
      setType(addresss);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function handleButtonPress(item) {
+    setDropDownValue(item);
+    setModalVisible(false);
+  }
+  function handleButtonPress2(item) {
+    setDropDownValue(item);
+    setModalVisible2(false);
+  }
+
+
 return (
   <NativeBaseProvider >
   <View>
+  <Modal visible={modalVisible} transparent={true} animationIn="slideInLeft" animationOut="slideOutRight">
+        <View style={{
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            flex: 1,
+          }}>
+        <View style={styles.modalContent}>
+        <Button
+            title="Close"
+            style={styles.closeButton}
+            onPress={() => setModalVisible(false)}
+          >X</Button>
+        <Center>
+        <Text style={{color:'#000', fontWeight:'bold', fontSize:18, textAlign:'center', width:'80%',marginBottom:10,marginTop:20}}>Close Pickup Reason Code</Text>
+        {CloseData.map((d) => (
+        <Button key={d.pickupFailureReasonUserID} w="80%" size="lg" bg="#004aad" marginBottom={1} marginTop={1} title={d.pickupFailureReasonName} onPress={() => handleButtonPress(d.pickupFailureReasonName)} >
+        {d.pickupFailureReasonName}</Button>
+        ))}
+        </Center>
+        <View>
+        <Center>
+        <Button onPress={() => {setModalVisible2(true), setModalVisible(false)}} w="80%" size="lg" bg="#004aad" marginBottom={1} marginTop={1}>Could Not Attempt</Button>
+        </Center>
+      </View>
+        </View>
+        </View>
+      </Modal>
+      <Modal visible={modalVisible2} transparent={true} animationIn="slideInLeft" animationOut="slideOutRight">
+        <View style={{
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            flex: 1,
+          }}>
+        <View style={styles.modalContent}>
+        <Button
+            title="Close"
+            style={styles.closeButton}
+            onPress={() => setModalVisible2(false)}
+          >X</Button>
+        <Center>
+        <Text style={{color:'#000', fontWeight:'bold', fontSize:18, textAlign:'center', width:'80%',marginTop:0}}>Could Not Attempt Reason </Text>
+        </Center>    
+        </View>
+        </View>
+      </Modal>
     <View style={{width: '100%', justifyContent: 'center', flexDirection: 'row', marginTop: 30}}>
       <PieChart
         widthAndHeight={160}
@@ -187,31 +268,30 @@ return (
             </View>
           </View>
          </ScrollView>
-         <Button style={{backgroundColor: '#004aad', width: '100%', alignSelf: 'center'}} leftIcon={<Icon color="white" as={<MaterialIcons name="barcode-scan" />} size="sm" />} 
-          onPress={()=>navigation.navigate('ShipmentBarcode',{
-            Forward : route.params.Forward,
-            PRSNumber : route.params.PRSNumber,
-            consignorCode : route.params.consignorCode,
-            userId : route.params.userId,
-            phone : route.params.phone,
-            packagingId : route.params.packagingId
-            // TotalpickUp : newdata[0].totalPickups
-          })}
-         >
-          Scan Products
-        </Button>
-    {/* <TouchableOpacity  onPress={toggleLoading}> 
-      <View style={styles.bt3}>
-      	<Text style={styles.text1}>Sync</Text>
-      </View>
-    </TouchableOpacity> */}
+         <View style={{flexDirection: 'row', width: '92%', justifyContent: 'space-between', marginTop:10, alignSelf: 'center'}}>
+          <Button leftIcon={<Icon color="white" as={<MaterialIcons name="close-circle-outline" />} size="sm" />} onPress={() => setModalVisible(true)} style={{backgroundColor: '#004aad', width: '48%'}}>
+            Close Pickup
+          </Button>
+          <Button style={{backgroundColor: '#004aad', width: '50%', alignSelf: 'center'}} leftIcon={<Icon color="white" as={<MaterialIcons name="barcode-scan" />} size="sm" />} 
+            onPress={()=>navigation.navigate('ShipmentBarcode',{
+              Forward : route.params.Forward,
+              PRSNumber : route.params.PRSNumber,
+              consignorCode : route.params.consignorCode,
+              userId : route.params.userId,
+              phone : route.params.phone,
+              packagingId : route.params.packagingId
+              // TotalpickUp : newdata[0].totalPickups
+            })}
+          >
+            Scan
+          </Button>
+        </View>
   </ScrollView>
   </View>
   <Center>
     <Image style={{nwidth:150, height:150}} source={require('../../assets/image.png')} alt={"Logo Image"} />
   </Center>
 </View>
-{/* <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} /> */}
 </NativeBaseProvider>
 );
 };
@@ -387,5 +467,29 @@ gaugeText: {
   backgroundColor: 'transparent',
   color: '#000',
   fontSize: 24,
+},
+modalContent: {
+  flex:0.7,
+  justifyContent:'center',
+  height:'50%',
+  width:'85%',
+  backgroundColor:'white',
+  
+  borderRadius:20,
+  shadowOpacity: 0.3,
+  shadowRadius: 10,
+  
+  elevation: 5,
+  marginLeft:28,
+  marginTop:175,
+},
+closeButton: {
+  position: 'absolute',
+  top: 0,
+  right: 0,
+  backgroundColor:'rgba(0,0,0,0.3)',
+  borderRadius:100,
+  margin:5.5,
+  color:'rgba(0,0,0,1)'
 },
 });
