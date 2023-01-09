@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { NativeBaseProvider, Image, Box, Fab, Icon, Button ,Alert} from 'native-base';
+import { NativeBaseProvider, Image, Box, Fab, Icon, Button ,Alert, Modal, Input} from 'native-base';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import{Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet, Modal} from 'react-native';
+import{Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet} from 'react-native';
 import { Center } from "native-base";
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -40,59 +40,72 @@ const ShipmentBarcode = ({route}) => {
     const [latitude, setLatitude] = useState(0);
     const [longitude , setLongitude] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
+    const [bagId, setBagId] = useState("");
+    const [bagIdNo, setBagIdNo] = useState(1);
+    const [showCloseBagModal, setShowCloseBagModal] = useState(false);
+    const [bagSeal, setBagSeal] = useState("");
 
+    useEffect(() => {
+      setBagId();
+    }, [bagId]);
 
-    +   useEffect(() => {
-          (async () => {
-               updateDetails2();
-           })();
-        }, []);
-      
-      
-         const updateDetails2 = () => {
-           console.log("scan 4545454");
-        
-            db.transaction((tx) => {
-                tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" WHERE awbNo=?', [barcode], (tx1, results) => {
-                    // let temp = [];
-                    console.log("ddsds4545",tx1);
-                    console.log('Results', results.rowsAffected);
-                    // if (results.rowsAffected > 0) {
-                    //   Alert.alert("Record Updated Successfully...");
-                    // } else {
-                    //   Alert.alert('Error');
-                    // }
-                    // console.log(results.rows.length);
-                   // for (let i = 0; i < results.rows.length; ++ i) {
-                    //     temp.push(results.rows.item(i));
-                    //     console.log(results.rows.item(i).awbNo);
-                  //     // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
-                    // }
-                    // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
-                    viewDetails2();
-                });
+    useEffect(() => {
+      (async () => {
+          updateDetails2();
+        })();
+    }, []);
+
+    function CloseBag(){
+      console.log(bagId);
+      console.log(bagSeal);
+      setBagId("");
+      setBagIdNo(bagIdNo+1);
+    }
+  
+      const updateDetails2 = () => {
+        console.log("scan 4545454");
+    
+        db.transaction((tx) => {
+            tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" WHERE awbNo=?', [barcode], (tx1, results) => {
+                // let temp = [];
+                console.log("ddsds4545",tx1);
+                console.log('Results', results.rowsAffected);
+                // if (results.rowsAffected > 0) {
+                //   Alert.alert("Record Updated Successfully...");
+                // } else {
+                //   Alert.alert('Error');
+                // }
+                // console.log(results.rows.length);
+                // for (let i = 0; i < results.rows.length; ++ i) {
+                //     temp.push(results.rows.item(i));
+                //     console.log(results.rows.item(i).awbNo);
+              //     // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+                // }
+                // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+                viewDetails2();
             });
-          };
-          const viewDetails2 = () => {
-            db.transaction((tx) => {
-                tx.executeSql('SELECT * FROM SellerMainScreenDetails', [], (tx1, results) => {
-                    let temp = [];
-                    console.log(results.rows.length);
-                    for (let i = 0; i < results.rows.length; ++ i) {
-                        temp.push(results.rows.item(i));
-                        console.log("barcode "+results.rows.item(i).awbNo);
-                        // var address121 = results.rows.item(i).consignorAddress;
-                        // var address_json = JSON.parse(address121);
-                        // console.log(typeof (address_json));
-                        // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
-                        // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
-                    }
-                    ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
-                    console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
-                });
+        });
+      };
+
+      const viewDetails2 = () => {
+        db.transaction((tx) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails', [], (tx1, results) => {
+                let temp = [];
+                console.log(results.rows.length);
+                for (let i = 0; i < results.rows.length; ++ i) {
+                    temp.push(results.rows.item(i));
+                    console.log("barcode "+results.rows.item(i).awbNo);
+                    // var address121 = results.rows.item(i).consignorAddress;
+                    // var address_json = JSON.parse(address121);
+                    // console.log(typeof (address_json));
+                    // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
+                    // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+                }
+                ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
+                console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
             });
-          };
-      
+        });
+      };
 
 
     const getCategories = (data) => {	
@@ -305,6 +318,17 @@ const ShipmentBarcode = ({route}) => {
   
   return (
     <NativeBaseProvider>
+
+      <Modal isOpen={showCloseBagModal} onClose={() => setShowCloseBagModal(false)} size="lg">
+        <Modal.Content maxWidth="350">
+          <Modal.CloseButton />
+          <Modal.Header>Close Bag</Modal.Header>
+          <Modal.Body>
+            <Input placeholder="Enter Bag Seal" size="md" onChangeText={(text)=>setBagSeal(text)} />
+            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(), setShowCloseBagModal(false); }}>Submit</Button>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal>
       
       <ScrollView style={{paddingTop: 20, paddingBottom: 50}} showsVerticalScrollIndicator={false}>
         <QRCodeScanner
@@ -322,7 +346,7 @@ const ShipmentBarcode = ({route}) => {
         <View>
         <Center>
       
-        <Modal visible={modalVisible} transparent={true} animationIn="slideInLeft" animationOut="slideOutRight">
+        {/* <Modal visible={modalVisible} transparent={true} animationIn="slideInLeft" animationOut="slideOutRight">
           <View style={{
             backgroundColor: 'rgba(0,0,0,0.6)',
             flex: 1,
@@ -342,7 +366,7 @@ const ShipmentBarcode = ({route}) => {
           </Center>
           </View>
           </View>
-      </Modal>
+      </Modal> */}
       </Center>
     </View>
         <View>
@@ -388,7 +412,7 @@ const ShipmentBarcode = ({route}) => {
               phone : route.params.phone,
               userId : route.params.userId,
             })} w="48%" size="lg" bg="#004aad">End Scan</Button>
-            <Button w="48%" size="lg" bg="#004aad">Close bag</Button>
+            <Button w="48%" size="lg" bg="#004aad" onPress={() => setShowCloseBagModal(true)} >Close bag</Button>
           </View>
           <Center>
             <Image 

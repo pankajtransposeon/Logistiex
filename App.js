@@ -100,7 +100,6 @@ function StackNavigators({navigation}){
     (async () => {
       await axios.get(`https://bked.logistiex.com/SellerMainScreen/details/${userId}`).then((res) => 
       {
-        setData2(res.data);
         createTables2();
         console.log("Size of data : " + res.data.data.length);
         for (let i = 0; i < res.data.data.length; i++) 
@@ -201,7 +200,6 @@ function StackNavigators({navigation}){
     (async () => {
       await axios.get(`https://bked.logistiex.com/SellerMainScreen/sellerList/${userId}`).then((res) => 
       {
-        setData(res.data);
         console.log("Size of data : " + res.data.length);
         for (let i = 0; i < res.data.length; i++) 
         {
