@@ -140,8 +140,10 @@ const ImageHandle = () =>
         <Box flex={1} bg="#004aad" alignItems="center" pt={'4%'}>
             <Box justifyContent="space-between" py={10} px={6} bg="#fff" rounded="xl" width={"90%"} maxWidth="100%" _text={{fontWeight: "medium",}}>
             <VStack space={6}>
-                <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>Vehicle Number - {vehicle.vehicle}</Text>
-                <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>Vehicle Kilometer - {vehicle.password}</Text>
+                <Input disabled selectTextOnFocus={false} editable={false} backgroundColor='gray.300' value={vehicle.vehicle} size="lg" type={"number"} placeholder="Input vehicle KMs" />
+
+                <Input selectTextOnFocus={false} editable={false} disabled backgroundColor='gray.300' value={vehicle.password} size="lg" type={"number"} placeholder="Input vehicle KMs" />
+
                 <Input value={password} keyboardType="numeric" onChangeText={setPassword} size="lg" type={"number"} placeholder="Input vehicle KMs" />
                 <Button py={3} variant='outline' title="Login"  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons></Button>
                 {
