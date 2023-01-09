@@ -21,75 +21,71 @@ export default function NewSellerAdditionNotification() {
   return (
     <NativeBaseProvider>
       <ScrollView>
-      <Box flex={1} bg="white" p={4}>
+      <Box flex={1} bg="coolGray.100" p={4}>
       
-                <Box  alignItems="center">
-                    <Box maxW="80" rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" _dark={{
+                <Box width='100%' marginBottom='5'  alignItems="center">
+                    <Box width='100%' rounded="lg" overflow="hidden" borderColor="coolGray.100" borderWidth="1" _dark={{
                         borderColor: "coolGray.600",
-                        backgroundColor: "gray.700"
+                        backgroundColor: "white"
                     }} _web={{
                         shadow: 2,
                         borderWidth: 0
                     }} _light={{
-                        backgroundColor: "gray.50"
+                        backgroundColor: "white"
                     }}>
                     <Stack p="4" space={3}>
                         <HStack alignItems="center" space={4} justifyContent="space-between">
                             <HStack alignItems="center">
-                                <Text color="gray.400" _dark={{
+                                <Text color="black" _dark={{
                                     color: "gray.400"
                                     }} fontWeight="400">
                                     Seller Name   Seller Code
                                 </Text>
                             </HStack>
                             <HStack alignItems="center">
-                                <Text color="gray.400" _dark={{
+                                <Text color="black" _dark={{
                                     color: "gray.400"
                                     }} fontWeight="400">
                                     100/20
                                 </Text>
                             </HStack>
                         </HStack>
-                        <Divider my="2" _light={{
-                            bg: "muted.300"
+                        <Divider my="1" _light={{
+                            bg: "muted.200"
                             }} _dark={{
                             bg: "muted.50"
                         }} />
                     <Stack space={2}>
-                        <Heading size="md" ml="-1">
-                            The Garden City
-                        </Heading>
-                    <Text fontSize="xs" _light={{
-                        color: "violet.500"
+                    <Text fontSize="sm" _light={{
+                        color: "black"
                         }} _dark={{
-                        color: "violet.400"
+                        color: "black"
                         }} fontWeight="500" ml="-0.5" mt="-1">
-                        The Silicon Valley of India.
+                        Address of seller {"\n"}
+                        26/19 East Patel Nagar {"\n"}
+                        New Delhi - 110008
+
                     </Text>
                     </Stack>
-                <Text fontWeight="400">
-                     Bengaluru (also called Bangalore) is the center of India's high-tech
-                    industry. The city is also known for its parks and nightlife.
-                </Text>
-                <Divider my="2" _light={{
-                    bg: "muted.300"
+                <Divider my="1" _light={{
+                    bg: "muted.200"
                     }} _dark={{
                     bg: "muted.50"
                 }} />
                 <HStack alignItems="center" space={4} justifyContent="space-between">
                     <HStack alignItems="center">
-                        <Text color="green.400" _dark={{
-                            color: "Green.200"
-                            }} fontWeight="400">
-                            Accept
-                        </Text>
-                    </HStack>
-                    <HStack alignItems="center">
-                        <Text color="red.400" _dark={{
-                            color: "warmRed.200"
+                    <Button style={{backgroundColor:'#FF2E2E'}} _dark={{
+                            color: "red.200"
                             }} fontWeight="400">
                             Reject
-                        </Text>
+                        </Button>
+                    </HStack>
+                    <HStack alignItems="center">
+                        <Button style={{backgroundColor:'#004aad'}} _dark={{
+                            color: "blue.200"
+                            }} fontWeight="400">
+                            Accept
+                        </Button>
                     </HStack>
                 </HStack>
             </Stack>
@@ -97,146 +93,69 @@ export default function NewSellerAdditionNotification() {
         </Box>
 
 
-        <Box alignItems="center" mt={4}>
-                    <Box maxW="80" rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" _dark={{
+        <Box width='100%' marginBottom='5'  alignItems="center">
+                    <Box width='100%' rounded="lg" overflow="hidden" borderColor="coolGray.100" borderWidth="1" _dark={{
                         borderColor: "coolGray.600",
-                        backgroundColor: "gray.700"
+                        backgroundColor: "white"
                     }} _web={{
                         shadow: 2,
                         borderWidth: 0
                     }} _light={{
-                        backgroundColor: "gray.50"
+                        backgroundColor: "white"
                     }}>
                     <Stack p="4" space={3}>
                         <HStack alignItems="center" space={4} justifyContent="space-between">
                             <HStack alignItems="center">
-                                <Text color="gray.400" _dark={{
+                                <Text color="black" _dark={{
                                     color: "gray.400"
                                     }} fontWeight="400">
                                     Seller Name   Seller Code
                                 </Text>
                             </HStack>
                             <HStack alignItems="center">
-                                <Text color="gray.400" _dark={{
+                                <Text color="black" _dark={{
                                     color: "gray.400"
                                     }} fontWeight="400">
                                     100/20
                                 </Text>
                             </HStack>
                         </HStack>
-                        <Divider my="2" _light={{
-                            bg: "muted.300"
+                        <Divider my="1" _light={{
+                            bg: "muted.200"
                             }} _dark={{
                             bg: "muted.50"
                         }} />
                     <Stack space={2}>
-                        <Heading size="md" ml="-1">
-                            The Garden City
-                        </Heading>
-                    <Text fontSize="xs" _light={{
-                        color: "violet.500"
+                    <Text fontSize="sm" _light={{
+                        color: "black"
                         }} _dark={{
-                        color: "violet.400"
+                        color: "black"
                         }} fontWeight="500" ml="-0.5" mt="-1">
-                        The Silicon Valley of India.
-                    </Text>
-                    </Stack>
-                <Text fontWeight="400">
-                     Bengaluru (also called Bangalore) is the center of India's high-tech
-                    industry. The city is also known for its parks and nightlife.
-                </Text>
-                <Divider my="2" _light={{
-                    bg: "muted.300"
-                    }} _dark={{
-                    bg: "muted.50"
-                }} />
-                <HStack alignItems="center" space={4} justifyContent="space-between">
-                    <HStack alignItems="center">
-                        <Text color="green.400" _dark={{
-                            color: "Green.200"
-                            }} fontWeight="400">
-                            Accept
-                        </Text>
-                    </HStack>
-                    <HStack alignItems="center">
-                        <Text color="red.400" _dark={{
-                            color: "warmRed.200"
-                            }} fontWeight="400">
-                            Reject
-                        </Text>
-                    </HStack>
-                </HStack>
-            </Stack>
-            </Box>
-        </Box>
+                        Address of seller {"\n"}
+                        26/19 East Patel Nagar {"\n"}
+                        New Delhi - 110008
 
-        <Box alignItems="center" mt={4}>
-                    <Box maxW="80" rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" _dark={{
-                        borderColor: "coolGray.600",
-                        backgroundColor: "gray.700"
-                    }} _web={{
-                        shadow: 2,
-                        borderWidth: 0
-                    }} _light={{
-                        backgroundColor: "gray.50"
-                    }}>
-                    <Stack p="4" space={3}>
-                        <HStack alignItems="center" space={4} justifyContent="space-between">
-                            <HStack alignItems="center">
-                                <Text color="gray.400" _dark={{
-                                    color: "gray.400"
-                                    }} fontWeight="400">
-                                    Seller Name   Seller Code
-                                </Text>
-                            </HStack>
-                            <HStack alignItems="center">
-                                <Text color="gray.400" _dark={{
-                                    color: "gray.400"
-                                    }} fontWeight="400">
-                                    100/20
-                                </Text>
-                            </HStack>
-                        </HStack>
-                        <Divider my="2" _light={{
-                            bg: "muted.300"
-                            }} _dark={{
-                            bg: "muted.50"
-                        }} />
-                    <Stack space={2}>
-                        <Heading size="md" ml="-1">
-                            The Garden City
-                        </Heading>
-                    <Text fontSize="xs" _light={{
-                        color: "violet.500"
-                        }} _dark={{
-                        color: "violet.400"
-                        }} fontWeight="500" ml="-0.5" mt="-1">
-                        The Silicon Valley of India.
                     </Text>
                     </Stack>
-                <Text fontWeight="400">
-                     Bengaluru (also called Bangalore) is the center of India's high-tech
-                    industry. The city is also known for its parks and nightlife.
-                </Text>
-                <Divider my="2" _light={{
-                    bg: "muted.300"
+                <Divider my="1" _light={{
+                    bg: "muted.200"
                     }} _dark={{
                     bg: "muted.50"
                 }} />
                 <HStack alignItems="center" space={4} justifyContent="space-between">
                     <HStack alignItems="center">
-                        <Text color="green.400" _dark={{
-                            color: "Green.200"
-                            }} fontWeight="400">
-                            Accept
-                        </Text>
-                    </HStack>
-                    <HStack alignItems="center">
-                        <Text color="red.400" _dark={{
-                            color: "warmRed.200"
+                    <Button style={{backgroundColor:'#FF2E2E'}} _dark={{
+                            color: "red.200"
                             }} fontWeight="400">
                             Reject
-                        </Text>
+                        </Button>
+                    </HStack>
+                    <HStack alignItems="center">
+                        <Button style={{backgroundColor:'#004aad'}} _dark={{
+                            color: "blue.200"
+                            }} fontWeight="400">
+                            Accept
+                        </Button>
                     </HStack>
                 </HStack>
             </Stack>
