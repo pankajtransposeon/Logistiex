@@ -200,7 +200,7 @@ return (
           {CloseData.map((d,index) => (
             <Button key={d.pickupFailureReasonID} flex="1" mt={2} marginBottom={1.5} 
              marginTop={1.5} style={{backgroundColor: d.pickupFailureReasonName === DropDownValue ? "#6666FF":"#C8C8C8"}}  title={d.pickupFailureReasonName} onPress={() => handleButtonPress(d.pickupFailureReasonName)} >
-            <Text style={{color:'black'}}>{d.pickupFailureReasonName}</Text></Button>
+            <Text style={{color:DropDownValue==d.pickupFailureReasonName?'white':'black'}}>{d.pickupFailureReasonName}</Text></Button>
             ))}
             <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => setModalVisible(false)} >
             Submit</Button>
@@ -215,10 +215,12 @@ return (
         {(NotAttemptData && NotAttemptData.data) &&
         NotAttemptData.data.map((d,index) => (
           <Button key={d.reasonUserID} flex="1" mt={2}  marginBottom={1.5} marginTop={1.5} style={{backgroundColor: d.reasonName === DropDownValue ? "#6666FF":"#C8C8C8"}} title={d.reasonName} onPress={() => handleButtonPress2(d.reasonName)} >
-          <Text style={{color:'black'}}>{d.reasonName}</Text></Button>
+          <Text style={{color:d.reasonName==DropDownValue?'white':'black'}}>{d.reasonName}</Text></Button>
         ))}
         <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5}  onPress={() => setModalVisible2(false)} >
          Submit</Button>
+         <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5}  onPress={() => {setModalVisible(true), setModalVisible2(false)}} >
+         Back</Button>
         </Modal.Body>
         </Modal.Content>
       </Modal>

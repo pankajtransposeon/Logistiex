@@ -336,7 +336,7 @@ const ShipmentBarcode = ({route}) => {
           <Modal.Body>
           {rejectedData.map((d) => (
             <Button key={d.shipmentExceptionReasonUserID} flex="1" mt={2}  marginBottom={1.5} marginTop={1.5} title={d.shipmentExceptionReasonName} style={{backgroundColor: d.shipmentExceptionReasonName === DropDownValue ? "#6666FF":"#C8C8C8"}} onPress={() => handleButtonPress(d.shipmentExceptionReasonName)} >
-            <Text style={{color:'black'}}>{d.shipmentExceptionReasonName}</Text></Button>
+            <Text style={{color:DropDownValue==d.shipmentExceptionReasonName?'white':'black'}}>{d.shipmentExceptionReasonName}</Text></Button>
             ))}
             <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => setModalVisible(false)} >
             Submit</Button>
