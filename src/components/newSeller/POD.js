@@ -169,8 +169,8 @@ const submitForm = () => {
             {(PartialCloseData && PartialCloseData.data) &&
             PartialCloseData.data.map((d,index) => (
             <Button key={d.reasonID} flex="1" mt={2} marginBottom={1.5} 
-             marginTop={1.5} style={{backgroundColor: d.reasonName === DropDownValue ? "#4169E1":"#C8C8C8"}}  title={d.reasonName} onPress={() => handleButtonPress(d.reasonName)} >
-            <Text style={{color:'black'}}>{d.reasonName}</Text></Button>
+             marginTop={1.5} style={{backgroundColor: d.reasonName === DropDownValue ? "#6666FF":"#C8C8C8"}}  title={d.reasonName} onPress={() => handleButtonPress(d.reasonName)} >
+            <Text style={{color:d.reasonName==DropDownValue?'white':'black'}}>{d.reasonName}</Text></Button>
             ))
           }
             <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => setModalVisible(false)} >

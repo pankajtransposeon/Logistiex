@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Header, Content, Item, Input, Icon, Button, NativeBaseProvider , Center} from 'native-base';
 import axios from 'axios';
-import{Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet} from 'react-native';
+import{Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet, PermissionsAndroid} from 'react-native';
 import {Searchbar } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,6 +10,7 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import { openDatabase } from "react-native-sqlite-storage";
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 const db = openDatabase({
   name: "rn_sqlite",
@@ -17,6 +18,49 @@ const db = openDatabase({
 
 const Dispatch = ({route}) => {
     const [keyword, setKeyword] = useState("");
+
+    const onSuccess = e => {	
+        console.log(e.data, 'barcode');	
+        getCategories(e.data);	
+        setBarcode(e.data);	
+      }
+      const requestCameraPermission = async () => {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            {
+              title: 'Camera Permission',
+              message: 'App needs camera permission',
+            },
+          );
+          // If CAMERA Permission is granted
+          return granted === PermissionsAndroid.RESULTS.GRANTED;
+        } catch (err) {
+          console.warn(err);
+          return false;
+        }
+      };
+
+      const openCamera= async()=>{
+        let options = {
+            mediaType:'photo',
+            quality:1,
+            cameraType:'back',
+            maxWidth : 480,
+            maxHeight : 480,
+            storageOptions: {
+              skipBackup: true,
+              path: 'images',
+            },
+        }
+        let isGranted = await requestCameraPermission();
+        let result = null;
+        if(isGranted){
+            result = await launchCamera(options);
+            console.log(result)
+        }
+        
+    }
   
   return (
     <NativeBaseProvider>
@@ -26,9 +70,9 @@ const Dispatch = ({route}) => {
         placeholder="Scan Bag Seal ID"
         onChangeText={(e) => setKeyword(e)}
         value={keyword}
-        style={{width:'75%'}}
+        style={{width:'85%', backgroundColor:"#E0E0E0"}}
        />                
-      <Button style={{backgroundColor:'white'}} leftIcon={<Icon color="white" as={<MaterialIcons name="camera" />} size="sm"  style={styles.cameraIcon}/>}>
+      <Button style={{backgroundColor:"#E0E0E0"}} onPress={()=>{openCamera()}} leftIcon={<Icon color="white" as={<MaterialIcons name="camera" />} size="sm"  style={styles.cameraIcon} />}>
       </Button>
       </View>
       <View style={{backgroundColor: 'white', flex: 1, paddingTop: 30}}>
@@ -75,7 +119,7 @@ export const styles = StyleSheet.create({
       container: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'white',
+        backgroundColor: "#E0E0E0",
         margin:10
       },
   });
