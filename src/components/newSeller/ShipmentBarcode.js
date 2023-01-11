@@ -311,7 +311,6 @@ const ShipmentBarcode = ({route}) => {
     }
     function handleButtonPress(item) {
       setDropDownValue(item);
-      setModalVisible(false);
       submitForm()
     }
     
@@ -326,6 +325,21 @@ const ShipmentBarcode = ({route}) => {
           <Modal.Body>
             <Input placeholder="Enter Bag Seal" size="md" onChangeText={(text)=>setBagSeal(text)} />
             <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(), setShowCloseBagModal(false); }}>Submit</Button>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal>
+
+      <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)} size="lg">
+        <Modal.Content maxWidth="350">
+          <Modal.CloseButton />
+          <Modal.Header>Reject Reason Code</Modal.Header>
+          <Modal.Body>
+          {rejectedData.map((d) => (
+            <Button key={d.shipmentExceptionReasonUserID} flex="1" mt={2}  marginBottom={1.5} marginTop={1.5} title={d.shipmentExceptionReasonName} style={{backgroundColor: d.shipmentExceptionReasonName === DropDownValue ? "#6666FF":"#C8C8C8"}} onPress={() => handleButtonPress(d.shipmentExceptionReasonName)} >
+            <Text style={{color:'black'}}>{d.shipmentExceptionReasonName}</Text></Button>
+            ))}
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => setModalVisible(false)} >
+            Submit</Button>
           </Modal.Body>
         </Modal.Content>
       </Modal>

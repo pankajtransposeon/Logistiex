@@ -24,6 +24,7 @@ import Main from './src/components/Main';
 import NewSellerPickup from './src/components/newSeller/NewSellerPickup';
 import NewSellerSelection from './src/components/newSeller/NewSellerSelection';
 import ShipmentBarcode from './src/components/newSeller/ShipmentBarcode';
+import Dispatch from './src/components/newSeller/Dispatch';
 import MapScreen from './src/components/MapScreen';
 import Reject from './src/components/RejectReason';
 import POD from './src/components/newSeller/POD';
@@ -388,6 +389,18 @@ function StackNavigators({navigation}) {
                   <Badge style={{position: 'absolute', fontSize: 15, borderColor: 'white', borderWidth: 1}}>3</Badge>
                 </TouchableOpacity>
               </View>
+            ),
+          }}
+        />
+        <Stack.Screen name="Dispatch" component={Dispatch}
+          options={{
+            headerTitle: (props) => (
+              <NativeBaseProvider>
+                <Heading style={{color: 'white'}} size="md">Bag to Dispatch</Heading>
+              </NativeBaseProvider>
+            ),
+            headerLeft: () => (
+              <MaterialIcons name="menu" style={{fontSize: 30, marginLeft: 10, color: 'white'}} onPress={()=>navigation.toggleDrawer()} />
             ),
           }}
         />
