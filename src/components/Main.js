@@ -36,7 +36,7 @@ export default function Main({navigation, route}) {
     const [spp, setSpp] = useState(1);
     const [spnp, setSpnp] = useState(0);
     const [spr, setSpr] = useState(0);
-    var let11 = 'accepted';
+    const let11 = 'accepted';
     useEffect(() => {
         (async () => {
             loadSellerPickupDetails();
@@ -49,7 +49,7 @@ export default function Main({navigation, route}) {
 
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
-                console.log('SP Total Seller : ' + results.rows.length);
+                // console.log('SP Total Seller : ' + results.rows.length);
                 setSpts(results.rows.length);
             });
         });
@@ -57,7 +57,7 @@ export default function Main({navigation, route}) {
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails where status=?', [let11], (tx1, results) => {
                 let temp = [];
-                console.log('SP Completed : ' + results.rows.length);
+                // console.log('SP Completed : ' + results.rows.length);
                 setSpc(results.rows.length);
                 for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
@@ -70,7 +70,7 @@ export default function Main({navigation, route}) {
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails ', [], (tx1, results) => {
                 let temp = [];
-                console.log('SP Pending : ' + results.rows.length);
+                // console.log('SP Pending : ' + results.rows.length);
                 setSpp(results.rows.length);
                 for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
@@ -83,7 +83,7 @@ export default function Main({navigation, route}) {
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="notPicked"', [], (tx1, results) => {
                 let temp = [];
-                console.log('SP Not Picked : ' + results.rows.length);
+                // console.log('SP Not Picked : ' + results.rows.length);
                 setSpnp(results.rows.length);
                 for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
@@ -96,7 +96,7 @@ export default function Main({navigation, route}) {
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="rejected"', [], (tx1, results) => {
                 let temp = [];
-                console.log('SP Rejected : ' + results.rows.length);
+                // console.log('SP Rejected : ' + results.rows.length);
                 setSpr(results.rows.length);
                 for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
@@ -123,7 +123,7 @@ export default function Main({navigation, route}) {
     };
 
     const addCategory = (clientShipmentReferenceNumber, packagingId, packagingStatus, consignorCode, consignorContact, PRSNumber, ForwardPickups, ScanStatus, UploadStatus) => {
-        console.log(clientShipmentReferenceNumber, packagingId, packagingStatus, consignorCode, consignorContact, PRSNumber, ForwardPickups, ScanStatus, UploadStatus);
+        // console.log(clientShipmentReferenceNumber, packagingId, packagingStatus, consignorCode, consignorContact, PRSNumber, ForwardPickups, ScanStatus, UploadStatus);
         if (!clientShipmentReferenceNumber && !packagingId && !packagingStatus && !consignorCode && !consignorContact && !PRSNumber && !ForwardPickups && !ScanStatus && !UploadStatus) { // eslint-disable-next-line no-alert
             alert('Enter category');
             return false;
@@ -141,7 +141,7 @@ export default function Main({navigation, route}) {
                 ScanStatus,
                 UploadStatus,
             ], (sqlTxn, res) => {
-                console.log('category added successfully');
+                // console.log('category added successfully');
             }, error => {
                 console.log('error on adding category ' + error.message);
             },);
@@ -208,7 +208,7 @@ export default function Main({navigation, route}) {
             }`).then((res) => {
                 setData(res.data.consignorPickupsList);
             }, (error) => {
-                Alert.alert(error);
+                alert(error);
             });
         })();
 
@@ -225,7 +225,7 @@ export default function Main({navigation, route}) {
                 });
 
             }, (error) => {
-                Alert.alert(error);
+                alert(error);
             });
         })();
     }, []);

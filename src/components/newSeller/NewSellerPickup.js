@@ -73,7 +73,7 @@ return (
             </DataTable.Header>
             {data && data.length > 0 ?
             data.filter(searched(keyword)).map((single, i) => (
-              <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} onPress={() =>{navigation.navigate('NewSellerSelection',{
+              <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} key={single.consignorName} onPress={() =>{navigation.navigate('NewSellerSelection',{
                 paramKey : single.consignorCode,
                 Forward : single.ForwardPickups,
                 consignorAddress : JSON.parse(single.consignorAddress),

@@ -52,7 +52,7 @@ const Drawer = createDrawerNavigator();
 function StackNavigators({navigation}) {
 
     const [isLoading, setIsLoading] = useState(false);
-    const [userId, setUserId] = useState('HADWFE01');
+    const [userId, setUserId] = useState('');
 
     const getData = async () => {
         try {
