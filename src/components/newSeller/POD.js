@@ -13,13 +13,28 @@ import OTPTextInput from 'react-native-otp-textinput';
 const POD = ({route}) => {
 
   var otpInput = useRef(null)
-
+  const navigation = useNavigation();
   const [name, setName] = useState('');
   const [inputOtp, setInputOtp] = useState('');
   const [mobileNumber, setMobileNumber] = useState(route.params.phone);
   const [latitude, setLatitude] = useState(0);
   const [longitude , setLongitude] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [DropDownValue, setDropDownValue] = useState(null);
+  const [PartialCloseData, setPartialCloseData] = useState([]);
+  const PartialClose = 'https://bked.logistiex.com/ADupdatePrams/getPartialClosureReasons';
+  const DisplayData = async() => {
+    await fetch(PartialClose)
+    .then((response) => response.json()) 
+    .then((json) => {
+      setPartialCloseData(json);
+    })
+    .catch((error) => alert(error)) 
+  }
+  useEffect(() => {
+    DisplayData();   
+  }, []);
 
   const clearText = () => {
     otpInput.current.clear();
@@ -98,6 +113,13 @@ const submitForm = () => {
       console.log("Otp not send", response);
     }
   }
+  function handleButtonPress(item) {
+    if(item=='Partial Dispatch'){
+      navigation.navigate('Dispatch');
+    }
+      setDropDownValue(item);
+    // setModalVisible(false);
+  }
 
   function validateOTP(){
     axios.post("https://bked.logistiex.com/SMS/OTPValidate", {
@@ -139,6 +161,23 @@ const submitForm = () => {
           </Modal.Body>
         </Modal.Content>
       </Modal>
+      <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)} size="lg">
+        <Modal.Content maxWidth="350">
+          <Modal.CloseButton />
+          <Modal.Header>Partial Close Reason Code</Modal.Header>
+          <Modal.Body>
+            {(PartialCloseData && PartialCloseData.data) &&
+            PartialCloseData.data.map((d,index) => (
+            <Button key={d.reasonID} flex="1" mt={2} marginBottom={1.5} 
+             marginTop={1.5} style={{backgroundColor: d.reasonName === DropDownValue ? "#4169E1":"#C8C8C8"}}  title={d.reasonName} onPress={() => handleButtonPress(d.reasonName)} >
+            <Text style={{color:'black'}}>{d.reasonName}</Text></Button>
+            ))
+          }
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => setModalVisible(false)} >
+            Submit</Button>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal>
       <View style={{backgroundColor: 'white', flex: 1, paddingTop: 30}}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{alignItems: 'center'}}>
@@ -163,6 +202,7 @@ const submitForm = () => {
             <Input mx="3" mt={4} placeholder="Receiver Name" w="90%" bg="gray.200" size="lg" value={name} onChangeText={(e)=>setName(e)} />
             <Input mx="3" my={4} placeholder="Mobile Number" w="90%" bg="gray.200" size="lg" value={mobileNumber} onChangeText={(e)=>setMobileNumber(e)} />
             <Button w="90%" size="lg" style={{backgroundColor:'#004aad', color:'#fff'}}  title="Submit"  onPress={() => sendSmsOtp()} >Submit</Button>
+            <Button w="90%" mt={2} size="lg" style={{backgroundColor:'#004aad', color:'#fff'}}  title="Submit"  onPress={() => setModalVisible(true)} >Partial Close</Button>
           </Center>
           <Center>
             <Image style={{ width:150, height:150 }} source={require('../../assets/image.png')} alt={"Logo Image"} />
