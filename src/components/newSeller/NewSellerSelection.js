@@ -69,12 +69,12 @@ const loadSellerPickupDetails = () => {
 db.transaction((tx) => {
   tx.executeSql('SELECT * FROM SellerMainScreenDetails where consignorCode=? AND status="pending"', [route.params.consignorCode], (tx1, results) => {
       let temp = [];
-      console.log(results.rows.length);
+      // console.log(results.rows.length);
       setAcc(results.rows.length);
       for (let i = 0; i < results.rows.length; ++i) {
           temp.push(results.rows.item(i));
       }
-      console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+      // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
       setData(temp);
   });
 });
@@ -92,7 +92,7 @@ db.transaction((tx) => {
             [1],	
             (tx, results) => {	
               var len = results.rows.length;	
-              console.log(len);	
+              // console.log(len);	
               // setAcc(len);	
               setPending(route.params.Forward - len);	
             }	
