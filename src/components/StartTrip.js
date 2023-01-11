@@ -69,6 +69,10 @@ export default function StartTrip() {
   const storeDataTripValue = async() => {
     try {
       await AsyncStorage.setItem('@StartEndTrip', JSON.stringify('End Trip'));
+      await AsyncStorage.setItem('@VehiclePassword', JSON.stringify({
+        vehicle,
+        password
+      }));
       navigation.navigate('Main');
     } catch (e) {
       console.log(e);
@@ -160,7 +164,7 @@ const ImageHandle = () =>
             <Box justifyContent="space-between" py={10} px={6} bg="#fff" rounded="xl" width={"90%"} maxWidth="100%" _text={{fontWeight: "medium",}}>
             <ScrollView>
             <VStack space={6}>
-                <Input value={vehicle} onChangeText={setVehicle} size="lg" placeholder="Enter your vehical no." />
+                <Input value={vehicle} onChangeText={setVehicle} size="lg" placeholder="Enter your vehicle no." />
                 <Input keyboardType="numeric" value={password} onChangeText={setPassword} size="lg" type={"number"} placeholder="Input vehicle KMs" />
                 <Button py={3} title="Login" variant='outline'  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons></Button>
                 {

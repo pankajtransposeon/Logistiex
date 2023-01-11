@@ -7,16 +7,11 @@ import { PermissionsAndroid, Pressable, SafeAreaView, StyleSheet, TouchableHighl
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { decode } from "react-native-pure-jwt";
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import Marker from 'react-native-image-marker';
 
 export default function EndTrip() {
 
-  const [vehicle, setVehicle] = useState('');
+  const [vehicle, setVehicle] = useState([]);
   const [password, setPassword] = useState('');
-  const [show, setShow] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [message, setMessage] = useState(0);
-  const [loginClicked, setLoginClicked] = useState(false);
   const [ImageUrl, setImageUrl] = useState('');
   const navigation = useNavigation();
 
@@ -29,7 +24,6 @@ export default function EndTrip() {
           message: 'App needs camera permission',
         },
       );
-      // If CAMERA Permission is granted
       return granted === PermissionsAndroid.RESULTS.GRANTED;
     } catch (err) {
       console.warn(err);
@@ -95,6 +89,23 @@ export default function EndTrip() {
     }
 }
 
+const getData = async () => {
+  try {
+    const value = await AsyncStorage.getItem('@VehiclePassword')
+    if(value !== null) {
+      const data = JSON.parse(value);
+      setVehicle(data);
+      console.log(data, 'data')
+    }
+  } catch(e) {
+    console.log(e);
+  }
+}
+
+useEffect(() => {
+  getData();
+}, []);
+
 const storeDataTripValue = async() => {
   try {
     await AsyncStorage.setItem('@StartEndTrip', JSON.stringify('End'));
@@ -129,6 +140,10 @@ const ImageHandle = () =>
         <Box flex={1} bg="#004aad" alignItems="center" pt={'4%'}>
             <Box justifyContent="space-between" py={10} px={6} bg="#fff" rounded="xl" width={"90%"} maxWidth="100%" _text={{fontWeight: "medium",}}>
             <VStack space={6}>
+                <Input disabled selectTextOnFocus={false} editable={false} backgroundColor='gray.300' value={vehicle.vehicle} size="lg" type={"number"} placeholder="Input vehicle KMs" />
+
+                <Input selectTextOnFocus={false} editable={false} disabled backgroundColor='gray.300' value={vehicle.password} size="lg" type={"number"} placeholder="Input vehicle KMs" />
+
                 <Input value={password} keyboardType="numeric" onChangeText={setPassword} size="lg" type={"number"} placeholder="Input vehicle KMs" />
                 <Button py={3} variant='outline' title="Login"  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons></Button>
                 {
