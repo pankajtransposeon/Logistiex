@@ -10,19 +10,20 @@ export default function StartEndDetails() {
 
   
   const [data, setData] = useState();
-  const [printData, setPrintData] = useState([{
-    "_id": "63bc00ba4587976c951c2170",
-    "tripID": "Mon Jan 09 2023 17:25:14 GMT+0530UI001",
-    "userID": "UI001",
-    "date": "2023-01-09T11:55:37.682Z",
-    "startTime": "10:00AM",
-    "vehicleNumber": "Gfvh",
-    "startKilometer": "2555",
-    "startVehicleImageUrl": "https://storage.googleapis.com/logistiex-shp/DSQC/front/2023/0/9/SI002/rn_image_picker_lib_temp_dad8377e-4f00-47eb-af11-55c5842c35d6_1673265334736.jpg",
-    "createdAt": "2023-01-09T11:55:38.785Z",
-    "updatedAt": "2023-01-09T11:55:38.785Z",
-    "__v": 0
-    }]);
+  // const [printData, setPrintData] = useState([{
+  //   "_id": "63bc00ba4587976c951c2170",
+  //   "tripID": "Mon Jan 09 2023 17:25:14 GMT+0530UI001",
+  //   "userID": "UI001",
+  //   "date": "2023-01-09T11:55:37.682Z",
+  //   "startTime": "10:00AM",
+  //   "vehicleNumber": "Gfvh",
+  //   "startKilometer": "2555",
+  //   "startVehicleImageUrl": "https://storage.googleapis.com/logistiex-shp/DSQC/front/2023/0/9/SI002/rn_image_picker_lib_temp_dad8377e-4f00-47eb-af11-55c5842c35d6_1673265334736.jpg",
+  //   "createdAt": "2023-01-09T11:55:38.785Z",
+  //   "updatedAt": "2023-01-09T11:55:38.785Z",
+  //   "__v": 0
+  //   }]);
+  const [printData,setPrintData]=useState([])
   const navigation = useNavigation();
 
     const getData = 'https://bked.logistiex.com/UserTripInfo/getUserTripInfo';
@@ -37,7 +38,7 @@ export default function StartEndDetails() {
             });
         })();
     }, []);
-
+    
 const getDataLocal = async () => {
   try {
     const value = await AsyncStorage.getItem('@TripID')
@@ -45,6 +46,7 @@ const getDataLocal = async () => {
       const datavalue = JSON.parse(value);
       if(datavalue && data){
         const arr = data.res_data.filter((res) => res.tripID === datavalue);
+        // console.log(data.res_data);
         setPrintData(arr);
       }
       return;
@@ -53,7 +55,7 @@ const getDataLocal = async () => {
     console.log(e);
   }
 }
-  console.log(printData, 'print')
+  // console.log(printData, 'print')
   
     return (
       printData.length ?
@@ -84,7 +86,7 @@ const getDataLocal = async () => {
     <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>Start Time - {printData[0].startTime}</Text>
     <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>Vehicle Number - {printData[0].vehicleNumber}</Text>
     <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>Start Kilometer - {printData[0].startKilometer}</Text>
-    <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>End Kilometer - {printData[0].startKilometer}</Text>
+    <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>End Kilometer - {printData[0].endkilometer}</Text>
   </Stack>
   <HStack space="3" px="4" pb="4">
    
