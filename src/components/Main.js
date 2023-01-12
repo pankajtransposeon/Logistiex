@@ -32,7 +32,7 @@ export default function Main({navigation, route}) {
     // const [data2, setData2] = useState('');
 
     const [spts, setSpts] = useState(0);
-    const [spc, setSpc] = useState(0); // default is putting 1 to overcome render problem in pie chart
+    const [spc, setSpc] = useState(0);
     const [spp, setSpp] = useState(1);
     const [spnp, setSpnp] = useState(0);
     const [spr, setSpr] = useState(0);
@@ -340,7 +340,7 @@ export default function Main({navigation, route}) {
         </Center>
       </Box>
       </ScrollView>
-      <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} />
+      {/* <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} /> */}
     </NativeBaseProvider>
   );
 }
