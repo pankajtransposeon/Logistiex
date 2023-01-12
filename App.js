@@ -13,7 +13,7 @@ import {
     Button,
     Select,
     Divider,
-    Center,
+    Center
 } from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {NavigationContainer, DrawerActions} from '@react-navigation/native';
@@ -79,8 +79,10 @@ function StackNavigators({navigation}) {
 
     useEffect(() => {
         if (userId) {
-            toggleLoading();
+            toggleLoading1();
             toggleLoading2();
+            toggleLoading3();
+            toggleLoading4();
         }
     }, []);
 
@@ -109,7 +111,6 @@ function StackNavigators({navigation}) {
             },);
         });
     };
-
     const toggleLoading2 = () => {
         setIsLoading(!isLoading);
         (async () => {
@@ -159,12 +160,11 @@ function StackNavigators({navigation}) {
             });
         })();
     };
-
     const viewDetails2 = () => {
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails', [], (tx1, results) => {
                 let temp = [];
-                for (let i = 0; i < results.rows.length; ++i) {
+                for (let i = 0; i < results.rows.length; ++ i) {
                     temp.push(results.rows.item(i));
                     // var address121 = results.rows.item(i).consignorAddress;
                     // var address_json = JSON.parse(address121);
@@ -180,20 +180,21 @@ function StackNavigators({navigation}) {
             });
         });
     };
-
     const sync11 = () => {
         NetInfo.fetch().then(state => {
             if (state.isConnected && state.isInternetReachable) {
-                toggleLoading();
+                toggleLoading1();
                 toggleLoading2();
+                toggleLoading3();
+                toggleLoading4();
             } else {
                 ToastAndroid.show('You are Offline!', ToastAndroid.SHORT);
-                viewDetails();
+                viewDetails1();
             }
         });
     };
 
-    const createTables = () => {
+    const createTables1 = () => {
         db.transaction(txn => {
             txn.executeSql('DROP TABLE IF EXISTS SyncSellerPickUp', []);
             txn.executeSql(`CREATE TABLE IF NOT EXISTS SyncSellerPickUp( consignorCode ID VARCHAR(200) PRIMARY KEY ,userId VARCHAR(100), consignorName VARCHAR(200),consignorAddress VARCHAR(500),
@@ -205,64 +206,194 @@ function StackNavigators({navigation}) {
             },);
         });
     };
-
-    const toggleLoading = () => {
+    const createTables3 = () => {
+        db.transaction(txn => {
+            txn.executeSql('DROP TABLE IF EXISTS ShipmentRejectReasons', []);
+            txn.executeSql('CREATE TABLE IF NOT EXISTS ShipmentRejectReasons(_id ID VARCHAR(100) PRIMARY KEY ,shipmentExceptionReasonID VARCHAR(200),shipmentExceptionReasonName VARCHAR(200),shipmentExceptionReasonUserID VARCHAR(200),disable VARCHAR(20),createdAt VARCHAR(200),updatedAt VARCHAR(200),__v INT(10))', [], (sqlTxn, res) => {
+                console.log('table 3 created successfully');
+                // toggleLoading();
+            }, error => {
+                console.log('error on creating table ' + error.message);
+            },);
+        });
+    };
+    const createTables4 = () => {
+        db.transaction(txn => {
+            txn.executeSql('DROP TABLE IF EXISTS ClosePickupReasons', []);
+            txn.executeSql('CREATE TABLE IF NOT EXISTS ClosePickupReasons( _id ID VARCHAR(100) PRIMARY KEY,pickupFailureReasonID VARCHAR(50),pickupFailureReasonName VARCHAR(200),pickupFailureReasonUserID VARCHAR(50),pickupFailureReasonActiveStatus VARCHAR(20),pickupFailureReasonGroupID VARCHAR(50),pickupFailureReasonGeoFence VARCHAR(20),pickupFailureReasonOTPenable VARCHAR(20),pickupFailureReasonCallMandatory VARCHAR(20),pickupFailureReasonPickupDateEnable VARCHAR(20),pickupFailureReasonGroupName VARCHAR(200),disable VARCHAR(20),createdAt VARCHAR(200),updatedAt VARCHAR(200),__v INT(10))', [], (sqlTxn, res) => {
+                console.log('table 4 created successfully');
+                // toggleLoading();
+            }, error => {
+                console.log('error on creating table ' + error.message);
+            },);
+        });
+    };
+    const toggleLoading3 = () => {
         setIsLoading(!isLoading);
-        createTables();
+        createTables3();
         (async () => {
-            await axios.get(`https://bked.logistiex.com/SellerMainScreen/sellerList/${userId}`).then((res) => {
-                console.log('Table1 API OK: ' + res.data.length);
+            await axios.get('https://bked.logistiex.com/ADupdatePrams/getUSER').then((res) => {
+                console.log('Table3 API OK: ' + res.data.length);
                 // console.log(res.data);
                 for (let i = 0; i < res.data.length; i++) {
-                    let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
                     db.transaction(txn => {
-                        txn.executeSql(`INSERT OR REPLACE INTO SyncSellerPickUp( consignorCode ,userId ,consignorName , consignorAddress,
-              consignorLocation ,consignorContact ,ReverseDeliveries ,PRSNumber ,ForwardPickups) VALUES (?,?,?,?,?,?,?,?,?)`, [
-                            res.data[i].consignorCode,
-                            userId,
-                            res.data[i].consignorName,
-                            m21,
-                            res.data[i].consignorLocation,
-                            res.data[i].consignorContact,
-                            res.data[i].ReverseDeliveries,
-                            res.data[i].PRSNumber,
-                            res.data[i].ForwardPickups,
+                        txn.executeSql('INSERT OR REPLACE INTO ShipmentRejectReasons( _id,shipmentExceptionReasonID,shipmentExceptionReasonName,shipmentExceptionReasonUserID,disable,createdAt,updatedAt,__v) VALUES (?,?,?,?,?,?,?,?)', [
+                            res.data[i]._id,
+                            res.data[i].shipmentExceptionReasonID,
+                            res.data[i].shipmentExceptionReasonName,
+                            res.data[i].shipmentExceptionReasonUserID,
+                            res.data[i].disable,
+                            res.data[i].createdAt,
+                            res.data[i].updatedAt,
+                            res.data[i].__v,
+
                         ], (sqlTxn, _res) => {
-                            // console.log(`\n Data Added to local db successfully1212`);
-                            // console.log(res);
+                            // console.log('\n Data Added to local db 3 ');
+                            // console.log(_res);
                         }, error => {
                             console.log('error on adding data ' + error.message);
                         },);
                     });
                 }
-                viewDetails();
+                viewDetails3();
                 setIsLoading(false);
             }, (error) => {
                 Alert.alert(error);
             });
         })();
     };
-
-    const viewDetails = () => {
+    const toggleLoading4 = () => {
+        setIsLoading(!isLoading);
+        createTables4();
+        (async () => {
+            await axios.get('https://bked.logistiex.com/ADupdatePrams/getUPFR').then((res) => {
+                console.log('Table4 API OK: ' + res.data.length);
+                // console.log(res.data);
+                for (let i = 0; i < res.data.length; i++) {
+                    db.transaction(txn => {
+                        txn.executeSql(`INSERT OR REPLACE INTO ClosePickupReasons( _id,pickupFailureReasonID,pickupFailureReasonName,pickupFailureReasonUserID,pickupFailureReasonActiveStatus,pickupFailureReasonGroupID,pickupFailureReasonGeoFence,pickupFailureReasonOTPenable,pickupFailureReasonCallMandatory,pickupFailureReasonPickupDateEnable,pickupFailureReasonGroupName,disable,createdAt,updatedAt,__v
+                    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, [
+                            res.data[i]._id,
+                            res.data[i].pickupFailureReasonID,
+                            res.data[i].pickupFailureReasonName,
+                            res.data[i].pickupFailureReasonUserID,
+                            res.data[i].pickupFailureReasonActiveStatus,
+                            res.data[i].pickupFailureReasonGroupID,
+                            res.data[i].pickupFailureReasonGeoFence,
+                            res.data[i].pickupFailureReasonOTPenable,
+                            res.data[i].pickupFailureReasonCallMandatory,
+                            res.data[i].pickupFailureReasonPickupDateEnable,
+                            res.data[i].pickupFailureReasonGroupName,
+                            res.data[i].disable,
+                            res.data[i].createdAt,
+                            res.data[i].updatedAt,
+                            res.data[i].__v,
+                        ], (sqlTxn, _res) => {
+                            // console.log('\n Data Added to local db 4 ');
+                            // console.log(res);
+                        }, error => {
+                            console.log('error on adding data ' + error.message);
+                        },);
+                    });
+                }
+                viewDetails4();
+                setIsLoading(false);
+            }, (error) => {
+                Alert.alert(error);
+            });
+        })();
+    };
+    const viewDetails3 = () => {
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM ShipmentRejectReasons', [], (tx1, results) => {
                 let temp = [];
                 // console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
+                for (let i = 0; i < results.rows.length; ++ i) {
                     temp.push(results.rows.item(i));
-                    // console.log(results.rows.item(i).consignorName);
-                    // var address121 = results.rows.item(i).consignorAddress;
-                    // var address_json = JSON.parse(address121);
-                    // console.log(typeof (address_json));
-                    // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
-                    // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
                 }
-                // ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
-                // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
-                console.log('Table1 DB OK:', temp.length);
+                ToastAndroid.show("Sync Successful3", ToastAndroid.SHORT);
+                console.log('Data from Local Database 3: \n ', JSON.stringify(temp, null, 4));
+                // console.log('Table 3 DB OK:', temp.length);
             });
         });
     };
+    const viewDetails4 = () => {
+        db.transaction((tx) => {
+            tx.executeSql('SELECT * FROM ClosePickupReasons', [], (tx1, results) => {
+                let temp = [];
+                // console.log(results.rows.length);
+                for (let i = 0; i < results.rows.length; ++ i) {
+                    temp.push(results.rows.item(i));
+                }
+                ToastAndroid.show("Sync Successful4", ToastAndroid.SHORT);
+                console.log('Data from Local Database 4: \n ', JSON.stringify(temp, null, 4));
+                // console.log('Data from Local Database 4: \n ',temp);
+
+                console.log('Table 4 DB OK:', temp.length);
+            });
+        });
+    };
+
+ 
+
+
+const toggleLoading1 = () => {
+    setIsLoading(!isLoading);
+    createTables1();
+    (async () => {
+        await axios.get(`https://bked.logistiex.com/SellerMainScreen/sellerList/${userId}`).then((res) => {
+            console.log('Table1 API OK: ' + res.data.length);
+            // console.log(res.data);
+            for (let i = 0; i < res.data.length; i++) {
+                let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
+                db.transaction(txn => {
+                    txn.executeSql(`INSERT OR REPLACE INTO SyncSellerPickUp( consignorCode ,userId ,consignorName , consignorAddress,
+              consignorLocation ,consignorContact ,ReverseDeliveries ,PRSNumber ,ForwardPickups) VALUES (?,?,?,?,?,?,?,?,?)`, [
+                        res.data[i].consignorCode,
+                        userId,
+                        res.data[i].consignorName,
+                        m21,
+                        res.data[i].consignorLocation,
+                        res.data[i].consignorContact,
+                        res.data[i].ReverseDeliveries,
+                        res.data[i].PRSNumber,
+                        res.data[i].ForwardPickups,
+                    ], (sqlTxn, _res) => {
+                        // console.log(`\n Data Added to local db successfully1212`);
+                        // console.log(res);
+                    }, error => {
+                        console.log('error on adding data ' + error.message);
+                    },);
+                });
+            }
+            viewDetails1();
+            setIsLoading(false);
+        }, (error) => {
+            Alert.alert(error);
+        });
+    })();
+};
+
+const viewDetails1 = () => {
+    db.transaction((tx) => {
+        tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
+            let temp = [];
+            // console.log(results.rows.length);
+            for (let i = 0; i < results.rows.length; ++ i) {
+                temp.push(results.rows.item(i));
+                // console.log(results.rows.item(i).consignorName);
+                // var address121 = results.rows.item(i).consignorAddress;
+                // var address_json = JSON.parse(address121);
+                // console.log(typeof (address_json));
+                // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
+                // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+            }
+            // ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
+            // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+            console.log('Table1 DB OK:', temp.length);
+        });
+    });
+};
 
 
 
