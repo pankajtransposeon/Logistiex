@@ -2,7 +2,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState, Alert} from 'react';
-import {Text, View, ScrollView} from 'react-native';
+import {Text, View, ScrollView,ToastAndroid} from 'react-native';
 import axios from 'axios';
 import {Fab} from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -36,14 +36,15 @@ export default function Main({navigation, route}) {
     const [spp, setSpp] = useState(1);
     const [spnp, setSpnp] = useState(0);
     const [spr, setSpr] = useState(0);
-    const let11 = 'accepted';
     useEffect(() => {
         (async () => {
             loadSellerPickupDetails();
         })();
-    }, []);
+    },[]);
     const sync11 = () => {
         loadSellerPickupDetails();
+        ToastAndroid.show("Loading Data Successfull",ToastAndroid.SHORT);
+
     };
     const loadSellerPickupDetails = () => {
 
@@ -55,7 +56,7 @@ export default function Main({navigation, route}) {
         });
 
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails where status=?', [let11], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="accepted"', [], (tx1, results) => {
                 let temp = [];
                 // console.log('SP Completed : ' + results.rows.length);
                 setSpc(results.rows.length);
@@ -340,7 +341,7 @@ export default function Main({navigation, route}) {
         </Center>
       </Box>
       </ScrollView>
-      {/* <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} /> */}
+      <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} />
     </NativeBaseProvider>
   );
 }
