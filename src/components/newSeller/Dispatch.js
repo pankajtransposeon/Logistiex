@@ -120,6 +120,6 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: "#E0E0E0",
-        margin:10
+        margin:15
       },
   });
