@@ -76,7 +76,11 @@ return (
               <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} key={single.consignorName} onPress={() =>{navigation.navigate('NewSellerSelection',{
                 paramKey : single.consignorCode,
                 Forward : single.ForwardPickups,
-                consignorAddress : JSON.parse(single.consignorAddress),
+                consignorAddress1 :single.consignorAddress1,
+                consignorAddress2 :single.consignorAddress2,
+                consignorCity :single.consignorCity,
+                consignorPincode :single.consignorPincode,
+                // consignorAddress : JSON.parse(single.consignorAddress),
                 consignorName : single.consignorName,
                 PRSNumber : single.PRSNumber,
                 consignorCode : single.consignorCode,

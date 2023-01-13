@@ -161,13 +161,13 @@ db.transaction((tx) => {
   useEffect(() => {
     let addresss = "";
     if(route && route.params){
-      addresss += route.params.consignorAddress?.consignorAddress1;
+      addresss += route.params.consignorAddress1;
       addresss += " ";
-      addresss += route.params.consignorAddress?.consignorAddress2;
+      addresss += route.params.consignorAddress2;
       addresss += " ";
-      addresss += route.params.consignorAddress?.consignorCity;
+      addresss += route.params.consignorCity;
       addresss += " ";
-      addresss += route.params.consignorAddress?.consignorPincode
+      addresss += route.params.consignorPincode
     } 
      setType(addresss);
   // eslint-disable-next-line react-hooks/exhaustive-deps
