@@ -105,7 +105,7 @@ const loadSellerPickupDetails = () => {
 
         }
         setIsLoading(false);
-        ToastAndroid.show("Reloading Successfull",ToastAndroid.SHORT);
+        // ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
         // for (let i = 0; i < results.rows.length; ++i) {
         //     temp.push(results.rows.item(i));
         // }
@@ -324,7 +324,7 @@ return (
   </Center>
 </View>
 <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} />
-{isLoading ? (
+{/* {isLoading ? (
         <View
           style={[
             StyleSheet.absoluteFillObject,
@@ -336,7 +336,7 @@ return (
               backgroundColor: 'rgba(0,0,0,0.65)',
             },
           ]}>
-          <Text style={{color: 'white'}}>Syncing Please Wait...</Text>
+          <Text style={{color: 'white'}}>Loading Please Wait...</Text>
           <Lottie
             source={require('../../assets/loading11.json')}
             autoPlay
@@ -346,7 +346,7 @@ return (
           />
           <ProgressBar width={70} />
         </View>
-      ) : null}
+      ) : null} */}
 </NativeBaseProvider>
 );
 };

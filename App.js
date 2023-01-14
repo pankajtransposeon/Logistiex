@@ -79,6 +79,7 @@ function StackNavigators({navigation}) {
         return () => clearInterval(StartValue);
     }, []);
     useEffect(() => {
+      (async () => {
         if (userId) {
             loadAPI_Data1();
             loadAPI_Data2();
@@ -87,6 +88,7 @@ function StackNavigators({navigation}) {
             loadAPI_Data5();
             loadAPI_Data6();
         }
+      })();
     }, []);
 
     // Sync button function

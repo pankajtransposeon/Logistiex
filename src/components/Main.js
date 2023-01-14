@@ -114,7 +114,7 @@ export default function Main({navigation, route}) {
                 // console.log('SP Pending : ' + results.rows.length);
                 setSpp(results.rows.length);
                 setIsLoading(false);
-                ToastAndroid.show("Reloading Successfull",ToastAndroid.SHORT);
+                ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
                 // for (let i = 0; i < results.rows.length; ++i) {
                 //     temp.push(results.rows.item(i));
                 // }
@@ -370,7 +370,7 @@ export default function Main({navigation, route}) {
               backgroundColor: 'rgba(0,0,0,0.65)',
             },
           ]}>
-          <Text style={{color: 'white'}}>Reloading ...</Text>
+          <Text style={{color: 'white'}}>Loading...</Text>
           <Lottie
             source={require('../assets/loading11.json')}
             autoPlay
