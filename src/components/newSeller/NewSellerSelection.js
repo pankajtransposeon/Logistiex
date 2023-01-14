@@ -49,7 +49,7 @@ const NewSellerSelection = ({route}) => {
             for (let i = 0; i < results.rows.length; ++i) {
                 temp.push(results.rows.item(i));
             }
-            // console.log('Data from Local Database CPR: \n ', temp);
+            console.log('Data from Local Database CPR: \n ', temp);
             setCloseData(temp);
         });
     });
@@ -67,7 +67,7 @@ const NewSellerSelection = ({route}) => {
                 temp.push(results.rows.item(i));
             }
             setNotAttemptData(temp);
-            // console.log('Data from Local Database  NAR: \n ', temp);
+            console.log('Data from Local Database  NAR: \n ', JSON.stringify(temp,null,4));
         });
     });
 };
@@ -245,9 +245,9 @@ return (
       <Modal.CloseButton />
       <Modal.Header>Could Not Attempt Reason</Modal.Header>
       <Modal.Body>
-        {(NotAttemptData && NotAttemptData.data) &&
-        NotAttemptData.data.map((d,index) => (
-          <Button key={d.reasonUserID} flex="1" mt={2}  marginBottom={1.5} marginTop={1.5} style={{backgroundColor: d.reasonName === DropDownValue ? "#6666FF":"#C8C8C8"}} title={d.reasonName} onPress={() => handleButtonPress2(d.reasonName)} >
+        {(NotAttemptData) &&
+        NotAttemptData.map((d,index) => (
+          <Button key={d._id} flex="1" mt={2}  marginBottom={1.5} marginTop={1.5} style={{backgroundColor: d.reasonName === DropDownValue ? "#6666FF":"#C8C8C8"}} title={d.reasonName} onPress={() => handleButtonPress2(d.reasonName)} >
           <Text style={{color:d.reasonName==DropDownValue?'white':'black'}}>{d.reasonName}</Text></Button>
         ))}
         <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5}  onPress={() => setModalVisible2(false)} >
