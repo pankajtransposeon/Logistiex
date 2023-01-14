@@ -7,6 +7,8 @@ import axios from 'axios';
 import {Fab} from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Icon} from 'native-base';
+import Lottie from 'lottie-react-native';
+import {ProgressBar} from '@react-native-community/progress-bar-android';
 import {
     NativeBaseProvider,
     Box,
@@ -19,7 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {openDatabase} from 'react-native-sqlite-storage';
 const db = openDatabase({name: 'rn_sqlite'});
 import PieChart from 'react-native-pie-chart';
-
+import { StyleSheet } from 'react-native';
 export default function Main({navigation, route}) {
 
     const shipmentData = `https://bked.logistiex.com/SellerMainScreen/sellerList/${
@@ -36,6 +38,8 @@ export default function Main({navigation, route}) {
     const [spp, setSpp] = useState(1);
     const [spnp, setSpnp] = useState(0);
     const [spr, setSpr] = useState(0);
+    const [SpARC,setSpARC] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
     useEffect(() => {
         (async () => {
             loadSellerPickupDetails();
@@ -43,11 +47,11 @@ export default function Main({navigation, route}) {
     },[]);
     const sync11 = () => {
         loadSellerPickupDetails();
-        ToastAndroid.show("Loading Data Successfull",ToastAndroid.SHORT);
 
     };
-    const loadSellerPickupDetails = () => {
-
+    const loadSellerPickupDetails = async() => {
+        
+        setIsLoading(!isLoading);
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
                 // console.log('SP Total Seller : ' + results.rows.length);
@@ -60,50 +64,62 @@ export default function Main({navigation, route}) {
                 let temp = [];
                 // console.log('SP Completed : ' + results.rows.length);
                 setSpc(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
-                // console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
-                setData(temp);
+                // for (let i = 0; i < results.rows.length; ++i) {
+                //     temp.push(results.rows.item(i));
+                // }
+                // // console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
+                // setData(temp);
             });
         });
-
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails ', [], (tx1, results) => {
-                let temp = [];
-                // console.log('SP Pending : ' + results.rows.length);
-                setSpp(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
-                // console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
-                setData(temp);
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="accepted" OR status="rejected"', [], (tx1, results) => {
+                // let temp = [];
+                // console.log('SP Completed : ' + results.rows.length);
+                setSpARC(results.rows.length);
+                // for (let i = 0; i < results.rows.length; ++i) {
+                //     temp.push(results.rows.item(i));
+                // }
+                // // console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
+                // setData(temp);
             });
         });
-
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="notPicked"', [], (tx1, results) => {
-                let temp = [];
+                // let temp = [];
                 // console.log('SP Not Picked : ' + results.rows.length);
                 setSpnp(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
+                // for (let i = 0; i < results.rows.length; ++i) {
+                //     temp.push(results.rows.item(i));
+                // }
                 // console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
-                setData(temp);
+                // setData(temp);
             });
         });
 
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="rejected"', [], (tx1, results) => {
-                let temp = [];
+                // let temp = [];
                 // console.log('SP Rejected : ' + results.rows.length);
                 setSpr(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
+                // for (let i = 0; i < results.rows.length; ++i) {
+                //     temp.push(results.rows.item(i));
+                // }
                 // console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
-                setData(temp);
+                // setData(temp);
+            });
+        });
+        db.transaction((tx) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE status IS Null', [], (tx1, results) => {
+                // let temp = [];
+                // console.log('SP Pending : ' + results.rows.length);
+                setSpp(results.rows.length);
+                setIsLoading(false);
+                ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
+                // for (let i = 0; i < results.rows.length; ++i) {
+                //     temp.push(results.rows.item(i));
+                // }
+                // console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
+                // setData(temp);
             });
         });
     };
@@ -342,6 +358,29 @@ export default function Main({navigation, route}) {
       </Box>
       </ScrollView>
       <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} />
+      {isLoading ? (
+        <View
+          style={[
+            StyleSheet.absoluteFillObject,
+            {
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 1,
+              backgroundColor: 'rgba(0,0,0,0.65)',
+            },
+          ]}>
+          <Text style={{color: 'white'}}>Loading...</Text>
+          <Lottie
+            source={require('../assets/loading11.json')}
+            autoPlay
+            loop
+            speed={1}
+            //   progress={animationProgress.current}
+          />
+          <ProgressBar width={70} />
+        </View>
+      ) : null}
     </NativeBaseProvider>
   );
 }

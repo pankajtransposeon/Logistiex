@@ -2,7 +2,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Image, Center,NativeBaseProvider, Fab, Icon, Button, Box, Heading, Modal } from 'native-base';
-import{StyleSheet,Text,TouchableOpacity,View, ScrollView, TextInput,getPick, Alert, TouchableWithoutFeedbackBase} from 'react-native';
+import{StyleSheet,Text,TouchableOpacity,View, ScrollView, TextInput,getPick, Alert, TouchableWithoutFeedbackBase,ToastAndroid} from 'react-native';
+import Lottie from 'lottie-react-native';
+import {ProgressBar} from '@react-native-community/progress-bar-android';
 import call from 'react-native-phone-call';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
@@ -29,30 +31,47 @@ const NewSellerSelection = ({route}) => {
   const [DropDownValue, setDropDownValue] = useState(null);
   const [CloseData, setCloseData] = useState([]);
   const [NotAttemptData, setNotAttemptData] = useState([]);
-  const ClosePickup = 'https://bked.logistiex.com/ADupdatePrams/getUPFR';
-  const NotAttemptReason='https://bked.logistiex.com/ADupdatePrams/getNotAttemptedReasons';
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
   const [buttonColor, setButtonColor] = useState('#004aad');
   const [selected, setSelected]=useState(null)
   const [initialValue, setInitialValue] = useState('blue');
+
   const DisplayData = async() => {
-    await fetch(ClosePickup)
-    .then((response) => response.json()) 
-    .then((json) => {
-      setCloseData(json);
-    })
-    .catch((error) => alert(error)) 
-  }
+     closePickup11();
+  };
+  const  closePickup11 = () => {
+    db.transaction(tx => {
+        tx.executeSql('SELECT * FROM ClosePickupReasons', [], (tx1, results) => {
+            let temp = [];
+            console.log(results.rows.length);
+            for (let i = 0; i < results.rows.length; ++i) {
+                temp.push(results.rows.item(i));
+            }
+            // console.log('Data from Local Database CPR: \n ', temp);
+            setCloseData(temp);
+        });
+    });
+};
   const DisplayData2 = async() => {
-    await fetch(NotAttemptReason)
-    .then((response) => response.json()) 
-    .then((json) => {
-      setNotAttemptData(json);
-    })
-    .catch((error) => alert(error)) 
+    NotAttemptReasons11();
   }
+
+  const NotAttemptReasons11 = () => {
+    db.transaction(tx => {
+        tx.executeSql('SELECT * FROM NotAttemptReasons', [], (tx1, results) => {
+            let temp = [];
+            // console.log(results.rows.length);
+            for (let i = 0; i < results.rows.length; ++i) {
+                temp.push(results.rows.item(i));
+            }
+            setNotAttemptData(temp);
+            // console.log('Data from Local Database  NAR: \n ', temp);
+        });
+    });
+};
+
   useEffect(() => {
     DisplayData();   
   }, []);
@@ -67,20 +86,34 @@ const NewSellerSelection = ({route}) => {
     })();
 }, []);
 
-const loadSellerPickupDetails = () => {
-db.transaction((tx) => {
-  tx.executeSql('SELECT * FROM SellerMainScreenDetails where consignorCode=? AND status="pending"', [route.params.consignorCode], (tx1, results) => {
-      let temp = [];
-      // console.log(results.rows.length);
-      setAcc(results.rows.length);
-      for (let i = 0; i < results.rows.length; ++i) {
-          temp.push(results.rows.item(i));
-      }
-      // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
-      setData(temp);
-  });
-});
+const sync11 = () => {
+  loadSellerPickupDetails();
+
 };
+
+const loadSellerPickupDetails = () => {
+  setIsLoading(!isLoading);
+  db.transaction((tx) => {
+    tx.executeSql('SELECT * FROM SellerMainScreenDetails where consignorCode=? AND status="accepted"', [route.params.consignorCode], (tx1, results) => {
+        // let temp = [];
+        console.log(results.rows.length);
+        if (results.rows.length > 0){
+        setAcc(results.rows.length);
+        console.log(acc);
+        setPending(route.params.Forward - results.rows.length);
+        console.log(pending);
+
+        }
+        setIsLoading(false);
+        // ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
+        // for (let i = 0; i < results.rows.length; ++i) {
+        //     temp.push(results.rows.item(i));
+        // }
+        // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+        // setData(temp);
+    });
+  });
+  };
 
 
 
@@ -228,7 +261,7 @@ return (
     <View style={{width: '100%', justifyContent: 'center', flexDirection: 'row', marginTop: 30}}>
       <PieChart
         widthAndHeight={160}
-        series={[acc, pending]}
+        series={[pending,acc]}
         sliceColor={['#F44336', '#4CAF50' ]}
         doughnut={true}
         coverRadius={0.6}
@@ -236,8 +269,8 @@ return (
       />
     </View>
     <View style={{flexDirection: 'row', width: '85%', marginTop: 30, marginBottom: 10, alignSelf: 'center', justifyContent: 'space-between'}}>
-      <View style={{backgroundColor: '#4CAF50', width: '48%', padding: 10, borderRadius: 10}}><Text style={{color:'white', alignSelf: 'center'}}>{pending}</Text></View>
-      <View style={{backgroundColor: '#F44336', width: '48%', padding: 10, borderRadius: 10}}><Text style={{color:'white', alignSelf: 'center'}}>{acc}</Text></View>
+      <View style={{backgroundColor: '#4CAF50', width: '48%', padding: 10, borderRadius: 10}}><Text style={{color:'white', alignSelf: 'center'}}>{acc}</Text></View>
+      <View style={{backgroundColor: '#F44336', width: '48%', padding: 10, borderRadius: 10}}><Text style={{color:'white', alignSelf: 'center'}}>{pending}</Text></View>
     </View>
       <View style={styles.containter}>
         <ScrollView style={styles.homepage} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>       
@@ -290,6 +323,30 @@ return (
     <Image style={{nwidth:150, height:150}} source={require('../../assets/image.png')} alt={"Logo Image"} />
   </Center>
 </View>
+<Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} />
+{/* {isLoading ? (
+        <View
+          style={[
+            StyleSheet.absoluteFillObject,
+            {
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 1,
+              backgroundColor: 'rgba(0,0,0,0.65)',
+            },
+          ]}>
+          <Text style={{color: 'white'}}>Loading Please Wait...</Text>
+          <Lottie
+            source={require('../../assets/loading11.json')}
+            autoPlay
+            loop
+            speed={1}
+            //   progress={animationProgress.current}
+          />
+          <ProgressBar width={70} />
+        </View>
+      ) : null} */}
 </NativeBaseProvider>
 );
 };

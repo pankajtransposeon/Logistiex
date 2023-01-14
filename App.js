@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable no-trailing-spaces */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
@@ -55,6 +56,7 @@ const Drawer = createDrawerNavigator();
 function StackNavigators({navigation}) {
     const [isLoading, setIsLoading] = useState(false);
     const [userId, setUserId] = useState('');
+    let m=0;
     const getData = async () => {
         try {
             const value = await AsyncStorage.getItem('@storage_Key');
@@ -77,13 +79,16 @@ function StackNavigators({navigation}) {
         return () => clearInterval(StartValue);
     }, []);
     useEffect(() => {
+      (async () => {
         if (userId) {
             loadAPI_Data1();
             loadAPI_Data2();
             loadAPI_Data3();
             loadAPI_Data4();
             loadAPI_Data5();
+            loadAPI_Data6();
         }
+      })();
     }, []);
 
     // Sync button function
@@ -95,12 +100,20 @@ function StackNavigators({navigation}) {
                 loadAPI_Data3();
                 loadAPI_Data4();
                 loadAPI_Data5();
+                loadAPI_Data6();
             } else {
                 ToastAndroid.show('You are Offline!', ToastAndroid.SHORT);
                 viewDetails1();
             }
         });
     };
+
+
+    
+
+    /* Press (Ctrl + k + 2) keys together for better API tables view in App.js (VSCode) */
+
+
 
     // Table 1
     const createTables1 = () => {
@@ -120,7 +133,7 @@ function StackNavigators({navigation}) {
         createTables1();
         (async () => {
             await axios.get(`https://bked.logistiex.com/SellerMainScreen/sellerList/${userId}`).then(res => {
-                console.log('Table1 API OK: ' + res.data.length);
+                // console.log('Table1 API OK: ' + res.data.length);
                 // console.log(res.data);
                 for (let i = 0; i < res.data.length; i++) {
                     // let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
@@ -168,9 +181,10 @@ function StackNavigators({navigation}) {
                     // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
                     // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
                 }
+                m++;
                 // ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
                 // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
-                console.log('Table1 DB OK:', temp.length);
+                // console.log('Table1 DB OK:', temp.length);
             });
         });
     };
@@ -206,7 +220,7 @@ function StackNavigators({navigation}) {
         (async () => {
             await axios.get(`https://bked.logistiex.com/SellerMainScreen/details/${userId}`).then(res => {
                 createTables2();
-                console.log('Table2 API OK: ' + res.data.data.length);
+                // console.log('Table2 API OK: ' + res.data.data.length);
                 for (let i = 0; i < res.data.data.length; i++) { // console.log(res.data.data[i].consignorCode);
                     db.transaction(txn => {
                         txn.executeSql(`INSERT OR REPLACE INTO SellerMainScreenDetails( 
@@ -263,10 +277,11 @@ function StackNavigators({navigation}) {
                     // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
                     // ToastAndroid.show("Sync Successful"+ results.rows.item(i).clientShipmentReferenceNumber,ToastAndroid.SHORT);
                 }
-                ToastAndroid.show('Sync Successful', ToastAndroid.SHORT);
-
+                // ToastAndroid.show('Sync Successful', ToastAndroid.SHORT);
+                 
+                m++;
                 // console.log("Data from Local Database1 : \n ", JSON.stringify(temp, null, 4));
-                console.log('Table2 DB OK :', temp.length);
+                // console.log('Table2 DB OK :', temp.length);
             },);
         });
     };
@@ -288,7 +303,7 @@ function StackNavigators({navigation}) {
         createTables3();
         (async () => {
             await axios.get('https://bked.logistiex.com/ADupdatePrams/getUSER').then(res => {
-                console.log('Table3 API OK: ' + res.data.length);
+                // console.log('Table3 API OK: ' + res.data.length);
                 // console.log(res.data);
                 for (let i = 0; i < res.data.length; i++) {
                     db.transaction(txn => {
@@ -324,9 +339,11 @@ function StackNavigators({navigation}) {
                 for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
                 }
-                ToastAndroid.show('Sync Successful3', ToastAndroid.SHORT);
+                 
+                m++;
+                // ToastAndroid.show('Sync Successful3', ToastAndroid.SHORT);
                 // console.log('Data from Local Database 3: \n ', JSON.stringify(temp, null, 4),);
-                console.log('Table3 DB OK:', temp.length);
+                // console.log('Table3 DB OK:', temp.length);
             },);
         });
     };
@@ -348,7 +365,7 @@ function StackNavigators({navigation}) {
         createTables4();
         (async () => {
             await axios.get('https://bked.logistiex.com/ADupdatePrams/getUPFR').then(res => {
-                console.log('Table4 API OK: ' + res.data.length);
+                // console.log('Table4 API OK: ' + res.data.length);
                 // console.log(res.data);
                 for (let i = 0; i < res.data.length; i++) {
                     db.transaction(txn => {
@@ -392,11 +409,12 @@ function StackNavigators({navigation}) {
                 for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
                 }
-                ToastAndroid.show('Sync Successful4', ToastAndroid.SHORT);
+                // ToastAndroid.show('Sync Successful4', ToastAndroid.SHORT);
                 // console.log('Data from Local Database 4: \n ', JSON.stringify(temp, null, 4),);
                 // console.log('Data from Local Database 4: \n ',temp);
-
-                console.log('Table4 DB OK:', temp.length);
+                 
+                m++;
+                // console.log('Table4 DB OK:', temp.length);
             });
         });
     };
@@ -418,7 +436,7 @@ function StackNavigators({navigation}) {
         createTables5();
         (async () => {
             await axios.get('https://bked.logistiex.com/ADupdatePrams/getNotAttemptedReasons').then(res => {
-                console.log('Table5 API OK:' , res.data.data.length);
+                // console.log('Table5 API OK:' , res.data.data.length);
                 // console.log(res.data);
                 for (let i = 0; i < res.data.data.length; i++) {
                     db.transaction(txn => {
@@ -456,13 +474,80 @@ function StackNavigators({navigation}) {
                 for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
                 }
+                m++;
                 // ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
                 // console.log('Data from Local Database 5: \n ', temp);
-                console.log('Table 5 DB OK:', temp.length);
+                // console.log('Table 5 DB OK:', temp.length);
             });
         });
     };
-  
+
+    // Table 6
+    const createTables6 = () => {
+        db.transaction(txn => {
+            txn.executeSql('DROP TABLE IF EXISTS PartialCloseReasons', []);
+            txn.executeSql('CREATE TABLE IF NOT EXISTS PartialCloseReasons(_id ID VARCHAR(200) PRIMARY KEY,reasonID VARCHAR(200),reasonName VARCHAR(200),reasonUserID VARCHAR(200),disable VARCHAR(200),createdAt VARCHAR(200),updatedAt VARCHAR(200),__v INT(10))', [], (sqlTxn, res) => {
+                // console.log('table 6 created successfully');
+                // loadAPI_Data();
+            }, error => {
+                console.log('error on creating table ' + error.message);
+            },);
+        });
+    };
+    const loadAPI_Data6 = () => {
+        setIsLoading(!isLoading);
+        createTables6();
+        (async () => {
+            await axios.get('https://bked.logistiex.com/ADupdateprams/getPartialClosureReasons',).then(res => {
+                // console.log('Table6 API OK: ' + res.data.data.length);
+                // console.log(res.data);
+                for (let i = 0; i < res.data.data.length; i++) {
+                    db.transaction(txn => {
+                        txn.executeSql(`INSERT OR REPLACE INTO PartialCloseReasons(_id,reasonID,reasonName,reasonUserID,disable,createdAt,updatedAt,__v
+                          ) VALUES (?,?,?,?,?,?,?,?)`, [
+                            res.data.data[i]._id,
+                            res.data.data[i].reasonID,
+                            res.data.data[i].reasonName,
+                            res.data.data[i].reasonUserID,
+                            res.data.data[i].disable,
+                            res.data.data[i].createdAt,
+                            res.data.data[i].updatedAt,
+                            res.data.data[i].__v,
+                        ], (sqlTxn, _res) => {
+                            // console.log('\n Data Added to local db 6 ');
+                            // console.log(res);
+                        }, error => {
+                            console.log('error on adding data ' + error.message);
+                        },);
+                    });
+                }
+                viewDetails6();
+                setIsLoading(false);
+            }, error => {
+                Alert.alert(error);
+            },);
+        })();
+    };
+    const viewDetails6 = () => {
+        db.transaction(tx => {
+            tx.executeSql('SELECT * FROM PartialCloseReasons', [], (tx1, results) => {
+                let temp = [];
+                // console.log(results.rows.length);
+                for (let i = 0; i < results.rows.length; ++i) {
+                    temp.push(results.rows.item(i));
+                }
+                m++;
+                 
+                if (m === 6){
+                ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
+                console.log("API to local db sync success: " + m);
+                m = 0;
+                }
+                // console.log('Data from Local Database 6 : \n ', temp);
+                // console.log('Table6 DB OK:', temp.length);
+            });
+        });
+    };
 
 
   return (
@@ -908,11 +993,6 @@ function StackNavigators({navigation}) {
       </Stack.Navigator>
 
       {isLoading ? (
-        //   <View style={[StyleSheet.absoluteFillObject, styles.container222]}>
-        //     <Text>Loading Please Wait...</Text>
-        //     <ProgressBar width={70}/>
-        //   </View>
-        // sync11(),
         <View
           style={[
             StyleSheet.absoluteFillObject,
