@@ -64,25 +64,25 @@ const getDataLocal = async () => {
         <ScrollView>
         
         <Box
-  shadow="2"
-  rounded="lg"
-  w='100%'
-  _light={{ bg: "coolGray.50" }}
-  _dark={{ bg: "gray.700" }}
-  marginTop={5}
+        shadow="2"
+        rounded="lg"
+        w='100%'
+       _light={{ bg: "coolGray.50" }}
+       _dark={{ bg: "gray.700" }}
+        marginTop={5}
 >
   
     <View style={{display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}} >
     <Image style={{height:200, width:350}} source={{uri : printData[0].startVehicleImageUrl}} alt="image base" />
-  <Text bold position="absolute" color="coolGray.50" top="0" m="4">
+    <Text bold position="absolute" color="coolGray.50" top="0" m="4">
     Start vehicle
-  </Text>
-  <Image marginTop={10} style={{height:200, width:350}} source={{uri : printData[0].startVehicleImageUrl}} alt="image base" />
-  <Text bold position="absolute" color="coolGray.50" top="40" m="20">
-  End vehicle
-  </Text>
+    </Text>
+    <Image marginTop={10} style={{height:200, width:350}} source={{uri : printData[0].startVehicleImageUrl}} alt="image base" />
+    <Text bold position="absolute" color="coolGray.50" top="40" m="20">
+    End vehicle
+    </Text>
     </View>
-  <Stack space="2" p="4">
+    <Stack space="2" p="4">
     <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>Start Time - {printData[0].startTime}</Text>
     <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>Vehicle Number - {printData[0].vehicleNumber}</Text>
     <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>Start Kilometer - {printData[0].startKilometer}</Text>
@@ -93,12 +93,12 @@ const getDataLocal = async () => {
   </HStack>
 </Box>
 
-          <Center>
-            <Image style={{ width: 150, height: 100 }} source={require('../assets/image.png')} alt={"Logo Image"} />
-          </Center>
+<Center>
+<Image style={{ width: 150, height: 100 }} source={require('../assets/image.png')} alt={"Logo Image"} />
+</Center>
         
-        </ScrollView>              
-      </NativeBaseProvider>
+  </ScrollView>              
+</NativeBaseProvider>
       ) : (
         <NativeBaseProvider>
           <Text>Loading</Text>
