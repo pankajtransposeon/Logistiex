@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
-import { Container, Header, Content, Item, Input, Icon, Button, NativeBaseProvider , Center} from 'native-base';
+import { Container, Header, Content, Item, Input, Icon, Button, NativeBaseProvider, Center, Image} from 'native-base';
 import axios from 'axios';
 import{Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet, PermissionsAndroid} from 'react-native';
 import {Searchbar } from 'react-native-paper'
@@ -64,45 +64,66 @@ const Dispatch = ({route}) => {
   
   return (
     <NativeBaseProvider>
+      <View style={{backgroundColor:'white'}}>
         <Text style={{fontSize:20, marginTop:10, textAlign:'center',fontWeight:'500'}}>List of Bags to Dispatch</Text>
-        <View style={styles.container}>
+        {/* <View style={styles.container}> */}
         <Searchbar
-        placeholder="Scan Bag Seal ID"
+        placeholder="Search Bag"
         onChangeText={(e) => setKeyword(e)}
         value={keyword}
-        style={{width:'85%', backgroundColor:"#E0E0E0"}}
-       />                
-      <Button style={{backgroundColor:"#E0E0E0"}} onPress={()=>{openCamera()}} leftIcon={<Icon color="white" as={<MaterialIcons name="camera" />} size="sm"  style={styles.cameraIcon} />}>
-      </Button>
-      </View>
-      <View style={{backgroundColor: 'white', flex: 1, paddingTop: 30}}>
+        style={{width:'90%', backgroundColor:"#E0E0E0",marginLeft:22,marginTop:10}}
+       />  
+       </View>              
+      {/* <Button style={{backgroundColor:"#E0E0E0"}} onPress={()=>{openCamera()}} leftIcon={<Icon color="white" as={<MaterialIcons name="camera" />} size="sm"  style={styles.cameraIcon} />}> */}
+      {/* </Button> */}
+      {/* </View> */}
+      <View style={{backgroundColor: 'white', flex: 1, paddingTop: 20}}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{alignItems: 'center'}}>
             <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
-              <Text style={{fontSize: 18, fontWeight: '500'}}>Eligible Bags</Text>
-              <Text style={{fontSize: 18, fontWeight: '500'}}>123</Text>
+              <Text style={{fontSize: 16, fontWeight: '500'}}>Eligible Bags</Text>
+              <Text style={{fontSize: 16, fontWeight: '500'}}>123</Text>
             </View>
             <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
-              <Text style={{fontSize: 18, fontWeight: '500'}}>Scanned</Text>
-              <Text style={{fontSize: 18, fontWeight: '500'}}>12</Text>
+              <Text style={{fontSize: 16, fontWeight: '500'}}>Scanned</Text>
+              <Text style={{fontSize: 16, fontWeight: '500'}}>12</Text>
+            </View>
+            <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 1, borderColor: 'lightgray', padding: 10}}>     
+              <Text style={{fontSize: 16, fontWeight: '500'}}>Pending</Text>
+              <Text style={{fontSize: 16, fontWeight: '500'}}>111</Text>
+            </View>
+          </View>
+          <ScrollView  showsVerticalScrollIndicator={true}>
+          <View style={{alignItems: 'center', marginTop:20, marginBottom:35}}>
+            <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
+              <Text style={{fontSize: 16, fontWeight: 'bold'}}>Bag ID</Text>
+              <Text style={{fontSize: 16, fontWeight: 'bold'}}>Shipments</Text>
+            </View>
+            <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
+              <Text style={{fontSize: 16, fontWeight: '500'}}>1234567</Text>
+              <Text style={{fontSize: 16, fontWeight: '500'}}>12</Text>
+            </View>
+            <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
+              <Text style={{fontSize: 16, fontWeight: '500'}}>1234789</Text>
+              <Text style={{fontSize: 16, fontWeight: '500'}}>10</Text>
             </View>
             <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>     
-              <Text style={{fontSize: 18, fontWeight: '500'}}>Pending</Text>
-              <Text style={{fontSize: 18, fontWeight: '500'}}>111</Text>
+              <Text style={{fontSize: 16, fontWeight: '500'}}>126789</Text>
+              <Text style={{fontSize: 16, fontWeight: '500'}}>11</Text>
+            </View>
+            <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 1, borderColor: 'lightgray', padding: 10}}>     
+              <Text style={{fontSize: 16, fontWeight: '500'}}>189076</Text>
+              <Text style={{fontSize: 16, fontWeight: '500'}}>5</Text>
             </View>
           </View>
-          <View style={{alignItems: 'center', marginTop:20, marginBottom:50}}>
-            <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
-              <Text style={{fontSize: 18, fontWeight: 'bold'}}>Bag ID</Text>
-              <Text style={{fontSize: 18, fontWeight: 'bold'}}>Shipments</Text>
-            </View>
+          </ScrollView>
+          <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center'}}>
+            <Button w="48%" size="lg" style={{backgroundColor:'#004aad', color:'#fff'}}  title="Dispatch">Dispatch</Button>
+            <Button w="48%" size="lg" style={{backgroundColor:'#004aad', color:'#fff'}}  title="Scan">Scan</Button>
           </View>
           <Center>
-            <Button w="48%" size="lg" style={{backgroundColor:'#004aad', color:'#fff', marginBottom:0}}  title="Dispatch">Dispatch</Button>
-          </Center>
-          {/* <Center>
             <Image style={{ width:150, height:150 }} source={require('../../assets/image.png')} alt={"Logo Image"} />
-          </Center> */}
+          </Center>
         </ScrollView>
       </View>
     </NativeBaseProvider>
