@@ -85,13 +85,13 @@ export default function Main({navigation, route}) {
         });
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="notPicked"', [], (tx1, results) => {
-                // let temp = [];
-                // console.log('SP Not Picked : ' + results.rows.length);
+                let temp = [];
+                console.log('SP Not Picked : ' + results.rows.length);
                 setSpnp(results.rows.length);
-                // for (let i = 0; i < results.rows.length; ++i) {
-                //     temp.push(results.rows.item(i));
-                // }
-                // console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
+                for (let i = 0; i < results.rows.length; ++i) {
+                    temp.push(results.rows.item(i));
+                }
+                console.log('Data from Local Database125 : \n ', JSON.stringify(temp, null, 4));
                 // setData(temp);
             });
         });
