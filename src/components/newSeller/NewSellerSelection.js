@@ -41,6 +41,26 @@ const NewSellerSelection = ({route}) => {
   const DisplayData = async() => {
      closePickup11();
   };
+  const notPicked = () => {
+        db.transaction((tx) => {
+          tx.executeSql('UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE status IS Null', [DropDownValue], (tx1, results) => {
+              let temp = [];
+              console.log("Not Picked Reason",DropDownValue);
+              console.log('Results',results.rowsAffected);
+              console.log(results);
+              // if (results.rowsAffected > 0) {
+              //   console.log('notPicked done');
+              // } else {
+              //   console.log('failed to add notPicked item locally');
+              // }
+              console.log(results.rows.length);
+              for (let i = 0; i < results.rows.length; ++ i) {
+                  temp.push(results.rows.item(i));
+              }
+              console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+          });
+      });
+  }
   const  closePickup11 = () => {
     db.transaction(tx => {
         tx.executeSql('SELECT * FROM ClosePickupReasons', [], (tx1, results) => {
@@ -49,7 +69,7 @@ const NewSellerSelection = ({route}) => {
             for (let i = 0; i < results.rows.length; ++i) {
                 temp.push(results.rows.item(i));
             }
-            console.log('Data from Local Database CPR: \n ', temp);
+            // console.log('Data from Local Database CPR: \n ', temp);
             setCloseData(temp);
         });
     });
@@ -67,7 +87,7 @@ const NewSellerSelection = ({route}) => {
                 temp.push(results.rows.item(i));
             }
             setNotAttemptData(temp);
-            console.log('Data from Local Database  NAR: \n ', JSON.stringify(temp,null,4));
+            // console.log('Data from Local Database  NAR: \n ', JSON.stringify(temp,null,4));
         });
     });
 };
@@ -235,7 +255,7 @@ return (
              marginTop={1.5} style={{backgroundColor: d.pickupFailureReasonName === DropDownValue ? "#6666FF":"#C8C8C8"}}  title={d.pickupFailureReasonName} onPress={() => handleButtonPress(d.pickupFailureReasonName)} >
             <Text style={{color:DropDownValue==d.pickupFailureReasonName?'white':'black'}}>{d.pickupFailureReasonName}</Text></Button>
             ))}
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => setModalVisible(false)} >
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => {notPicked(); setModalVisible(false);}} >
             Submit</Button>
           </Modal.Body>
         </Modal.Content>
@@ -250,7 +270,7 @@ return (
           <Button key={d._id} flex="1" mt={2}  marginBottom={1.5} marginTop={1.5} style={{backgroundColor: d.reasonName === DropDownValue ? "#6666FF":"#C8C8C8"}} title={d.reasonName} onPress={() => handleButtonPress2(d.reasonName)} >
           <Text style={{color:d.reasonName==DropDownValue?'white':'black'}}>{d.reasonName}</Text></Button>
         ))}
-        <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5}  onPress={() => setModalVisible2(false)} >
+        <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5}  onPress={() => {notPicked(); setModalVisible2(false);}} >
          Submit</Button>
          <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5}  onPress={() => {setModalVisible(true), setModalVisible2(false)}} >
          Back</Button>

@@ -67,10 +67,10 @@ const ShipmentBarcode = ({route}) => {
 
         db.transaction((tx) => {
             tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" WHERE clientShipmentReferenceNumber=?', [barcode], (tx1, results) => {
-                // let temp = [];
-                // console.log("ddsds4545",tx1);
+                let temp = [];
                 console.log('Results',results.rowsAffected);
                 console.log(results);
+
                 if (results.rowsAffected > 0) {
                   console.log(barcode + 'accepted');
                   ToastAndroid.show(barcode +" Accepted",ToastAndroid.SHORT);
@@ -79,13 +79,11 @@ const ShipmentBarcode = ({route}) => {
                   console.log(barcode + 'not accepted');
                 }
                 console.log(results.rows.length);
-                // for (let i = 0; i < results.rows.length; ++ i) {
-                //     temp.push(results.rows.item(i));
-                //     console.log(results.rows.item(i).awbNo);
-              //     // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
-                // }
-                // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
-                viewDetails2();
+                for (let i = 0; i < results.rows.length; ++ i) {
+                    temp.push(results.rows.item(i));
+                }
+                console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+                // viewDetails2();
             });
         });
       };
@@ -94,9 +92,10 @@ const ShipmentBarcode = ({route}) => {
         console.log('scan 45456');
 
         db.transaction((tx) => {
-            tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" WHERE clientShipmentReferenceNumber=?', [barcode], (tx1, results) => {
-                // let temp = [];
+            tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectedReason=? WHERE clientShipmentReferenceNumber=?', [DropDownValue,barcode], (tx1, results) => {
+                let temp = [];
                 // console.log("ddsds4545",tx1);
+                console.log("Rejected Reason : ",DropDownValue);
                 console.log('Results',results.rowsAffected);
                 console.log(results);
                 if (results.rowsAffected > 0) {
@@ -106,13 +105,11 @@ const ShipmentBarcode = ({route}) => {
                   console.log(barcode + 'failed to reject item locally');
                 }
                 console.log(results.rows.length);
-                // for (let i = 0; i < results.rows.length; ++ i) {
-                //     temp.push(results.rows.item(i));
-                //     console.log(results.rows.item(i).awbNo);
-              //     // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
-                // }
-                // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
-                viewDetailsR2();
+                for (let i = 0; i < results.rows.length; ++ i) {
+                    temp.push(results.rows.item(i));
+                }
+                console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+                // viewDetailsR2();
             });
         });
       };
