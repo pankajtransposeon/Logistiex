@@ -37,7 +37,7 @@ const ShipmentBarcode = ({route}) => {
     const [len, setLen] = useState(0);
     const [DropDownValue, setDropDownValue] = useState(null);
     const [rejectedData, setRejectedData] = useState([]);
-    const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
+    // const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
     const [latitude, setLatitude] = useState(0);
     const [longitude , setLongitude] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
@@ -209,12 +209,26 @@ const ShipmentBarcode = ({route}) => {
     }, [len]);
 
     const displaydata = async() => {
-      await fetch(RejectReason)
-      .then((response) => response.json())
-      .then((json) => {
-        setRejectedData(json);
-      })
-      .catch((error) => alert(error));
+      db.transaction(tx => {
+        tx.executeSql('SELECT * FROM ShipmentRejectReasons', [], (tx1, results) => {
+            let temp = [];
+            // console.log(results.rows.length);
+            for (let i = 0; i < results.rows.length; ++i) {
+                temp.push(results.rows.item(i));
+            }
+            // ToastAndroid.show('Sync Successful3', ToastAndroid.SHORT);
+            setRejectedData(temp);
+
+            console.log('Data from Local Database reject reasons: \n ', JSON.stringify(temp, null, 4),);
+            // console.log('Table3 DB OK:', temp.length);
+        },);
+    });
+      // await fetch(RejectReason)
+      // .then((response) => response.json())
+      // .then((json) => {
+      //   setRejectedData(json);
+      // })
+      // .catch((error) => alert(error));
     };
     const navigation = useNavigation();
     const [count, setcount] = useState(0);
@@ -375,7 +389,7 @@ const ShipmentBarcode = ({route}) => {
           <Modal.Header>Reject Reason Code</Modal.Header>
           <Modal.Body>
           {rejectedData.map((d) => (
-            <Button key={d.shipmentExceptionReasonUserID} flex="1" mt={2}  marginBottom={1.5} marginTop={1.5} title={d.shipmentExceptionReasonName} style={{backgroundColor: d.shipmentExceptionReasonName === DropDownValue ? '#6666FF' : '#C8C8C8'}} onPress={() => handleButtonPress(d.shipmentExceptionReasonName)} >
+            <Button key={d.shipmentExceptionReasonID} flex="1" mt={2}  marginBottom={1.5} marginTop={1.5} title={d.shipmentExceptionReasonName} style={{backgroundColor: d.shipmentExceptionReasonName === DropDownValue ? '#6666FF' : '#C8C8C8'}} onPress={() => handleButtonPress(d.shipmentExceptionReasonName)} >
             <Text style={{color:DropDownValue == d.shipmentExceptionReasonName ? 'white' : 'black'}}>{d.shipmentExceptionReasonName}</Text></Button>
             ))}
             <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => {rejectDetails2(); setModalVisible(false);}} >

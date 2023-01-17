@@ -45,9 +45,9 @@ const NewSellerSelection = ({route}) => {
         db.transaction((tx) => {
           tx.executeSql('UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE status IS Null', [DropDownValue], (tx1, results) => {
               let temp = [];
-              console.log("Not Picked Reason",DropDownValue);
-              console.log('Results',results.rowsAffected);
-              console.log(results);
+              // console.log("Not Picked Reason",DropDownValue);
+              // console.log('Results',results.rowsAffected);
+              // console.log(results);
               // if (results.rowsAffected > 0) {
               //   console.log('notPicked done');
               // } else {
@@ -57,7 +57,7 @@ const NewSellerSelection = ({route}) => {
               for (let i = 0; i < results.rows.length; ++ i) {
                   temp.push(results.rows.item(i));
               }
-              console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+              // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
           });
       });
   }
@@ -100,11 +100,20 @@ const NewSellerSelection = ({route}) => {
     DisplayData2();   
   }, []);
 
-  useEffect(() => {
-    (async () => {
-        loadSellerPickupDetails();
-    })();
-}, []);
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      // do something
+      loadSellerPickupDetails();
+
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+//   useEffect(() => {
+//     (async () => {
+//         loadSellerPickupDetails();
+//     })();
+// }, []);
 
 const sync11 = () => {
   loadSellerPickupDetails();
@@ -343,7 +352,7 @@ return (
     <Image style={{nwidth:150, height:150}} source={require('../../assets/image.png')} alt={"Logo Image"} />
   </Center>
 </View>
-<Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} />
+{/* <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} /> */}
 {/* {isLoading ? (
         <View
           style={[
