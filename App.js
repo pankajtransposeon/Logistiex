@@ -56,7 +56,7 @@ const Drawer = createDrawerNavigator();
 function StackNavigators({navigation}) {
     const [isLoading, setIsLoading] = useState(false);
     const [userId, setUserId] = useState('');
-    let m=0;
+    let m = 0;
     const getData = async () => {
         try {
             const value = await AsyncStorage.getItem('@storage_Key');
@@ -95,15 +95,26 @@ function StackNavigators({navigation}) {
     const sync11 = () => {
         NetInfo.fetch().then(state => {
             if (state.isConnected && state.isInternetReachable) {
+              Alert.alert('Are You Sure? ', 'Your local changes might loss!', [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {text: 'Yes, Sync it!', onPress: () => {console.log('OK Pressed');
+              
                 loadAPI_Data1();
                 loadAPI_Data2();
                 loadAPI_Data3();
                 loadAPI_Data4();
                 loadAPI_Data5();
                 loadAPI_Data6();
+              },
+            },
+              ]);
             } else {
                 ToastAndroid.show('You are Offline!', ToastAndroid.SHORT);
-                viewDetails1();
+                // viewDetails1();
             }
         });
     };
@@ -534,8 +545,8 @@ function StackNavigators({navigation}) {
                 m++;
                  
                 if (m === 6){
-                ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
-                console.log("API to local db sync success: " + m);
+                ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
+                console.log('API to local db sync success: ' + m);
                 m = 0;
                 }
                 // console.log('Data from Local Database 6 : \n ', temp);

@@ -37,7 +37,8 @@ const ShipmentBarcode = ({route}) => {
     const [len, setLen] = useState(0);
     const [DropDownValue, setDropDownValue] = useState(null);
     const [rejectedData, setRejectedData] = useState([]);
-    const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
+    const [acceptedArray,setAcceptedArray]=useState(['']);
+        // const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
     const [latitude, setLatitude] = useState(0);
     const [longitude , setLongitude] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
@@ -46,25 +47,91 @@ const ShipmentBarcode = ({route}) => {
     const [showCloseBagModal, setShowCloseBagModal] = useState(false);
     const [bagSeal, setBagSeal] = useState('');
 
-    useEffect(() => {
-      setBagId();
-    }, [bagId]);
+    // useEffect(() => {
+    //   setBagId();
+    // }, [bagId]);
 
     // useEffect(() => {
     //       updateDetails2();
     //       console.log("fdfdd "+barcode);
     // });
 
+    
     function CloseBag(){
-      console.log(bagId);
       console.log(bagSeal);
-      setBagId('');
-      setBagIdNo(bagIdNo + 1);
+      console.log(acceptedArray);
+      let date = new Date().getDate();
+      let month = new Date().getMonth() + 1;
+      let year = new Date().getFullYear();
+      let date11 = date + '' + month + '' + year;
+      // console.log(route.params.userId + date11 + bagIdNo);
+      setBagId(route.params.userId + date11 + bagIdNo);
+      console.log(bagId);
+      function112();
     }
+    const function112 = async() => {
+      db.transaction(txn => {
+        txn.executeSql('INSERT OR REPLACE INTO closeBag1( bagId,bagSeal,AcceptedList) VALUES (?,?,?)', [
+            bagId,
+            bagSeal,
+            acceptedArray.toString(),
+        ], (sqlTxn, _res) => {
+       setBagIdNo(bagIdNo + 1);
+       setAcceptedArray(['']);
+       setBagSeal('');
+            console.log(`\n Data Added to local db successfully closebag`);
 
+            console.log(_res);
+            viewDetailBag();
+        }, error => {
+            console.log('error on adding data ' + error.message);
+        },);
+    });
+    }
+    const viewDetailBag = () => {
+      db.transaction(tx => {
+          tx.executeSql('SELECT * FROM closeBag1', [], (tx1, results) => {
+              let temp = [];
+              console.log(results.rows.length);
+              for (let i = 0; i < results.rows.length; ++i) {
+                  temp.push(results.rows.item(i));
+                  // console.log(results.rows.item(i).consignorName);
+                  // var address121 = results.rows.item(i).AcceptedList;
+                  // var address_json = JSON.parse(address121);
+                  // console.log(typeof (address_json));
+                  // console.log("Address from local db : " , address_json);
+                  // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+              }
+              // ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
+              console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+              // console.log('Table1 DB OK:', temp.length);
+          });
+      });
+  };
+
+     useEffect(() => {
+            createTableBag1();
+    },[]);
+
+    const createTableBag1 = () => {
+      db.transaction(txn => {
+          txn.executeSql('DROP TABLE IF EXISTS closeBag1', []);
+          txn.executeSql(`CREATE TABLE IF NOT EXISTS closeBag1( 
+            bagId VARCHAR(100) PRIMARY KEY ,
+        bagSeal VARCHAR(100),
+        AcceptedList VARCHAR(600)
+      )`, [], (sqlTxn, res) => {
+              console.log("table created successfully details213 ");
+              // loadAPI_Data();
+          }, error => {
+              console.log('error on creating table ' + error.message);
+          },);
+      });
+  };
       const updateDetails2 = () => {
-        console.log('scan 4545454');
-
+        console.log('scan '+barcode);
+        setAcceptedArray([...acceptedArray, barcode]);
+        console.log(acceptedArray);
         db.transaction((tx) => {
             tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" WHERE clientShipmentReferenceNumber=?', [barcode], (tx1, results) => {
                 let temp = [];
@@ -82,7 +149,7 @@ const ShipmentBarcode = ({route}) => {
                 for (let i = 0; i < results.rows.length; ++ i) {
                     temp.push(results.rows.item(i));
                 }
-                console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+                // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
                 // viewDetails2();
             });
         });
@@ -108,7 +175,7 @@ const ShipmentBarcode = ({route}) => {
                 for (let i = 0; i < results.rows.length; ++ i) {
                     temp.push(results.rows.item(i));
                 }
-                console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+                // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
                 // viewDetailsR2();
             });
         });
@@ -209,12 +276,26 @@ const ShipmentBarcode = ({route}) => {
     }, [len]);
 
     const displaydata = async() => {
-      await fetch(RejectReason)
-      .then((response) => response.json())
-      .then((json) => {
-        setRejectedData(json);
-      })
-      .catch((error) => alert(error));
+      db.transaction(tx => {
+        tx.executeSql('SELECT * FROM ShipmentRejectReasons', [], (tx1, results) => {
+            let temp = [];
+            // console.log(results.rows.length);
+            for (let i = 0; i < results.rows.length; ++i) {
+                temp.push(results.rows.item(i));
+            }
+            // ToastAndroid.show('Sync Successful3', ToastAndroid.SHORT);
+            setRejectedData(temp);
+
+            // console.log('Data from Local Database reject reasons: \n ', JSON.stringify(temp, null, 4),);
+            // console.log('Table3 DB OK:', temp.length);
+        },);
+    });
+      // await fetch(RejectReason)
+      // .then((response) => response.json())
+      // .then((json) => {
+      //   setRejectedData(json);
+      // })
+      // .catch((error) => alert(error));
     };
     const navigation = useNavigation();
     const [count, setcount] = useState(0);
@@ -303,7 +384,7 @@ const ShipmentBarcode = ({route}) => {
             timeout: 10000,
         })
         .then(latestLocation => {
-            console.log('latest location ' + JSON.stringify(latestLocation));
+            // console.log('latest location ' + JSON.stringify(latestLocation));
             return latestLocation;
         }).then(location => {
             const currentLoc = { latitude: location.latitude, longitude: location.longitude };
@@ -375,7 +456,7 @@ const ShipmentBarcode = ({route}) => {
           <Modal.Header>Reject Reason Code</Modal.Header>
           <Modal.Body>
           {rejectedData.map((d) => (
-            <Button key={d.shipmentExceptionReasonUserID} flex="1" mt={2}  marginBottom={1.5} marginTop={1.5} title={d.shipmentExceptionReasonName} style={{backgroundColor: d.shipmentExceptionReasonName === DropDownValue ? '#6666FF' : '#C8C8C8'}} onPress={() => handleButtonPress(d.shipmentExceptionReasonName)} >
+            <Button key={d.shipmentExceptionReasonID} flex="1" mt={2}  marginBottom={1.5} marginTop={1.5} title={d.shipmentExceptionReasonName} style={{backgroundColor: d.shipmentExceptionReasonName === DropDownValue ? '#6666FF' : '#C8C8C8'}} onPress={() => handleButtonPress(d.shipmentExceptionReasonName)} >
             <Text style={{color:DropDownValue == d.shipmentExceptionReasonName ? 'white' : 'black'}}>{d.shipmentExceptionReasonName}</Text></Button>
             ))}
             <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => {rejectDetails2(); setModalVisible(false);}} >
@@ -393,7 +474,7 @@ const ShipmentBarcode = ({route}) => {
           containerStyle={{width: '100%', alignSelf: 'center', backgroundColor: 'white'}}
           cameraStyle={{width: '90%', alignSelf: 'center'}}
           topContent={
-            <View><Text>okay</Text></View>
+            <View><Text>Scanner</Text></View>
           }
         />
 

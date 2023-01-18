@@ -10,6 +10,11 @@ import GetLocation from 'react-native-get-location';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import OTPTextInput from 'react-native-otp-textinput';
 
+import { openDatabase } from 'react-native-sqlite-storage';
+
+const db = openDatabase({
+  name: 'rn_sqlite',
+});
 const POD = ({route}) => {
 
   var otpInput = useRef(null)
@@ -23,14 +28,26 @@ const POD = ({route}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [DropDownValue, setDropDownValue] = useState(null);
   const [PartialCloseData, setPartialCloseData] = useState([]);
-  const PartialClose = 'https://bked.logistiex.com/ADupdatePrams/getPartialClosureReasons';
+  // const PartialClose = 'https://bked.logistiex.com/ADupdatePrams/getPartialClosureReasons';
   const DisplayData = async() => {
-    await fetch(PartialClose)
-    .then((response) => response.json()) 
-    .then((json) => {
-      setPartialCloseData(json);
-    })
-    .catch((error) => alert(error)) 
+    db.transaction(tx => {
+      tx.executeSql('SELECT * FROM PartialCloseReasons', [], (tx1, results) => {
+          let temp = [];
+          // console.log(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++i) {
+              temp.push(results.rows.item(i));
+          }
+          // console.log('Data from Local Database partialClosure : \n ', temp);
+      setPartialCloseData(temp);
+          // console.log('Table6 DB OK:', temp.length);
+      });
+  });
+    // await fetch(PartialClose)
+    // .then((response) => response.json()) 
+    // .then((json) => {
+    //   setPartialCloseData(json);
+    // })
+    // .catch((error) => alert(error)) 
   }
   useEffect(() => {
     DisplayData();   
@@ -166,8 +183,8 @@ const submitForm = () => {
           <Modal.CloseButton />
           <Modal.Header>Partial Close Reason Code</Modal.Header>
           <Modal.Body>
-            {(PartialCloseData && PartialCloseData.data) &&
-            PartialCloseData.data.map((d,index) => (
+            {(PartialCloseData ) &&
+            PartialCloseData.map((d,index) => (
             <Button key={d.reasonID} flex="1" mt={2} marginBottom={1.5} 
              marginTop={1.5} style={{backgroundColor: d.reasonName === DropDownValue ? "#6666FF":"#C8C8C8"}}  title={d.reasonName} onPress={() => handleButtonPress(d.reasonName)} >
             <Text style={{color:d.reasonName==DropDownValue?'white':'black'}}>{d.reasonName}</Text></Button>
