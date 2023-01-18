@@ -24,19 +24,65 @@ export default function StartEndDetails() {
   //   "__v": 0
   //   }]);
   const [printData,setPrintData]=useState([])
+  const [tripID, setTripID] = useState("");
+  const [userId, setUserId] = useState('');
   const navigation = useNavigation();
 
     const getData = 'https://bked.logistiex.com/UserTripInfo/getUserTripInfo';
-
+    const getUserId = async () => {
+      try {
+        const value = await AsyncStorage.getItem('@storage_Key');
+        if (value !== null) {
+            const data = JSON.parse(value);
+            setUserId(data.userId);
+            // console.log(data.userId);
+        } else {
+            setUserId(' ');
+        }
+    } catch (e) {
+        console.log(e);
+    }
+    };
     useEffect(() => {
-        (async () => {
-            await axios.get(getData).then((res) => {
-                setData(res.data);
-                getDataLocal();
-            }, (error) => {
-                Alert.alert(error);
-            });
-        })();
+      getUserId();
+  }, []);
+  const getTripID = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@TripID')
+      if(value !== null) {
+        const data = JSON.parse(value);
+        setTripID(data);
+      }
+    } catch(e) {
+      console.log(e);
+    }
+  }
+  useEffect(() => {
+    getTripID();
+}, []);
+let dateStart = 0; // start of the string
+let dateEnd = tripID.indexOf(" ", tripID.indexOf(" ", tripID.indexOf(" ") + 1) + 1); 
+let date = dateEnd ? tripID.substring(dateStart, dateEnd+5) : "No match found";
+    useEffect(() => {
+        // (async () => {
+        //     await axios.get(getData).then((res) => {
+        //         setData(res.data);
+        //         getDataLocal();
+        //     }, (error) => {
+        //         Alert.alert(error);
+        //     });
+        // })();
+        axios.get("https://bked.logistiex.com/UserTripInfo/getUserTripInfo", {
+        params: {
+        tripID: userId+"_"+date, 
+      }
+      }).then(response => {
+      console.log('data',response.data);
+      setData(response.data);
+      setPrintData(response.data.res_data);
+      }).catch(error => {
+      console.log(error);
+      });
     }, []);
     
 const getDataLocal = async () => {
@@ -44,10 +90,11 @@ const getDataLocal = async () => {
     const value = await AsyncStorage.getItem('@TripID')
     if(value !== null) {
       const datavalue = JSON.parse(value);
+      // console.log(datavalue);
       if(datavalue && data){
-        const arr = data.res_data.filter((res) => res.tripID === datavalue);
-        // console.log(data.res_data);
-        setPrintData(arr);
+        // const arr = data.res_data.filter((res) => res.tripID === datavalue);
+        // console.log('value',datavalue);
+        // setPrintData(data.res_data);
       }
       return;
     }
@@ -55,10 +102,15 @@ const getDataLocal = async () => {
     console.log(e);
   }
 }
+useEffect(() => {
+  getDataLocal();
+}, []);
+
   // console.log(printData, 'print')
-  
+  // console.log('startkilometer',printData.startKilometer)
+
     return (
-      printData.length ?
+      printData ?
       (
         <NativeBaseProvider>
         <ScrollView>
@@ -73,20 +125,20 @@ const getDataLocal = async () => {
 >
   
     <View style={{display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}} >
-    <Image style={{height:200, width:350}} source={{uri : printData[0].startVehicleImageUrl}} alt="image base" />
+    <Image style={{height:200, width:350}} source={{uri : printData.startVehicleImageUrl}} alt="image base" />
     <Text bold position="absolute" color="coolGray.50" top="0" m="4">
     Start vehicle
     </Text>
-    <Image marginTop={10} style={{height:200, width:350}} source={{uri : printData[0].startVehicleImageUrl}} alt="image base" />
+    <Image marginTop={10} style={{height:200, width:350}} source={{uri : printData.endVehicleImageUrl}} alt="image base" />
     <Text bold position="absolute" color="coolGray.50" top="40" m="20">
     End vehicle
     </Text>
     </View>
     <Stack space="2" p="4">
-    <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>Start Time - {printData[0].startTime}</Text>
-    <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>Vehicle Number - {printData[0].vehicleNumber}</Text>
-    <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>Start Kilometer - {printData[0].startKilometer}</Text>
-    <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>End Kilometer - {printData[0].endkilometer}</Text>
+    <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>Start Time - {printData.startTime}</Text>
+    <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>Vehicle Number - {printData.vehicleNumber}</Text>
+    <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>Start Kilometer - {printData.startKilometer}</Text>
+    <Text style={{backgroundColor:'#004aad', paddingVertical: '3%',textAlign:'center', display:'flex', justifyContent:'center', alignItems:'center', color:'white'}}>End Kilometer - {printData.endkilometer}</Text>
   </Stack>
   <HStack space="3" px="4" pb="4">
    
