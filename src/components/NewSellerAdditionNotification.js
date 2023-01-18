@@ -7,7 +7,7 @@ import { Image, StyleSheet, View } from 'react-native';
 import { convertAbsoluteToRem } from 'native-base/lib/typescript/theme/tools';
 
 
-export default function NewSellerAdditionNotification() {
+export default function NewSellerAdditionNotification(route) {
 
   const [vehicle, setVehicle] = useState('');
   const [password, setPassword] = useState('');
@@ -19,40 +19,43 @@ export default function NewSellerAdditionNotification() {
   const [loginClicked, setLoginClicked] = useState(false);
   const navigation = useNavigation();
   const [userId, setUserId] = useState('');
-  const getData = async () => {
-    try {
-        const value = await AsyncStorage.getItem('@storage_Key');
-        if (value !== null) {
-            const data = JSON.parse(value);
-            setUserId(data.userId);
-            // console.log(data.userId);
-        } else {
-            setUserId(' ');
-        }
-    } catch (e) {
-        console.log(e);
-    }
-};
-console.log(userId)
-useEffect(() => {
+  useEffect(() => {
     getData();
 }, []);
-const DisplayData= () => {
-   fetch(`https://bked.logistiex.com/SellerMainScreen/getadditionalwork/${userId}`)
-  .then(res => {
-    if(!res.ok) throw Error(res.statusText);
-    return res.json();
-  })
-  .then(data => {
-    setData(data)
-  })
-  .catch(error => {
-    console.error('Error Msg:', error)
-  })
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@storage_Key');
+      if (value) {
+        const { userId } = JSON.parse(value);
+        setUserId(userId);
+        if (userId) {
+          DisplayData();
+        } else {
+          console.log("User ID is not defined in the storage value");
+        }
+      } else {
+        console.log("No value found in storage for key '@storage_Key'");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+console.log(userId)
+
+  const DisplayData= () => {
+        axios.get(`https://bked.logistiex.com/SellerMainScreen/getadditionalwork/${userId}`)
+          .then(res => {
+            setData(res.data)
+          })
+          .catch(error => {
+            console.log('Error Msg:', error)
+          })
 };
 useEffect(() => {
     DisplayData();
-}, []);
+}, [userId]);
 // console.log('Data:',data);
   return (
     <NativeBaseProvider>

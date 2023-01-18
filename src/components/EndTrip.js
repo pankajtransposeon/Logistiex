@@ -13,7 +13,27 @@ export default function EndTrip() {
   const [vehicle, setVehicle] = useState([]);
   const [password, setPassword] = useState('');
   const [ImageUrl, setImageUrl] = useState('');
+  const [tripID, setTripID] = useState("");
+  const [userId, setUserId] = useState('');
+  const [vehicleN,setVehiceleN]=useState('')
   const navigation = useNavigation();
+  const getUserId = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@storage_Key');
+      if (value !== null) {
+          const data = JSON.parse(value);
+          setUserId(data.userId);
+          // console.log(data.userId);
+      } else {
+          setUserId(' ');
+      }
+  } catch (e) {
+      console.log(e);
+  }
+  };
+  useEffect(() => {
+    getUserId();
+}, []);
 
   const requestCameraPermission = async () => {
     try {
@@ -95,17 +115,31 @@ const getData = async () => {
     if(value !== null) {
       const data = JSON.parse(value);
       setVehicle(data);
+      setVehiceleN(data.vehicle);
       console.log(data, 'data')
     }
   } catch(e) {
     console.log(e);
   }
 }
-
+console.log(vehicle);
 useEffect(() => {
   getData();
 }, []);
-
+const getTripID = async () => {
+  try {
+    const value = await AsyncStorage.getItem('@TripID')
+    if(value !== null) {
+      const data = JSON.parse(value);
+      setTripID(data);
+    }
+  } catch(e) {
+    console.log(e);
+  }
+}
+useEffect(() => {
+  getTripID();
+}, []);
 const storeDataTripValue = async() => {
   try {
     await AsyncStorage.setItem('@StartEndTrip', JSON.stringify('End'));
@@ -115,11 +149,17 @@ const storeDataTripValue = async() => {
   }
 }
 
+let dateStart = 0; // start of the string
+let dateEnd = tripID.indexOf(" ", tripID.indexOf(" ", tripID.indexOf(" ") + 1) + 1); 
+let date = dateEnd ? tripID.substring(dateStart, dateEnd+5) : "No match found";
+console.log(date);
+console.log(userId+"_"+date)
 const ImageHandle = () => 
+
   {
     (async() => {
       await axios.post('https://bked.logistiex.com/UserTripInfo/updateUserTripEndDetails', {
-        tripID : "TI001", 
+        tripID : userId+"_"+date, 
         endTime : "6:00PM", 
         endkilometer : password, 
         endVehicleImageUrl : ImageUrl
