@@ -366,7 +366,10 @@ export default function Main({navigation, route}) {
               </View>
             </View>
           </Box>
-          <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup',{count : data, userId : route.params.userId})}>New Pickup</Button>
+          {it.title==='Seller Deliveries'?
+            <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover',{count : data, userId : route.params.userId})}>New Pickup</Button>
+            :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup',{count : data, userId : route.params.userId})}>New Pickup</Button>
+            }
         </Box>
         );
         })}
