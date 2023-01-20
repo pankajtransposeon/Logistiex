@@ -10,15 +10,10 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Marker from 'react-native-image-marker';
 import { ScrollView } from 'react-native-gesture-handler';
 
-
 export default function StartTrip() {
 
   const [vehicle, setVehicle] = useState('');
   const [startkm, setStartKm] = useState('');
-  const [show, setShow] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [message, setMessage] = useState(0);
-  const [loginClicked, setLoginClicked] = useState(false);
   const [ImageUrl, setImageUrl] = useState('');
   const [tripValue, setTripValue] = useState('Start Trip');
   const [tripID, setTripID] = useState("");
@@ -42,7 +37,6 @@ export default function StartTrip() {
   useEffect(() => {
     getUserId();
 }, []);
-console.log(userId);
   const requestCameraPermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -109,7 +103,6 @@ console.log(userId);
       console.log(e);
     }
   }
-console.log(tripID);
   const takePhoto= async()=>{
     let options = {
         mediaType:'photo',
@@ -149,15 +142,17 @@ console.log(tripID);
       });
     }
 }
+// useEffect(() => {
+//   storeData(new Date() + "UI001");
+// }, []);
 
-useEffect(() => {
-  storeData(new Date() + "UI001");
-}, []);
-let dateStart = 0; // start of the string
-let dateEnd = tripID.indexOf(" ", tripID.indexOf(" ", tripID.indexOf(" ") + 1) + 1); 
-let date = dateEnd ? tripID.substring(dateStart, dateEnd+5) : "No match found";
-console.log(date);
+let current=new Date();
+let tripid=current.toString();
+let time = tripid.match(/\d{2}:\d{2}:\d{2}/)[0];
 
+let dateStart = 0; 
+let dateEnd = tripid.indexOf(" ", tripid.indexOf(" ", tripid.indexOf(" ") + 1) + 1); 
+let date = dateEnd ? tripid.substring(dateStart, dateEnd+5) : "No match found";
 const ImageHandle = () => 
   {
     (async() => {
@@ -165,7 +160,7 @@ const ImageHandle = () =>
         tripID : userId+"_"+date, 
         userID : userId, 
         date : new Date(), 
-        startTime : "10:00AM", 
+        startTime : time,
         vehicleNumber : vehicle, 
         startKilometer : startkm, 
         startVehicleImageUrl : ImageUrl
@@ -202,7 +197,7 @@ const ImageHandle = () =>
                   )
                 }
                 {
-                  startkm && vehicle && ImageUrl && tripID ? (
+                  startkm && vehicle && ImageUrl && tripid ? (
                     <Button title="Login" backgroundColor= {'#004aad'} _text={{ color: 'white', fontSize: 20 }} onPress={()=>ImageHandle()}>Start Trip</Button>
                   ) : (
                     <Button opacity={0.5}  disabled={true} title="Login" backgroundColor= {'#004aad'} _text={{ color: 'white', fontSize: 20 }}>Start Trip</Button>
