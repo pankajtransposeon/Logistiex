@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { NativeBaseProvider, Image, Box, Fab, Icon, Button ,Alert, Modal, Input} from 'native-base';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState , useRef } from 'react';
 import axios from 'axios';
 import {Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet} from 'react-native';
 import { Center } from 'native-base';
@@ -17,19 +18,22 @@ import GetLocation from 'react-native-get-location';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import { backgroundColor, borderColor, height, marginTop, style } from 'styled-system';
 import { Console } from 'console';
+// import GetLocation from 'react-native-get-location';
+// import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
+import OTPTextInput from 'react-native-otp-textinput';
 
 const db = openDatabase({
   name: 'rn_sqlite',
 });
 
 const ShipmentBarcode = ({route}) => {
-    const [barcodeValue,setBarcodeValue] = useState('');
-    const [packageValue,setpackageValue] = useState('');
-    const [otp,setOtp] = useState('');
-    const [flag, setflag] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-    const [refresh, setRefresh] = useState(false);
-    const [pending, setPending] = useState(0);
+    // const [barcodeValue,setBarcodeValue] = useState('');
+    // const [packageValue,setpackageValue] = useState('');
+    // const [otp,setOtp] = useState('');
+    // const [flag, setflag] = useState(false);
+    // const [showModal, setShowModal] = useState(false);
+    // const [refresh, setRefresh] = useState(false);
+    // const [pending, setPending] = useState(0);
     const [expected, setExpected] = useState(0);
     const [newaccepted, setnewAccepted] = useState(0);
     const [newrejected, setnewRejected] = useState(0);
@@ -37,7 +41,7 @@ const ShipmentBarcode = ({route}) => {
     const [len, setLen] = useState(0);
     const [DropDownValue, setDropDownValue] = useState(null);
     const [rejectedData, setRejectedData] = useState([]);
-    const [acceptedArray,setAcceptedArray]=useState(['']);
+    const [acceptedArray,setAcceptedArray]=useState([]);
         // const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
     const [latitude, setLatitude] = useState(0);
     const [longitude , setLongitude] = useState(0);
@@ -47,6 +51,163 @@ const ShipmentBarcode = ({route}) => {
     const [showCloseBagModal, setShowCloseBagModal] = useState(false);
     const [bagSeal, setBagSeal] = useState('');
 
+
+    var otpInput = useRef(null)
+    // const navigation = useNavigation();
+    const [name, setName] = useState('');
+    const [inputOtp, setInputOtp] = useState('');
+    const [mobileNumber, setMobileNumber] = useState(route.params.phone);
+    const [latitude11, setLatitude11] = useState(0);
+    const [longitude11 , setLongitude11] = useState(0);
+    const [showModal11, setShowModal11] = useState(false);
+    const [modalVisible11, setModalVisible11] = useState(false);
+    const [DropDownValue11, setDropDownValue11] = useState(null);
+    const [PartialCloseData, setPartialCloseData] = useState([]);
+    // const PartialClose = 'https://bked.logistiex.com/ADupdatePrams/getPartialClosureReasons';
+    const DisplayData11 = async() => {
+      db.transaction(tx => {
+        tx.executeSql('SELECT * FROM PartialCloseReasons', [], (tx1, results) => {
+            let temp = [];
+            // console.log(results.rows.length);
+            for (let i = 0; i < results.rows.length; ++i) {
+                temp.push(results.rows.item(i));
+            }
+            // console.log('Data from Local Database partialClosure : \n ', temp);
+        setPartialCloseData(temp);
+            // console.log('Table6 DB OK:', temp.length);
+        });
+    });
+      // await fetch(PartialClose)
+      // .then((response) => response.json()) 
+      // .then((json) => {
+      //   setPartialCloseData(json);
+      // })
+      // .catch((error) => alert(error)) 
+    }
+    useEffect(() => {
+      DisplayData11();   
+    }, []);
+  
+    // useEffect(() => {
+    //   partialClose112();
+    // }, []);
+  
+    const partialClose112 = () => {
+      if (newaccepted + newrejected === 5){
+        sendSmsOtp();
+      } else {
+        setModalVisible11(true);
+      }
+          }
+  
+    // const clearText = () => {
+    //   otpInput.current.clear();
+    // }
+  
+    // const setText = () => {
+    //   otpInput.current.setValue("1234");
+    // }
+  
+  useEffect(() => {
+    const current_location = () => {
+  
+      return GetLocation.getCurrentPosition({
+          enableHighAccuracy: true,
+          timeout: 10000,
+      })
+      .then(latestLocation => {
+          console.log('latest location '+JSON.stringify(latestLocation))
+          return latestLocation;
+      }).then(location => {
+          const currentLoc = { latitude11: location.latitude11, longitude11: location.longitude11 };
+          setLatitude11(location.latitude11);
+          setLongitude11(location.longitude11);
+          return currentLoc;
+      }).catch(error => {
+          RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+              interval: 10000,
+              fastInterval: 5000,
+          })
+          .then(status=>{
+              if(status)
+                  console.log('Location enabled');
+          }).catch(err=>{
+          })
+          return false;
+      })
+  };
+  
+    current_location();
+  }, []);
+  
+  const submitForm11 = () => {
+    alert('Your Data has submitted');
+    axios.post('https://bked.logistiex.com/SellerMainScreen/postRD', {
+      excepted:route.params.Forward,
+      accepted: route.params.accepted,
+      rejected:route.params.rejected,
+      nothandedOver:0,
+      feUserID: route.params.userId,
+      receivingDate : new Date().toJSON().slice(0,10).replace(/-/g,'/'),
+      receivingTime: new Date().toLocaleString(),
+      latitude11 : latitude11,
+      longitude11 : longitude11,
+      ReceiverMobileNo : route.params.phone,
+      ReceiverName: name
+      
+  })
+      .then(function (response) {
+          console.log(response.data, "hello");
+          alert('Your Data has submitted');
+      })
+      .catch(function (error) {
+          console.log(error);
+      });
+  }
+  
+    const sendSmsOtp = async () => {
+      console.log(mobileNumber);
+      const response = await axios.post('https://bked.logistiex.com/SMS/msg', {
+        "mobileNumber": mobileNumber,
+      });
+      if(response.status === 200) {
+        setShowModal11(true);
+      } 
+      else {
+        console.log("Otp not send", response);
+      }
+    }
+  
+    function handleButtonPress11(item) {
+      // if(item=='Partial Dispatch'){
+      //   navigation.navigate('Dispatch');
+      // }
+        setDropDownValue11(item);
+      // setModalVisible11(false);
+    }
+  
+    function validateOTP(){
+      axios.post("https://bked.logistiex.com/SMS/OTPValidate", {
+        mobileNumber: mobileNumber,
+        otp: inputOtp
+      })
+      .then(response => {
+        if(response.data.return){
+          submitForm11();
+          setInputOtp("");
+          setShowModal11(false);
+        }
+        else{
+          alert("Invalid OTP, please try again !!");
+        }
+      })
+      .catch(error => {
+        alert("Invalid OTP, please try again !!");
+        console.log(error);
+      })
+    }
+
+    
     // useEffect(() => {
     //   setBagId();
     // }, [bagId]);
@@ -55,7 +216,6 @@ const ShipmentBarcode = ({route}) => {
     //       updateDetails2();
     //       console.log("fdfdd "+barcode);
     // });
-
     
     function CloseBag(){
       console.log(bagSeal);
@@ -65,19 +225,17 @@ const ShipmentBarcode = ({route}) => {
       let year = new Date().getFullYear();
       let date11 = date + '' + month + '' + year;
       // console.log(route.params.userId + date11 + bagIdNo);
+      let bagId11 = route.params.userId + date11 + bagIdNo;
       setBagId(route.params.userId + date11 + bagIdNo);
       console.log(bagId);
-      function112();
-    }
-    const function112 = async() => {
       db.transaction(txn => {
         txn.executeSql('INSERT OR REPLACE INTO closeBag1( bagId,bagSeal,AcceptedList) VALUES (?,?,?)', [
-            bagId,
+            bagId11,
             bagSeal,
             acceptedArray.toString(),
         ], (sqlTxn, _res) => {
        setBagIdNo(bagIdNo + 1);
-       setAcceptedArray(['']);
+       setAcceptedArray([]);
        setBagSeal('');
             console.log(`\n Data Added to local db successfully closebag`);
 
@@ -129,8 +287,8 @@ const ShipmentBarcode = ({route}) => {
       });
   };
       const updateDetails2 = () => {
-        console.log('scan '+barcode);
-        setAcceptedArray([...acceptedArray, barcode]);
+        console.log('scan '+barcode.toString());
+        setAcceptedArray([...acceptedArray, barcode.toString()]);
         console.log(acceptedArray);
         db.transaction((tx) => {
             tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" WHERE clientShipmentReferenceNumber=?', [barcode], (tx1, results) => {
@@ -157,7 +315,7 @@ const ShipmentBarcode = ({route}) => {
 
       const rejectDetails2 = () => {
         console.log('scan 45456');
-
+        setnewRejected(newrejected+1);
         db.transaction((tx) => {
             tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectedReason=? WHERE clientShipmentReferenceNumber=?', [DropDownValue,barcode], (tx1, results) => {
                 let temp = [];
@@ -210,7 +368,26 @@ const ShipmentBarcode = ({route}) => {
             });
         });
       };
-
+      const partialClose = () => {
+        db.transaction((tx) => {
+          tx.executeSql('UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE status IS Null', [DropDownValue11], (tx1, results) => {
+              let temp = [];
+              // console.log("Not Picked Reason",DropDownValue);
+              // console.log('Results',results.rowsAffected);
+              // console.log(results);
+              // if (results.rowsAffected > 0) {
+              //   console.log('notPicked done');
+              // } else {
+              //   console.log('failed to add notPicked item locally');
+              // }
+              console.log(results.rows.length);
+              for (let i = 0; i < results.rows.length; ++i) {
+                  temp.push(results.rows.item(i));
+              }
+              // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+          });
+      });
+  }
 
     const getCategories = (data) => {
       db.transaction(txn => {
@@ -438,7 +615,54 @@ const ShipmentBarcode = ({route}) => {
 
   return (
     <NativeBaseProvider>
-
+ <Modal w="100%" isOpen={showModal11} onClose={() => setShowModal11(false)}>
+        <Modal.Content w="100%" bg={'#eee'}>
+          <Modal.CloseButton />
+          <Modal.Body w="100%">
+            <Modal.Header>Enter the OTP</Modal.Header>
+            <OTPTextInput
+              ref={e => (otpInput = e)}
+              inputCount={6}
+              handleTextChange={(e)=>setInputOtp(e)}
+            />
+            <Box flexDir="row" justifyContent="space-between" mt={3}>
+              <Button w="40%" bg="gray.500" onPress={()=>sendSmsOtp()}>Resend</Button>
+              <Button w="40%" bg="#004aad" onPress={()=>validateOTP()}>Submit</Button>
+            </Box>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal>
+      <Modal isOpen={modalVisible11} onClose={() => setModalVisible11(false)} size="lg">
+        <Modal.Content maxWidth="350">
+          <Modal.CloseButton />
+          <Modal.Header>Partial Close Reason Code</Modal.Header>
+          <Modal.Body>
+            {(PartialCloseData ) &&
+            PartialCloseData.map((d,index) => (
+            <Button key={d.reasonID} flex="1" mt={2} marginBottom={1.5} 
+             marginTop={1.5} style={{backgroundColor: d.reasonName === DropDownValue11 ? "#6666FF":"#C8C8C8"}}  title={d.reasonName} onPress={() => handleButtonPress11(d.reasonName)} >
+            <Text style={{color:d.reasonName==DropDownValue11?'white':'black'}}>{d.reasonName}</Text></Button>
+            ))
+          }
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => {partialClose(); setModalVisible11(false)}} >
+            Submit</Button>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal>
+      <View style={{backgroundColor: 'white', flex: 1, paddingTop: 30}}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+        
+          <Center>
+            <Input mx="3" mt={4} placeholder="Receiver Name" w="90%" bg="gray.200" size="lg" value={name} onChangeText={(e)=>setName(e)} />
+            <Input mx="3" my={4} placeholder="Mobile Number" w="90%" bg="gray.200" size="lg" value={mobileNumber} onChangeText={(e)=>setMobileNumber(e)} />
+            <Button w="90%" size="lg" style={{backgroundColor:'#004aad', color:'#fff'}}  title="Submit"  onPress={() => sendSmsOtp()} >Submit</Button>
+            <Button w="90%" mt={2} size="lg" style={{backgroundColor:'#004aad', color:'#fff'}}  title="Submit"  onPress={() => setModalVisible11(true)} >Partial Close</Button>
+          </Center>
+          <Center>
+            <Image style={{ width:150, height:150 }} source={require('../../assets/image.png')} alt={"Logo Image"} />
+          </Center>
+        </ScrollView>
+      </View>
       <Modal isOpen={showCloseBagModal} onClose={() => setShowCloseBagModal(false)} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
@@ -460,7 +684,7 @@ const ShipmentBarcode = ({route}) => {
             <Text style={{color:DropDownValue == d.shipmentExceptionReasonName ? 'white' : 'black'}}>{d.shipmentExceptionReasonName}</Text></Button>
             ))}
             <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => {rejectDetails2(); setModalVisible(false);}} >
-            Submit</Button>
+            Submit1</Button>
           </Modal.Body>
         </Modal.Content>
       </Modal>
@@ -540,14 +764,18 @@ const ShipmentBarcode = ({route}) => {
             </View>
           </View>
           <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
-            <Button onPress={()=>navigation.navigate('POD',{
-              Forward : route.params.Forward,
-              accepted : newaccepted,
-              rejected : newrejected,
-              phone : route.params.phone,
-              userId : route.params.userId,
-            })} w="48%" size="lg" bg="#004aad">End Scan</Button>
-            <Button w="48%" size="lg" bg="#004aad" onPress={() => setShowCloseBagModal(true)} >Close bag</Button>
+            <Button onPress={()=>{partialClose112();
+            // navigation.navigate('POD',{
+            //   Forward : route.params.Forward,
+            //   accepted : newaccepted,
+            //   rejected : newrejected,
+            //   phone : route.params.phone,
+            //   userId : route.params.userId,
+            // })
+            }} w="48%" size="lg" bg="#004aad">End Scan</Button>
+            <Button w="48%" size="lg" bg="#004aad" onPress={() => {
+              setShowCloseBagModal(true);
+              }} >Close bag</Button>
           </View>
           <Center>
             <Image
@@ -683,5 +911,42 @@ export const styles = StyleSheet.create({
     alignContent:'center',
 
   },
+
+// text:{
+//   paddingLeft:20,
+//   color:'#000',
+//   fontWeight:'normal',
+//   fontSize:18
+// },
+// container:{
+//     flex:1,
+//     fontFamily:'open sans',
+//     fontWeight:'normal',
+//     color:'#eee',
+//     paddingTop:10,
+//     paddingBottom:10,
+//     flexDirection:'row',
+//     justifyContent:'space-between',
+//     width: 'auto',
+//     borderWidth:1,
+//     borderColor:'#eee'
+
+// },
+
+containerText:{
+
+    paddingLeft:30,
+    color:'#000',
+    fontSize:15
+
+
+},
+otp:{
+    backgroundColor:'#004aad', 
+    color:'#000',
+    marginTop:5,
+    borderRadius:10
+   
+}
 
   });
