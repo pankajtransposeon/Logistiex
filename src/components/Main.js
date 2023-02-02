@@ -293,21 +293,22 @@ export default function Main({navigation, route}) {
             completedOrder: 204,
             rejectedOrder: 83,
             notPicked: 70,
-        }, {
-            title: 'Customer Pickups',
-            totalUsers: 21,
-            pendingOrder: 23,
-            completedOrder: 123,
-            rejectedOrder: 112,
-            notPicked: 70,
-        }, {
-            title: 'Customer Deliveries',
-            totalUsers: 9,
-            pendingOrder: 200,
-            completedOrder: 303,
-            rejectedOrder: 32,
-            notPicked: 70,
         },
+        //  {
+        //     title: 'Customer Pickups',
+        //     totalUsers: 21,
+        //     pendingOrder: 23,
+        //     completedOrder: 123,
+        //     rejectedOrder: 112,
+        //     notPicked: 70,
+        // }, {
+        //     title: 'Customer Deliveries',
+        //     totalUsers: 9,
+        //     pendingOrder: 200,
+        //     completedOrder: 303,
+        //     rejectedOrder: 32,
+        //     notPicked: 70,
+        // },
     ];
 
 
