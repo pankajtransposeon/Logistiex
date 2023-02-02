@@ -47,7 +47,7 @@ export default function Login() {
 
   const handleLogin = async() => {
     setLoginClicked(true);
-    await axios.post("https://bked.logistiex.com/Login/login", { email: email, password: password })
+    await axios.post("https://bkedtest.logistiex.com/Login/login", { email: email, password: password })
     .then(async(response) => {
       setLoginClicked(false);
       setMessage(1);
