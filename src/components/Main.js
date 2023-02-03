@@ -26,7 +26,9 @@ import { StyleSheet } from 'react-native';
 
 export default function Main({navigation, route}) {
 
-    const shipmentData = `https://bked.logistiex.com/SellerMainScreen/sellerList/${
+    console.log(route.params.userId, 'asdcsdc')
+
+    const shipmentData = `https://bkedtest.logistiex.com/SellerMainScreen/sellerList/${
         route.params.userId
     }`;
     // const userId = route.params.userId;
@@ -150,7 +152,8 @@ export default function Main({navigation, route}) {
     const createTables = () => {
         db.transaction(txn => {
             txn.executeSql('DROP TABLE IF EXISTS categories', []);
-            txn.executeSql('CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, clientShipmentReferenceNumber VARCHAR(50), packagingId VARCHAR(50), packagingStatus VARCHAR(50), consignorCode VARCHAR(50), consignorContact VARCHAR(50), PRSNumber VARCHAR(50), ForwardPickups VARCHAR(50), ScanStatus INT(10), UploadStatus INT(10))', [], (sqlTxn, res) => { // console.log("table created successfully");
+            txn.executeSql('CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, clientShipmentReferenceNumber VARCHAR(50), packagingId VARCHAR(50), packagingStatus VARCHAR(50), consignorCode VARCHAR(50), consignorContact VARCHAR(50), PRSNumber VARCHAR(50), ForwardPickups VARCHAR(50), ScanStatus INT(10), UploadStatus INT(10))', [], (sqlTxn, res) => { 
+              console.log("table created successfully");
             }, error => {
                 console.log('error on creating table ' + error.message);
             },);
@@ -176,7 +179,7 @@ export default function Main({navigation, route}) {
                 ScanStatus,
                 UploadStatus,
             ], (sqlTxn, res) => {
-                // console.log('category added successfully');
+                console.log('category added successfully');
             }, error => {
                 console.log('error on adding category ' + error.message);
             },);
@@ -238,19 +241,19 @@ export default function Main({navigation, route}) {
     useEffect(() => {
         createTables();
         (async () => {
-            await axios.get(`https://bked.logistiex.com/SellerMainScreen/getMSD/${
+            await axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/getMSD/${
                 route.params.userId
             }`).then((res) => {
                 setData(res.data.consignorPickupsList);
             }, (error) => {
-                alert(error, 'dfsdf');
+                alert(error, 'getMSDerror');
             });
         })();
 
         (async () => {
             await axios.get(shipmentData).then((res) => {
                 res.data.map(m => {
-                    axios.get(`https://bked.logistiex.com/SellerMainScreen/getSellerDetails/${
+                    axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/getSellerDetails/${
                         m.consignorCode
                     }`).then((d) => {
                         d.data.totalPickups.map((val) => {
@@ -258,9 +261,8 @@ export default function Main({navigation, route}) {
                         });
                     });
                 });
-
             }, (error) => {
-                alert(error, 'dsfdsfg');
+                alert(error, 'hello');
             });
         })();
     }, []);
