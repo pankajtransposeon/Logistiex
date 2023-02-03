@@ -34,9 +34,6 @@ const NewSellerSelection = ({route}) => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
-  const [buttonColor, setButtonColor] = useState('#004aad');
-  const [selected, setSelected]=useState(null)
-  const [initialValue, setInitialValue] = useState('blue');
 
   const DisplayData = async() => {
      closePickup11();

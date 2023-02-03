@@ -15,7 +15,6 @@ export default function EndTrip({navigation,route}) {
   const [ImageUrl, setImageUrl] = useState('');
   const [tripID, setTripID] = useState("");
   const [userId, setUserId] = useState('');
-
   const getUserId = async () => {
     try {
       const value = await AsyncStorage.getItem('@storage_Key');
@@ -153,8 +152,6 @@ let time = tripid.match(/\d{2}:\d{2}:\d{2}/)[0];
 let dateStart = 0; 
 let dateEnd = tripid.indexOf(" ", tripid.indexOf(" ", tripid.indexOf(" ") + 1) + 1); 
 let date = dateEnd ? tripid.substring(dateStart, dateEnd+5) : "No match found";
-
-
 const ImageHandle = () => 
 
   {

@@ -17,6 +17,7 @@ import GetLocation from 'react-native-get-location';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import { backgroundColor, borderColor, height, marginTop, style } from 'styled-system';
 import { Console } from 'console';
+import { truncate } from 'fs/promises';
 
 const db = openDatabase({
   name: 'rn_sqlite',
@@ -361,10 +362,24 @@ const HandoverShipment = ({route}) => {
       <Modal isOpen={showCloseBagModal} onClose={() => setShowCloseBagModal(false)} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
-          <Modal.Header>Close Bag</Modal.Header>
+          <Modal.Header></Modal.Header>
           <Modal.Body>
             <Input placeholder="Enter Bag Seal" size="md" onChangeText={(text)=>setBagSeal(text)} />
             <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(), setShowCloseBagModal(false); }}>Submit</Button>
+            <View style={{alignItems: 'center', marginTop: 15}}>
+              <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
+                <Text style={{fontSize: 16, fontWeight: '500'}}>Seller Code</Text>
+                <Text style={{fontSize: 16, fontWeight: '500'}}>ABC1</Text>
+              </View>
+              <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
+                <Text style={{fontSize: 16, fontWeight: '500'}}>Seller Name</Text>
+                <Text style={{fontSize: 16, fontWeight: '500'}}>XYZ</Text>
+              </View>
+              <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 1, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
+                <Text style={{fontSize: 16, fontWeight: '500'}}>Number of Shipments</Text>
+                <Text style={{fontSize: 16, fontWeight: '500'}}>23</Text>
+              </View>
+            </View>
           </Modal.Body>
         </Modal.Content>
       </Modal>
@@ -372,14 +387,13 @@ const HandoverShipment = ({route}) => {
       <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
-          <Modal.Header>Reject Reason Code</Modal.Header>
+          <Modal.Header></Modal.Header>
           <Modal.Body>
-          {rejectedData.map((d) => (
-            <Button key={d.shipmentExceptionReasonUserID} flex="1" mt={2}  marginBottom={1.5} marginTop={1.5} title={d.shipmentExceptionReasonName} style={{backgroundColor: d.shipmentExceptionReasonName === DropDownValue ? '#6666FF' : '#C8C8C8'}} onPress={() => handleButtonPress(d.shipmentExceptionReasonName)} >
-            <Text style={{color:DropDownValue == d.shipmentExceptionReasonName ? 'white' : 'black'}}>{d.shipmentExceptionReasonName}</Text></Button>
-            ))}
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => {rejectDetails2(); setModalVisible(false);}} >
-            Submit</Button>
+          <Text style={{fontWeight:'bold'}}>The Seller has 123 shipments. Would you like to open the Bag?</Text>
+          <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
+            <Button w="48%" size="lg" bg="#004aad" >Yes</Button>
+            <Button w="48%" size="lg" bg="#004aad">No</Button>
+          </View>
           </Modal.Body>
         </Modal.Content>
       </Modal>
@@ -423,8 +437,8 @@ const HandoverShipment = ({route}) => {
             </View>
           </View>
           <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
-            <Button w="48%" size="lg" bg="#004aad">Close Bag</Button>
-            <Button w="48%" size="lg" bg="#004aad">Close Handover</Button>
+            <Button w="48%" size="lg" bg="#004aad" onPress={()=>setShowCloseBagModal(true)}>Close Bag</Button>
+            <Button w="48%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('OpenBags')}>Close Handover</Button>
           </View>
           <Center>
             <Image
