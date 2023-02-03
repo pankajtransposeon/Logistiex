@@ -97,34 +97,33 @@ function StackNavigators({navigation}) {
     }, []);
 
     // Sync button function
+    const pull_API_Data = () => {
+      // console.log("jkjkjk1");
+       
+    };
+
+           
     const sync11 = () => {
         NetInfo.fetch().then(state => {
             if (state.isConnected && state.isInternetReachable) {
-              Alert.alert('Are You Sure? ', 'Your local changes might loss!', [
-                {
-                  text: 'Cancel',
-                  onPress: () => console.log('Cancel Pressed'),
-                  style: 'cancel',
-                },
-                {text: 'Yes, Sync it!', onPress: () => {console.log('OK Pressed');
-              
-                loadAPI_Data1();
-                loadAPI_Data2();
-                loadAPI_Data3();
-                loadAPI_Data4();
-                loadAPI_Data5();
-                loadAPI_Data6();
-              },
-            },
-              ]);
+              // console.log("jkjkjk");
+              loadAPI_Data1();
+              loadAPI_Data2();
+              loadAPI_Data3();
+              loadAPI_Data4();
+              loadAPI_Data5();
+              loadAPI_Data6();
             } else {
                 ToastAndroid.show('You are Offline!', ToastAndroid.SHORT);
-                // viewDetails1();
             }
         });
     };
 
-    /* Press (Ctrl + k + 2) keys together for better API tables view in App.js (VSCode) */
+
+
+    /*              Press (Ctrl + k + 2) keys together for better API tables view in App.js (VSCode) */
+
+
 
     // Table 1
     const createTables1 = () => {
@@ -140,29 +139,30 @@ function StackNavigators({navigation}) {
         });
     };
     const loadAPI_Data1 = () => {
+
         setIsLoading(!isLoading);
         createTables1();
         (async () => {
-            await axios.get(`https://bked.logistiex.com/SellerMainScreen/sellerList/${userId}`).then(res => {
-                // console.log('Table1 API OK: ' + res.data.length);
+            await axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/consignorslist/${userId}`).then(res => {
+                console.log('Table1 API OK: ' + res.data.data.length);
                 // console.log(res.data);
-                for (let i = 0; i < res.data.length; i++) {
+                for (let i = 0; i < res.data.data.length; i++) {
                     // let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
                     db.transaction(txn => {
                         txn.executeSql('INSERT OR REPLACE INTO SyncSellerPickUp( consignorCode ,userId ,consignorName,consignorAddress1,consignorAddress2,consignorCity,consignorPincode,consignorLocation,consignorLongitude,consignorContact,ReverseDeliveries,PRSNumber,ForwardPickups) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', [
-                            res.data[i].consignorCode,
+                            res.data.data[i].consignorCode,
                             userId,
-                            res.data[i].consignorName,
-                            res.data[i].consignorAddress1,
-                            res.data[i].consignorAddress2,
-                            res.data[i].consignorCity,
-                            res.data[i].consignorPincode,
-                            res.data[i].consignorLocation,
-                            res.data[i].consignorLongitude,
-                            res.data[i].consignorContact,
-                            res.data[i].ReverseDeliveries,
-                            res.data[i].PRSNumber,
-                            res.data[i].ForwardPickups,
+                            res.data.data[i].consignorName,
+                            res.data.data[i].consignorAddress1,
+                            res.data.data[i].consignorAddress2,
+                            res.data.data[i].consignorCity,
+                            res.data.data[i].consignorPincode,
+                            res.data.data[i].consignorLocation,
+                            res.data.data[i].consignorLongitude,
+                            res.data.data[i].consignorContact,
+                            res.data.data[i].ReverseDeliveries,
+                            res.data.data[i].PRSNumber,
+                            res.data.data[i].ForwardPickups,
                         ], (sqlTxn, _res) => {
                             // console.log(`\n Data Added to local db successfully1212`);
                             // console.log(res);
@@ -229,9 +229,9 @@ function StackNavigators({navigation}) {
     const loadAPI_Data2 = () => {
         setIsLoading(!isLoading);
         (async () => {
-            await axios.get(`https://bked.logistiex.com/SellerMainScreen/details/${userId}`).then(res => {
+            await axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/workload/${userId}`).then(res => {
                 createTables2();
-                // console.log('Table2 API OK: ' + res.data.data.length);
+                console.log('Table2 API OK: ' + res.data.data.length);
                 for (let i = 0; i < res.data.data.length; i++) { // console.log(res.data.data[i].consignorCode);
                     db.transaction(txn => {
                         txn.executeSql(`INSERT OR REPLACE INTO SellerMainScreenDetails( 
@@ -313,7 +313,7 @@ function StackNavigators({navigation}) {
         setIsLoading(!isLoading);
         createTables3();
         (async () => {
-            await axios.get('https://bked.logistiex.com/ADupdatePrams/getUSER').then(res => {
+            await axios.get('https://bkedtest.logistiex.com/ADupdatePrams/getUSER').then(res => {
                 // console.log('Table3 API OK: ' + res.data.length);
                 // console.log(res.data);
                 for (let i = 0; i < res.data.length; i++) {
@@ -375,7 +375,7 @@ function StackNavigators({navigation}) {
         setIsLoading(!isLoading);
         createTables4();
         (async () => {
-            await axios.get('https://bked.logistiex.com/ADupdatePrams/getUPFR').then(res => {
+            await axios.get('https://bkedtest.logistiex.com/ADupdatePrams/getUPFR').then(res => {
                 // console.log('Table4 API OK: ' + res.data.length);
                 // console.log(res.data);
                 for (let i = 0; i < res.data.length; i++) {
@@ -446,7 +446,7 @@ function StackNavigators({navigation}) {
         setIsLoading(!isLoading);
         createTables5();
         (async () => {
-            await axios.get('https://bked.logistiex.com/ADupdatePrams/getNotAttemptedReasons').then(res => {
+            await axios.get('https://bkedtest.logistiex.com/ADupdatePrams/getNotAttemptedReasons').then(res => {
                 // console.log('Table5 API OK:' , res.data.data.length);
                 // console.log(res.data);
                 for (let i = 0; i < res.data.data.length; i++) {
@@ -509,7 +509,7 @@ function StackNavigators({navigation}) {
         setIsLoading(!isLoading);
         createTables6();
         (async () => {
-            await axios.get('https://bked.logistiex.com/ADupdateprams/getPartialClosureReasons',).then(res => {
+            await axios.get('https://bkedtest.logistiex.com/ADupdateprams/getPartialClosureReasons',).then(res => {
                 // console.log('Table6 API OK: ' + res.data.data.length);
                 // console.log(res.data);
                 for (let i = 0; i < res.data.data.length; i++) {
