@@ -6,7 +6,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image, StyleSheet, View } from 'react-native';
 import { convertAbsoluteToRem } from 'native-base/lib/typescript/theme/tools';
 
-
 export default function NewSellerAdditionNotification(route) {
 
   const [vehicle, setVehicle] = useState('');

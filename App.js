@@ -1,7 +1,3 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable no-trailing-spaces */
-/* eslint-disable react-native/no-inline-styles */
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import 'react-native-gesture-handler';
 import {
@@ -58,6 +54,7 @@ const Drawer = createDrawerNavigator();
 function StackNavigators({navigation}) {
     const [isLoading, setIsLoading] = useState(false);
     const [userId, setUserId] = useState('');
+    const [data, setData] = useState([]);
     let m = 0;
     const getData = async () => {
         try {
@@ -557,6 +554,20 @@ function StackNavigators({navigation}) {
         });
     };
 
+  const DisplayData= () => {
+        axios.get(`https://bked.logistiex.com/SellerMainScreen/getadditionalwork/${userId}`)
+          .then(res => {
+            setData(res.data)
+          })
+          .catch(error => {
+            console.log('Error Msg:', error)
+          })
+  };
+
+  useEffect(() => {
+    DisplayData();
+  }, [userId]);
+
 
   return (
     <NativeBaseProvider>
@@ -630,7 +641,7 @@ function StackNavigators({navigation}) {
                       borderColor: 'white',
                       borderWidth: 1,
                     }}>
-                    3
+                    {data.length}
                   </Badge>
                 </TouchableOpacity>
               </View>

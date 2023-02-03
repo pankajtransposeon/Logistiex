@@ -243,7 +243,7 @@ export default function Main({navigation, route}) {
             }`).then((res) => {
                 setData(res.data.consignorPickupsList);
             }, (error) => {
-                alert(error);
+                alert(error, 'dfsdf');
             });
         })();
 
@@ -260,7 +260,7 @@ export default function Main({navigation, route}) {
                 });
 
             }, (error) => {
-                alert(error);
+                alert(error, 'dsfdsfg');
             });
         })();
     }, []);
