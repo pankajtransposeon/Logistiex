@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable prettier/prettier */
 import React, {useEffect, useState} from 'react';
 import 'react-native-gesture-handler';
 import {
@@ -95,26 +97,89 @@ function StackNavigators({navigation}) {
 
     // Sync button function
     const pull_API_Data = () => {
-      // console.log("jkjkjk1");
-       
+      console.log('api pull');
+        loadAPI_Data1();
+        loadAPI_Data2();
+        loadAPI_Data3();
+        loadAPI_Data4();
+        loadAPI_Data5();
+        loadAPI_Data6();
     };
 
-           
+const push_Data = () => {
+    console.log('push data function');
+    db.transaction(tx => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE status IS NOT Null', [], (tx1, results) => {
+            if (results.rows.length > 0) {
+                ToastAndroid.show('Syncing...', ToastAndroid.SHORT);
+                // setIsLoading(!isLoading);
+                let temp = [];
+                var temp11 = 0;
+                for (let i = 0; i < results.rows.length; ++ i) {
+                    temp.push(results.rows.item(i));
+                    let accepted11 = [false];
+                    if (results.rows.item(i).status === 'accepted') {
+                        accepted11[0] = true;
+                    }
+                    // console.log(results.rows.item(i));
+                    tx.executeSql('SELECT * FROM SyncSellerPickUp where consignorCode=?', [results.rows.item(i).consignorCode], (tx1, results11) => { // console.log(results11.rows.item(0));
+                        setIsLoading(!isLoading);
+                        console.log(results11.rows.item(0).consignorLocation);
+                        console.log(results.rows.item(i).status);
+                        console.log(results.rows.item(i).clientShipmentReferenceNumber, accepted11[0], results.rows.item(i).rejectedReason, results.rows.item(i).consignorCode);
+                        // console.log(new Date().toJSON().slice(0,10).replace(/-/g,'/'));
+                        console.log('value of temp is :' + temp11 + ' ' + results.rows.length);
+
+                        axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
+                            clientShipmentReferenceNumber: results.rows.item(i).clientShipmentReferenceNumber,
+                            feUserID: userId,
+                            isAccepted: accepted11[0],
+                            rejectionReason: results.rows.item(i).rejectedReason,
+                            consignorCode: results.rows.item(i).consignorCode,
+                            pickupTime: new Date().toJSON().slice(0, 10).replace(/-/g, '/'),
+                            latitude: results11.rows.item(0).consignorLocation,
+                            longitude: results11.rows.item(0).consignorLongitude,
+                            // packagingId : results.rows.item(i).packagingId ,
+                            packagingId: 'PSN00100',
+                            packageingStatus: 1,
+                            PRSNumber: results11.rows.item(0).PRSNumber,
+                            pickupBagId: 'ss121'
+                        }).then(response => {
+                            temp11++;
+                            setIsLoading(false);
+                            // console.log(response.data, 'Data has been pushed');
+                            console.log('Data has been pushed');
+                            if (temp11 === results.rows.length) {
+                                temp11 = 0;
+                                // ToastAndroid.show('Data Pushed Successfully', ToastAndroid.SHORT);
+                                console.log('ok now pulling the data');
+                                pull_API_Data();
+                            }
+                        }).catch(error => {
+                            setIsLoading(false);
+                            console.log(error);
+                        });
+
+                    });
+                }
+            } else {
+                pull_API_Data();
+            }
+        },);
+    });
+
+};
+
     const sync11 = () => {
         NetInfo.fetch().then(state => {
             if (state.isConnected && state.isInternetReachable) {
-              // console.log("jkjkjk");
-              loadAPI_Data1();
-              loadAPI_Data2();
-              loadAPI_Data3();
-              loadAPI_Data4();
-              loadAPI_Data5();
-              loadAPI_Data6();
+              push_Data();
             } else {
                 ToastAndroid.show('You are Offline!', ToastAndroid.SHORT);
             }
         });
     };
+
 
 
 
