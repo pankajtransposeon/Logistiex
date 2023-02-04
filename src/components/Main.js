@@ -26,11 +26,7 @@ import { StyleSheet } from 'react-native';
 
 export default function Main({navigation, route}) {
 
-    console.log(route.params.userId, 'asdcsdc')
-
-    const shipmentData = `https://bkedtest.logistiex.com/SellerMainScreen/sellerList/${
-        route.params.userId
-    }`;
+    
     // const userId = route.params.userId;
 
     const [data, setData] = useState(0);
@@ -149,42 +145,41 @@ export default function Main({navigation, route}) {
         Rejected: 0,
     };
 
-    const createTables = () => {
-        db.transaction(txn => {
-            txn.executeSql('DROP TABLE IF EXISTS categories', []);
-            txn.executeSql('CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, clientShipmentReferenceNumber VARCHAR(50), packagingId VARCHAR(50), packagingStatus VARCHAR(50), consignorCode VARCHAR(50), consignorContact VARCHAR(50), PRSNumber VARCHAR(50), ForwardPickups VARCHAR(50), ScanStatus INT(10), UploadStatus INT(10))', [], (sqlTxn, res) => { 
-              console.log("table created successfully");
-            }, error => {
-                console.log('error on creating table ' + error.message);
-            },);
-        });
-    };
+    // const createTables = () => {
+    //     db.transaction(txn => {
+    //         txn.executeSql('DROP TABLE IF EXISTS categories', []);
+    //         txn.executeSql('CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, clientShipmentReferenceNumber VARCHAR(50), packagingId VARCHAR(50), packagingStatus VARCHAR(50), consignorCode VARCHAR(50), consignorContact VARCHAR(50), PRSNumber VARCHAR(50), ForwardPickups VARCHAR(50), ScanStatus INT(10), UploadStatus INT(10))', [], (sqlTxn, res) => { // console.log("table created successfully");
+    //         }, error => {
+    //             console.log('error on creating table ' + error.message);
+    //         },);
+    //     });
+    // };
 
-    const addCategory = (clientShipmentReferenceNumber, packagingId, packagingStatus, consignorCode, consignorContact, PRSNumber, ForwardPickups, ScanStatus, UploadStatus) => {
-        // console.log(clientShipmentReferenceNumber, packagingId, packagingStatus, consignorCode, consignorContact, PRSNumber, ForwardPickups, ScanStatus, UploadStatus);
-        if (!clientShipmentReferenceNumber && !packagingId && !packagingStatus && !consignorCode && !consignorContact && !PRSNumber && !ForwardPickups && !ScanStatus && !UploadStatus) { // eslint-disable-next-line no-alert
-            alert('Enter category');
-            return false;
-        }
+    // const addCategory = (clientShipmentReferenceNumber, packagingId, packagingStatus, consignorCode, consignorContact, PRSNumber, ForwardPickups, ScanStatus, UploadStatus) => {
+    //     // console.log(clientShipmentReferenceNumber, packagingId, packagingStatus, consignorCode, consignorContact, PRSNumber, ForwardPickups, ScanStatus, UploadStatus);
+    //     if (!clientShipmentReferenceNumber && !packagingId && !packagingStatus && !consignorCode && !consignorContact && !PRSNumber && !ForwardPickups && !ScanStatus && !UploadStatus) { // eslint-disable-next-line no-alert
+    //         alert('Enter category');
+    //         return false;
+    //     }
 
-        db.transaction(txn => {
-            txn.executeSql('INSERT INTO categories (clientShipmentReferenceNumber, packagingId, packagingStatus , consignorCode, consignorContact, PRSNumber, ForwardPickups,ScanStatus,UploadStatus) VALUES (?,?,?,?,?,?,?,?,?)', [
-                clientShipmentReferenceNumber,
-                packagingId,
-                packagingStatus,
-                consignorCode,
-                consignorContact,
-                PRSNumber,
-                ForwardPickups,
-                ScanStatus,
-                UploadStatus,
-            ], (sqlTxn, res) => {
-                console.log('category added successfully');
-            }, error => {
-                console.log('error on adding category ' + error.message);
-            },);
-        });
-    };
+    //     db.transaction(txn => {
+    //         txn.executeSql('INSERT INTO categories (clientShipmentReferenceNumber, packagingId, packagingStatus , consignorCode, consignorContact, PRSNumber, ForwardPickups,ScanStatus,UploadStatus) VALUES (?,?,?,?,?,?,?,?,?)', [
+    //             clientShipmentReferenceNumber,
+    //             packagingId,
+    //             packagingStatus,
+    //             consignorCode,
+    //             consignorContact,
+    //             PRSNumber,
+    //             ForwardPickups,
+    //             ScanStatus,
+    //             UploadStatus,
+    //         ], (sqlTxn, res) => {
+    //             // console.log('category added successfully');
+    //         }, error => {
+    //             console.log('error on adding category ' + error.message);
+    //         },);
+    //     });
+    // };
 
     const storeUser = async () => {
         try {
@@ -238,34 +233,35 @@ export default function Main({navigation, route}) {
     //     });
     // };
 
-    useEffect(() => {
-        createTables();
-        (async () => {
-            await axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/getMSD/${
-                route.params.userId
-            }`).then((res) => {
-                setData(res.data.consignorPickupsList);
-            }, (error) => {
-                alert(error, 'getMSDerror');
-            });
-        })();
+    // useEffect(() => {
+    //     createTables();
+    //     (async () => {
+    //         await axios.get(`https://bked.logistiex.com/SellerMainScreen/getMSD/${
+    //             route.params.userId
+    //         }`).then((res) => {
+    //             setData(res.data.consignorPickupsList);
+    //         }, (error) => {
+    //             alert(error);
+    //         });
+    //     })();
 
-        (async () => {
-            await axios.get(shipmentData).then((res) => {
-                res.data.map(m => {
-                    axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/getSellerDetails/${
-                        m.consignorCode
-                    }`).then((d) => {
-                        d.data.totalPickups.map((val) => {
-                            addCategory(val.clientShipmentReferenceNumber, val.packagingId, val.packagingStatus, m.consignorCode, m.consignorContact, m.PRSNumber, m.ForwardPickups, 0, 0);
-                        });
-                    });
-                });
-            }, (error) => {
-                alert(error, 'hello');
-            });
-        })();
-    }, []);
+    //     (async () => {
+    //         await axios.get(shipmentData).then((res) => {
+    //             res.data.map(m => {
+    //                 axios.get(`https://bked.logistiex.com/SellerMainScreen/getSellerDetails/${
+    //                     m.consignorCode
+    //                 }`).then((d) => {
+    //                     d.data.totalPickups.map((val) => {
+    //                         addCategory(val.clientShipmentReferenceNumber, val.packagingId, val.packagingStatus, m.consignorCode, m.consignorContact, m.PRSNumber, m.ForwardPickups, 0, 0);
+    //                     });
+    //                 });
+    //             });
+
+    //         }, (error) => {
+    //             alert(error);
+    //         });
+    //     })();
+    // }, []);
 
     // useEffect(() => {
     //     (async () => {
@@ -342,36 +338,36 @@ export default function Main({navigation, route}) {
               <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
                 <View style={{flexDirection: 'row'}}>
                   <View style={{width: 15, height: 15, backgroundColor: '#4CAF50', borderRadius: 100, marginTop: 4}} />
-                  <Text style={{marginLeft: 10, fontWeight: '500', fontSize: 14}}>Completed</Text>
+                  <Text style={{marginLeft: 10, fontWeight: '500', fontSize: 14, color: 'black'}}>Completed</Text>
                 </View>
-                <Text style={{fontWeight: '500', fontSize: 14}}>{it.completedOrder}</Text>
+                <Text style={{fontWeight: '500', fontSize: 14, color: 'black'}}>{it.completedOrder}</Text>
               </View>
               <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
                 <View style={{flexDirection: 'row'}}>
                   <View style={{width: 15, height: 15, backgroundColor: '#2196F3', borderRadius: 100, marginTop: 4}} />
-                  <Text style={{marginLeft: 10, fontWeight: '500', fontSize: 14}}>Pending</Text>
+                  <Text style={{marginLeft: 10, fontWeight: '500', fontSize: 14, color: 'black'}}>Pending</Text>
                 </View>
-                <Text style={{fontWeight: '500', fontSize: 14}}>{it.pendingOrder}</Text>
+                <Text style={{fontWeight: '500', fontSize: 14, color: 'black'}}>{it.pendingOrder}</Text>
               </View>
               <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
                 <View style={{flexDirection: 'row'}}>
                   <View style={{width: 15, height: 15, backgroundColor: '#FFEB3B', borderRadius: 100, marginTop: 4}} />
-                  <Text style={{marginLeft: 10, fontWeight: '500', fontSize: 14}}>Not Picked</Text>
+                  <Text style={{marginLeft: 10, fontWeight: '500', fontSize: 14, color: 'black'}}>Not Picked</Text>
                 </View>
-                <Text style={{fontWeight: '500', fontSize: 14}}>{it.notPicked}</Text>
+                <Text style={{fontWeight: '500', fontSize: 14, color: 'black'}}>{it.notPicked}</Text>
               </View>
               <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
                 <View style={{flexDirection: 'row'}}>
                   <View style={{width: 15, height: 15, backgroundColor: '#F44336', borderRadius: 100, marginTop: 4}} />
-                  <Text style={{marginLeft: 10, fontWeight: '500', fontSize: 14}}>Rejected</Text>
+                  <Text style={{marginLeft: 10, fontWeight: '500', fontSize: 14, color: 'black'}}>Rejected</Text>
                 </View>
-                <Text style={{fontWeight: '500', fontSize: 14}}>{it.rejectedOrder}</Text>
+                <Text style={{fontWeight: '500', fontSize: 14, color: 'black'}}>{it.rejectedOrder}</Text>
               </View>
             </View>
           </Box>
           {it.title==='Seller Deliveries'?
-            <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover',{count : data, userId : route.params.userId})}>New Pickup</Button>
-            :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup',{count : data, userId : route.params.userId})}>New Pickup</Button>
+            <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>New Pickup</Button>
+            :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup')}>New Pickup</Button>
             }
         </Box>
         );

@@ -44,7 +44,7 @@ export default function NewSellerAdditionNotification(route) {
 console.log(userId)
 
   const DisplayData= () => {
-        axios.get(`https://bked.logistiex.com/SellerMainScreen/getadditionalwork/${userId}`)
+        axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/getadditionalwork/${userId}`)
           .then(res => {
             setData(res.data)
           })
@@ -61,10 +61,9 @@ useEffect(() => {
       <ScrollView>
       <Box flex={1} bg="coolGray.100" p={4}>
             {(data) &&
-                data.map(d=>{
-                    console.log(d.consignorName);
+                data.map((d, i)=>{
                 return(
-                <Box width='100%' marginBottom='5'  alignItems="center">
+                <Box key={i} width='100%' marginBottom='5'  alignItems="center">
                     <Box width='100%' rounded="lg" overflow="hidden" borderColor="coolGray.100" borderWidth="1" _dark={{
                         borderColor: "coolGray.600",
                         backgroundColor: "white"

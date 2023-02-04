@@ -368,16 +368,16 @@ const HandoverShipment = ({route}) => {
             <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(), setShowCloseBagModal(false); }}>Submit</Button>
             <View style={{alignItems: 'center', marginTop: 15}}>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>Seller Code</Text>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>ABC1</Text>
+                <Text style={{fontSize: 16, fontWeight: '500', color: 'black'}}>Seller Code</Text>
+                <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{route.params.consignorCode}</Text>
               </View>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>Seller Name</Text>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>XYZ</Text>
+                <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>Seller Name</Text>
+                <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{route.params.consignorName}</Text>
               </View>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 1, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>Number of Shipments</Text>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>23</Text>
+                <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>Number of Shipments</Text>
+                <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>23</Text>
               </View>
             </View>
           </Modal.Body>
@@ -419,20 +419,20 @@ const HandoverShipment = ({route}) => {
                 <Text style={{fontSize: 18, fontWeight: '500'}}></Text>
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>Seller Code</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>ABC1</Text>
+                <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>Seller Code</Text>
+                <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>{route.params.consignorCode}</Text>
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>Seller Name</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>XYZ</Text>
+                <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>Seller Name</Text>
+                <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>{route.params.consignorName}</Text>
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>Shipment scan Progress for ABC1</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>10/50</Text>
+                <Text style={{fontSize: 13, fontWeight: '500', color: 'black'}}>Shipment scan Progress for {route.params.consignorName}</Text>
+                <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>10/50</Text>
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>Bags Open</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>Yes/No</Text>
+                <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>Bags Open</Text>
+                <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>Yes/No</Text>
               </View>
             </View>
           </View>
