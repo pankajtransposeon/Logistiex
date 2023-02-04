@@ -12,6 +12,44 @@ const OpenBags = ({route}) => {
     const [data, setData] = useState([]);
     const navigation = useNavigation();
     const [showCloseBagModal, setShowCloseBagModal] = useState(false);
+    const [keyword, setKeyword] = useState('');
+    const [consignorNames, setconsignorNames] = useState('');
+    const [consignorCode, setconsignorCode] = useState('');
+    const [NoShipment, setNoShipment] = useState(45);
+
+
+    const loadDetails = () => { 
+        db.transaction((tx) => {
+            tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => { 
+                let temp = [];
+                console.log(results.rows.length);
+                for (let i = 0; i < results.rows.length; ++i) {
+                    temp.push(results.rows.item(i));
+                }
+                setData(temp);
+            });
+        });
+    };
+
+    useEffect(() => {
+        (async () => {
+            loadDetails();
+        })();
+    }, []);
+
+    const searched = (keyword1) => (c) => {
+        let f = c.consignorName;
+        return (f.includes(keyword1));
+    };
+
+    const CloseBagFunction = (consignorCode, consignorName) => {
+      setShowCloseBagModal(true),
+      setNoShipment(45),
+      setconsignorCode(consignorCode),
+      setconsignorNames(consignorName)
+    }
+
+
     
 return (
   <NativeBaseProvider>
@@ -21,19 +59,19 @@ return (
           <Modal.Header></Modal.Header>
           <Modal.Body>
             <Input placeholder="Enter Bag Seal" size="md" onChangeText={(text)=>setBagSeal(text)} />
-            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(), setShowCloseBagModal(false); }}>Submit</Button>
+            <Button flex="1" mt={2} bg="#004aad" onPress={() => {setShowCloseBagModal(false), navigation.navigate('PendingHandover') }}>Submit</Button>
             <View style={{alignItems: 'center', marginTop: 15}}>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 16, fontWeight: '500'}}>Seller Code</Text>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>ABC1</Text>
+                <Text style={{fontSize: 16, fontWeight: '500'}}>{consignorCode}</Text>
               </View>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
                 <Text style={{fontSize: 16, fontWeight: '500'}}>Seller Name</Text>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>XYZ</Text>
+                <Text style={{fontSize: 16, fontWeight: '500'}}>{consignorNames}</Text>
               </View>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 1, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 16, fontWeight: '500'}}>Number of Shipments</Text>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>23</Text>
+                <Text style={{fontSize: 16, fontWeight: '500'}}>{NoShipment}</Text>
               </View>
             </View>
           </Modal.Body>
@@ -50,7 +88,39 @@ return (
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>No. of Shipment</Text></DataTable.Title>
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}></Text></DataTable.Title>
             </DataTable.Header>
+
+            {data && data.length > 0 ?
+            data.filter(searched(keyword)).map((single, i) => (
+              // <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} key={single.consignorName} onPress={() =>{navigation.navigate('HandoverShipment',{
+              //   paramKey : single.consignorCode,
+              //   Forward : single.ForwardPickups,
+              //   consignorAddress1 :single.consignorAddress1,
+              //   consignorAddress2 :single.consignorAddress2,
+              //   consignorCity :single.consignorCity,
+              //   consignorPincode :single.consignorPincode,
+              //   consignorName : single.consignorName,
+              //   PRSNumber : single.PRSNumber,
+              //   consignorCode : single.consignorCode,
+              //   userId : single.userId,
+              //   phone : single.consignorContact,
+              // });}}>
+              //   <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
+              //   <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{single.ReverseDeliveries}</Text></DataTable.Cell>
+              //   <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >doubt</Text></DataTable.Cell>
+              //   <ArrowForwardIcon style={{color:'#004aad',marginTop:8}} />
+              // </DataTable.Row>
               <DataTable.Row>
+                <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >45</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1}}><Button style={{backgroundColor:'#004aad', color:'#fff'}} onPress={
+                  () => CloseBagFunction(single.consignorCode, single.consignorName)
+                  }>Close Bag</Button></DataTable.Cell>
+              </DataTable.Row>
+            ))
+          :
+            null
+          }
+              {/* <DataTable.Row>
                 <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >ABC1</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1}}><Button style={{backgroundColor:'#004aad', color:'#fff'}} onPress={()=>setShowCloseBagModal(true)}>Close Bag</Button></DataTable.Cell>
@@ -64,7 +134,7 @@ return (
                 <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >ABC3</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1}}><Button style={{backgroundColor:'#004aad', color:'#fff'}} onPress={()=>navigation.navigate('PendingHandover')}>Close Bag</Button></DataTable.Cell>
-              </DataTable.Row>
+              </DataTable.Row> */}
           </DataTable>
         </Card>
       </ScrollView>

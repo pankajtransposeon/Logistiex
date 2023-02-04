@@ -1,4 +1,4 @@
-import { NativeBaseProvider, Box, Image, Center, Button} from 'native-base';
+import { NativeBaseProvider, Box, Image, Center, Button, ArrowForwardIcon} from 'native-base';
 import {StyleSheet, ScrollView} from 'react-native';
 import {DataTable, Searchbar, Text, Card} from 'react-native-paper';
 import {openDatabase} from 'react-native-sqlite-storage';
@@ -10,7 +10,41 @@ const db = openDatabase({name: 'rn_sqlite'});
 const SellerHandover = ({route}) => {
 
     const [data, setData] = useState([]);
+    const [keyword, setKeyword] = useState('');
+
     const navigation = useNavigation();
+
+    const loadDetails = () => { // setIsLoading(!isLoading);
+        db.transaction((tx) => {
+            tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => { // ToastAndroid.show("Loading...", ToastAndroid.SHORT);
+                let temp = [];
+                console.log(results.rows.length);
+                for (let i = 0; i < results.rows.length; ++i) {
+                    temp.push(results.rows.item(i));
+                    // console.log(results.rows.item(i).consignorName);
+                    // var address121 = results.rows.item(i).consignorAddress;
+                    // var address_json = JSON.parse(address121);
+                    // console.log(typeof (address_json));
+                    // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
+                    // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+                }
+                // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+                setData(temp);
+                // setIsLoading(false);
+            });
+        });
+    };
+
+    useEffect(() => {
+        (async () => {
+            loadDetails();
+        })();
+    }, []);
+
+    const searched = (keyword1) => (c) => {
+        let f = c.consignorName;
+        return (f.includes(keyword1));
+    };
 
     
 return (
@@ -25,21 +59,30 @@ return (
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Expected Deliveries</Text></DataTable.Title>
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Scanned Shipments</Text></DataTable.Title>
             </DataTable.Header>
-              <DataTable.Row>
-                <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >ABC1</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
+              {data && data.length > 0 ?
+            data.filter(searched(keyword)).map((single, i) => (
+              <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} key={single.consignorName} onPress={() =>{navigation.navigate('HandoverShipment',{
+                paramKey : single.consignorCode,
+                Forward : single.ForwardPickups,
+                consignorAddress1 :single.consignorAddress1,
+                consignorAddress2 :single.consignorAddress2,
+                consignorCity :single.consignorCity,
+                consignorPincode :single.consignorPincode,
+                consignorName : single.consignorName,
+                PRSNumber : single.PRSNumber,
+                consignorCode : single.consignorCode,
+                userId : single.userId,
+                phone : single.consignorContact,
+              });}}>
+                <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{single.ReverseDeliveries}</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >doubt</Text></DataTable.Cell>
+                <ArrowForwardIcon style={{color:'#004aad',marginTop:8}} />
               </DataTable.Row>
-              <DataTable.Row>
-                <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >ABC2</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
-              </DataTable.Row>
-              <DataTable.Row>
-                <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >ABC3</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
-              </DataTable.Row>
+            ))
+          :
+            null
+          }
           </DataTable>
         </Card>
       </ScrollView>

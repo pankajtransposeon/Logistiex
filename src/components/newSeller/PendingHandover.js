@@ -27,7 +27,7 @@ return (
           <Modal.Header></Modal.Header>
           <Modal.Body>
             <Input placeholder="Enter Bag Seal" size="md" onChangeText={(text)=>setBagSeal(text)} />
-            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(), setShowCloseBagModal(false); }}>Submit</Button>
+            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(), setShowCloseBagModal(false) }}>Submit</Button>
             <View style={{alignItems: 'center', marginTop: 15}}>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 16, fontWeight: '500'}}>Seller Code</Text>
@@ -68,42 +68,11 @@ return (
               onValueChange={value => setSelected(value)}
              >
                 {data.map(item => (
-                <Picker.Item key={item.value} label={item.label} value={item.value} />
+                <Picker.Item color='black' key={item.value} label={item.label} value={item.value} />
                 ))}
                 </Picker>
               </View>
-              <DataTable.Row>
-                <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >ABC2</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
-              </DataTable.Row>
-              <View>
-              <Picker
-              mode="dropdown"
-              selectedValue={selected}
-              onValueChange={value => setSelected(value)}
-             >
-                {data.map(item => (
-                <Picker.Item key={item.value} label={item.label} value={item.value} />
-                ))}
-                </Picker>
-              </View>
-              <DataTable.Row>
-                <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >ABC3</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
-              </DataTable.Row>
-              <View>
-              <Picker
-              mode="dropdown"
-              selectedValue={selected}
-              onValueChange={value => setSelected(value)}
-             >
-                {data.map(item => (
-                <Picker.Item key={item.value} label={item.label} value={item.value} />
-                ))}
-                </Picker>
-              </View>
+              
           </DataTable>
         </Card>
       </ScrollView>

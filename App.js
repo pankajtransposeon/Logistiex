@@ -1,7 +1,3 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable no-trailing-spaces */
-/* eslint-disable react-native/no-inline-styles */
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import 'react-native-gesture-handler';
 import {
@@ -61,6 +57,7 @@ const Drawer = createDrawerNavigator();
 function StackNavigators({navigation}) {
     const [isLoading, setIsLoading] = useState(false);
     const [userId, setUserId] = useState('');
+    const [data, setData] = useState([]);
     let m = 0;
     const getData = async () => {
         try {
@@ -560,11 +557,27 @@ function StackNavigators({navigation}) {
         });
     };
 
+  const DisplayData= () => {
+        axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/getadditionalwork/${userId}`)
+          .then(res => {
+            setData(res.data)
+            console.log('dataDisplay', res.data);
+          })
+          .catch(error => {
+            console.log('Error Msg:', error)
+          })
+  };
+
+  useEffect(() => {
+    DisplayData();
+  }, [userId]);
+
 
   return (
     <NativeBaseProvider>
       <Stack.Navigator
         initialRouteName={'Login'}
+        key={'Login'}
         screenOptions={{
           headerStyle: {
             backgroundColor: '#004aad',
@@ -633,7 +646,7 @@ function StackNavigators({navigation}) {
                       borderColor: 'white',
                       borderWidth: 1,
                     }}>
-                    3
+                    {data.length}
                   </Badge>
                 </TouchableOpacity>
               </View>
@@ -687,7 +700,7 @@ function StackNavigators({navigation}) {
                       borderColor: 'white',
                       borderWidth: 1,
                     }}>
-                    3
+                    {data.length}
                   </Badge>
                 </TouchableOpacity>
               </View>
@@ -752,7 +765,7 @@ function StackNavigators({navigation}) {
                       borderColor: 'white',
                       borderWidth: 1,
                     }}>
-                    3
+                    {data.length}
                   </Badge>
                 </TouchableOpacity>
               </View>
@@ -805,7 +818,7 @@ function StackNavigators({navigation}) {
                       borderColor: 'white',
                       borderWidth: 1,
                     }}>
-                    3
+                    {data.length}
                   </Badge>
                 </TouchableOpacity>
               </View>
@@ -858,7 +871,7 @@ function StackNavigators({navigation}) {
                       borderColor: 'white',
                       borderWidth: 1,
                     }}>
-                    3
+                    {data.length}
                   </Badge>
                 </TouchableOpacity>
               </View>
@@ -911,7 +924,7 @@ function StackNavigators({navigation}) {
                       borderColor: 'white',
                       borderWidth: 1,
                     }}>
-                    3
+                    {data.length}
                   </Badge>
                 </TouchableOpacity>
               </View>
@@ -964,7 +977,7 @@ function StackNavigators({navigation}) {
                       borderColor: 'white',
                       borderWidth: 1,
                     }}>
-                    3
+                    {data.length}
                   </Badge>
                 </TouchableOpacity>
               </View>
@@ -1018,7 +1031,7 @@ function StackNavigators({navigation}) {
                       borderColor: 'white',
                       borderWidth: 1,
                     }}>
-                    3
+                    {data.length}
                   </Badge>
                 </TouchableOpacity>
               </View>
@@ -1072,7 +1085,7 @@ function StackNavigators({navigation}) {
                       borderColor: 'white',
                       borderWidth: 1,
                     }}>
-                    3
+                    {data.length}
                   </Badge>
                 </TouchableOpacity>
               </View>
@@ -1146,7 +1159,7 @@ function StackNavigators({navigation}) {
                       borderColor: 'white',
                       borderWidth: 1,
                     }}>
-                    3
+                    {data.length}
                   </Badge>
                 </TouchableOpacity>
               </View>
@@ -1341,7 +1354,7 @@ function CustomDrawerContent({navigation}) {
   return (
     <NativeBaseProvider>
       {email ? (
-        <Box pt={4} px={4}>
+        <Box pt={4} px={4} key={'extra'+ email}>
           <Avatar bg="#004aad" alignSelf="center" size="xl">
             <MaterialIcons
               name="account"
@@ -1440,6 +1453,7 @@ export default function App({navigation}) {
     <NavigationContainer>
       <Drawer.Navigator
         initialRouteName="home"
+        key={'home'}
         drawerContent={props => <CustomDrawerContent {...props} />}>
         <Drawer.Screen
           name="home"
