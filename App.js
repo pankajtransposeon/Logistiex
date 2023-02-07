@@ -646,8 +646,8 @@ const push_Data = () => {
   return (
     <NativeBaseProvider>
       <Stack.Navigator
-        initialRouteName={'CloseTrip'}
-        key={'CloseTrip'}
+        initialRouteName={'Main'}
+        key={'Main'}
         screenOptions={{
           headerStyle: {
             backgroundColor: '#004aad',
