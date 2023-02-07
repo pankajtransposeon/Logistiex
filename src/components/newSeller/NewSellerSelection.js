@@ -1,5 +1,3 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Image, Center,NativeBaseProvider, Fab, Icon, Button, Box, Heading, Modal } from 'native-base';
 import{StyleSheet,Text,TouchableOpacity,View, ScrollView, TextInput,getPick, Alert, TouchableWithoutFeedbackBase,ToastAndroid} from 'react-native';
@@ -161,7 +159,6 @@ const loadSellerPickupDetails = () => {
         });	
       }) ();	
      }	
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     ,[]);
  	
 
