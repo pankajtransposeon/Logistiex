@@ -52,6 +52,11 @@ import {openDatabase} from 'react-native-sqlite-storage';
 import NewSellerAdditionNotification from './src/components/NewSellerAdditionNotification';
 import StartEndDetails from './src/components/StartEndDetails';
 import EndTrip from './src/components/EndTrip';
+import SellerSelection from './src/components/newSeller/SellerSelection';
+import UpdateSellerCloseReasonCode from './src/components/newSeller/UpdateSellerCloseReasonCode';
+import CloseReasonCode from './src/components/newSeller/CloseReasonCode';
+import ReturnHandoverRejectionTag from './src/components/newSeller/ReturnHandoverRejectionTag';
+import CloseTrip from './src/components/newSeller/CloseTrip';
 const db = openDatabase({name: 'rn_sqlite'});
 
 const Stack = createStackNavigator();
@@ -641,8 +646,8 @@ const push_Data = () => {
   return (
     <NativeBaseProvider>
       <Stack.Navigator
-        initialRouteName={'Login'}
-        key={'Login'}
+        initialRouteName={'CloseTrip'}
+        key={'CloseTrip'}
         screenOptions={{
           headerStyle: {
             backgroundColor: '#004aad',
@@ -659,6 +664,111 @@ const push_Data = () => {
           component={Login}
           options={{
             header: () => null,
+          }}
+        />
+        <Stack.Screen
+          name="SellerSelection"
+          component={SellerSelection}
+          options={{
+            headerTitle: props => (
+              <NativeBaseProvider>
+                <Heading style={{color: 'white'}} size="md">
+                  Notification
+                </Heading>
+              </NativeBaseProvider>
+            ),
+            headerLeft: () => (
+              <MaterialIcons
+                name="menu"
+                style={{fontSize: 30, marginLeft: 10, color: 'white'}}
+                onPress={() => navigation.toggleDrawer()}
+              />
+            ),
+          }}
+        />
+
+<Stack.Screen
+          name="CloseReasonCode"
+          component={CloseReasonCode}
+          options={{
+            headerTitle: props => (
+              <NativeBaseProvider>
+                <Heading style={{color: 'white'}} size="md">
+                  Notification
+                </Heading>
+              </NativeBaseProvider>
+            ),
+            headerLeft: () => (
+              <MaterialIcons
+                name="menu"
+                style={{fontSize: 30, marginLeft: 10, color: 'white'}}
+                onPress={() => navigation.toggleDrawer()}
+              />
+            ),
+          }}
+        />
+
+<Stack.Screen
+          name="CloseTrip"
+          component={CloseTrip}
+          options={{
+            headerTitle: props => (
+              <NativeBaseProvider>
+                <Heading style={{color: 'white'}} size="md">
+                  Notification
+                </Heading>
+              </NativeBaseProvider>
+            ),
+            headerLeft: () => (
+              <MaterialIcons
+                name="menu"
+                style={{fontSize: 30, marginLeft: 10, color: 'white'}}
+                onPress={() => navigation.toggleDrawer()}
+              />
+            ),
+          }}
+        />
+
+<Stack.Screen
+          name="UpdateSellerCloseReasonCode"
+          component={UpdateSellerCloseReasonCode}
+          options={{
+            headerTitle: props => (
+              <NativeBaseProvider>
+                <Heading style={{color: 'white'}} size="md">
+                  Notification
+                </Heading>
+              </NativeBaseProvider>
+            ),
+            headerLeft: () => (
+              <MaterialIcons
+                name="menu"
+                style={{fontSize: 30, marginLeft: 10, color: 'white'}}
+                onPress={() => navigation.toggleDrawer()}
+              />
+            ),
+          }}
+        />
+
+
+<Stack.Screen
+          name="ReturnHandoverRejectionTag"
+          component={ReturnHandoverRejectionTag}
+          options={{
+            headerTitle: props => (
+              <NativeBaseProvider>
+                <Heading style={{color: 'white'}} size="md">
+                  Notification
+                </Heading>
+              </NativeBaseProvider>
+            ),
+            headerLeft: () => (
+              <MaterialIcons
+                name="menu"
+                style={{fontSize: 30, marginLeft: 10, color: 'white'}}
+                onPress={() => navigation.toggleDrawer()}
+              />
+            ),
           }}
         />
 
