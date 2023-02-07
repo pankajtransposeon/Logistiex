@@ -49,6 +49,8 @@ import com.airbnb.android.react.maps.MapsPackage;
 import com.zoontek.rnpermissions.RNPermissionsPackage;
 // react-native-reanimated
 import com.swmansion.reanimated.ReanimatedPackage;
+// react-native-restart
+import com.reactnativerestart.RestartPackage;
 // react-native-safe-area-context
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 // react-native-screens
@@ -123,6 +125,7 @@ public class PackageList {
       new MapsPackage(),
       new RNPermissionsPackage(),
       new ReanimatedPackage(),
+      new RestartPackage(),
       new SafeAreaContextPackage(),
       new RNScreensPackage(),
       new SQLitePluginPackage(),
