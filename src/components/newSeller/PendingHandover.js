@@ -21,33 +21,7 @@ const PendingHandover = ({route}) => {
     
 return (
   <NativeBaseProvider>
-    <Modal isOpen={showCloseBagModal} onClose={() => setShowCloseBagModal(false)} size="lg">
-        <Modal.Content maxWidth="350">
-          <Modal.CloseButton />
-          <Modal.Header></Modal.Header>
-          <Modal.Body>
-            <Input placeholder="Enter Bag Seal" size="md" onChangeText={(text)=>setBagSeal(text)} />
-            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(), setShowCloseBagModal(false) }}>Submit</Button>
-            <View style={{alignItems: 'center', marginTop: 15}}>
-              <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>Seller Code</Text>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>ABC1</Text>
-              </View>
-              <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>Seller Name</Text>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>XYZ</Text>
-              </View>
-              <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 1, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>Number of Shipments</Text>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>23</Text>
-              </View>
-            </View>
-          </Modal.Body>
-        </Modal.Content>
-      </Modal>
-
     <Box flex={1} bg="#fff"  width="auto" maxWidth="100%">
-      
       <ScrollView style={styles.homepage} showsVerticalScrollIndicator={true} showsHorizontalScrollIndicator={false}>
         <Card>
           <DataTable>
@@ -57,9 +31,9 @@ return (
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Pending Shipments</Text></DataTable.Title>
             </DataTable.Header>
               <DataTable.Row>
-                <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >ABC1</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{route.params.consignorName}</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{route.params.expected}</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{0}</Text></DataTable.Cell>
               </DataTable.Row>
               <View>
               <Picker
