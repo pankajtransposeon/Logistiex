@@ -28,6 +28,10 @@ import PendingHandover from './src/components/newSeller/PendingHandover';
 import HandOverSummary from './src/components/newSeller/HandOverSummary';
 import NewSellerSelection from './src/components/newSeller/NewSellerSelection';
 import ShipmentBarcode from './src/components/newSeller/ShipmentBarcode';
+import SellerDeliveries from './src/components/newSeller/SellerDeliveries';
+import SellerHandoverSelection from './src/components/newSeller/SellerHandoverSelection';
+import ScanShipment from './src/components/newSeller/ScanShipment';
+import CollectPOD from './src/components/newSeller/CollectPOD';
 import Dispatch from './src/components/newSeller/Dispatch';
 import MapScreen from './src/components/MapScreen';
 import Reject from './src/components/RejectReason';
@@ -1226,6 +1230,218 @@ const push_Data = () => {
               <NativeBaseProvider>
                 <Heading style={{color: 'white'}} size="md">
                   Scan Products
+                </Heading>
+              </NativeBaseProvider>
+            ),
+            headerLeft: () => (
+              <MaterialIcons
+                name="menu"
+                style={{fontSize: 30, marginLeft: 10, color: 'white'}}
+                onPress={() => navigation.toggleDrawer()}
+              />
+            ),
+            headerRight: () => (
+              <View style={{flexDirection: 'row', marginRight: 10}}>
+                <TouchableOpacity
+                  style={{marginRight: 15}}
+                  onPress={() => {
+                    sync11();
+                  }}>
+                  <MaterialIcons
+                    name="sync"
+                    style={{fontSize: 30, color: 'white'}}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('NewSellerAdditionNotification');
+                    navigation.dispatch(DrawerActions.openDrawer());
+                  }}>
+                  <MaterialIcons
+                    name="bell-outline"
+                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                  />
+                  <Badge
+                    style={{
+                      position: 'absolute',
+                      fontSize: 15,
+                      borderColor: 'white',
+                      borderWidth: 1,
+                    }}>
+                    {data.length}
+                  </Badge>
+                </TouchableOpacity>
+              </View>
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="SellerDeliveries"
+          component={SellerDeliveries}
+          options={{
+            headerTitle: props => (
+              <NativeBaseProvider>
+                <Heading style={{color: 'white'}} size="md">
+                  Seller Deliveries
+                </Heading>
+              </NativeBaseProvider>
+            ),
+            headerLeft: () => (
+              <MaterialIcons
+                name="menu"
+                style={{fontSize: 30, marginLeft: 10, color: 'white'}}
+                onPress={() => navigation.toggleDrawer()}
+              />
+            ),
+            headerRight: () => (
+              <View style={{flexDirection: 'row', marginRight: 10}}>
+                <TouchableOpacity
+                  style={{marginRight: 15}}
+                  onPress={() => {
+                    sync11();
+                  }}>
+                  <MaterialIcons
+                    name="sync"
+                    style={{fontSize: 30, color: 'white'}}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('NewSellerAdditionNotification');
+                    navigation.dispatch(DrawerActions.openDrawer());
+                  }}>
+                  <MaterialIcons
+                    name="bell-outline"
+                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                  />
+                  <Badge
+                    style={{
+                      position: 'absolute',
+                      fontSize: 15,
+                      borderColor: 'white',
+                      borderWidth: 1,
+                    }}>
+                    {data.length}
+                  </Badge>
+                </TouchableOpacity>
+              </View>
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="SellerHandoverSelection"
+          component={SellerHandoverSelection}
+          options={{
+            headerTitle: props => (
+              <NativeBaseProvider>
+                <Heading style={{color: 'white'}} size="md">
+                  Seller Handover
+                </Heading>
+              </NativeBaseProvider>
+            ),
+            headerLeft: () => (
+              <MaterialIcons
+                name="menu"
+                style={{fontSize: 30, marginLeft: 10, color: 'white'}}
+                onPress={() => navigation.toggleDrawer()}
+              />
+            ),
+            headerRight: () => (
+              <View style={{flexDirection: 'row', marginRight: 10}}>
+                <TouchableOpacity
+                  style={{marginRight: 15}}
+                  onPress={() => {
+                    sync11();
+                  }}>
+                  <MaterialIcons
+                    name="sync"
+                    style={{fontSize: 30, color: 'white'}}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('NewSellerAdditionNotification');
+                    navigation.dispatch(DrawerActions.openDrawer());
+                  }}>
+                  <MaterialIcons
+                    name="bell-outline"
+                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                  />
+                  <Badge
+                    style={{
+                      position: 'absolute',
+                      fontSize: 15,
+                      borderColor: 'white',
+                      borderWidth: 1,
+                    }}>
+                    {data.length}
+                  </Badge>
+                </TouchableOpacity>
+              </View>
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="ScanShipment"
+          component={ScanShipment}
+          options={{
+            headerTitle: props => (
+              <NativeBaseProvider>
+                <Heading style={{color: 'white'}} size="md">
+                  Scan Shipment Barcode
+                </Heading>
+              </NativeBaseProvider>
+            ),
+            headerLeft: () => (
+              <MaterialIcons
+                name="menu"
+                style={{fontSize: 30, marginLeft: 10, color: 'white'}}
+                onPress={() => navigation.toggleDrawer()}
+              />
+            ),
+            headerRight: () => (
+              <View style={{flexDirection: 'row', marginRight: 10}}>
+                <TouchableOpacity
+                  style={{marginRight: 15}}
+                  onPress={() => {
+                    sync11();
+                  }}>
+                  <MaterialIcons
+                    name="sync"
+                    style={{fontSize: 30, color: 'white'}}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('NewSellerAdditionNotification');
+                    navigation.dispatch(DrawerActions.openDrawer());
+                  }}>
+                  <MaterialIcons
+                    name="bell-outline"
+                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                  />
+                  <Badge
+                    style={{
+                      position: 'absolute',
+                      fontSize: 15,
+                      borderColor: 'white',
+                      borderWidth: 1,
+                    }}>
+                    {data.length}
+                  </Badge>
+                </TouchableOpacity>
+              </View>
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="CollectPOD"
+          component={CollectPOD}
+          options={{
+            headerTitle: props => (
+              <NativeBaseProvider>
+                <Heading style={{color: 'white'}} size="md">
+                  Seller Deliveries
                 </Heading>
               </NativeBaseProvider>
             ),
