@@ -21,6 +21,7 @@ import { Console } from 'console';
 // import GetLocation from 'react-native-get-location';
 // import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import OTPTextInput from 'react-native-otp-textinput';
+import { err } from 'react-native-svg/lib/typescript/xml';
 
 const db = openDatabase({
   name: 'rn_sqlite',
@@ -41,7 +42,7 @@ const ShipmentBarcode = ({route}) => {
     const [len, setLen] = useState(0);
     const [DropDownValue, setDropDownValue] = useState(null);
     const [rejectedData, setRejectedData] = useState([]);
-    const [acceptedArray,setAcceptedArray]=useState([]);
+    const [acceptedArray,setAcceptedArray] = useState([]);
         // const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
     const [latitude, setLatitude] = useState(0);
     const [longitude , setLongitude] = useState(0);
@@ -49,10 +50,11 @@ const ShipmentBarcode = ({route}) => {
     const [bagId, setBagId] = useState('');
     const [bagIdNo, setBagIdNo] = useState(1);
     const [showCloseBagModal, setShowCloseBagModal] = useState(false);
+    const [showCloseBagModal11, setShowCloseBagModal11] = useState(false);
     const [bagSeal, setBagSeal] = useState('');
 
 
-    var otpInput = useRef(null)
+    var otpInput = useRef(null);
     // const navigation = useNavigation();
     const [name, setName] = useState('');
     const [inputOtp, setInputOtp] = useState('');
@@ -78,45 +80,47 @@ const ShipmentBarcode = ({route}) => {
         });
     });
       // await fetch(PartialClose)
-      // .then((response) => response.json()) 
+      // .then((response) => response.json())
       // .then((json) => {
       //   setPartialCloseData(json);
       // })
-      // .catch((error) => alert(error)) 
-    }
+      // .catch((error) => alert(error))
+    };
     useEffect(() => {
-      DisplayData11();   
+      DisplayData11();
     }, []);
-  
+
     // useEffect(() => {
     //   partialClose112();
     // }, []);
-  
+
     const partialClose112 = () => {
-      if (newaccepted + newrejected === 5){
+      console.log('partialClose popup shown11');
+      if (newaccepted + newrejected === route.params.Forward){
+        console.log(newaccepted);
         sendSmsOtp();
       } else {
         setModalVisible11(true);
       }
-          }
-  
+          };
+
     // const clearText = () => {
     //   otpInput.current.clear();
     // }
-  
+
     // const setText = () => {
     //   otpInput.current.setValue("1234");
     // }
-  
+
   useEffect(() => {
     const current_location = () => {
-  
+
       return GetLocation.getCurrentPosition({
           enableHighAccuracy: true,
           timeout: 10000,
       })
       .then(latestLocation => {
-          console.log('latest location '+JSON.stringify(latestLocation))
+          console.log('latest location ' + JSON.stringify(latestLocation));
           return latestLocation;
       }).then(location => {
           const currentLoc = { latitude11: location.latitude11, longitude11: location.longitude11 };
@@ -129,17 +133,17 @@ const ShipmentBarcode = ({route}) => {
               fastInterval: 5000,
           })
           .then(status=>{
-              if(status)
-                  console.log('Location enabled');
+              if (status)
+                  {console.log('Location enabled');}
           }).catch(err=>{
-          })
+          });
           return false;
-      })
+      });
   };
-  
+
     current_location();
   }, []);
-  
+
   const submitForm11 = () => {
     alert('Your Data has submitted');
     axios.post('https://bked.logistiex.com/SellerMainScreen/postRD', {
@@ -153,31 +157,31 @@ const ShipmentBarcode = ({route}) => {
       latitude11 : latitude11,
       longitude11 : longitude11,
       ReceiverMobileNo : route.params.phone,
-      ReceiverName: name
-      
+      ReceiverName: name,
+
   })
       .then(function (response) {
-          console.log(response.data, "hello");
+          console.log(response.data, 'hello');
           alert('Your Data has submitted');
       })
       .catch(function (error) {
           console.log(error);
       });
-  }
-  
+  };
+
     const sendSmsOtp = async () => {
       console.log(mobileNumber);
       const response = await axios.post('https://bked.logistiex.com/SMS/msg', {
-        "mobileNumber": mobileNumber,
-      });
-      if(response.status === 200) {
-        setShowModal11(true);
-      } 
-      else {
-        console.log("Otp not send", response);
-      }
-    }
-  
+        'mobileNumber': mobileNumber,
+      }).then(setShowModal11(true)).catch((err=>console.log("OTP not send")));
+      // if (response.status === 200) {
+      //   setShowModal11(true);
+      // }
+      // else {
+      //   console.log('Otp not send', response);
+      // }
+    };
+
     function handleButtonPress11(item) {
       // if(item=='Partial Dispatch'){
       //   navigation.navigate('Dispatch');
@@ -185,29 +189,29 @@ const ShipmentBarcode = ({route}) => {
         setDropDownValue11(item);
       // setModalVisible11(false);
     }
-  
+
     function validateOTP(){
-      axios.post("https://bked.logistiex.com/SMS/OTPValidate", {
+      axios.post('https://bked.logistiex.com/SMS/OTPValidate', {
         mobileNumber: mobileNumber,
-        otp: inputOtp
+        otp: inputOtp,
       })
       .then(response => {
-        if(response.data.return){
+        if (response.data.return){
           submitForm11();
-          setInputOtp("");
+          setInputOtp('');
           setShowModal11(false);
         }
-        else{
-          alert("Invalid OTP, please try again !!");
+        else {
+          alert('Invalid OTP, please try again !!');
         }
       })
       .catch(error => {
-        alert("Invalid OTP, please try again !!");
+        alert('Invalid OTP, please try again !!');
         console.log(error);
-      })
+      });
     }
 
-    
+
     // useEffect(() => {
     //   setBagId();
     // }, [bagId]);
@@ -216,7 +220,37 @@ const ShipmentBarcode = ({route}) => {
     //       updateDetails2();
     //       console.log("fdfdd "+barcode);
     // });
-    
+
+    function CloseBagEndScan(){
+      partialClose112();
+      console.log(bagSeal);
+      console.log(acceptedArray);
+      let date = new Date().getDate();
+      let month = new Date().getMonth() + 1;
+      let year = new Date().getFullYear();
+      let date11 = date + '' + month + '' + year;
+      // console.log(route.params.userId + date11 + bagIdNo);
+      let bagId11 = route.params.userId + date11 + bagIdNo;
+      setBagId(route.params.userId + date11 + bagIdNo);
+      console.log(bagId);
+      db.transaction(txn => {
+        txn.executeSql('INSERT OR REPLACE INTO closeBag1( bagId,bagSeal,AcceptedList) VALUES (?,?,?)', [
+            bagId11,
+            bagSeal,
+            acceptedArray.toString(),
+        ], (sqlTxn, _res) => {
+       setBagIdNo(bagIdNo + 1);
+       setAcceptedArray([]);
+       setBagSeal('');
+            console.log('\n Data Added to local db successfully closebag');
+            console.log(_res);
+            viewDetailBag();
+        }, error => {
+            console.log('error on adding data ' + error.message);
+        },);
+    });
+    }
+
     function CloseBag(){
       console.log(bagSeal);
       console.log(acceptedArray);
@@ -237,7 +271,7 @@ const ShipmentBarcode = ({route}) => {
        setBagIdNo(bagIdNo + 1);
        setAcceptedArray([]);
        setBagSeal('');
-            console.log(`\n Data Added to local db successfully closebag`);
+            console.log('\n Data Added to local db successfully closebag');
 
             console.log(_res);
             viewDetailBag();
@@ -261,7 +295,7 @@ const ShipmentBarcode = ({route}) => {
                   // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
               }
               // ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
-              console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+              console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
               // console.log('Table1 DB OK:', temp.length);
           });
       });
@@ -279,7 +313,7 @@ const ShipmentBarcode = ({route}) => {
         bagSeal VARCHAR(100),
         AcceptedList VARCHAR(600)
       )`, [], (sqlTxn, res) => {
-              console.log("table created successfully details213 ");
+              console.log('table created successfully details213 ');
               // loadAPI_Data();
           }, error => {
               console.log('error on creating table ' + error.message);
@@ -287,7 +321,7 @@ const ShipmentBarcode = ({route}) => {
       });
   };
       const updateDetails2 = () => {
-        console.log('scan '+barcode.toString());
+        console.log('scan ' + barcode.toString());
         setAcceptedArray([...acceptedArray, barcode.toString()]);
         console.log(acceptedArray);
         db.transaction((tx) => {
@@ -298,13 +332,13 @@ const ShipmentBarcode = ({route}) => {
 
                 if (results.rowsAffected > 0) {
                   console.log(barcode + 'accepted');
-                  ToastAndroid.show(barcode +" Accepted",ToastAndroid.SHORT);
+                  ToastAndroid.show(barcode + ' Accepted',ToastAndroid.SHORT);
 
                 } else {
                   console.log(barcode + 'not accepted');
                 }
                 console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++ i) {
+                for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
                 }
                 // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
@@ -315,22 +349,22 @@ const ShipmentBarcode = ({route}) => {
 
       const rejectDetails2 = () => {
         console.log('scan 45456');
-        setnewRejected(newrejected+1);
+        setnewRejected(newrejected + 1);
         db.transaction((tx) => {
             tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectedReason=? WHERE clientShipmentReferenceNumber=?', [DropDownValue,barcode], (tx1, results) => {
                 let temp = [];
                 // console.log("ddsds4545",tx1);
-                console.log("Rejected Reason : ",DropDownValue);
+                console.log('Rejected Reason : ',DropDownValue);
                 console.log('Results',results.rowsAffected);
                 console.log(results);
                 if (results.rowsAffected > 0) {
                   console.log(barcode + 'rejected');
-                  ToastAndroid.show(barcode +" Rejected",ToastAndroid.SHORT);
+                  ToastAndroid.show(barcode + ' Rejected',ToastAndroid.SHORT);
                 } else {
                   console.log(barcode + 'failed to reject item locally');
                 }
                 console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++ i) {
+                for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
                 }
                 // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
@@ -387,7 +421,7 @@ const ShipmentBarcode = ({route}) => {
               // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
           });
       });
-  }
+  };
 
     const getCategories = (data) => {
       db.transaction(txn => {
@@ -435,6 +469,13 @@ const ShipmentBarcode = ({route}) => {
       console.log(e.data, 'barcode');
       getCategories(e.data);
       setBarcode(e.data);
+    };
+    const onSuccess11 = e => {
+      Vibration.vibrate(100);
+      RNBeep.beep();
+      console.log(e.data, 'sealID');
+      // getCategories(e.data);
+      setBagSeal(e.data);
     };
 
     useEffect(() => {
@@ -639,19 +680,19 @@ const ShipmentBarcode = ({route}) => {
           <Modal.Body>
             {(PartialCloseData ) &&
             PartialCloseData.map((d,index) => (
-            <Button key={d.reasonID} flex="1" mt={2} marginBottom={1.5} 
-             marginTop={1.5} style={{backgroundColor: d.reasonName === DropDownValue11 ? "#6666FF":"#C8C8C8"}}  title={d.reasonName} onPress={() => handleButtonPress11(d.reasonName)} >
-            <Text style={{color:d.reasonName==DropDownValue11?'white':'black'}}>{d.reasonName}</Text></Button>
+            <Button key={d.reasonID} flex="1" mt={2} marginBottom={1.5}
+             marginTop={1.5} style={{backgroundColor: d.reasonName === DropDownValue11 ? '#6666FF' : '#C8C8C8'}}  title={d.reasonName} onPress={() => handleButtonPress11(d.reasonName)} >
+            <Text style={{color:d.reasonName == DropDownValue11 ? 'white' : 'black'}}>{d.reasonName}</Text></Button>
             ))
           }
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => {partialClose(); setModalVisible11(false)}} >
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => {partialClose(); setModalVisible11(false);}} >
             Submit</Button>
           </Modal.Body>
         </Modal.Content>
       </Modal>
       <View style={{backgroundColor: 'white', flex: 1, paddingTop: 30}}>
         <ScrollView showsVerticalScrollIndicator={false}>
-        
+
           <Center>
             <Input mx="3" mt={4} placeholder="Receiver Name" w="90%" bg="gray.200" size="lg" value={name} onChangeText={(e)=>setName(e)} />
             <Input mx="3" my={4} placeholder="Mobile Number" w="90%" bg="gray.200" size="lg" value={mobileNumber} onChangeText={(e)=>setMobileNumber(e)} />
@@ -659,16 +700,80 @@ const ShipmentBarcode = ({route}) => {
             <Button w="90%" mt={2} size="lg" style={{backgroundColor:'#004aad', color:'#fff'}}  title="Submit"  onPress={() => setModalVisible11(true)} >Partial Close</Button>
           </Center>
           <Center>
-            <Image style={{ width:150, height:150 }} source={require('../../assets/image.png')} alt={"Logo Image"} />
+            <Image style={{ width:150, height:150 }} source={require('../../assets/image.png')} alt={'Logo Image'} />
           </Center>
         </ScrollView>
       </View>
+      <Modal isOpen={showCloseBagModal11} onClose={() => { setShowCloseBagModal11(false);}} size="lg">
+        <Modal.Content maxWidth="350">
+          <Modal.CloseButton />
+          <Modal.Header>Close Bag</Modal.Header>
+          <Modal.Body>
+                {/* <ScrollView style={{paddingTop: 20, paddingBottom: 50}} showsVerticalScrollIndicator={false}> */}
+        <QRCodeScanner
+          onRead={onSuccess11}
+          reactivate={true}
+          // showMarker={true}
+          reactivateTimeout={2000}
+          flashMode={RNCamera.Constants.FlashMode.off}
+          ref={(node) => { this.scanner = node; }}
+          containerStyle={{ height:116,marginBottom:'55%' }}
+          cameraStyle={{ height: 90, marginTop: 95,marginBottom:'15%', width: 289, alignSelf: 'center', justifyContent: 'center' }}
+          // cameraProps={{ ratio:'1:2' }}
+          // containerStyle={{width: '100%', alignSelf: 'center', backgroundColor: 'white'}}
+          // cameraStyle={{width: '10%',alignSelf: 'center'}}
+          // topContent={
+          //   <View><Text>Scan Bag Seal</Text></View>
+          // }
+          // style={{
+          //   // flex: 1,
+          //   // width: '100%',
+          // }}
+        />
+            {'\n'}
+            <Input placeholder="Enter Bag Seal" size="md" value={bagSeal} onChangeText={(text)=>setBagSeal(text)}  style={{
+
+             width: 290,
+          backgroundColor:'white',
+          }} />
+            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBagEndScan(); setShowCloseBagModal11(false);}}>Submit</Button>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal>
+
+
       <Modal isOpen={showCloseBagModal} onClose={() => setShowCloseBagModal(false)} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
           <Modal.Header>Close Bag</Modal.Header>
           <Modal.Body>
-            <Input placeholder="Enter Bag Seal" size="md" onChangeText={(text)=>setBagSeal(text)} />
+                {/* <ScrollView style={{paddingTop: 20, paddingBottom: 50}} showsVerticalScrollIndicator={false}> */}
+        <QRCodeScanner
+          onRead={onSuccess11}
+          reactivate={true}
+          // showMarker={true}
+          reactivateTimeout={2000}
+          flashMode={RNCamera.Constants.FlashMode.off}
+          ref={(node) => { this.scanner = node; }}
+          containerStyle={{ height:116,marginBottom:'55%' }}
+          cameraStyle={{ height: 90, marginTop: 95,marginBottom:'15%', width: 289, alignSelf: 'center', justifyContent: 'center' }}
+          // cameraProps={{ ratio:'1:2' }}
+          // containerStyle={{width: '100%', alignSelf: 'center', backgroundColor: 'white'}}
+          // cameraStyle={{width: '10%',alignSelf: 'center'}}
+          // topContent={
+          //   <View><Text>Scan Bag Seal</Text></View>
+          // }
+          // style={{
+          //   // flex: 1,
+          //   // width: '100%',
+          // }}
+        />
+            {'\n'}
+            <Input placeholder="Enter Bag Seal" size="md" value={bagSeal} onChangeText={(text)=>setBagSeal(text)}  style={{
+
+             width: 290,
+          backgroundColor:'white',
+          }} />
             <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(), setShowCloseBagModal(false); }}>Submit</Button>
           </Modal.Body>
         </Modal.Content>
@@ -684,7 +789,7 @@ const ShipmentBarcode = ({route}) => {
             <Text style={{color:DropDownValue == d.shipmentExceptionReasonName ? 'white' : 'black'}}>{d.shipmentExceptionReasonName}</Text></Button>
             ))}
             <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => {rejectDetails2(); setModalVisible(false);}} >
-            Submit1</Button>
+            Submit</Button>
           </Modal.Body>
         </Modal.Content>
       </Modal>
@@ -698,7 +803,7 @@ const ShipmentBarcode = ({route}) => {
           containerStyle={{width: '100%', alignSelf: 'center', backgroundColor: 'white'}}
           cameraStyle={{width: '90%', alignSelf: 'center'}}
           topContent={
-            <View><Text>Scanner</Text></View>
+            <View><Text>Scanner </Text></View>
           }
         />
 
@@ -764,7 +869,9 @@ const ShipmentBarcode = ({route}) => {
             </View>
           </View>
           <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
-            <Button onPress={()=>{partialClose112();
+            <Button onPress={()=>{
+              setShowCloseBagModal11(true);
+              // partialClose112();
             // navigation.navigate('POD',{
             //   Forward : route.params.Forward,
             //   accepted : newaccepted,
@@ -773,6 +880,7 @@ const ShipmentBarcode = ({route}) => {
             //   userId : route.params.userId,
             // })
             }} w="48%" size="lg" bg="#004aad">End Scan</Button>
+
             <Button w="48%" size="lg" bg="#004aad" onPress={() => {
               setShowCloseBagModal(true);
               }} >Close bag</Button>
@@ -937,16 +1045,16 @@ containerText:{
 
     paddingLeft:30,
     color:'#000',
-    fontSize:15
+    fontSize:15,
 
 
 },
 otp:{
-    backgroundColor:'#004aad', 
+    backgroundColor:'#004aad',
     color:'#000',
     marginTop:5,
-    borderRadius:10
-   
-}
+    borderRadius:10,
+
+},
 
   });
