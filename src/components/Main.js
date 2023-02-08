@@ -72,7 +72,7 @@ export default function Main({navigation, route}) {
             });
         });
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE status IS Null', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentStatus="WFP" AND status IS NULL', [], (tx1, results) => {
                 // let temp = [];
                 // console.log('SP Pending : ' + results.rows.length);
                 setSpp(results.rows.length);
@@ -87,7 +87,7 @@ export default function Main({navigation, route}) {
         });
 
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="accepted"', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="WFP" AND status="accepted"', [], (tx1, results) => {
                 let temp = [];
                 // console.log('SP Completed : ' + results.rows.length);
                 setSpc(results.rows.length);
@@ -99,7 +99,7 @@ export default function Main({navigation, route}) {
             });
         });
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="accepted" OR status="rejected"', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="WFP" AND status="accepted" OR status="rejected"', [], (tx1, results) => {
                 // let temp = [];
                 // console.log('SP Completed : ' + results.rows.length);
                 setSpARC(results.rows.length);
@@ -111,7 +111,7 @@ export default function Main({navigation, route}) {
             });
         });
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="notPicked"', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="WFP" AND status="notPicked"', [], (tx1, results) => {
                 let temp = [];
                 // console.log('SP Not Picked : ' + results.rows.length);
                 setSpnp(results.rows.length);
