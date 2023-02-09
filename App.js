@@ -265,6 +265,7 @@ const push_Data = () => {
                 }
                 if (m === 6){
                   ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
+                  setIsLoading(false);
                   console.log('All ' + m + ' APIs loaded successfully ');
                   m = 0;
                 } else {
@@ -306,7 +307,7 @@ const push_Data = () => {
         });
     };
     const loadAPI_Data2 = () => {
-        setIsLoading(!isLoading);
+        // setIsLoading(!isLoading);
         (async () => {
             await axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/workload/${userId}`).then(res => {
                 createTables2();
@@ -350,7 +351,7 @@ const push_Data = () => {
                 m++;
                 // console.log('value of m2 '+m);
                 // viewDetails2();
-                setIsLoading(false);
+                // setIsLoading(false);
             }, error => {
                 console.log(error);
             },);
@@ -391,7 +392,7 @@ const push_Data = () => {
         });
     };
     const loadAPI_Data3 = () => {
-        setIsLoading(!isLoading);
+        // setIsLoading(!isLoading);
         createTables3();
         (async () => {
             await axios.get('https://bkedtest.logistiex.com/ADupdatePrams/getUSER').then(res => {
@@ -419,7 +420,7 @@ const push_Data = () => {
                 m++;
                 // console.log('value of m3 '+m);
                 // viewDetails3();
-                setIsLoading(false);
+                // setIsLoading(false);
             }, error => {
                 console.log(error);
             },);
@@ -455,7 +456,7 @@ const push_Data = () => {
         });
     };
     const loadAPI_Data4 = () => {
-        setIsLoading(!isLoading);
+        // setIsLoading(!isLoading);
         createTables4();
         (async () => {
             await axios.get('https://bkedtest.logistiex.com/ADupdatePrams/getUPFR').then(res => {
@@ -492,7 +493,7 @@ const push_Data = () => {
                 // console.log('value of m4 '+m);
 
                 // viewDetails4();
-                setIsLoading(false);
+                // setIsLoading(false);
             }, error => {
                 console.log(error);
             },);
@@ -529,7 +530,7 @@ const push_Data = () => {
         });
     };
     const loadAPI_Data5 = () => {
-        setIsLoading(!isLoading);
+        // setIsLoading(!isLoading);
         createTables5();
         (async () => {
             await axios.get('https://bkedtest.logistiex.com/ADupdatePrams/getNotAttemptedReasons').then(res => {
@@ -560,7 +561,7 @@ const push_Data = () => {
                 // console.log('value of m5 '+m);
 
                 // viewDetails5();
-                setIsLoading(false);
+                // setIsLoading(false);
             }, error => {
                 console.log(error);
             },);
@@ -595,7 +596,7 @@ const push_Data = () => {
         });
     };
     const loadAPI_Data6 = () => {
-        setIsLoading(!isLoading);
+        // setIsLoading(!isLoading);
         createTables6();
         (async () => {
             await axios.get('https://bkedtest.logistiex.com/ADupdateprams/getPartialClosureReasons',).then(res => {
@@ -625,7 +626,7 @@ const push_Data = () => {
                 // console.log('value of m6 '+m);
 
                 viewDetails6();
-                setIsLoading(false);
+                // setIsLoading(false);
             }, error => {
                 console.log(error);
             },);
@@ -1707,7 +1708,7 @@ const push_Data = () => {
               backgroundColor: 'rgba(0,0,0,0.65)',
             },
           ]}>
-          <Text style={{color: 'white'}}>Syncing Please Wait...</Text>
+          <Text style={{color: 'white'}}>Syncing Data. Please Wait...</Text>
           <Lottie
             source={require('./src/assets/loading11.json')}
             autoPlay
