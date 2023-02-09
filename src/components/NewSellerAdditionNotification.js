@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image, StyleSheet, View } from 'react-native';
 import { convertAbsoluteToRem } from 'native-base/lib/typescript/theme/tools';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function NewSellerAdditionNotification(route) {
 
@@ -56,6 +57,33 @@ useEffect(() => {
     DisplayData();
 }, [userId]);
 // console.log('Data:',data);
+
+  const AcceptHandler = async() => {
+    console.log('df')
+    axios.post('https://bkedtest.logistiex.com/SellerMainScreen/acceptworkload', {   
+      consignorCode :  data.consignorCode,
+      feUserId : userId                   
+      }).then(response => {
+          console.log(response)                  
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+
+  const RejectHandler = async() => {
+    console.log('df')
+    axios.post('https://bkedtest.logistiex.com/SellerMainScreen/rejectworkload', {   
+      consignorCode :  data.consignorCode,
+      feUserId : userId                   
+      }).then(response => {
+          console.log(response)                  
+      }).catch(error => {
+        console.log(error);
+      });
+  }
+
+
+
   return (
     <NativeBaseProvider>
       <ScrollView>
@@ -114,18 +142,22 @@ useEffect(() => {
                 }} />
                 <HStack alignItems="center" space={4} justifyContent="space-between">
                     <HStack alignItems="center">
+                    <TouchableOpacity onPress={() => RejectHandler()} >
                     <Button style={{backgroundColor:'#FF2E2E'}} _dark={{
                             color: "red.200"
                             }} fontWeight="400">
                             Reject
                         </Button>
+                    </TouchableOpacity>
                     </HStack>
                     <HStack alignItems="center">
+                        <TouchableOpacity onPress={() => AcceptHandler()} >
                         <Button style={{backgroundColor:'#004aad'}} _dark={{
                             color: "blue.200"
                             }} fontWeight="400">
                             Accept
                         </Button>
+                        </TouchableOpacity>
                     </HStack>
                 </HStack>
             </Stack>

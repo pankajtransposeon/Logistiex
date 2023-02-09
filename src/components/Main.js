@@ -369,7 +369,19 @@ export default function Main({navigation, route}) {
             <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>New Pickup</Button>
             :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup')}>New Pickup</Button>
             }
+
+<Button
+              variant="outline"
+              onPress={() => {
+                  navigation.navigate('SellerHandover')
+              }}
+              mt={4}
+              style={{color: '#004aad', borderColor: '#004aad'}}>
+              <Text style={{color: '#004aad'}}>Start Handover</Text>
+            </Button>
         </Box>
+
+        
         );
         })}
         <Center>

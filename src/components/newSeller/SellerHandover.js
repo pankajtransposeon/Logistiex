@@ -14,23 +14,31 @@ const SellerHandover = ({route}) => {
 
     const navigation = useNavigation();
 
-    const loadDetails = () => { // setIsLoading(!isLoading);
+    const loadDetails = () => { 
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => { // ToastAndroid.show("Loading...", ToastAndroid.SHORT);
+            tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => { 
                 let temp = [];
-                console.log(results.rows.length);
                 for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
-                    // console.log(results.rows.item(i).consignorName);
-                    // var address121 = results.rows.item(i).consignorAddress;
-                    // var address_json = JSON.parse(address121);
-                    // console.log(typeof (address_json));
-                    // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
-                    // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+  
+                    // tx.executeSql('SELECT * FROM SellerMainScreenDetailsRTO WHERE consignorCode = ?', [results.rows.item(i).consignorCode], (tx1, result) => {
+                    //     let expected = 0;
+                    //     for (let j = 0; j < result.rows.length; ++j) {
+                    //         expected++;
+                    //     }
+                    // },
+                    // err => console.log(err, 'error')
+                    // );
+                    // tx.executeSql('SELECT * FROM SellerMainScreenDetailsRTO WHERE status = ?', [1], (tx1, result) => {
+                    //     for (let j = 0; j < result.rows.length; ++j) {
+                    //         scaned++;
+                    //     }
+                    // },
+                    // err => console.log(err, 'error')
+                    // );
                 }
-                // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+                // temp.push(expected)
                 setData(temp);
-                // setIsLoading(false);
             });
         });
     };
@@ -46,7 +54,7 @@ const SellerHandover = ({route}) => {
         return (f.includes(keyword1));
     };
 
-    
+    console.log(data, 'dafdf')
 return (
   <NativeBaseProvider>
     <Box flex={1} bg="#fff"  width="auto" maxWidth="100%">
@@ -61,22 +69,10 @@ return (
             </DataTable.Header>
               {data && data.length > 0 ?
             data.filter(searched(keyword)).map((single, i) => (
-              <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} key={single.consignorName} onPress={() =>{navigation.navigate('HandoverShipment',{
-                paramKey : single.consignorCode,
-                Forward : single.ForwardPickups,
-                consignorAddress1 :single.consignorAddress1,
-                consignorAddress2 :single.consignorAddress2,
-                consignorCity :single.consignorCity,
-                consignorPincode :single.consignorPincode,
-                consignorName : single.consignorName,
-                PRSNumber : single.PRSNumber,
-                consignorCode : single.consignorCode,
-                userId : single.userId,
-                phone : single.consignorContact,
-              });}}>
+              <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} key={single.consignorName}>
                 <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{single.ReverseDeliveries}</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >doubt</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >0</Text></DataTable.Cell>
                 <ArrowForwardIcon style={{color:'#004aad',marginTop:8}} />
               </DataTable.Row>
             ))
@@ -87,7 +83,7 @@ return (
         </Card>
       </ScrollView>
       <Center>
-      <Button w="50%" size="lg" style={{backgroundColor:'#004aad', color:'#fff'}} onPress={()=>navigation.navigate('HandoverShipment')} >Start Scanning</Button>
+      <Button w="50%" size="lg" style={{backgroundColor:'#004aad', color:'#fff'}} onPress={()=>navigation.navigate('HandoverShipmentRTO')} >Start Scanning</Button>
       </Center>
       <Center>
           <Image style={{ width:150, height:150}} source={require('../../assets/image.png')} alt={'Logo Image'} />
