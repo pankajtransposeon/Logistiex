@@ -760,7 +760,9 @@ const ScanShipment = ({route}) => {
               }}
               source={require('../../assets/image.png')} alt={'Logo Image'}
             />
+            
           </Center>
+          
         </View>
         {/* <Fab onPress={() => handleSync()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} /> */}
       </ScrollView>

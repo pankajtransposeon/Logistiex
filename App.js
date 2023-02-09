@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import 'react-native-gesture-handler';
@@ -43,7 +44,6 @@ import {
     View,
     StyleSheet,
     ToastAndroid,
-    Alert,
 } from 'react-native';
 import {Badge} from 'react-native-paper';
 // import { Icon } from 'native-base';
@@ -123,8 +123,8 @@ const push_Data = () => {
                 ToastAndroid.show('Syncing...', ToastAndroid.SHORT);
                 // setIsLoading(!isLoading);
                 let temp = [];
-                var temp11 = 0;
-                for (let i = 0; i < results.rows.length; ++ i) {
+                let temp11 = 0;
+                for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
                     let accepted11 = [false];
                     if (results.rows.item(i).status === 'accepted') {
@@ -151,7 +151,7 @@ const push_Data = () => {
                             // packagingId : results.rows.item(i).packagingId ,
                             packagingId: 'PSN00100',
                             packageingStatus: 1,
-                            PRSNumber: "results.rows.item(i).PRSNumber",
+                            PRSNumber: 'results.rows.item(i).PRSNumber',
                             pickupBagId: 'ss121',
                         }).then(response => {
                             temp11++;
@@ -190,10 +190,7 @@ const push_Data = () => {
     };
 
 
-
-
     /*              Press (Ctrl + k + 2) keys together for better API tables view in App.js (VSCode) */
-
 
 
     // Table 1
@@ -215,8 +212,8 @@ const push_Data = () => {
         createTables1();
         (async () => {
             await axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/consignorslist/${userId}`).then(res => {
-                console.log('Table1 API OK: ' + res.data.data.length);
-                // console.log(res.data);
+                console.log('API 1 OK: ' + res.data.data.length);
+                // console.log(res);
                 for (let i = 0; i < res.data.data.length; i++) {
                     // let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
                     db.transaction(txn => {
@@ -238,15 +235,17 @@ const push_Data = () => {
                             // console.log(`\n Data Added to local db successfully1212`);
                             // console.log(res);
                         }, error => {
-                            console.log('error on adding data ' + error.message);
+                            console.log('error on loading  data from https://bkedtest.logistiex.com/SellerMainScreen/consignorslist/' + error.message);
                         },);
                     });
                 }
                 viewDetails1();
                 m++;
+                // console.log('value of m1 '+m);
+
                 setIsLoading(false);
             }, error => {
-                console.log(error);
+                console.log('https://bkedtest.logistiex.com/SellerMainScreen/consignorslist/',error);
             },);
         })();
     };
@@ -264,9 +263,17 @@ const push_Data = () => {
                     // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
                     // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
                 }
-                m++;
+                if (m === 6){
+                  ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
+                  console.log('All ' + m + ' APIs loaded successfully ');
+                  m = 0;
+                } else {
+                console.log('Only ' + m + ' APIs loaded out of 6 ');
+              }
+                // m++;
                 // ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
-                console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+                // console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
+                // console.log('data loaded API 1',temp);
                 // console.log('Table1 DB OK:', temp.length);
             });
         });
@@ -303,7 +310,7 @@ const push_Data = () => {
         (async () => {
             await axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/workload/${userId}`).then(res => {
                 createTables2();
-                console.log('Table2 API OK: ' + res.data.data.length);
+                console.log('API 2 OK: ' + res.data.data.length);
                 for (let i = 0; i < res.data.data.length; i++) {  //console.log(res.data.data[i].shipmentStatus);
                     db.transaction(txn => {
                         txn.executeSql(`INSERT OR REPLACE INTO SellerMainScreenDetails( 
@@ -341,6 +348,7 @@ const push_Data = () => {
                     });
                 }
                 m++;
+                // console.log('value of m2 '+m);
                 // viewDetails2();
                 setIsLoading(false);
             }, error => {
@@ -351,19 +359,19 @@ const push_Data = () => {
     const viewDetails2 = () => {
         db.transaction(tx => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails', [], (tx1, results) => {
-                let temp = [];
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
+                // let temp = [];
+                // for (let i = 0; i < results.rows.length; ++i) {
+                //     temp.push(results.rows.item(i));
                     // var address121 = results.rows.item(i).consignorAddress;
                     // var address_json = JSON.parse(address121);
                     // console.log(typeof (address_json));
                     // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
                     // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
                     // ToastAndroid.show("Sync Successful"+ results.rows.item(i).clientShipmentReferenceNumber,ToastAndroid.SHORT);
-                }
+                // }
                 // ToastAndroid.show('Sync Successful', ToastAndroid.SHORT);
-                 
-                m++;
+
+                // m++;
                 // console.log("Data from Local Database1 : \n ", JSON.stringify(temp, null, 4));
                 // console.log('Table2 DB OK :', temp.length);
             },);
@@ -409,6 +417,7 @@ const push_Data = () => {
                     });
                 }
                 m++;
+                // console.log('value of m3 '+m);
                 // viewDetails3();
                 setIsLoading(false);
             }, error => {
@@ -419,12 +428,12 @@ const push_Data = () => {
     const viewDetails3 = () => {
         db.transaction(tx => {
             tx.executeSql('SELECT * FROM ShipmentRejectReasons', [], (tx1, results) => {
-                let temp = [];
+                // let temp = [];
                 // console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
-                 
+                // for (let i = 0; i < results.rows.length; ++i) {
+                //     temp.push(results.rows.item(i));
+                // }
+
                 // m++;
                 // ToastAndroid.show('Sync Successful3', ToastAndroid.SHORT);
                 // console.log('Data from Local Database 3: \n ', JSON.stringify(temp, null, 4),);
@@ -480,6 +489,8 @@ const push_Data = () => {
                     });
                 }
                 m++;
+                // console.log('value of m4 '+m);
+
                 // viewDetails4();
                 setIsLoading(false);
             }, error => {
@@ -490,15 +501,15 @@ const push_Data = () => {
     const viewDetails4 = () => {
         db.transaction(tx => {
             tx.executeSql('SELECT * FROM ClosePickupReasons', [], (tx1, results) => {
-                let temp = [];
+                // let temp = [];
                 // console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
+                // for (let i = 0; i < results.rows.length; ++i) {
+                //     temp.push(results.rows.item(i));
+                // }
                 // ToastAndroid.show('Sync Successful4', ToastAndroid.SHORT);
                 // console.log('Data from Local Database 4: \n ', JSON.stringify(temp, null, 4),);
                 // console.log('Data from Local Database 4: \n ',temp);
-                 
+
                 // m++;
                 // console.log('Table4 DB OK:', temp.length);
             });
@@ -546,6 +557,8 @@ const push_Data = () => {
                     });
                 }
                 m++;
+                // console.log('value of m5 '+m);
+
                 // viewDetails5();
                 setIsLoading(false);
             }, error => {
@@ -556,11 +569,11 @@ const push_Data = () => {
     const viewDetails5 = () => {
         db.transaction(tx => {
             tx.executeSql('SELECT * FROM NotAttemptReasons', [], (tx1, results) => {
-                let temp = [];
-                // console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
+                // let temp = [];
+                // // console.log(results.rows.length);
+                // for (let i = 0; i < results.rows.length; ++i) {
+                //     temp.push(results.rows.item(i));
+                // }
                 // m++;
                 // ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
                 // console.log('Data from Local Database 5: \n ', temp);
@@ -608,6 +621,9 @@ const push_Data = () => {
                         },);
                     });
                 }
+                m++;
+                // console.log('value of m6 '+m);
+
                 viewDetails6();
                 setIsLoading(false);
             }, error => {
@@ -623,27 +639,30 @@ const push_Data = () => {
                 // for (let i = 0; i < results.rows.length; ++i) {
                 //     temp.push(results.rows.item(i));
                 // }
-                m++;
-                if (m === 5){
-                ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
-                m = 0;
-              }
-              console.log('API to local db sync success: ' + m);
+                // m++;
+                if (m <= 5){
+                  // ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
+                  console.log('Waiting for ' + ( 6 - m ) + ' API to load. Plz wait...');
+                  // m = 0;
+                }
+              //  else {
+              //   console.log('Only ' + m + ' APIs loaded out of 6 ');
+              // }
                 // console.log('Data from Local Database 6 : \n ', temp);
                 // console.log('Table6 DB OK:', temp.length);
             });
         });
     };
 
-  const DisplayData= () => {
+  const DisplayData = () => {
         axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/getadditionalwork/${userId}`)
           .then(res => {
-            setData(res.data)
+            setData(res.data);
             // console.log('dataDisplay', res.data);
           })
           .catch(error => {
-            console.log('Error Msg:', error)
-          })
+            console.log('Error Msg:', error);
+          });
   };
 
   useEffect(() => {
@@ -1749,7 +1768,7 @@ function CustomDrawerContent({navigation}) {
   return (
     <NativeBaseProvider>
       {email ? (
-        <Box pt={4} px={4} key={'extra'+ email}>
+        <Box pt={4} px={4} key={'extra' + email}>
           <Avatar bg="#004aad" alignSelf="center" size="xl">
             <MaterialIcons
               name="account"
