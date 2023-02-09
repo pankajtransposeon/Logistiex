@@ -8,7 +8,6 @@ import { Center } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import { RNCamera } from 'react-native-camera';
 import { openDatabase } from 'react-native-sqlite-storage';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import NetInfo from '@react-native-community/netinfo';
@@ -21,7 +20,7 @@ import { Console } from 'console';
 // import GetLocation from 'react-native-get-location';
 // import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import OTPTextInput from 'react-native-otp-textinput';
-
+import { RNCamera } from 'react-native-camera';
 const db = openDatabase({
   name: 'rn_sqlite',
 });
@@ -64,7 +63,20 @@ const ScanShipment = ({route}) => {
     const [modalVisible11, setModalVisible11] = useState(false);
     const [DropDownValue11, setDropDownValue11] = useState(null);
     const [PartialCloseData, setPartialCloseData] = useState([]);
-    const [ImageUrl, setImageUrl] = useState('');
+    // const camera = useRef(null);
+    const [images, setImages] = useState([]);
+
+const takePicture = async () => {
+    if (camera) {
+      const options = { quality: 0.5, base64: true };
+      const data = await camera.takePictureAsync(options);
+      setImages([...images, data.uri]);
+    }
+  };
+
+  const recordVideo = () => {
+    console.log('Recording a video is not implemented yet');
+  };
     // const PartialClose = 'https://bked.logistiex.com/ADupdatePrams/getPartialClosureReasons';
     const DisplayData11 = async() => {
       db.transaction(tx => {
@@ -101,53 +113,7 @@ const ScanShipment = ({route}) => {
         setModalVisible11(true);
       }
           }
-  
-    // const clearText = () => {
-    //   otpInput.current.clear();
-    // }
-  
-    // const setText = () => {
-    //   otpInput.current.setValue("1234");
-    // }
-    const takePhoto= async()=>{
-        let options = {
-            mediaType:'photo',
-            quality:1,
-            cameraType:'back',
-            maxWidth : 480,
-            maxHeight : 480,
-            storageOptions: {
-              skipBackup: true,
-              path: 'images',
-            },
-        }
-        let isGranted = await requestCameraPermission();
-        let result = null;
-        if(isGranted){
-            result = await launchCamera(options);
-            console.log(result)
-        }
-        if(result.assets !== undefined){          
-          fetch('https://bked.logistiex.com/DSQCPicture/uploadPicture', {
-            method: 'POST',
-            body: createFormData(result.assets[0], {
-                    useCase : "DSQC",
-                    type : "front",
-                    contextId : "SI002",
-                    contextType: "shipment",
-                    hubCode :"HC001"
-                  }),
-          })
-          .then((data) => data.json())
-          .then((res) => {
-            setImageUrl(res.publicURL);
-            console.log('upload succes', res);
-          })
-          .catch((error) => {
-            console.log('upload error', error);
-          });
-        }
-    }
+    
   
   useEffect(() => {
     const current_location = () => {
@@ -673,26 +639,52 @@ const ScanShipment = ({route}) => {
           </Modal.Body>
         </Modal.Content>
       </Modal>
-      <Modal isOpen={modalVisible1} onClose={() => setModalVisible1(false)} size="lg">
+      <Modal isOpen={modalVisible1} onClose={() => {setModalVisible1(false); setImages([])}} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
           <Modal.Header>Return Handover Rejection Tag</Modal.Header>
           <Modal.Body>
-          <Button py={3}  variant='outline'  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons></Button>
-          {
-            ImageUrl ? (
-            <Image 
-            source={{ uri: ImageUrl }} 
-            style={{ width: 300, height: 200 }} 
-            alt = 'image not shown'
-            />
-            ):(
-            null
-            )
-            }
+          <View style={{ flex: 1}}>
+          <RNCamera
+        ref={(ref) => {
+          camera = ref;
+        }}
+        style={{ flex: 1 ,width:300,height:300}}
+        type={RNCamera.Constants.Type.back}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'transparent',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            padding: 20
+          }}
+        >
+          <TouchableOpacity onPress={takePicture} style={{ marginRight: 20 }}>
+            <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}>Take photo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={recordVideo}>
+            <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}>Record video</Text>
+          </TouchableOpacity>
+        </View>
+      </RNCamera>
+      {images.length > 0 && (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' ,marginTop:50}}>
+          {images.map((image, index) => (
+            <Image key={index} style={{ width: 200, height: 200 }} source={{ uri: image }} />
+          ))}
+        </View>
+        )}
+        </View>
             <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} marginRight={1}>ReScan/Record</Button>
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} marginRight={1} onPress={()=>setImages([])}>ReScan/Record</Button>
+            {images.length<5 ?
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} >Save</Button>
+            :
             <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={()=>{setModalVisible(true); setModalVisible1(false)}} >Save</Button>
+            }
             </View>
           </Modal.Body>
         </Modal.Content>
