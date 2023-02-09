@@ -61,6 +61,7 @@ import UpdateSellerCloseReasonCode from './src/components/newSeller/UpdateSeller
 import CloseReasonCode from './src/components/newSeller/CloseReasonCode';
 import ReturnHandoverRejectionTag from './src/components/newSeller/ReturnHandoverRejectionTag';
 import CloseTrip from './src/components/newSeller/CloseTrip';
+import HandoverShipmentRTO from './src/components/newSeller/HandoverShipmentRTO';
 const db = openDatabase({name: 'rn_sqlite'});
 
 const Stack = createStackNavigator();
@@ -94,12 +95,14 @@ function StackNavigators({navigation}) {
     useEffect(() => {
       (async () => {
         if (userId) {
+          loadAPI_Data10();
             loadAPI_Data1();
             loadAPI_Data2();
             loadAPI_Data3();
             loadAPI_Data4();
             loadAPI_Data5();
             loadAPI_Data6();
+            
         }
       })();
     }, []);
@@ -107,6 +110,7 @@ function StackNavigators({navigation}) {
     // Sync button function
     const pull_API_Data = () => {
       console.log('api pull');
+      loadAPI_Data10();
         loadAPI_Data1();
         loadAPI_Data2();
         loadAPI_Data3();
@@ -378,6 +382,105 @@ const push_Data = () => {
             },);
         });
     };
+
+
+    const createTables10 = () => {
+      db.transaction(txn => {
+          txn.executeSql('DROP TABLE IF EXISTS SellerMainScreenDetailsRTO', []);
+          txn.executeSql(`CREATE TABLE IF NOT EXISTS SellerMainScreenDetailsRTO( 
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        clientShipmentReferenceNumber VARCHAR(200),
+        clientRefId VARCHAR(200),
+        awbNo VARCHAR(200),
+        consignorCode VARCHAR(200),
+        packagingStatus VARCHAR(200),
+        packagingId VARCHAR(200),
+        runSheetNumber VARCHAR(200),
+        shipmentStatus VARCHAR(200),
+        shipmentAction VARCHAR(200),
+        rejectedReason VARCHAR(200),
+        actionTime VARCHAR(200),
+        status VARCHAR(200)
+      )`, [], (sqlTxn, res) => {
+              // console.log("table created successfully details213 ");
+              // loadAPI_Data();
+          }, error => {
+              console.log('error on creating table ' + error.message);
+          },);
+      });
+  };
+  const loadAPI_Data10 = () => {
+      setIsLoading(!isLoading);
+      (async () => {
+          await axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/workload/${userId}`).then(res => {
+              createTables10();
+              console.log('Table10 API OK 123: ' + res.data.data.length);
+              for (let i = 0; i < res.data.data.length; i++) { // console.log(res.data.data[i].consignorCode);
+                 if(res.data.data[i].shipmentStatus === "RTO"){
+                  db.transaction(txn => {
+                    txn.executeSql(`INSERT OR REPLACE INTO SellerMainScreenDetailsRTO( 
+              clientShipmentReferenceNumber ,
+              clientRefId ,
+              awbNo ,
+              consignorCode ,
+              packagingStatus ,
+              packagingId ,
+              runSheetNumber ,
+              shipmentStatus ,
+              shipmentAction ,
+              rejectedReason ,
+              actionTime ,
+              status 
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`, [
+                        res.data.data[i].clientShipmentReferenceNumber,
+                        res.data.data[i].clientRefId,
+                        res.data.data[i].awbNo,
+                        res.data.data[i].consignorCode,
+                        res.data.data[i].packagingStatus,
+                        res.data.data[i].packagingId,
+                        res.data.data[i].runSheetNumber,
+                        res.data.data[i].shipmentStatus,
+                        res.data.data[i].shipmentAction,
+                        res.data.data[i].rejectedReason,
+                        res.data.data[i].actionTime,
+                        'Rejected',
+                    ], (sqlTxn, _res) => {
+                        console.log(`\n Data Added to local db successfully 213`);
+                        // console.log(res);
+                    }, error => {
+                        console.log('error on adding data ' + error.message);
+                    },);
+                });
+                 }
+              }
+              viewDetails10();
+              setIsLoading(false);
+          }, error => {
+              Alert.alert(error);
+          },);
+      })();
+  };
+  const viewDetails10 = () => {
+      db.transaction(tx => {
+          tx.executeSql('SELECT * FROM SellerMainScreenDetailsRTO', [], (tx1, results) => {
+              let temp = [];
+              for (let i = 0; i < results.rows.length; ++i) {
+                  temp.push(results.rows.item(i));
+                  // var address121 = results.rows.item(i).consignorAddress;
+                  // var address_json = JSON.parse(address121);
+                  // console.log(typeof (address_json));
+                  // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
+                  // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+                  // ToastAndroid.show("Sync Successful"+ results.rows.item(i).clientShipmentReferenceNumber,ToastAndroid.SHORT);
+              }
+              // ToastAndroid.show('Sync Successful', ToastAndroid.SHORT);
+               
+              m++;
+              // console.log("Data from Local Database1 : \n ", JSON.stringify(temp, null, 4));
+              // console.log('Table2 DB OK :', temp.length);
+          },);
+      });
+  };
 
     // Table 3
     const createTables3 = () => {
@@ -1188,6 +1291,60 @@ const push_Data = () => {
           }}
         />
 
+<Stack.Screen
+          name="HandoverShipmentRTO"
+          component={HandoverShipmentRTO}
+          options={{
+            headerTitle: props => (
+              <NativeBaseProvider>
+                <Heading style={{color: 'white'}} size="md">
+                HandoverShipmentRTO
+                </Heading>
+              </NativeBaseProvider>
+            ),
+            headerLeft: () => (
+              <MaterialIcons
+                name="menu"
+                style={{fontSize: 30, marginLeft: 10, color: 'white'}}
+                onPress={() => navigation.toggleDrawer()}
+              />
+            ),
+            headerRight: () => (
+              <View style={{flexDirection: 'row', marginRight: 10}}>
+                <TouchableOpacity
+                  style={{marginRight: 15}}
+                  onPress={() => {
+                    sync11();
+                  }}>
+                  <MaterialIcons
+                    name="sync"
+                    style={{fontSize: 30, color: 'white'}}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('NewSellerAdditionNotification');
+                    navigation.dispatch(DrawerActions.openDrawer());
+                  }}>
+                  <MaterialIcons
+                    name="bell-outline"
+                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                  />
+                  <Badge
+                    style={{
+                      position: 'absolute',
+                      fontSize: 15,
+                      borderColor: 'white',
+                      borderWidth: 1,
+                    }}>
+                    {data.length}
+                  </Badge>
+                </TouchableOpacity>
+              </View>
+            ),
+          }}
+        />
+
         <Stack.Screen
           name="NewSellerSelection"
           component={NewSellerSelection}
@@ -1831,6 +1988,8 @@ function CustomDrawerContent({navigation}) {
               style={{color: '#004aad', borderColor: '#004aad'}}>
               <Text style={{color: '#004aad'}}>{TripValue}</Text>
             </Button>
+
+            
           </Box>
         </View>
       ) : null}
