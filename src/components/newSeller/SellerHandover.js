@@ -11,10 +11,14 @@ const SellerHandover = ({route}) => {
 
     const [data, setData] = useState([]);
     const [keyword, setKeyword] = useState('');
-
+    const [numScanned, setNumScanned] = useState(0);
     const navigation = useNavigation();
 
-    const loadDetails = () => { 
+    
+    const loadDetails = () => { // setIsLoading(!isLoading);
+        const handleNumScannedUpdate = (newNumScanned) => {
+            setNumScanned(newNumScanned);
+          };
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => { 
                 let temp = [];
@@ -42,13 +46,11 @@ const SellerHandover = ({route}) => {
             });
         });
     };
-
     useEffect(() => {
         (async () => {
             loadDetails();
         })();
-    }, []);
-
+    }, [data]);
     const searched = (keyword1) => (c) => {
         let f = c.consignorName;
         return (f.includes(keyword1));
@@ -72,7 +74,7 @@ return (
               <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} key={single.consignorName}>
                 <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{single.ReverseDeliveries}</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >0</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >{numScanned}</Text></DataTable.Cell>
                 <ArrowForwardIcon style={{color:'#004aad',marginTop:8}} />
               </DataTable.Row>
             ))

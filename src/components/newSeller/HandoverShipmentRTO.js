@@ -142,7 +142,7 @@ const HandoverShipmentRTO = ({route}) => {
     const [count, setcount] = useState(0);
 
     console.log(barcode, 'barcode')
-    console.log('datatanmay', data.consignorName)
+    console.log('datatanmay', data)
 
   return (
     <NativeBaseProvider>

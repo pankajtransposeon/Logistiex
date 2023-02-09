@@ -1,67 +1,101 @@
-import { NativeBaseProvider, Box, Image, Center, Button, Modal, Input} from 'native-base';
-import {StyleSheet, ScrollView, View} from 'react-native';
+/* eslint-disable prettier/prettier */
+/* eslint-disable react-native/no-inline-styles */
+import {
+    ArrowForwardIcon,
+    NativeBaseProvider,
+    Box,
+    Image,
+    Center,
+} from 'native-base';
+import {StyleSheet, ScrollView} from 'react-native';
 import {DataTable, Searchbar, Text, Card} from 'react-native-paper';
 import {openDatabase} from 'react-native-sqlite-storage';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import { Picker } from '@react-native-picker/picker';
+
 const db = openDatabase({name: 'rn_sqlite'});
 
-const PendingHandover = ({route}) => {
+const SellerDeliveries = ({route}) => {
 
-    // const [data, setData] = useState([]);
-    const [selected,setSelected]=useState('Select Exception Reason');
+    const [data, setData] = useState([]);
+    const [keyword, setKeyword] = useState('');
+
     const navigation = useNavigation();
-    const [showCloseBagModal, setShowCloseBagModal] = useState(false);
-    let data = [
-        { value: 'Select Exception Reason', label: 'Select Exception Reason' },
-        { value: 'Out of Capacity', label: 'Out of Capacity' },
-        { value: 'Seller Holiday', label: 'Seller Holiday' },
-      ];
-    
+
+    const loadDetails = () => { // setIsLoading(!isLoading);
+        db.transaction((tx) => {
+            tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => { // ToastAndroid.show("Loading...", ToastAndroid.SHORT);
+                let temp = [];
+                console.log(results.rows.length);
+                for (let i = 0; i < results.rows.length; ++i) {
+                    temp.push(results.rows.item(i));
+                }
+                setData(temp);
+            });
+        });
+    };
+    useEffect(() => {
+        (async () => {
+            loadDetails();
+        })();
+    }, [data]);
+    const searched = (keyword1) => (c) => {
+        let f = c.consignorName;
+        return (f.includes(keyword1));
+    };
+
 return (
   <NativeBaseProvider>
     <Box flex={1} bg="#fff"  width="auto" maxWidth="100%">
+      <Searchbar
+        placeholder="Search Seller Name"
+        onChangeText={(e) => setKeyword(e)}
+        value={keyword}
+        style={{marginHorizontal: 15, marginTop: 10}}
+      />
       <ScrollView style={styles.homepage} showsVerticalScrollIndicator={true} showsHorizontalScrollIndicator={false}>
         <Card>
           <DataTable>
             <DataTable.Header style={{height:'auto', backgroundColor: '#004aad', borderTopLeftRadius: 5, borderTopRightRadius: 5}} >
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Seller Name</Text></DataTable.Title>
-              <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Expected Deliveries</Text></DataTable.Title>
-              <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Pending Shipments</Text></DataTable.Title>
+              <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Forward Pickups</Text></DataTable.Title>
+              <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Return Deliveries</Text></DataTable.Title>
             </DataTable.Header>
-              <DataTable.Row>
-                <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{route.params.consignorName}</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{route.params.expected}</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{0}</Text></DataTable.Cell>
+            {data && data.length > 0 ?
+            data.filter(searched(keyword)).map((single, i) => (
+              <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} key={single.consignorName} onPress={() =>{navigation.navigate('SellerHandoverSelection',{
+                paramKey : single.consignorCode,
+                Forward : single.ForwardPickups,
+                consignorAddress1 :single.consignorAddress1,
+                consignorAddress2 :single.consignorAddress2,
+                consignorCity :single.consignorCity,
+                consignorPincode :single.consignorPincode,
+                consignorName : single.consignorName,
+                PRSNumber : single.PRSNumber,
+                consignorCode : single.consignorCode,
+                userId : single.userId,
+                phone : single.consignorContact,
+              });}}>
+                <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{single.ForwardPickups}</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >{single.ReverseDeliveries}</Text></DataTable.Cell>
+                <ArrowForwardIcon style={{color:'#004aad',marginTop:8}} />
               </DataTable.Row>
-              <View>
-              <Picker
-              mode="dropdown"
-              selectedValue={selected}
-              onValueChange={value => setSelected(value)}
-             >
-                {data.map(item => (
-                <Picker.Item color='black' key={item.value} label={item.label} value={item.value} />
-                ))}
-                </Picker>
-              </View>
-              
+            ))
+          :
+            null
+          }
           </DataTable>
         </Card>
       </ScrollView>
-      <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
-            <Button w="48%" size="lg" bg="#004aad" >Start Scanning</Button>
-            <Button w="48%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('HandOverSummary')} >Close Handover</Button>
-          </View>
       <Center>
           <Image style={{ width:150, height:150}} source={require('../../assets/image.png')} alt={'Logo Image'} />
       </Center>
     </Box>
-    </NativeBaseProvider>
+        </NativeBaseProvider>
   );
 };
-export default PendingHandover;
+export default SellerDeliveries;
 export const styles = StyleSheet.create({
 
     container112: {

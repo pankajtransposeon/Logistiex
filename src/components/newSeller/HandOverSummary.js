@@ -9,45 +9,32 @@ const db = openDatabase({name: 'rn_sqlite'});
 
 const HandOverSummary = ({route}) => {
 
-    // const [data, setData] = useState([]);
-    const [selected,setSelected]=useState('Select Exception Reason');
-    const navigation = useNavigation();
-    const [showCloseBagModal, setShowCloseBagModal] = useState(false);
-    let data = [
-        { value: 'Select Exception Reason', label: 'Select Exception Reason' },
-        { value: 'Out of Capacity', label: 'Out of Capacity' },
-        { value: 'Seller Holiday', label: 'Seller Holiday' },
-      ];
+    const [data, setData] = useState([]);
+    const loadDetails = () => { // setIsLoading(!isLoading);
+      db.transaction((tx) => {
+          tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => { // ToastAndroid.show("Loading...", ToastAndroid.SHORT);
+              let temp = [];
+              console.log(results.rows.length);
+              for (let i = 0; i < results.rows.length; ++i) {
+                  temp.push(results.rows.item(i));
+              }
+              setData(temp);
+          });
+      });
+  };
+  useEffect(() => {
+      (async () => {
+          loadDetails();
+      })();
+  }, [data]);
+  const searched = (keyword1) => (c) => {
+    let f = c.consignorName;
+    return (f.includes(keyword1));
+};
     
 return (
   <NativeBaseProvider>
-    <Modal isOpen={showCloseBagModal} onClose={() => setShowCloseBagModal(false)} size="lg">
-        <Modal.Content maxWidth="350">
-          <Modal.CloseButton />
-          <Modal.Header></Modal.Header>
-          <Modal.Body>
-            <Input placeholder="Enter Bag Seal" size="md" onChangeText={(text)=>setBagSeal(text)} />
-            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(), setShowCloseBagModal(false); }}>Submit</Button>
-            <View style={{alignItems: 'center', marginTop: 15}}>
-              <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>Seller Code</Text>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>ABC1</Text>
-              </View>
-              <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>Seller Name</Text>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>XYZ</Text>
-              </View>
-              <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 1, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>Number of Shipments</Text>
-                <Text style={{fontSize: 16, fontWeight: '500'}}>23</Text>
-              </View>
-            </View>
-          </Modal.Body>
-        </Modal.Content>
-      </Modal>
-
     <Box flex={1} bg="#fff"  width="auto" maxWidth="100%">
-      
       <ScrollView style={styles.homepage} showsVerticalScrollIndicator={true} showsHorizontalScrollIndicator={false}>
         <Card>
           <DataTable>
@@ -56,21 +43,14 @@ return (
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>No. of Shipments</Text></DataTable.Title>
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>No. of Bags</Text></DataTable.Title>
             </DataTable.Header>
+            {data && data.length > 0 ?
+            data.map((single, i) => (
               <DataTable.Row >
-                <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >ABC1</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{0}</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{0}</Text></DataTable.Cell>
               </DataTable.Row>
-              <DataTable.Row>
-                <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >ABC2</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
-              </DataTable.Row>
-              <DataTable.Row>
-                <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >ABC3</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >XXX1</Text></DataTable.Cell>
-              </DataTable.Row>
+            )): null}
           </DataTable>
         </Card>
       </ScrollView>

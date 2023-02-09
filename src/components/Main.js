@@ -72,7 +72,7 @@ export default function Main({navigation, route}) {
             });
         });
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE status IS Null', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentStatus="WFP" AND status IS NULL', [], (tx1, results) => {
                 // let temp = [];
                 // console.log('SP Pending : ' + results.rows.length);
                 setSpp(results.rows.length);
@@ -87,7 +87,7 @@ export default function Main({navigation, route}) {
         });
 
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="accepted"', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="WFP" AND status="accepted"', [], (tx1, results) => {
                 let temp = [];
                 // console.log('SP Completed : ' + results.rows.length);
                 setSpc(results.rows.length);
@@ -99,7 +99,7 @@ export default function Main({navigation, route}) {
             });
         });
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="accepted" OR status="rejected"', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="WFP" AND status="accepted" OR status="rejected"', [], (tx1, results) => {
                 // let temp = [];
                 // console.log('SP Completed : ' + results.rows.length);
                 setSpARC(results.rows.length);
@@ -111,7 +111,7 @@ export default function Main({navigation, route}) {
             });
         });
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="notPicked"', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="WFP" AND status="notPicked"', [], (tx1, results) => {
                 let temp = [];
                 // console.log('SP Not Picked : ' + results.rows.length);
                 setSpnp(results.rows.length);
@@ -286,11 +286,11 @@ export default function Main({navigation, route}) {
             notPicked: spnp,
         }, {
             title: 'Seller Deliveries',
-            totalUsers: 14,
-            pendingOrder: 200,
-            completedOrder: 204,
-            rejectedOrder: 83,
-            notPicked: 70,
+            totalUsers: spts,
+            pendingOrder: spp,
+            completedOrder: spc,
+            rejectedOrder: spr,
+            notPicked: spnp,
         },
         //  {
         //     title: 'Customer Pickups',
@@ -352,7 +352,11 @@ export default function Main({navigation, route}) {
               <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
                 <View style={{flexDirection: 'row'}}>
                   <View style={{width: 15, height: 15, backgroundColor: '#FFEB3B', borderRadius: 100, marginTop: 4}} />
+                  {it.title==='Seller Deliveries'?
+                  <Text style={{marginLeft: 10, fontWeight: '500', fontSize: 14, color: 'black'}}>Not Delivered</Text>
+                  :
                   <Text style={{marginLeft: 10, fontWeight: '500', fontSize: 14, color: 'black'}}>Not Picked</Text>
+                  }
                 </View>
                 <Text style={{fontWeight: '500', fontSize: 14, color: 'black'}}>{it.notPicked}</Text>
               </View>
@@ -366,7 +370,7 @@ export default function Main({navigation, route}) {
             </View>
           </Box>
           {it.title==='Seller Deliveries'?
-            <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>New Pickup</Button>
+            <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries')}>New Pickup</Button>
             :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup')}>New Pickup</Button>
             }
 

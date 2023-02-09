@@ -1,5 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable prettier/prettier */
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import 'react-native-gesture-handler';
 import {
@@ -28,6 +29,10 @@ import PendingHandover from './src/components/newSeller/PendingHandover';
 import HandOverSummary from './src/components/newSeller/HandOverSummary';
 import NewSellerSelection from './src/components/newSeller/NewSellerSelection';
 import ShipmentBarcode from './src/components/newSeller/ShipmentBarcode';
+import SellerDeliveries from './src/components/newSeller/SellerDeliveries';
+import SellerHandoverSelection from './src/components/newSeller/SellerHandoverSelection';
+import ScanShipment from './src/components/newSeller/ScanShipment';
+import CollectPOD from './src/components/newSeller/CollectPOD';
 import Dispatch from './src/components/newSeller/Dispatch';
 import MapScreen from './src/components/MapScreen';
 import Reject from './src/components/RejectReason';
@@ -39,7 +44,6 @@ import {
     View,
     StyleSheet,
     ToastAndroid,
-    Alert,
 } from 'react-native';
 import {Badge} from 'react-native-paper';
 // import { Icon } from 'native-base';
@@ -118,20 +122,20 @@ function StackNavigators({navigation}) {
 const push_Data = () => {
     console.log('push data function');
     db.transaction(tx => {
-        tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE status IS NOT Null', [], (tx1, results) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentStatus="WFP" AND status IS NOT Null', [], (tx1, results) => {
             if (results.rows.length > 0) {
                 ToastAndroid.show('Syncing...', ToastAndroid.SHORT);
                 // setIsLoading(!isLoading);
                 let temp = [];
-                var temp11 = 0;
-                for (let i = 0; i < results.rows.length; ++ i) {
+                let temp11 = 0;
+                for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
                     let accepted11 = [false];
                     if (results.rows.item(i).status === 'accepted') {
                         accepted11[0] = true;
                     }
                     // console.log(results.rows.item(i));
-                    tx.executeSql('SELECT * FROM SyncSellerPickUp where consignorCode=?', [results.rows.item(i).consignorCode], (tx1, results11) => { // console.log(results11.rows.item(0));
+                    tx.executeSql('SELECT * FROM SyncSellerPickUp where consignorCode=?', [results.rows.item(i).consignorCode], (tx1, results11) => {  console.log(results.rows.item(i).PRSNumber);
                         setIsLoading(!isLoading);
                         console.log(results11.rows.item(0).consignorLocation);
                         console.log(results.rows.item(i).status);
@@ -151,8 +155,8 @@ const push_Data = () => {
                             // packagingId : results.rows.item(i).packagingId ,
                             packagingId: 'PSN00100',
                             packageingStatus: 1,
-                            PRSNumber: results11.rows.item(0).PRSNumber,
-                            pickupBagId: 'ss121'
+                            PRSNumber: 'results.rows.item(i).PRSNumber',
+                            pickupBagId: 'ss121',
                         }).then(response => {
                             temp11++;
                             setIsLoading(false);
@@ -190,6 +194,10 @@ const push_Data = () => {
     };
 
 
+    /*              Press (Ctrl + k + 2) keys together for better API tables view in App.js (VSCode) */
+
+
+    // Table 1
     const createTables1 = () => {
         db.transaction(txn => {
             txn.executeSql('DROP TABLE IF EXISTS SyncSellerPickUp', []);
@@ -208,8 +216,8 @@ const push_Data = () => {
         createTables1();
         (async () => {
             await axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/consignorslist/${userId}`).then(res => {
-                console.log('Table1 API OK: ' + res.data.data.length);
-                // console.log(res.data);
+                console.log('API 1 OK: ' + res.data.data.length);
+                // console.log(res);
                 for (let i = 0; i < res.data.data.length; i++) {
                     // let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
                     db.transaction(txn => {
@@ -221,7 +229,7 @@ const push_Data = () => {
                             res.data.data[i].consignorAddress2,
                             res.data.data[i].consignorCity,
                             res.data.data[i].consignorPincode,
-                            res.data.data[i].consignorLocation,
+                            res.data.data[i].consignorLatitude,
                             res.data.data[i].consignorLongitude,
                             res.data.data[i].consignorContact,
                             res.data.data[i].ReverseDeliveries,
@@ -231,14 +239,17 @@ const push_Data = () => {
                             // console.log(`\n Data Added to local db successfully1212`);
                             // console.log(res);
                         }, error => {
-                            console.log('error on adding data ' + error.message);
+                            console.log('error on loading  data from https://bkedtest.logistiex.com/SellerMainScreen/consignorslist/' + error.message);
                         },);
                     });
                 }
                 viewDetails1();
+                m++;
+                // console.log('value of m1 '+m);
+
                 setIsLoading(false);
             }, error => {
-                Alert.alert(error);
+                console.log('https://bkedtest.logistiex.com/SellerMainScreen/consignorslist/',error);
             },);
         })();
     };
@@ -256,9 +267,18 @@ const push_Data = () => {
                     // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
                     // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
                 }
-                m++;
+                if (m === 6){
+                  ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
+                  setIsLoading(false);
+                  console.log('All ' + m + ' APIs loaded successfully ');
+                  m = 0;
+                } else {
+                console.log('Only ' + m + ' APIs loaded out of 6 ');
+              }
+                // m++;
                 // ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
-                // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+                // console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
+                // console.log('data loaded API 1',temp);
                 // console.log('Table1 DB OK:', temp.length);
             });
         });
@@ -291,13 +311,12 @@ const push_Data = () => {
         });
     };
     const loadAPI_Data2 = () => {
-      
-        setIsLoading(!isLoading);
+        // setIsLoading(!isLoading);
         (async () => {
             await axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/workload/${userId}`).then(res => {
                 createTables2();
-                console.log('Table2 API OK: ' + res.data.data.length);
-                for (let i = 0; i < res.data.data.length; i++) { // console.log(res.data.data[i].consignorCode);
+                console.log('API 2 OK: ' + res.data.data.length);
+                for (let i = 0; i < res.data.data.length; i++) {  //console.log(res.data.data[i].shipmentStatus);
                     db.transaction(txn => {
                         txn.executeSql(`INSERT OR REPLACE INTO SellerMainScreenDetails( 
                   clientShipmentReferenceNumber ,
@@ -333,29 +352,31 @@ const push_Data = () => {
                         },);
                     });
                 }
-                viewDetails2();
-                setIsLoading(false);
+                m++;
+                // console.log('value of m2 '+m);
+                // viewDetails2();
+                // setIsLoading(false);
             }, error => {
-                Alert.alert(error);
+                console.log(error);
             },);
         })();
     };
     const viewDetails2 = () => {
         db.transaction(tx => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails', [], (tx1, results) => {
-                let temp = [];
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
+                // let temp = [];
+                // for (let i = 0; i < results.rows.length; ++i) {
+                //     temp.push(results.rows.item(i));
                     // var address121 = results.rows.item(i).consignorAddress;
                     // var address_json = JSON.parse(address121);
                     // console.log(typeof (address_json));
                     // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
                     // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
                     // ToastAndroid.show("Sync Successful"+ results.rows.item(i).clientShipmentReferenceNumber,ToastAndroid.SHORT);
-                }
+                // }
                 // ToastAndroid.show('Sync Successful', ToastAndroid.SHORT);
-                 
-                m++;
+
+                // m++;
                 // console.log("Data from Local Database1 : \n ", JSON.stringify(temp, null, 4));
                 // console.log('Table2 DB OK :', temp.length);
             },);
@@ -474,7 +495,7 @@ const push_Data = () => {
         });
     };
     const loadAPI_Data3 = () => {
-        setIsLoading(!isLoading);
+        // setIsLoading(!isLoading);
         createTables3();
         (async () => {
             await axios.get('https://bkedtest.logistiex.com/ADupdatePrams/getUSER').then(res => {
@@ -499,23 +520,25 @@ const push_Data = () => {
                         },);
                     });
                 }
-                viewDetails3();
-                setIsLoading(false);
+                m++;
+                // console.log('value of m3 '+m);
+                // viewDetails3();
+                // setIsLoading(false);
             }, error => {
-                Alert.alert(error);
+                console.log(error);
             },);
         })();
     };
     const viewDetails3 = () => {
         db.transaction(tx => {
             tx.executeSql('SELECT * FROM ShipmentRejectReasons', [], (tx1, results) => {
-                let temp = [];
+                // let temp = [];
                 // console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
-                 
-                m++;
+                // for (let i = 0; i < results.rows.length; ++i) {
+                //     temp.push(results.rows.item(i));
+                // }
+
+                // m++;
                 // ToastAndroid.show('Sync Successful3', ToastAndroid.SHORT);
                 // console.log('Data from Local Database 3: \n ', JSON.stringify(temp, null, 4),);
                 // console.log('Table3 DB OK:', temp.length);
@@ -536,7 +559,7 @@ const push_Data = () => {
         });
     };
     const loadAPI_Data4 = () => {
-        setIsLoading(!isLoading);
+        // setIsLoading(!isLoading);
         createTables4();
         (async () => {
             await axios.get('https://bkedtest.logistiex.com/ADupdatePrams/getUPFR').then(res => {
@@ -569,26 +592,29 @@ const push_Data = () => {
                         },);
                     });
                 }
-                viewDetails4();
-                setIsLoading(false);
+                m++;
+                // console.log('value of m4 '+m);
+
+                // viewDetails4();
+                // setIsLoading(false);
             }, error => {
-                Alert.alert(error);
+                console.log(error);
             },);
         })();
     };
     const viewDetails4 = () => {
         db.transaction(tx => {
             tx.executeSql('SELECT * FROM ClosePickupReasons', [], (tx1, results) => {
-                let temp = [];
+                // let temp = [];
                 // console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
+                // for (let i = 0; i < results.rows.length; ++i) {
+                //     temp.push(results.rows.item(i));
+                // }
                 // ToastAndroid.show('Sync Successful4', ToastAndroid.SHORT);
                 // console.log('Data from Local Database 4: \n ', JSON.stringify(temp, null, 4),);
                 // console.log('Data from Local Database 4: \n ',temp);
-                 
-                m++;
+
+                // m++;
                 // console.log('Table4 DB OK:', temp.length);
             });
         });
@@ -607,7 +633,7 @@ const push_Data = () => {
         });
     };
     const loadAPI_Data5 = () => {
-        setIsLoading(!isLoading);
+        // setIsLoading(!isLoading);
         createTables5();
         (async () => {
             await axios.get('https://bkedtest.logistiex.com/ADupdatePrams/getNotAttemptedReasons').then(res => {
@@ -634,22 +660,25 @@ const push_Data = () => {
                         },);
                     });
                 }
-                viewDetails5();
-                setIsLoading(false);
+                m++;
+                // console.log('value of m5 '+m);
+
+                // viewDetails5();
+                // setIsLoading(false);
             }, error => {
-                Alert.alert(error);
+                console.log(error);
             },);
         })();
     };
     const viewDetails5 = () => {
         db.transaction(tx => {
             tx.executeSql('SELECT * FROM NotAttemptReasons', [], (tx1, results) => {
-                let temp = [];
-                // console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
-                m++;
+                // let temp = [];
+                // // console.log(results.rows.length);
+                // for (let i = 0; i < results.rows.length; ++i) {
+                //     temp.push(results.rows.item(i));
+                // }
+                // m++;
                 // ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
                 // console.log('Data from Local Database 5: \n ', temp);
                 // console.log('Table 5 DB OK:', temp.length);
@@ -670,7 +699,7 @@ const push_Data = () => {
         });
     };
     const loadAPI_Data6 = () => {
-        setIsLoading(!isLoading);
+        // setIsLoading(!isLoading);
         createTables6();
         (async () => {
             await axios.get('https://bkedtest.logistiex.com/ADupdateprams/getPartialClosureReasons',).then(res => {
@@ -696,42 +725,48 @@ const push_Data = () => {
                         },);
                     });
                 }
+                m++;
+                // console.log('value of m6 '+m);
+
                 viewDetails6();
-                setIsLoading(false);
+                // setIsLoading(false);
             }, error => {
-                Alert.alert(error);
+                console.log(error);
             },);
         })();
     };
     const viewDetails6 = () => {
         db.transaction(tx => {
             tx.executeSql('SELECT * FROM PartialCloseReasons', [], (tx1, results) => {
-                let temp = [];
-                // console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
+                // let temp = [];
+                // // console.log(results.rows.length);
+                // for (let i = 0; i < results.rows.length; ++i) {
+                //     temp.push(results.rows.item(i));
+                // }
+                // m++;
+                if (m <= 5){
+                  // ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
+                  console.log('Waiting for ' + ( 6 - m ) + ' API to load. Plz wait...');
+                  // m = 0;
                 }
-                m++;
-                 
-                if (m === 6){
-                ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
-                console.log('API to local db sync success: ' + m);
-                m = 0;
-                }
+              //  else {
+              //   console.log('Only ' + m + ' APIs loaded out of 6 ');
+              // }
                 // console.log('Data from Local Database 6 : \n ', temp);
                 // console.log('Table6 DB OK:', temp.length);
             });
         });
     };
 
-  const DisplayData= () => {
+  const DisplayData = () => {
         axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/getadditionalwork/${userId}`)
           .then(res => {
-            setData(res.data)
+            setData(res.data);
+            // console.log('dataDisplay', res.data);
           })
           .catch(error => {
-            console.log('Error Msg:', error)
-          })
+            console.log('Error Msg:', error);
+          });
   };
 
   useEffect(() => {
@@ -1418,6 +1453,218 @@ const push_Data = () => {
           }}
         />
         <Stack.Screen
+          name="SellerDeliveries"
+          component={SellerDeliveries}
+          options={{
+            headerTitle: props => (
+              <NativeBaseProvider>
+                <Heading style={{color: 'white'}} size="md">
+                  Seller Deliveries
+                </Heading>
+              </NativeBaseProvider>
+            ),
+            headerLeft: () => (
+              <MaterialIcons
+                name="menu"
+                style={{fontSize: 30, marginLeft: 10, color: 'white'}}
+                onPress={() => navigation.toggleDrawer()}
+              />
+            ),
+            headerRight: () => (
+              <View style={{flexDirection: 'row', marginRight: 10}}>
+                <TouchableOpacity
+                  style={{marginRight: 15}}
+                  onPress={() => {
+                    sync11();
+                  }}>
+                  <MaterialIcons
+                    name="sync"
+                    style={{fontSize: 30, color: 'white'}}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('NewSellerAdditionNotification');
+                    navigation.dispatch(DrawerActions.openDrawer());
+                  }}>
+                  <MaterialIcons
+                    name="bell-outline"
+                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                  />
+                  <Badge
+                    style={{
+                      position: 'absolute',
+                      fontSize: 15,
+                      borderColor: 'white',
+                      borderWidth: 1,
+                    }}>
+                    {data.length}
+                  </Badge>
+                </TouchableOpacity>
+              </View>
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="SellerHandoverSelection"
+          component={SellerHandoverSelection}
+          options={{
+            headerTitle: props => (
+              <NativeBaseProvider>
+                <Heading style={{color: 'white'}} size="md">
+                  Seller Handover
+                </Heading>
+              </NativeBaseProvider>
+            ),
+            headerLeft: () => (
+              <MaterialIcons
+                name="menu"
+                style={{fontSize: 30, marginLeft: 10, color: 'white'}}
+                onPress={() => navigation.toggleDrawer()}
+              />
+            ),
+            headerRight: () => (
+              <View style={{flexDirection: 'row', marginRight: 10}}>
+                <TouchableOpacity
+                  style={{marginRight: 15}}
+                  onPress={() => {
+                    sync11();
+                  }}>
+                  <MaterialIcons
+                    name="sync"
+                    style={{fontSize: 30, color: 'white'}}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('NewSellerAdditionNotification');
+                    navigation.dispatch(DrawerActions.openDrawer());
+                  }}>
+                  <MaterialIcons
+                    name="bell-outline"
+                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                  />
+                  <Badge
+                    style={{
+                      position: 'absolute',
+                      fontSize: 15,
+                      borderColor: 'white',
+                      borderWidth: 1,
+                    }}>
+                    {data.length}
+                  </Badge>
+                </TouchableOpacity>
+              </View>
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="ScanShipment"
+          component={ScanShipment}
+          options={{
+            headerTitle: props => (
+              <NativeBaseProvider>
+                <Heading style={{color: 'white'}} size="md">
+                  Scan Shipment Barcode
+                </Heading>
+              </NativeBaseProvider>
+            ),
+            headerLeft: () => (
+              <MaterialIcons
+                name="menu"
+                style={{fontSize: 30, marginLeft: 10, color: 'white'}}
+                onPress={() => navigation.toggleDrawer()}
+              />
+            ),
+            headerRight: () => (
+              <View style={{flexDirection: 'row', marginRight: 10}}>
+                <TouchableOpacity
+                  style={{marginRight: 15}}
+                  onPress={() => {
+                    sync11();
+                  }}>
+                  <MaterialIcons
+                    name="sync"
+                    style={{fontSize: 30, color: 'white'}}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('NewSellerAdditionNotification');
+                    navigation.dispatch(DrawerActions.openDrawer());
+                  }}>
+                  <MaterialIcons
+                    name="bell-outline"
+                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                  />
+                  <Badge
+                    style={{
+                      position: 'absolute',
+                      fontSize: 15,
+                      borderColor: 'white',
+                      borderWidth: 1,
+                    }}>
+                    {data.length}
+                  </Badge>
+                </TouchableOpacity>
+              </View>
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="CollectPOD"
+          component={CollectPOD}
+          options={{
+            headerTitle: props => (
+              <NativeBaseProvider>
+                <Heading style={{color: 'white'}} size="md">
+                  Seller Deliveries
+                </Heading>
+              </NativeBaseProvider>
+            ),
+            headerLeft: () => (
+              <MaterialIcons
+                name="menu"
+                style={{fontSize: 30, marginLeft: 10, color: 'white'}}
+                onPress={() => navigation.toggleDrawer()}
+              />
+            ),
+            headerRight: () => (
+              <View style={{flexDirection: 'row', marginRight: 10}}>
+                <TouchableOpacity
+                  style={{marginRight: 15}}
+                  onPress={() => {
+                    sync11();
+                  }}>
+                  <MaterialIcons
+                    name="sync"
+                    style={{fontSize: 30, color: 'white'}}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('NewSellerAdditionNotification');
+                    navigation.dispatch(DrawerActions.openDrawer());
+                  }}>
+                  <MaterialIcons
+                    name="bell-outline"
+                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                  />
+                  <Badge
+                    style={{
+                      position: 'absolute',
+                      fontSize: 15,
+                      borderColor: 'white',
+                      borderWidth: 1,
+                    }}>
+                    {data.length}
+                  </Badge>
+                </TouchableOpacity>
+              </View>
+            ),
+          }}
+        />
+        <Stack.Screen
           name="Dispatch"
           component={Dispatch}
           options={{
@@ -1618,7 +1865,7 @@ const push_Data = () => {
               backgroundColor: 'rgba(0,0,0,0.65)',
             },
           ]}>
-          <Text style={{color: 'white'}}>Syncing Please Wait...</Text>
+          <Text style={{color: 'white'}}>Syncing Data. Please Wait...</Text>
           <Lottie
             source={require('./src/assets/loading11.json')}
             autoPlay
@@ -1679,7 +1926,7 @@ function CustomDrawerContent({navigation}) {
   return (
     <NativeBaseProvider>
       {email ? (
-        <Box pt={4} px={4} key={'extra'+ email}>
+        <Box pt={4} px={4} key={'extra' + email}>
           <Avatar bg="#004aad" alignSelf="center" size="xl">
             <MaterialIcons
               name="account"
