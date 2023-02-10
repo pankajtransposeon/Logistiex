@@ -370,22 +370,13 @@ export default function Main({navigation, route}) {
             </View>
           </Box>
           {it.title==='Seller Deliveries'?
-            <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries')}>New Pickup</Button>
+            <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries')}>New Delivery</Button>
             :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup')}>New Pickup</Button>
             }
-
         </Box>        
         );
         })}
-        <Button
-              variant="outline"
-              onPress={() => {
-                  navigation.navigate('SellerHandover')
-              }}
-              mt={4}
-              style={{color: '#004aad', borderColor: '#004aad'}}>
-              <Text style={{color: '#004aad'}}>Start Handover</Text>
-            </Button>
+        <Button w="100%" size="lg" bg="#004aad" mt={-5} onPress={()=>navigation.navigate('SellerHandover')}>Seller Handover</Button>
         <Center>
           <Image style={{ width: 150, height: 100 }} source={require('../assets/image.png')} alt={'Logo Image'} />
         </Center>
