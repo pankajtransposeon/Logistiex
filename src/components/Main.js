@@ -374,7 +374,10 @@ export default function Main({navigation, route}) {
             :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup')}>New Pickup</Button>
             }
 
-<Button
+        </Box>        
+        );
+        })}
+        <Button
               variant="outline"
               onPress={() => {
                   navigation.navigate('SellerHandover')
@@ -383,11 +386,6 @@ export default function Main({navigation, route}) {
               style={{color: '#004aad', borderColor: '#004aad'}}>
               <Text style={{color: '#004aad'}}>Start Handover</Text>
             </Button>
-        </Box>
-
-        
-        );
-        })}
         <Center>
           <Image style={{ width: 150, height: 100 }} source={require('../assets/image.png')} alt={'Logo Image'} />
         </Center>
