@@ -21,6 +21,7 @@ import { Console } from 'console';
 // import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import OTPTextInput from 'react-native-otp-textinput';
 import { RNCamera } from 'react-native-camera';
+import { panGestureHandlerCustomNativeProps } from 'react-native-gesture-handler/lib/typescript/handlers/PanGestureHandler';
 const db = openDatabase({
   name: 'rn_sqlite',
 });
@@ -36,6 +37,7 @@ const ScanShipment = ({route}) => {
     const [expected, setExpected] = useState(0);
     const [newaccepted, setnewAccepted] = useState(0);
     const [newrejected, setnewRejected] = useState(0);
+    const [newtagged, setnewTagged] = useState(0);
     const [barcode, setBarcode] = useState('');
     const [len, setLen] = useState(0);
     const [DropDownValue, setDropDownValue] = useState(null);
@@ -73,6 +75,38 @@ const takePicture = async () => {
       setImages([...images, data.uri]);
     }
   };
+  const handleUpload = async () => {
+    if (images.length > 0) {
+      for (let i = 0; i < images.length; i++) {
+        const data = {
+          useCase: "DSQC",
+          type: "front",
+          contextId: "SI002",
+          contextType: "shipment",
+          hubCode: "HC001"
+        };
+    
+        const formData = new FormData();
+        formData.append("picture", {
+          uri: images[i],
+          name: `image-${i}.jpg`,
+          type: "image/jpeg"
+        });
+        formData.append("data", JSON.stringify(data));
+    
+        const response = await fetch(
+          "https://bkedtest.logistiex.com/DSQCPicture/uploadPicture",
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+        const result = await response.json();
+        console.log(result);
+      }
+    }
+  };
+  
 
   const recordVideo = () => {
     console.log('Recording a video is not implemented yet');
@@ -342,6 +376,29 @@ const takePicture = async () => {
                 }
                 // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
                 // viewDetailsR2();
+            });
+        });
+      };
+      const taggedDetails = () => {
+        console.log('scan 45456');
+        setnewTagged(newtagged+1);
+        db.transaction((tx) => {
+            tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" ,rejectedReason=? WHERE clientShipmentReferenceNumber=?', [DropDownValue,barcode], (tx1, results) => {
+                let temp = [];
+                // console.log("ddsds4545",tx1);
+                console.log("Rejected Reason : ",DropDownValue);
+                console.log('Results',results.rowsAffected);
+                console.log(results);
+                if (results.rowsAffected > 0) {
+                  console.log(barcode + 'rejected');
+                  ToastAndroid.show(barcode +" Rejected",ToastAndroid.SHORT);
+                } else {
+                  console.log(barcode + 'failed to reject item locally');
+                }
+                console.log(results.rows.length);
+                for (let i = 0; i < results.rows.length; ++ i) {
+                    temp.push(results.rows.item(i));
+                }
             });
         });
       };
@@ -618,12 +675,12 @@ const takePicture = async () => {
       setDropDownValue(item);
       submitForm();
     }
-
+    
 
   return (
     <NativeBaseProvider>
 
-      <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)} size="lg">
+      <Modal isOpen={modalVisible} onClose={() => {setModalVisible(false); setImages([])}} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
           <Modal.Header>Return Handover Rejection Tag</Modal.Header>
@@ -633,8 +690,8 @@ const takePicture = async () => {
             <Text style={{color:DropDownValue == d.shipmentExceptionReasonName ? 'white' : 'black'}}>{d.shipmentExceptionReasonName}</Text></Button>
             ))}
             <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} marginRight={1} onPress={()=>{setModalVisible(false);rejectDetails2()}}>Reject Shipment</Button>
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={()=>setModalVisible(false)} >Tag Shipment</Button>
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} marginRight={1} onPress={()=>{setModalVisible(false);rejectDetails2();setImages([])}}>Reject Shipment</Button>
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={()=>{setModalVisible(false); taggedDetails(); setImages([])}} >Tag Shipment</Button>
             </View>
           </Modal.Body>
         </Modal.Content>
@@ -683,7 +740,7 @@ const takePicture = async () => {
             {images.length<5 ?
             <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} >Save</Button>
             :
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={()=>{setModalVisible(true); setModalVisible1(false)}} >Save</Button>
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={()=>{ handleUpload(); setModalVisible(true); setModalVisible1(false)}} >Save</Button>
             }
             </View>
           </Modal.Body>
@@ -724,7 +781,7 @@ const takePicture = async () => {
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Tagged</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>{newrejected}</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{newtagged}</Text>
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: 'lightgray', borderBottomLeftRadius: 5, borderBottomRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Not Handed Over</Text>
@@ -737,7 +794,7 @@ const takePicture = async () => {
             navigation.navigate('CollectPOD',{
               Forward : route.params.Forward,
               accepted : newaccepted,
-              rejected : newrejected,
+              rejected : newtagged,
               phone : route.params.phone,
               userId : route.params.userId,
             })
