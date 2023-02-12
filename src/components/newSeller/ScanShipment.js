@@ -332,7 +332,7 @@ const takePicture = async () => {
         setAcceptedArray([...acceptedArray, barcode.toString()]);
         console.log(acceptedArray);
         db.transaction((tx) => {
-            tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" WHERE clientShipmentReferenceNumber=?', [barcode], (tx1, results) => {
+            tx.executeSql('UPDATE SellerMainScreenDetailsRTO SET status="accepted" WHERE clientShipmentReferenceNumber=?', [barcode], (tx1, results) => {
                 let temp = [];
                 console.log('Results',results.rowsAffected);
                 console.log(results);
@@ -358,7 +358,7 @@ const takePicture = async () => {
         console.log('scan 45456');
         setnewRejected(newrejected+1);
         db.transaction((tx) => {
-            tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectedReason=? WHERE clientShipmentReferenceNumber=?', [DropDownValue,barcode], (tx1, results) => {
+            tx.executeSql('UPDATE SellerMainScreenDetailsRTO SET status="rejected" ,rejectedReason=? WHERE clientShipmentReferenceNumber=?', [DropDownValue,barcode], (tx1, results) => {
                 let temp = [];
                 // console.log("ddsds4545",tx1);
                 console.log("Rejected Reason : ",DropDownValue);
@@ -383,7 +383,7 @@ const takePicture = async () => {
         console.log('scan 45456');
         setnewTagged(newtagged+1);
         db.transaction((tx) => {
-            tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" ,rejectedReason=? WHERE clientShipmentReferenceNumber=?', [DropDownValue,barcode], (tx1, results) => {
+            tx.executeSql('UPDATE SellerMainScreenDetailsRTO SET status="accepted" ,rejectedReason=? WHERE clientShipmentReferenceNumber=?', [DropDownValue,barcode], (tx1, results) => {
                 let temp = [];
                 // console.log("ddsds4545",tx1);
                 console.log("Rejected Reason : ",DropDownValue);
@@ -405,7 +405,7 @@ const takePicture = async () => {
 
       const viewDetails2 = () => {
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails where status = "accepted"', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetailsRTO where status = "accepted"', [], (tx1, results) => {
                 let temp = [];
                 console.log(results.rows.length);
                 for (let i = 0; i < results.rows.length; ++i) {
@@ -419,7 +419,7 @@ const takePicture = async () => {
       };
       const viewDetailsR2 = () => {
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails where status = "rejected"', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetailsRTO where status = "rejected"', [], (tx1, results) => {
                 let temp = [];
                 console.log(results.rows.length);
                 // setnewRejected(results.rows.length);
@@ -434,7 +434,7 @@ const takePicture = async () => {
       };
       const partialClose = () => {
         db.transaction((tx) => {
-          tx.executeSql('UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE status IS Null', [DropDownValue11], (tx1, results) => {
+          tx.executeSql('UPDATE SellerMainScreenDetailsRTO SET status="notPicked" , rejectedReason=? WHERE status IS Null', [DropDownValue11], (tx1, results) => {
               let temp = [];
               // console.log("Not Picked Reason",DropDownValue);
               // console.log('Results',results.rowsAffected);
@@ -549,9 +549,11 @@ const takePicture = async () => {
           await AsyncStorage.setItem('user', JSON.stringify({
             Accepted: currentUser.Accepted + 1,
             Rejected: currentUser.Rejected,
+            Tagged: currentUser.Tagged,
           }));
           setnewAccepted(1 + currentUser.Accepted);
           setnewRejected(currentUser.Rejected);
+          setnewTagged(currentUser.Tagged)
         } catch (error) {
           console.log(error);
         }
@@ -565,9 +567,10 @@ const takePicture = async () => {
         const currentUser = JSON.parse(savedUser);
         setnewAccepted(currentUser.Accepted);
         setnewRejected(currentUser.Rejected);
+        setnewTagged(currentUser.Tagged)
       }
       userdata();
-    }, [newaccepted, newrejected]);
+    }, [newaccepted, newrejected,newtagged]);
 
     const handleSync = () => {
       const unsubscribe = NetInfo.addEventListener(state => {
@@ -584,7 +587,7 @@ const takePicture = async () => {
               if (len > 0) {
                 let res = results.rows.item(0);
                 console.log(res, 'tanmay');
-                axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
+                axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
                   clientShipmentReferenceNumber: res.clientShipmentReferenceNumber,
                   feUserID: route.params.userId,
                   isAccepted: 'false',
@@ -649,7 +652,7 @@ const takePicture = async () => {
     }, []);
 
     const submitForm = () => {
-      axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
+      axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
         clientShipmentReferenceNumber : route.params.barcode,
         feUserID: route.params.userId,
         isAccepted : 'false',
