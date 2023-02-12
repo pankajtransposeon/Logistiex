@@ -3,7 +3,7 @@ import axios from 'axios';
 import {NativeBaseProvider, Box, Image, Center, VStack, Button, Icon, Input, Heading, Alert, Text, Modal } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { PermissionsAndroid, Pressable, SafeAreaView, StyleSheet, TouchableHighlight, View } from 'react-native';
+import { PermissionsAndroid, Pressable, SafeAreaView, StyleSheet, TouchableHighlight, View , ActivityIndicator} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { decode } from "react-native-pure-jwt";
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
@@ -18,6 +18,7 @@ export default function StartTrip() {
   const [tripValue, setTripValue] = useState('Start Trip');
   const [tripID, setTripID] = useState("");
   const [userId, setUserId] = useState('');
+  const [uploadStatus, setUploadStatus] = useState('idle');
   const navigation = useNavigation();
 
   const getUserId = async () => {
@@ -104,6 +105,7 @@ export default function StartTrip() {
     }
   }
   const takePhoto= async()=>{
+    setUploadStatus('uploading');
     let options = {
         mediaType:'photo',
         quality:1,
@@ -122,7 +124,7 @@ export default function StartTrip() {
         console.log(result)
     }
     if(result.assets !== undefined){          
-      fetch('https://bked.logistiex.com/DSQCPicture/uploadPicture', {
+      fetch('https://bkedtest.logistiex.com/DSQCPicture/uploadPicture', {
         method: 'POST',
         body: createFormData(result.assets[0], {
                 useCase : "DSQC",
@@ -135,10 +137,12 @@ export default function StartTrip() {
       .then((data) => data.json())
       .then((res) => {
         setImageUrl(res.publicURL);
+        setUploadStatus('done');
         console.log('upload succes', res);
       })
       .catch((error) => {
         console.log('upload error', error);
+        setUploadStatus('error')
       });
     }
 }
@@ -156,7 +160,7 @@ let date = dateEnd ? tripid.substring(dateStart, dateEnd+5) : "No match found";
 const ImageHandle = () => 
   {
     (async() => {
-        await axios.post('https://bked.logistiex.com/UserTripInfo/userTripDetails', {
+        await axios.post('https://bkedtest.logistiex.com/UserTripInfo/userTripDetails', {
         tripID : userId+"_"+date, 
         userID : userId, 
         date : new Date(), 
@@ -184,7 +188,13 @@ const ImageHandle = () =>
             <VStack space={6}>
                 <Input value={vehicle} onChangeText={setVehicle} size="lg" placeholder="Enter your vehicle no." />
                 <Input keyboardType="numeric" value={startkm} onChangeText={setStartKm} size="lg" type={"number"} placeholder="Input vehicle KMs" />
-                <Button py={3} title="Login" variant='outline'  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons></Button>
+                {/* <Button py={3} title="Login" variant='outline'  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons></Button> */}
+                <Button py={3} variant='outline' _text={{ color: 'white', fontSize: 20 }} onPress={takePhoto}>
+                {uploadStatus === 'idle' && <MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons>}
+                {uploadStatus === 'uploading' && <ActivityIndicator size="small" color="gray" />}
+                {uploadStatus === 'done' && <MaterialIcons name="check" size={22} color="green" />}
+                {uploadStatus === 'error' && <MaterialIcons name="error" size={22} color="red" />}
+                </Button>
                 {
                   ImageUrl ? (
                     <Image 

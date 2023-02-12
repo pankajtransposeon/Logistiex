@@ -964,8 +964,8 @@ const push_Data = () => {
                 name="menu"
                 style={{fontSize: 30, marginLeft: 10, color: 'white'}}
                 onPress={() => {
-                  console.log('dashboard menu clicked');
-                  navigation.dispatch(DrawerActions.openDrawer());
+                console.log('dashboard menu clicked');
+                  navigation.dispatch(DrawerActions.openDrawer())
                 }}
               />
             ),
