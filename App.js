@@ -77,7 +77,6 @@ function StackNavigators({navigation}) {
             if (value !== null) {
                 const data = JSON.parse(value);
                 setUserId(data.userId);
-                // console.log(data.userId);
             } else {
                 setUserId(' ');
             }

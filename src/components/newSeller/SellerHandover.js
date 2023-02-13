@@ -15,31 +15,22 @@ const SellerHandover = ({route}) => {
     const navigation = useNavigation();
 
     
-    const loadDetails = () => { // setIsLoading(!isLoading);
-        const handleNumScannedUpdate = (newNumScanned) => {
-            setNumScanned(newNumScanned);
-          };
+    const loadDetails = () => {
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => { 
                 let temp = [];
+                let scannedvalue = [];
+                let scaned = 0;
                 for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
-  
-                    // tx.executeSql('SELECT * FROM SellerMainScreenDetailsRTO WHERE consignorCode = ?', [results.rows.item(i).consignorCode], (tx1, result) => {
-                    //     let expected = 0;
-                    //     for (let j = 0; j < result.rows.length; ++j) {
-                    //         expected++;
-                    //     }
-                    // },
-                    // err => console.log(err, 'error')
-                    // );
-                    // tx.executeSql('SELECT * FROM SellerMainScreenDetailsRTO WHERE status = ?', [1], (tx1, result) => {
-                    //     for (let j = 0; j < result.rows.length; ++j) {
-                    //         scaned++;
-                    //     }
-                    // },
-                    // err => console.log(err, 'error')
-                    // );
+                    tx.executeSql('SELECT * FROM SellerMainScreenDetailsRTO WHERE status = ?', ['Accepted'], (tx1, result) => {
+                        for (let j = 0; j < result.rows.length; ++j) {
+                            scaned++;
+                        }
+                        scannedvalue.push(scaned);
+                    },
+                    err => console.log(err, 'error')
+                    );
                 }
                 // temp.push(expected)
                 setData(temp);
@@ -56,7 +47,6 @@ const SellerHandover = ({route}) => {
         return (f.includes(keyword1));
     };
 
-    console.log(data, 'dafdf')
 return (
   <NativeBaseProvider>
     <Box flex={1} bg="#fff"  width="auto" maxWidth="100%">
@@ -74,7 +64,7 @@ return (
               <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} key={single.consignorName}>
                 <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{single.ReverseDeliveries}</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >{numScanned}</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >0</Text></DataTable.Cell>
                 <ArrowForwardIcon style={{color:'#004aad',marginTop:8}} />
               </DataTable.Row>
             ))

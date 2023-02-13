@@ -46,7 +46,7 @@ const HandoverShipmentRTO = ({route}) => {
     const [bagIdNo, setBagIdNo] = useState(1);
     const [showCloseBagModal, setShowCloseBagModal] = useState(false);
     const [bagSeal, setBagSeal] = useState('');
-    const [data, setData] = useState();
+    const [data, setData] = useState([]);
 
     useEffect(() => {
       setBagId();
@@ -111,7 +111,6 @@ const HandoverShipmentRTO = ({route}) => {
           [data],
           (sqlTxn, res) => {
             console.log('categories retrieved successfully', res.rows.length);
-            setLen(res.rows.length);
             if (!res.rows.length){
               alert('You are scanning wrong product, please check.');
             }else{
@@ -119,7 +118,6 @@ const HandoverShipmentRTO = ({route}) => {
                 Vibration.vibrate(100);
                 RNBeep.beep();
                 updateDetails2();
-                setLen(false);
                 loadDetails(data);
             }
           },
@@ -141,8 +139,6 @@ const HandoverShipmentRTO = ({route}) => {
     const navigation = useNavigation();
     const [count, setcount] = useState(0);
 
-    console.log(barcode, 'barcode')
-    console.log('datatanmay', data)
 
   return (
     <NativeBaseProvider>
@@ -158,17 +154,17 @@ const HandoverShipmentRTO = ({route}) => {
                 <Text style={{fontSize: 16, fontWeight: '500', color: 'black'}}>Seller Code</Text>
                 {
                     data ? (
-                        <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data.consignorName}</Text>
+                        <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data[0].consignorCode}</Text>
                     ):null
                 }
               </View>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
                 <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>Seller Name</Text>
-                <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>fgh</Text>
+                <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data[0].consignorName}</Text>
               </View>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 1, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>Number of Shipments</Text>
-                <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>23</Text>
+                <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data[0].ForwardPickups}</Text>
               </View>
             </View>
           </Modal.Body>
@@ -180,10 +176,10 @@ const HandoverShipmentRTO = ({route}) => {
           <Modal.CloseButton />
           <Modal.Header></Modal.Header>
           <Modal.Body>
-          <Text style={{fontWeight:'bold'}}>The Seller has 123 shipments. Would you like to open the Bag?</Text>
+          <Text style={{fontWeight:'bold', color:'black'}}>The Seller has {data[0].ForwardPickups} shipments. Would you like to open the Bag?</Text>
           <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
             <Button w="48%" size="lg" bg="#004aad" >Yes</Button>
-            <Button w="48%" size="lg" bg="#004aad">No</Button>
+            <Button onPress={() => setModalVisible(false)} w="48%" size="lg" bg="#004aad">No</Button>
           </View>
           </Modal.Body>
         </Modal.Content>
@@ -211,19 +207,29 @@ const HandoverShipmentRTO = ({route}) => {
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>Seller Code</Text>
-                <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>gyu</Text>
+                {
+                  data ? (
+                    <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>{data[0].consignorCode}</Text>
+                  ):null
+                }
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>Seller Name</Text>
-                <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>ghj</Text>
+                {
+                  data ? (
+                    <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>{data[0].consignorName}</Text>
+                  ): null
+                }
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 13, fontWeight: '500', color: 'black'}}>Shipment scan Progress for </Text>
-                <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>10/50</Text>
+                <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>1/{data[0].ForwardPickups}</Text>
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>Bags Open</Text>
+                <TouchableOpacity style={{backgroundColor: 'lightgray', padding: 5, borderRadius: 3}} onPress={() => setModalVisible(true)} >
                 <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>Yes/No</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
