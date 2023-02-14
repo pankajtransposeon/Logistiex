@@ -70,13 +70,16 @@ function StackNavigators({navigation}) {
     const [isLoading, setIsLoading] = useState(false);
     const [userId, setUserId] = useState('');
     const [data, setData] = useState([]);
-    let m = 0;
+    const [islogin,setIsLogin]=useState(false);
+    let m = 0;  
     const getData = async () => {
         try {
             const value = await AsyncStorage.getItem('@storage_Key');
             if (value !== null) {
                 const data = JSON.parse(value);
                 setUserId(data.userId);
+                getData11();
+                // console.log(data.userId);
             } else {
                 setUserId(' ');
             }
@@ -91,9 +94,39 @@ function StackNavigators({navigation}) {
         }, 1000);
         return () => clearInterval(StartValue);
     }, []);
+
+
+    const getData11 = async () => {
+      try {
+          const value = await AsyncStorage.getItem('load11');
+          if (value === 'load') {
+            AsyncStorage.setItem('load11', 'notload');
+              setTimeout(()=>pull_API_Data(),1000);
+          } 
+      } catch (e) {
+          console.log(e);
+      }
+  };
+
+ 
+
+
+  //   useEffect(() => {
+  //     if (!islogin && userId !== null){
+  //       loadAPI_Data10();
+  //           loadAPI_Data1();
+  //           loadAPI_Data2();
+  //           loadAPI_Data3();
+  //           loadAPI_Data4();
+  //           loadAPI_Data5();
+  //           loadAPI_Data6();
+  //     }
+  // }, []);
+
     useEffect(() => {
       (async () => {
         if (userId) {
+
           loadAPI_Data10();
             loadAPI_Data1();
             loadAPI_Data2();
@@ -101,7 +134,9 @@ function StackNavigators({navigation}) {
             loadAPI_Data4();
             loadAPI_Data5();
             loadAPI_Data6();
-            
+        } else {
+          // setTimeout(()=>navigation.navigate('Login'),1000);
+          navigation.navigate('Login');
         }
       })();
     }, []);
@@ -109,7 +144,7 @@ function StackNavigators({navigation}) {
     // Sync button function
     const pull_API_Data = () => {
       console.log('api pull');
-      loadAPI_Data10();
+        loadAPI_Data10();
         loadAPI_Data1();
         loadAPI_Data2();
         loadAPI_Data3();
@@ -117,9 +152,14 @@ function StackNavigators({navigation}) {
         loadAPI_Data5();
         loadAPI_Data6();
     };
-
+ 
 const push_Data = () => {
     console.log('push data function');
+    if (!islogin){
+    //   console.log('first time sync');
+      setIsLogin(true);
+      pull_API_Data();
+    }
     db.transaction(tx => {
         tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentStatus="WFP" AND status IS NOT Null', [], (tx1, results) => {
             if (results.rows.length > 0) {
@@ -134,7 +174,9 @@ const push_Data = () => {
                         accepted11[0] = true;
                     }
                     // console.log(results.rows.item(i));
-                    tx.executeSql('SELECT * FROM SyncSellerPickUp where consignorCode=?', [results.rows.item(i).consignorCode], (tx1, results11) => {  console.log(results.rows.item(i).PRSNumber);
+                    tx.executeSql('SELECT * FROM SyncSellerPickUp where consignorCode=?', [results.rows.item(i).consignorCode], (tx1, results11) => {  
+                      console.log('API push');
+                      console.log(results.rows.item(i).PRSNumber);
                         setIsLoading(!isLoading);
                         console.log(results11.rows.item(0).consignorLocation);
                         console.log(results.rows.item(i).status);
@@ -175,6 +217,7 @@ const push_Data = () => {
                     });
                 }
             } else {
+              console.log('pull11');
                 pull_API_Data();
             }
         },);
@@ -245,7 +288,7 @@ const push_Data = () => {
                 viewDetails1();
                 m++;
                 // console.log('value of m1 '+m);
-
+                AsyncStorage.setItem('load11', 'notload');
                 setIsLoading(false);
             }, error => {
                 console.log('https://bkedtest.logistiex.com/SellerMainScreen/consignorslist/',error);
@@ -269,8 +312,12 @@ const push_Data = () => {
                 if (m === 6){
                   ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
                   setIsLoading(false);
+                  setIsLogin(true);
                   console.log('All ' + m + ' APIs loaded successfully ');
                   m = 0;
+                  AsyncStorage.setItem('load11', 'notload');
+
+                  AsyncStorage.setItem('refresh11', 'refresh');
                 } else {
                 console.log('Only ' + m + ' APIs loaded out of 6 ');
               }
@@ -409,11 +456,11 @@ const push_Data = () => {
       });
   };
   const loadAPI_Data10 = () => {
-      setIsLoading(!isLoading);
+      // setIsLoading(!isLoading);
       (async () => {
           await axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/workload/${userId}`).then(res => {
               createTables10();
-              console.log('Table10 API OK 123: ' + res.data.data.length);
+              // console.log('Table10 API OK 123: ' + res.data.data.length);
               for (let i = 0; i < res.data.data.length; i++) { // console.log(res.data.data[i].consignorCode);
                  if(res.data.data[i].shipmentStatus === "RTO"){
                   db.transaction(txn => {
@@ -444,7 +491,7 @@ const push_Data = () => {
                         res.data.data[i].actionTime,
                         'Rejected',
                     ], (sqlTxn, _res) => {
-                        console.log(`\n Data Added to local db successfully 213`);
+                        // console.log(`\n Data Added to local db successfully 213`);
                         // console.log(res);
                     }, error => {
                         console.log('error on adding data ' + error.message);
@@ -453,9 +500,9 @@ const push_Data = () => {
                  }
               }
               viewDetails10();
-              setIsLoading(false);
+              // setIsLoading(false);
           }, error => {
-              Alert.alert(error);
+              console.log(error);
           },);
       })();
   };
@@ -473,8 +520,7 @@ const push_Data = () => {
                   // ToastAndroid.show("Sync Successful"+ results.rows.item(i).clientShipmentReferenceNumber,ToastAndroid.SHORT);
               }
               // ToastAndroid.show('Sync Successful', ToastAndroid.SHORT);
-               
-              m++;
+              // m++;
               // console.log("Data from Local Database1 : \n ", JSON.stringify(temp, null, 4));
               // console.log('Table2 DB OK :', temp.length);
           },);
@@ -764,7 +810,7 @@ const push_Data = () => {
             // console.log('dataDisplay', res.data);
           })
           .catch(error => {
-            console.log('Error Msg:', error);
+            // console.log('Error Msg:', error);
           });
   };
 
@@ -918,8 +964,8 @@ const push_Data = () => {
                 name="menu"
                 style={{fontSize: 30, marginLeft: 10, color: 'white'}}
                 onPress={() => {
-                  console.log('dashboard menu clicked');
-                  navigation.dispatch(DrawerActions.openDrawer());
+                console.log('dashboard menu clicked');
+                  navigation.dispatch(DrawerActions.openDrawer())
                 }}
               />
             ),
@@ -1297,7 +1343,7 @@ const push_Data = () => {
             headerTitle: props => (
               <NativeBaseProvider>
                 <Heading style={{color: 'white'}} size="md">
-                HandoverShipmentRTO
+                Seller Handover Scan
                 </Heading>
               </NativeBaseProvider>
             ),

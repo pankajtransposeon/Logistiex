@@ -15,6 +15,7 @@ export default function EndTrip({navigation,route}) {
   const [ImageUrl, setImageUrl] = useState('');
   const [tripID, setTripID] = useState("");
   const [userId, setUserId] = useState('');
+  const [uploadStatus, setUploadStatus] = useState('idle');
   const getUserId = async () => {
     try {
       const value = await AsyncStorage.getItem('@storage_Key');
@@ -66,6 +67,7 @@ export default function EndTrip({navigation,route}) {
   };
 
   const takePhoto= async()=>{
+    setUploadStatus('uploading');
     setImageUrl("");
     let options = {
         mediaType:'photo',
@@ -85,7 +87,7 @@ export default function EndTrip({navigation,route}) {
         console.log(result)
     }
     if(result.assets !== undefined){          
-      fetch('https://bked.logistiex.com/DSQCPicture/uploadPicture', {
+      fetch('https://bkedtest.logistiex.com/DSQCPicture/uploadPicture', {
         method: 'POST',
       
         body: createFormData(result.assets[0], {
@@ -99,10 +101,12 @@ export default function EndTrip({navigation,route}) {
         .then((data) => data.json())
         .then((res) => {
           setImageUrl(res.publicURL);
+          setUploadStatus('done');
           console.log('upload succes', res);
         })
         .catch((error) => {
           console.log('upload error', error);
+          setUploadStatus('error');
         });
     }
 }
@@ -156,7 +160,7 @@ const ImageHandle = () =>
 
   {
     (async() => {
-      await axios.post('https://bked.logistiex.com/UserTripInfo/updateUserTripEndDetails', {
+      await axios.post('https://bkedtest.logistiex.com/UserTripInfo/updateUserTripEndDetails', {
         tripID : userId+"_"+date, 
         endTime : time, 
         endkilometer : endkm, 
@@ -183,7 +187,13 @@ console.log(vehicle);
                 <Input selectTextOnFocus={false} editable={false} disabled backgroundColor='gray.300' value={vehicle.startkm} size="lg" type={"number"} placeholder="Input vehicle KMs" />
 
                 <Input value={endkm} keyboardType="numeric" onChangeText={setEndkm} size="lg" type={"number"} placeholder="Input vehicle KMs" />
-                <Button py={3} variant='outline' title="Login"  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons></Button>
+                {/* <Button py={3} variant='outline' title="Login"  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons></Button> */}
+                <Button py={3} variant='outline' _text={{ color: 'white', fontSize: 20 }} onPress={takePhoto}>
+                {uploadStatus === 'idle' && <MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons>}
+                {uploadStatus === 'uploading' && <ActivityIndicator size="small" color="gray" />}
+                {uploadStatus === 'done' && <MaterialIcons name="check" size={22} color="green" />}
+                {uploadStatus === 'error' && <MaterialIcons name="error" size={22} color="red" />}
+                </Button>
                 {
                   ImageUrl ? (
                     <Image 

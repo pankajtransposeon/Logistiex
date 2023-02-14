@@ -49,6 +49,25 @@ export default function Main({navigation, route}) {
       }, [navigation]);
 
 
+      const getData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('refresh11');
+            if (value === 'refresh') {
+                loadSellerPickupDetails();
+            } 
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    useEffect(() => {
+        const StartValue = setInterval(() => {
+            getData();
+        }, 100);
+        return () => clearInterval(StartValue);
+    }, []);
+
+
     // useEffect(() => {
     //     (async () => {
     //         loadSellerPickupDetails();
@@ -60,11 +79,12 @@ export default function Main({navigation, route}) {
 
     // };
     const loadSellerPickupDetails = async() => {
-        setIsLoading(!isLoading);
+        // setIsLoading(!isLoading);
         setSpp(1);
         setSpnp(1);
         setSpc(1);
         setSpr(1);
+        await AsyncStorage.setItem('refresh11', 'notrefresh');
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
                 // console.log('SP Total Seller : ' + results.rows.length);
@@ -129,7 +149,7 @@ export default function Main({navigation, route}) {
                 // console.log('SP Rejected : ' + results.rows.length);
                 setSpr(results.rows.length);
                 setIsLoading(false);
-                ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
+                // ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
                 // for (let i = 0; i < results.rows.length; ++i) {
                 //     temp.push(results.rows.item(i));
                 // }
@@ -313,6 +333,7 @@ export default function Main({navigation, route}) {
 
   return (
     <NativeBaseProvider>
+      <Box flex={1} bg="gray.300">
       <ScrollView>
       <Box flex={1} bg="gray.300" p={4}>
         {dashboardData.map((it, index)=>{
@@ -373,19 +394,11 @@ export default function Main({navigation, route}) {
             <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>New Pickup</Button>
             :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup')}>New Pickup</Button>
             }
-
         </Box>        
         );
         })}
-        <Button
-              variant="outline"
-              onPress={() => {
-                  navigation.navigate('SellerHandover')
-              }}
-              mt={4}
-              style={{color: '#004aad', borderColor: '#004aad'}}>
-              <Text style={{color: '#004aad'}}>Start Handover</Text>
-            </Button>
+        {/* <Button w="100%" size="lg" bg="#004aad" mt={-5} onPress={()=>navigation.navigate('SellerHandover')}>Seller Handover</Button> */}
+        {/* <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>Start Handover</Button> */}
         <Center>
           <Image style={{ width: 150, height: 100 }} source={require('../assets/image.png')} alt={'Logo Image'} />
         </Center>
@@ -415,6 +428,6 @@ export default function Main({navigation, route}) {
           <ProgressBar width={70} />
         </View>
       ) : null}
-    </NativeBaseProvider>
+    </Box></NativeBaseProvider>
   );
 }

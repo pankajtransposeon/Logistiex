@@ -1,4 +1,6 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-native/no-inline-styles */
 import { NativeBaseProvider, Image, Box, Fab, Icon, Button ,Alert, Modal, Input} from 'native-base';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -24,29 +26,35 @@ const db = openDatabase({
 });
 
 const HandoverShipmentRTO = ({route}) => {
-    const [barcodeValue,setBarcodeValue] = useState('');
-    const [packageValue,setpackageValue] = useState('');
-    const [otp,setOtp] = useState('');
-    const [flag, setflag] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-    const [refresh, setRefresh] = useState(false);
-    const [pending, setPending] = useState(0);
-    const [expected, setExpected] = useState(0);
-    const [newaccepted, setnewAccepted] = useState(0);
-    const [newrejected, setnewRejected] = useState(0);
+    // const [barcodeValue,setBarcodeValue] = useState('');
+    // const [packageValue,setpackageValue] = useState('');
+    // const [otp,setOtp] = useState('');
+    // const [flag, setflag] = useState(false);
+    // const [showModal, setShowModal] = useState(false);
+    // const [refresh, setRefresh] = useState(false);
+    // const [pending, setPending] = useState(0);
+    // const [expected, setExpected] = useState(0);
+    // const [newaccepted, setnewAccepted] = useState(0);
+    // const [newrejected, setnewRejected] = useState(0);
     const [barcode, setBarcode] = useState('');
     const [len, setLen] = useState(0);
-    const [DropDownValue, setDropDownValue] = useState(null);
-    const [rejectedData, setRejectedData] = useState([]);
-    const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
-    const [latitude, setLatitude] = useState(0);
-    const [longitude , setLongitude] = useState(0);
+    // const [DropDownValue, setDropDownValue] = useState(null);
+    // const [rejectedData, setRejectedData] = useState([]);
+    // const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
+    // const [latitude, setLatitude] = useState(0);
+    // const [longitude , setLongitude] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
     const [bagId, setBagId] = useState('');
     const [bagIdNo, setBagIdNo] = useState(1);
     const [showCloseBagModal, setShowCloseBagModal] = useState(false);
     const [bagSeal, setBagSeal] = useState('');
     const [data, setData] = useState([]);
+
+    const [sellerCode11,setCode11] = useState('');
+    const [sellerName11,setSellerName11] = useState('');
+    const [sellerNoOfShipment,setSellerNoOfShipment] = useState(0);
+    const [scanprogressRD,setScanProgressRD] = useState(0);
+    const [sellerBagOpen11,setSellerbagOpen11] = useState('Yes');
 
     useEffect(() => {
       setBagId();
@@ -75,31 +83,31 @@ const HandoverShipmentRTO = ({route}) => {
 
                 if (results.rowsAffected > 0) {
                   console.log(barcode + 'accepted');
-                  ToastAndroid.show(barcode +" Accepted",ToastAndroid.SHORT);
+                  ToastAndroid.show(barcode + ' Accepted',ToastAndroid.SHORT);
 
                 } else {
                   console.log(barcode + 'not accepted');
                 }
                 console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++ i) {
+                for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
                 }
-                console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+                console.log('Data updated: \n ', JSON.stringify(temp, null, 4));
                 // viewDetails2();
             });
         });
       };
 
 
-      const loadDetails = (datas) => { 
+      const loadDetails = (datas) => {
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SyncSellerPickUp WHERE consignorCode=?', [datas], (tx1, results) => { 
+            tx.executeSql('SELECT * FROM SyncSellerPickUp WHERE consignorCode=?', [datas], (tx1, results) => {
                 let temp = [];
                 for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
                 }
                 setData(temp);
-                
+
             });
         });
     };
@@ -107,13 +115,13 @@ const HandoverShipmentRTO = ({route}) => {
     const getCategories = (data) => {
       db.transaction(txn => {
         txn.executeSql(
-          `SELECT * FROM SellerMainScreenDetailsRTO WHERE consignorCode = ? AND status = 'Rejected' `,
+          'SELECT * FROM SellerMainScreenDetailsRTO WHERE consignorCode = ? AND status = \'Rejected\' ',
           [data],
           (sqlTxn, res) => {
             console.log('categories retrieved successfully', res.rows.length);
             if (!res.rows.length){
               alert('You are scanning wrong product, please check.');
-            }else{
+            } else {
                 setBarcode(() => data);
                 Vibration.vibrate(100);
                 RNBeep.beep();
@@ -128,14 +136,50 @@ const HandoverShipmentRTO = ({route}) => {
       });
     };
 
-    
+
     const onSuccess = e => {
       console.log(e.data, 'barcode');
       getCategories(e.data);
+      displayConsignorDetails11();
     };
+    const onSuccess11 = e => {
+      Vibration.vibrate(100);
+      RNBeep.beep();
+      console.log(e.data, 'sealID');
+      // getCategories(e.data);
+      setBagSeal(e.data);
+    };
+    useEffect(() => {
+      displayConsignorDetails11();
+    }, []);
+    const displayConsignorDetails11 = () => {
+      db.transaction(tx => {
+          tx.executeSql('SELECT * FROM SyncSellerPickUp where consignorCode= ?', [barcode], (tx1, results) => {
+              // let temp = [];
+              console.log(results.rows.length);
+              for (let i = 0; i < results.rows.length; ++i) {
+                  // temp.push(results.rows.item(i));
+                  setCode11(results.rows.item(i).consignorCode);
+                  setSellerName11(results.rows.item(i).consignorName);
+                  // setSellerNoOfShipment11();
+                  setScanProgressRD(results.rows.item(i).ReverseDeliveries);
+                  console.log(results.rows.item(i).consignorName);
+                  // var address121 = results.rows.item(i).consignorAddress;
+                  // var address_json = JSON.parse(address121);
+                  // console.log(typeof (address_json));
+                  // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
+                  // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+              }
+              // m++;
+              // ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
+              // console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
+              // console.log('data loaded API 1',temp);
+              // console.log('Table1 DB OK:', temp.length);
+          });
+      });
+  };
 
 
-    
     const navigation = useNavigation();
     const [count, setcount] = useState(0);
 
@@ -143,20 +187,48 @@ const HandoverShipmentRTO = ({route}) => {
   return (
     <NativeBaseProvider>
       <Modal isOpen={showCloseBagModal} onClose={() => setShowCloseBagModal(false)} size="lg">
-        <Modal.Content maxWidth="350">
+        <Modal.Content maxWidth="350" >
           <Modal.CloseButton />
-          <Modal.Header></Modal.Header>
+          <Modal.Header>Close Bag</Modal.Header>
           <Modal.Body>
-            <Input placeholder="Enter Bag Seal" size="md" onChangeText={(text)=>setBagSeal(text)} />
-            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(), setShowCloseBagModal(false); }}>Submit</Button>
+          <QRCodeScanner
+          onRead={onSuccess11}
+          reactivate={true}
+          // showMarker={true}
+          reactivateTimeout={2000}
+          flashMode={RNCamera.Constants.FlashMode.off}
+          ref={(node) => { this.scanner = node; }}
+          containerStyle={{ height:116,marginBottom:'55%' }}
+          cameraStyle={{ height: 90, marginTop: 95,marginBottom:'15%', width: 289, alignSelf: 'center', justifyContent: 'center' }}
+          // cameraProps={{ ratio:'1:2' }}
+          // containerStyle={{width: '100%', alignSelf: 'center', backgroundColor: 'white'}}
+          // cameraStyle={{width: '10%',alignSelf: 'center'}}
+          // topContent={
+          //   <View><Text>Scan Bag Seal</Text></View>
+          // }
+          // style={{
+          //   // flex: 1,
+          //   // width: '100%',
+          // }}
+        /> {'\n'}
+        <Input placeholder="Enter Bag Seal" size="md" value={bagSeal} onChangeText={(text)=>setBagSeal(text)}  style={{
+
+         width: 290,
+      backgroundColor:'white',
+      }} />
+            {/* {'\n'}
+            <Input placeholder="Enter Bag Seal" size="md" onChangeText={(text)=>setBagSeal(text)} /> */}
+            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(); setShowCloseBagModal(false); }}>Submit</Button>
             <View style={{alignItems: 'center', marginTop: 15}}>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 16, fontWeight: '500', color: 'black'}}>Seller Code</Text>
-                {
+                {/* {
                     data ? (
                         <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data[0].consignorCode}</Text>
                     ):null
-                }
+                } */}
+                <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{sellerCode11}</Text>
+
               </View>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
                 <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>Seller Name</Text>
@@ -174,7 +246,7 @@ const HandoverShipmentRTO = ({route}) => {
       <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
-          <Modal.Header></Modal.Header>
+          <Modal.Header />
           <Modal.Body>
           <Text style={{fontWeight:'bold', color:'black'}}>The Seller has {data[0].ForwardPickups} shipments. Would you like to open the Bag?</Text>
           <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
@@ -202,7 +274,7 @@ const HandoverShipmentRTO = ({route}) => {
             <View style={{alignItems: 'center', marginTop: 15}}>
 
               <View style={{backgroundColor: 'lightgray', padding: 10, flexDirection: 'row', justifyContent: 'space-between', width: '90%', borderRadius: 5}}>
-                <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>shipment ID: </Text>
+                <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>SHIPMENT ID </Text>
                 <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>{barcode}</Text>
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
