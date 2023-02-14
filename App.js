@@ -70,16 +70,20 @@ function StackNavigators({navigation}) {
     const [isLoading, setIsLoading] = useState(false);
     const [userId, setUserId] = useState('');
     const [data, setData] = useState([]);
-    const [islogin,setIsLogin]=useState(false);
+    const [isLogin,setIsLogin]=useState(false);
     let m = 0;  
     const getData = async () => {
         try {
             const value = await AsyncStorage.getItem('@storage_Key');
+            // console.log(value);
             if (value !== null) {
                 const data = JSON.parse(value);
                 setUserId(data.userId);
-                getData11();
-                // console.log(data.userId);
+                // Login_Data_load();
+                // if(!isLogin){
+                //   setIsLogin(true);
+                //   Login_Data_load();
+                // }
             } else {
                 setUserId(' ');
             }
@@ -87,6 +91,7 @@ function StackNavigators({navigation}) {
             console.log(e);
         }
     };
+  // loadAPI();
 
     useEffect(() => {
         const StartValue = setInterval(() => {
@@ -95,39 +100,12 @@ function StackNavigators({navigation}) {
         return () => clearInterval(StartValue);
     }, []);
 
-
-    const getData11 = async () => {
-      try {
-          const value = await AsyncStorage.getItem('load11');
-          if (value === 'load') {
-            AsyncStorage.setItem('load11', 'notload');
-              setTimeout(()=>pull_API_Data(),1000);
-          } 
-      } catch (e) {
-          console.log(e);
-      }
-  };
-
  
-
-
-  //   useEffect(() => {
-  //     if (!islogin && userId !== null){
-  //       loadAPI_Data10();
-  //           loadAPI_Data1();
-  //           loadAPI_Data2();
-  //           loadAPI_Data3();
-  //           loadAPI_Data4();
-  //           loadAPI_Data5();
-  //           loadAPI_Data6();
-  //     }
-  // }, []);
 
     useEffect(() => {
       (async () => {
         if (userId) {
-
-          loadAPI_Data10();
+            loadAPI_Data10();
             loadAPI_Data1();
             loadAPI_Data2();
             loadAPI_Data3();
@@ -153,13 +131,33 @@ function StackNavigators({navigation}) {
         loadAPI_Data6();
     };
  
+    useEffect(() => {
+      if (userId !== null) {
+        setTimeout(()=>{Login_Data_load();},1000);
+      }
+    }, [userId]);
+    const Login_Data_load = () => {
+      // console.log('Login Data Load called');
+      AsyncStorage.getItem('apiDataLoaded')
+        .then(data11 => {
+        // console.log( 'Api Data Loaded value : ',data11);
+        setIsLogin(data11);
+        if (data11 === 'false') {
+          console.log('1st time call');
+          pull_API_Data();
+        AsyncStorage.setItem('apiDataLoaded', 'true');
+          // return;
+        }
+        })
+        .catch(e => {
+        console.log(e);
+        });
+    };
 const push_Data = () => {
     console.log('push data function');
-    if (!islogin){
-    //   console.log('first time sync');
-      setIsLogin(true);
-      pull_API_Data();
-    }
+
+    Login_Data_load();
+    
     db.transaction(tx => {
         tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentStatus="WFP" AND status IS NOT Null', [], (tx1, results) => {
             if (results.rows.length > 0) {
@@ -315,9 +313,9 @@ const push_Data = () => {
                   ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
                   setIsLoading(false);
                   setIsLogin(true);
+                  AsyncStorage.setItem('apiDataLoaded', 'true');
                   console.log('All ' + m + ' APIs loaded successfully ');
                   m = 0;
-                  AsyncStorage.setItem('load11', 'notload');
 
                   AsyncStorage.setItem('refresh11', 'refresh');
                 } else {
@@ -493,7 +491,7 @@ const push_Data = () => {
                         res.data.data[i].actionTime,
                         'Rejected',
                     ], (sqlTxn, _res) => {
-                        console.log(`\n Data Added to local db successfully 213`);
+                        // console.log(`\n Data Added to local db successfully 213`);
                         // console.log(res);
                     }, error => {
                         console.log('error on adding data ' + error.message);
