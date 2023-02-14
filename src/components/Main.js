@@ -22,8 +22,6 @@ import { StyleSheet } from 'react-native';
 
 
 export default function Main({navigation, route}) {
-
-    
     // const userId = route.params.userId;
 
     const [data, setData] = useState(0);
@@ -35,12 +33,18 @@ export default function Main({navigation, route}) {
     const [spp, setSpp] = useState(1);
     const [spnp, setSpnp] = useState(1);
     const [spr, setSpr] = useState(1);
+    const [spts1, setSpts1] = useState(0);
+    const [spc1, setSpc1] = useState(1);
+    const [spp1, setSpp1] = useState(1);
+    const [spnp1, setSpnp1] = useState(1);
+    const [spr1, setSpr1] = useState(1);
     const [SpARC,setSpARC] = useState(0);
+    const [SpARC1,setSpARC1] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoading1, setIsLoading1] = useState(false);
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
           loadSellerPickupDetails();
-
         });
         return unsubscribe;
       }, [navigation]);
@@ -63,20 +67,33 @@ export default function Main({navigation, route}) {
         }, 100);
         return () => clearInterval(StartValue);
     }, []);
+    useEffect(() => {
+      const unsubscribe = navigation.addListener('focus', () => {
+        loadSellerDeliveryDetails();
+      });
+      return unsubscribe;
+    }, [navigation]);
 
 
-    // useEffect(() => {
-    //     (async () => {
-    //         loadSellerPickupDetails();
-    //     })();
-    // },[]);
+    const getData1 = async () => {
+      try {
+          const value = await AsyncStorage.getItem('refresh11');
+          if (value === 'refresh') {
+           loadSellerDeliveryDetails();
+          } 
+      } catch (e) {
+          console.log(e);
+      }
+  };
 
-    // const sync11 = () => {
-    //     loadSellerPickupDetails();
+  useEffect(() => {
+      const StartValue = setInterval(() => {
+          getData1();
+      }, 100);
+      return () => clearInterval(StartValue);
+  }, []);
 
-    // };
     const loadSellerPickupDetails = async() => {
-        // setIsLoading(!isLoading);
         setSpp(1);
         setSpnp(1);
         setSpc(1);
@@ -84,78 +101,90 @@ export default function Main({navigation, route}) {
         await AsyncStorage.setItem('refresh11', 'notrefresh');
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
-                // console.log('SP Total Seller : ' + results.rows.length);
                 setSpts(results.rows.length);
             });
         });
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentStatus="WFP" AND status IS NULL', [], (tx1, results) => {
-                // let temp = [];
-                // console.log('SP Pending : ' + results.rows.length);
                 setSpp(results.rows.length);
-                // setIsLoading(false);
-                // ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
-                // for (let i = 0; i < results.rows.length; ++i) {
-                //     temp.push(results.rows.item(i));
-                // }
-                // console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
-                // setData(temp);
             });
         });
 
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="WFP" AND status="accepted"', [], (tx1, results) => {
                 let temp = [];
-                // console.log('SP Completed : ' + results.rows.length);
                 setSpc(results.rows.length);
-                // for (let i = 0; i < results.rows.length; ++i) {
-                //     temp.push(results.rows.item(i));
-                // }
-                // // console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
-                // setData(temp);
             });
         });
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="WFP" AND status="accepted" OR status="rejected"', [], (tx1, results) => {
-                // let temp = [];
-                // console.log('SP Completed : ' + results.rows.length);
                 setSpARC(results.rows.length);
-                // for (let i = 0; i < results.rows.length; ++i) {
-                //     temp.push(results.rows.item(i));
-                // }
-                // // console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
-                // setData(temp);
             });
         });
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="WFP" AND status="notPicked"', [], (tx1, results) => {
                 let temp = [];
-                // console.log('SP Not Picked : ' + results.rows.length);
                 setSpnp(results.rows.length);
                 for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
                 }
-                // console.log('Data from Local Database125 : \n ', JSON.stringify(temp, null, 4));
-                // setData(temp);
             });
         });
 
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="rejected"', [], (tx1, results) => {
-                // let temp = [];
-                // console.log('SP Rejected : ' + results.rows.length);
                 setSpr(results.rows.length);
                 setIsLoading(false);
-                // ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
-                // for (let i = 0; i < results.rows.length; ++i) {
-                //     temp.push(results.rows.item(i));
-                // }
-                // console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
-                // setData(temp);
             });
         });
        
     };
+    const loadSellerDeliveryDetails = async() => {
+      setSpp1(1);
+      setSpnp1(1);
+      setSpc1(1);
+      setSpr1(1);
+      await AsyncStorage.setItem('refresh11', 'notrefresh');
+      db.transaction((tx) => {
+          tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
+              setSpts(results.rows.length);
+          });
+      });
+      db.transaction((tx) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentStatus="RTO" AND status IS NULL', [], (tx1, results) => {
+            setSpp1(results.rows.length);
+        });
+    });
+
+    db.transaction((tx) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="RTO" AND status="accepted"', [], (tx1, results) => {
+            let temp = [];
+            setSpc1(results.rows.length);
+        });
+    });
+    db.transaction((tx) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="RTO" AND status="accepted" OR status="rejected"', [], (tx1, results) => {
+            setSpARC1(results.rows.length);
+        });
+    });
+    db.transaction((tx) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="RTO" AND status="notPicked"', [], (tx1, results) => {
+            let temp = [];
+            setSpnp1(results.rows.length);
+            for (let i = 0; i < results.rows.length; ++i) {
+                temp.push(results.rows.item(i));
+            }
+        });
+    });
+
+    db.transaction((tx) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetailsRTO where status="rejected"', [], (tx1, results) => {
+            setSpr1(results.rows.length);
+            setIsLoading(false);
+        });
+    });
+     
+  };
 
     const value = {
         Accepted: 0,
@@ -304,10 +333,10 @@ export default function Main({navigation, route}) {
         }, {
             title: 'Seller Deliveries',
             totalUsers: spts,
-            pendingOrder: spp,
-            completedOrder: spc,
-            rejectedOrder: spr,
-            notPicked: spnp,
+            pendingOrder: spp1,
+            completedOrder: spc1,
+            rejectedOrder: spr1,
+            notPicked: spnp1,
         },
         //  {
         //     title: 'Customer Pickups',
@@ -388,7 +417,7 @@ export default function Main({navigation, route}) {
             </View>
           </Box>
           {it.title==='Seller Deliveries'?
-            <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>New Pickup</Button>
+            <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries')}>New Pickup</Button>
             :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup')}>New Pickup</Button>
             }
         </Box>        
