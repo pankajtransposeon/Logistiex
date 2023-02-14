@@ -491,7 +491,7 @@ const push_Data = () => {
                         res.data.data[i].actionTime,
                         'Rejected',
                     ], (sqlTxn, _res) => {
-                        // console.log(`\n Data Added to local db successfully 213`);
+                        console.log(`\n Data Added to local db successfully 213`);
                         // console.log(res);
                     }, error => {
                         console.log('error on adding data ' + error.message);
