@@ -65,7 +65,6 @@ return (
                 <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{single.ReverseDeliveries}</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >0</Text></DataTable.Cell>
-                <ArrowForwardIcon style={{color:'#004aad',marginTop:8}} />
               </DataTable.Row>
             ))
           :
