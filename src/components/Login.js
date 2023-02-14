@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {NativeBaseProvider, Box, Image, Center, VStack, Button, Icon, Input, Heading, Alert, Text, Modal } from 'native-base';
@@ -19,27 +20,29 @@ export default function Login() {
 
   const storeData = async(data) => {
     try {
-      const jsonValue = JSON.stringify(data)
+      const jsonValue = JSON.stringify(data);
       await AsyncStorage.setItem('@storage_Key', jsonValue);
-      await AsyncStorage.setItem('load11', 'load');
+      // await AsyncStorage.setItem('load11', 'load');
+      await AsyncStorage.setItem('apiDataLoaded', 'false');
     } catch (e) {
       console.log(e);
     }
-  }
+  };
 
   const getData = async () => {
     try {
-      const value = await AsyncStorage.getItem('@storage_Key')
-      if(value !== null) {
+      const value = await AsyncStorage.getItem('@storage_Key');
+      if (value !== null) {
         const data = JSON.parse(value);
-        navigation.navigate('Main', {	
-          userId : data.userId	
+        navigation.navigate('Main', {
+          userId : data.userId,
         });
+
       }
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
-  }
+  };
 
   useEffect(() => {
     getData();
@@ -48,7 +51,7 @@ export default function Login() {
 
   const handleLogin = async() => {
     setLoginClicked(true);
-    await axios.post("https://bkedtest.logistiex.com/Login/login", { email: email, password: password })
+    await axios.post('https://bkedtest.logistiex.com/Login/login', { email: email, password: password })
     .then(async(response) => {
       setLoginClicked(false);
       setMessage(1);
@@ -56,12 +59,12 @@ export default function Login() {
       await storeData({
         UserName : response.data.userDetails.userFirstName + ' ' + response.data.userDetails.userLastName,
         UserEmail : response.data.userDetails.userPersonalEmailId,
-        userId : response.data.userDetails.userId
+        userId : response.data.userDetails.userId,
       });
       setTimeout(()=>{
         setShowModal(false);
-        navigation.navigate('Main', {	
-          userId : response.data.userDetails.userId	
+        navigation.navigate('Main', {
+          userId : response.data.userDetails.userId,
         });
       }, 1000);
     }, (error) => {
@@ -76,34 +79,34 @@ export default function Login() {
     <NativeBaseProvider>
       <Box flex={1} bg="#004aad" alignItems="center" pt={'40%'}>
         <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-          <Modal.Content backgroundColor={message==1 ? '#dcfce7' : '#fee2e2'}>
+          <Modal.Content backgroundColor={message === 1 ? '#dcfce7' : '#fee2e2'}>
             <Modal.CloseButton />
             <Modal.Body>
-              <Alert w="100%" status={message==1 ? 'success' : 'error'}>
+              <Alert w="100%" status={message === 1 ? 'success' : 'error'}>
                 <VStack space={1} flexShrink={1} w="100%" alignItems="center">
                   <Alert.Icon size="4xl" />
-                  <Text my={2} fontSize="md" fontWeight="medium">{message==1 ? 'Successfully logged in' : 'Please enter correct details'}</Text>
+                  <Text my={3} fontSize="md" fontWeight="medium">{message === 1 ? 'Successfully logged in' : 'Please enter correct details'}</Text>
                 </VStack>
               </Alert>
             </Modal.Body>
           </Modal.Content>
         </Modal>
-        <Box justifyContent="space-between" py={10} px={6} bg="#fff" rounded="xl" width={"90%"} maxWidth="100%" _text={{fontWeight: "medium",}}>
+        <Box justifyContent="space-between" py={10} px={6} bg="#fff" rounded="xl" width={'90%'} maxWidth="100%" _text={{fontWeight: 'medium'}}>
           <VStack space={6}>
             <Center>
               <Heading>Sign in</Heading>
             </Center>
             <Input value={email} onChangeText={setEmail} size="lg" InputLeftElement={<Icon as={<MaterialIcons name="email-outline" />} size={6} ml="2" color="muted.400" />} placeholder="Enter your email" />
-            <Input value={password} onChangeText={setPassword} size="lg" InputLeftElement={<Icon as={<MaterialIcons name="lock-outline" />} size={6} ml="2" color="muted.400" />} type={show ? "text" : "password"} InputRightElement={<Pressable onPress={() => setShow(!show)}><Icon as={<MaterialIcons name={show ? "eye" : "eye-off"} />} size={6} mr="2" color="muted.400" /></Pressable>} placeholder="Password" />
+            <Input value={password} onChangeText={setPassword} size="lg" InputLeftElement={<Icon as={<MaterialIcons name="lock-outline" />} size={6} ml="2" color="muted.400" />} type={show ? 'text' : 'password'} InputRightElement={<Pressable onPress={() => setShow(!show)}><Icon as={<MaterialIcons name={show ? 'eye' : 'eye-off'} />} size={6} mr="2" color="muted.400" /></Pressable>} placeholder="Password" />
             {loginClicked ?
-              <Button isLoading isLoadingText="Login" title="Login" backgroundColor='#004aad' _text={{ color: 'white', fontSize: 20 }}>LOGIN</Button>
+              <Button isLoading isLoadingText="Login" title="Login" backgroundColor="#004aad" _text={{ color: 'white', fontSize: 20 }}>LOGIN</Button>
             :
-              <Button title="Login" backgroundColor='#004aad' _text={{ color: 'white', fontSize: 20 }} onPress={()=>handleLogin()}>LOGIN</Button>
+              <Button title="Login" backgroundColor="#004aad" _text={{ color: 'white', fontSize: 20 }} onPress={()=>handleLogin()}>LOGIN</Button>
             }
           </VStack>
         </Box>
         <Center>
-          <Image style={{ width: 200, height: 200 }} source={require('../assets/logo.png')} alt={"Logo Image"} />
+          <Image style={{ width: 200, height: 200 }} source={require('../assets/logo.png')} alt={'Logo Image'} />
         </Center>
       </Box>
     </NativeBaseProvider>
