@@ -49,7 +49,7 @@ const HandoverShipmentRTO = ({route}) => {
     const [showCloseBagModal, setShowCloseBagModal] = useState(false);
     const [bagSeal, setBagSeal] = useState('');
     const [data, setData] = useState([]);
-
+    const [acceptedArray,setAcceptedArray] = useState([]);
     const [sellerCode11,setCode11] = useState('');
     const [sellerName11,setSellerName11] = useState('');
     const [sellerNoOfShipment,setSellerNoOfShipment] = useState(0);
@@ -107,7 +107,7 @@ const HandoverShipmentRTO = ({route}) => {
                     temp.push(results.rows.item(i));
                 }
                 setData(temp);
-
+                console.log(temp, 'datatanmay');
             });
         });
     };
@@ -140,44 +140,68 @@ const HandoverShipmentRTO = ({route}) => {
     const onSuccess = e => {
       console.log(e.data, 'barcode');
       getCategories(e.data);
-      displayConsignorDetails11();
+      // displayConsignorDetails11();
     };
+
+
     const onSuccess11 = e => {
       Vibration.vibrate(100);
       RNBeep.beep();
       console.log(e.data, 'sealID');
-      // getCategories(e.data);
+      getCategories(e.data);
       setBagSeal(e.data);
     };
-    useEffect(() => {
-      displayConsignorDetails11();
-    }, []);
-    const displayConsignorDetails11 = () => {
-      db.transaction(tx => {
-          tx.executeSql('SELECT * FROM SyncSellerPickUp where consignorCode= ?', [barcode], (tx1, results) => {
-              // let temp = [];
-              console.log(results.rows.length);
-              for (let i = 0; i < results.rows.length; ++i) {
-                  // temp.push(results.rows.item(i));
-                  setCode11(results.rows.item(i).consignorCode);
-                  setSellerName11(results.rows.item(i).consignorName);
-                  // setSellerNoOfShipment11();
-                  setScanProgressRD(results.rows.item(i).ReverseDeliveries);
-                  console.log(results.rows.item(i).consignorName);
-                  // var address121 = results.rows.item(i).consignorAddress;
-                  // var address_json = JSON.parse(address121);
-                  // console.log(typeof (address_json));
-                  // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
-                  // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
-              }
-              // m++;
-              // ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
-              // console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
-              // console.log('data loaded API 1',temp);
-              // console.log('Table1 DB OK:', temp.length);
-          });
-      });
-  };
+
+    const UpdateShipmentList = () => {
+      console.log('ram', acceptedArray.toString())
+      db.transaction(txn => {
+        txn.executeSql('UPDATE SyncSellerPickUp SET ShipmentListArray=? WHERE consignorCode=?', [
+            acceptedArray.toString(),
+            barcode
+        ], (sqlTxn, _res) => {
+            setModalVisible(false)
+
+        }, error => {
+            console.log('error on adding data ' + error.message);
+        },);
+    });
+    }
+
+    const bagopenCloseHandler = () => {
+      db.transaction((tx) => {
+        tx.executeSql('UPDATE SyncSellerPickUp SET BagOpenClose="open" WHERE consignorCode=?', [barcode], (tx1, results) => {
+          setAcceptedArray([...acceptedArray, barcode.toString()]);
+          UpdateShipmentList();
+        },
+        error => {
+          console.log('error on adding data ' + error.message);
+      },);
+        
+    });
+    }
+
+
+    // useEffect(() => {
+    //   `displayConsignorDetails11`();
+    // }, []);
+
+
+  //   const displayConsignorDetails11 = () => {
+  //     db.transaction(tx => {
+  //         tx.executeSql('SELECT * FROM SyncSellerPickUp where consignorCode= ?', [barcode], (tx1, results) => {
+  //             // let temp = [];
+  //             console.log(results.rows.length);
+  //             for (let i = 0; i < results.rows.length; ++i) {
+  //                 setCode11(results.rows.item(i).consignorCode);
+  //                 setSellerName11(results.rows.item(i).consignorName);
+  //                 setScanProgressRD(results.rows.item(i).ReverseDeliveries);
+  //                 console.log(results.rows.item(i).consignorName);
+
+  //             }
+          
+  //         });
+  //     });
+  // };
 
 
     const navigation = useNavigation();
@@ -222,21 +246,29 @@ const HandoverShipmentRTO = ({route}) => {
             <View style={{alignItems: 'center', marginTop: 15}}>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 16, fontWeight: '500', color: 'black'}}>Seller Code</Text>
-                {/* {
-                    data ? (
+                {
+                    data && data.length ? (
                         <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data[0].consignorCode}</Text>
                     ):null
-                } */}
-                <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{sellerCode11}</Text>
+                }
+                {/* <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{sellerCode11}</Text> */}
 
               </View>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
                 <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>Seller Name</Text>
-                <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data[0].consignorName}</Text>
+                {
+                  data && data.length ? (
+                    <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data[0].consignorName}</Text>
+                  ):null
+                }
               </View>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 1, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>Number of Shipments</Text>
-                <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data[0].ForwardPickups}</Text>
+                {
+                  data && data.length ? (
+                    <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data[0].ForwardPickups}</Text>
+                  ):null
+                }
               </View>
             </View>
           </Modal.Body>
@@ -248,9 +280,13 @@ const HandoverShipmentRTO = ({route}) => {
           <Modal.CloseButton />
           <Modal.Header />
           <Modal.Body>
-          <Text style={{fontWeight:'bold', color:'black'}}>The Seller has {data[0].ForwardPickups} shipments. Would you like to open the Bag?</Text>
+          <Text style={{fontWeight:'bold', color:'black'}}>The Seller has {
+                  data && data.length ? (
+                    <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>{data[0].ForwardPickups}</Text>
+                  ):null
+                } shipments. Would you like to open the Bag?</Text>
           <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
-            <Button w="48%" size="lg" bg="#004aad" >Yes</Button>
+            <Button onPress={() => bagopenCloseHandler()} w="48%" size="lg" bg="#004aad" >Yes</Button>
             <Button onPress={() => setModalVisible(false)} w="48%" size="lg" bg="#004aad">No</Button>
           </View>
           </Modal.Body>
@@ -280,7 +316,7 @@ const HandoverShipmentRTO = ({route}) => {
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>Seller Code</Text>
                 {
-                  data ? (
+                  data && data.length ? (
                     <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>{data[0].consignorCode}</Text>
                   ):null
                 }
@@ -288,20 +324,30 @@ const HandoverShipmentRTO = ({route}) => {
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>Seller Name</Text>
                 {
-                  data ? (
+                  data && data.length ? (
                     <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>{data[0].consignorName}</Text>
                   ): null
                 }
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 13, fontWeight: '500', color: 'black'}}>Shipment scan Progress for </Text>
-                <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>1/{data[0].ForwardPickups}</Text>
+                {
+                  data && data.length ? (
+                    <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>1/{data[0].ForwardPickups}</Text>
+                  ):null
+                }
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>Bags Open</Text>
-                <TouchableOpacity style={{backgroundColor: 'lightgray', padding: 5, borderRadius: 3}} onPress={() => setModalVisible(true)} >
-                <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>Yes/No</Text>
-                </TouchableOpacity>
+                {data && data.length && data[0].BagOpenClose === "close"? (
+                  
+                    <TouchableOpacity style={{backgroundColor: 'lightgray', padding: 5, borderRadius: 3}} onPress={() => setModalVisible(true)} >
+                    <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>Yes/No</Text>
+                    </TouchableOpacity>
+                  
+                ):(
+                  <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>bag open</Text>
+                )}
               </View>
             </View>
           </View>
