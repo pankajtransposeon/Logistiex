@@ -549,11 +549,9 @@ const takePicture = async () => {
           await AsyncStorage.setItem('user', JSON.stringify({
             Accepted: currentUser.Accepted + 1,
             Rejected: currentUser.Rejected,
-            Tagged: currentUser.Tagged,
           }));
           setnewAccepted(1 + currentUser.Accepted);
           setnewRejected(currentUser.Rejected);
-          setnewTagged(currentUser.Tagged)
         } catch (error) {
           console.log(error);
         }
@@ -567,10 +565,9 @@ const takePicture = async () => {
         const currentUser = JSON.parse(savedUser);
         setnewAccepted(currentUser.Accepted);
         setnewRejected(currentUser.Rejected);
-        setnewTagged(currentUser.Tagged)
       }
       userdata();
-    }, [newaccepted, newrejected,newtagged]);
+    }, [newaccepted, newrejected]);
 
     const handleSync = () => {
       const unsubscribe = NetInfo.addEventListener(state => {
@@ -741,7 +738,7 @@ const takePicture = async () => {
             <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
             <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} marginRight={1} onPress={()=>setImages([])}>ReScan/Record</Button>
             {images.length<5 ?
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} >Save</Button>
+            <Button opacity={0.5}  disabled={true} flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} >Save</Button>
             :
             <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={()=>{ handleUpload(); setModalVisible(true); setModalVisible1(false)}} >Save</Button>
             }
