@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState, Alert} from 'react';
 import {Text, View, ScrollView,ToastAndroid} from 'react-native';
 import axios from 'axios';
@@ -6,6 +8,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Icon} from 'native-base';
 import Lottie from 'lottie-react-native';
 import {ProgressBar} from '@react-native-community/progress-bar-android';
+import App from '../../App';
 import {
     NativeBaseProvider,
     Box,
