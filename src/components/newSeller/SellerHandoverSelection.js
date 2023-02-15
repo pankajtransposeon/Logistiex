@@ -40,7 +40,7 @@ const NewSellerSelection = ({route}) => {
   const [barcodeValue, setBarcodeValue] = useState('');
   const shipmentData = `https://bked.logistiex.com/SellerMainScreen/getSellerDetails/${route.params.paramKey}`;
   const [acc, setAcc] = useState(0);
-  const [pending, setPending] = useState(route.params.Forward);
+  const [pending, setPending] = useState(route.params.Pending);
   const [reject, setReject] = useState(0);
   const [data, setData] = useState([]);
   const [order, setOrder] = useState([]);
@@ -61,7 +61,7 @@ const NewSellerSelection = ({route}) => {
   const notPicked = () => {
     db.transaction(tx => {
       tx.executeSql(
-        'UPDATE SellerMainScreenDetailsRTO SET status="notPicked" , rejectedReason=? WHERE status IS Null',
+        'UPDATE SellerMainScreenDetailsDelivery SET status="notDelivered" , rejectedReason=? WHERE status IS Null',
         [DropDownValue],
         (tx1, results) => {
           let temp = [];
@@ -151,7 +151,7 @@ const NewSellerSelection = ({route}) => {
           if (results.rows.length > 0) {
             setAcc(results.rows.length);
             console.log(acc);
-            setPending(route.params.Forward - results.rows.length);
+            setPending(route.params.Pending - results.rows.length);
             console.log(pending);
           }
           setIsLoading(false);
@@ -177,7 +177,7 @@ const NewSellerSelection = ({route}) => {
             var len = results.rows.length;
             // console.log(len);
             // setAcc(len);
-            setPending(route.params.Forward - len);
+            setPending(route.params.Pending - len);
           },
         );
       });

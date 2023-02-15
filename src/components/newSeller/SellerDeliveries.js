@@ -38,7 +38,7 @@ const SellerDeliveries = ({route}) => {
         (async () => {
             loadDetails();
         })();
-    }, [data]);
+    }, []);
     const searched = (keyword1) => (c) => {
         let f = c.consignorName;
         return (f.includes(keyword1));
@@ -75,6 +75,7 @@ return (
                 consignorCode : single.consignorCode,
                 userId : single.userId,
                 phone : single.consignorContact,
+                Pending:route.params.Pending
               });}}>
                 <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{single.ForwardPickups}</Text></DataTable.Cell>
