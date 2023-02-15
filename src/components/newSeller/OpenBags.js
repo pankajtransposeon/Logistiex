@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import {
   NativeBaseProvider,
   Box,
@@ -13,6 +12,8 @@ import {DataTable, Searchbar, Text, Card} from 'react-native-paper';
 import {openDatabase} from 'react-native-sqlite-storage';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
+import QRCodeScanner from 'react-native-qrcode-scanner';
+import { RNCamera } from 'react-native-camera';
 
 const db = openDatabase({name: 'rn_sqlite'});
 
@@ -24,6 +25,7 @@ const OpenBags = ({route}) => {
   const [consignorNames, setconsignorNames] = useState('');
   const [consignorCode, setconsignorCode] = useState('');
   const [NoShipment, setNoShipment] = useState(45);
+  const [bagSeal, setBagSeal] = useState('');
 
   const loadDetails = () => {
     db.transaction(tx => {
@@ -34,6 +36,7 @@ const OpenBags = ({route}) => {
           temp.push(results.rows.item(i));
         }
         setData(temp);
+        console.log(data[0].ShipmentListArray.split().length, 'data');
       });
     });
   };
@@ -56,8 +59,143 @@ const OpenBags = ({route}) => {
       setconsignorNames(consignorName);
   };
 
+
+
+  function CloseBag(){
+    console.log(bagId);
+    console.log(bagSeal);
+    setBagId('');
+    setBagIdNo(bagIdNo + 1);
+  }
+
+    const updateDetails2 = () => {
+      console.log('scan 4545454');
+
+      db.transaction((tx) => {
+          tx.executeSql('UPDATE SellerMainScreenDetailsRTO SET  BagOpenClose="open" WHERE consignorCode=?', [barcode], (tx1, results) => {
+              let temp = [];
+              console.log('Results',results.rowsAffected);
+              console.log(results);
+
+              if (results.rowsAffected > 0) {
+                console.log(barcode + 'accepted');
+                ToastAndroid.show(barcode + ' Accepted',ToastAndroid.SHORT);
+
+              } else {
+                console.log(barcode + 'not accepted');
+              }
+              console.log(results.rows.length);
+              for (let i = 0; i < results.rows.length; ++i) {
+                  temp.push(results.rows.item(i));
+              }
+              console.log('Data updated: \n ', JSON.stringify(temp, null, 4));
+              // viewDetails2();
+          });
+      });
+    };
+
+
+  const getCategories = (data) => {
+    db.transaction(txn => {
+      txn.executeSql(
+        'SELECT * FROM SellerMainScreenDetailsRTO WHERE consignorCode = ?',
+        [data],
+        (sqlTxn, res) => {
+          console.log('categories retrieved successfully', res.rows.length);
+          if (!res.rows.length){
+            alert('You are scanning wrong product, please check.');
+          } else {
+              setBarcode(() => data);
+              Vibration.vibrate(100);
+              RNBeep.beep();
+              updateDetails2();
+              loadDetails(data);
+          }
+        },
+        error => {
+          console.log('error on getting categories ' + error.message);
+        },
+      );
+    });
+  };
+
+
+  const onSuccess11 = e => {
+    Vibration.vibrate(100);
+    RNBeep.beep();
+    console.log(e.data, 'sealID');
+    getCategories(e.data);
+    setBagSeal(e.data);
+  };
+
+  
+
   return (
     <NativeBaseProvider>
+      <Modal isOpen={showCloseBagModal} onClose={() => setShowCloseBagModal(false)} size="lg">
+        <Modal.Content maxWidth="350" >
+          <Modal.CloseButton />
+          <Modal.Header>Close Bag</Modal.Header>
+          <Modal.Body>
+          <QRCodeScanner
+          onRead={onSuccess11}
+          reactivate={true}
+          // showMarker={true}
+          reactivateTimeout={2000}
+          flashMode={RNCamera.Constants.FlashMode.off}
+          ref={(node) => { this.scanner = node; }}
+          containerStyle={{ height:116,marginBottom:'55%' }}
+          cameraStyle={{ height: 90, marginTop: 95,marginBottom:'15%', width: 289, alignSelf: 'center', justifyContent: 'center' }}
+          // cameraProps={{ ratio:'1:2' }}
+          // containerStyle={{width: '100%', alignSelf: 'center', backgroundColor: 'white'}}
+          // cameraStyle={{width: '10%',alignSelf: 'center'}}
+          // topContent={
+          //   <View><Text>Scan Bag Seal</Text></View>
+          // }
+          // style={{
+          //   // flex: 1,
+          //   // width: '100%',
+          // }}
+        /> {'\n'}
+        <Input placeholder="Enter Bag Seal" size="md" value={bagSeal} onChangeText={(text)=>setBagSeal(text)}  style={{
+
+         width: 290,
+      backgroundColor:'white',
+      }} />
+            {/* {'\n'}
+            <Input placeholder="Enter Bag Seal" size="md" onChangeText={(text)=>setBagSeal(text)} /> */}
+            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(); setShowCloseBagModal(false); }}>Submit</Button>
+            <View style={{alignItems: 'center', marginTop: 15}}>
+              <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
+                <Text style={{fontSize: 16, fontWeight: '500', color: 'black'}}>Seller Code</Text>
+                {
+                    data && data.length ? (
+                        <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data[0].consignorCode}</Text>
+                    ):null
+                }
+                {/* <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{sellerCode11}</Text> */}
+
+              </View>
+              <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
+                <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>Seller Name</Text>
+                {
+                  data && data.length ? (
+                    <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data[0].consignorName}</Text>
+                  ):null
+                }
+              </View>
+              <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 1, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
+                <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>Number of Shipments</Text>
+                {
+                  data && data.length ? (
+                    <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data[0].ForwardPickups}</Text>
+                  ):null
+                }
+              </View>
+            </View>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal>
       {/* <Modal
         isOpen={showCloseBagModal}
         onClose={() => setShowCloseBagModal(false)}
@@ -200,11 +338,12 @@ const OpenBags = ({route}) => {
                         </Text>
                       </DataTable.Cell>
                       <DataTable.Cell style={{flex: 1}}>
-                        <Text style={styles.fontvalue}>45</Text>
+                        <Text style={styles.fontvalue}>{data[0].ShipmentListArray.split().length}</Text>
                       </DataTable.Cell>
                       <DataTable.Cell style={{flex: 1}}>
                         <Button
-                          style={{backgroundColor: '#004aad', color: '#fff'}}
+                        disabled={single.BagOpenClose === 'close' ? true : false}
+                          style={{backgroundColor: single.BagOpenClose === 'close' ? 'grey' : '#004aad', color: '#fff'}}
                           onPress={() =>
                             CloseBagFunction(
                               single.consignorCode,

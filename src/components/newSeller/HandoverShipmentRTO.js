@@ -153,7 +153,7 @@ const HandoverShipmentRTO = ({route}) => {
     };
 
     const UpdateShipmentList = () => {
-      console.log('ram', acceptedArray.toString())
+      // console.log('ram', acceptedArray.toString())
       db.transaction(txn => {
         txn.executeSql('UPDATE SyncSellerPickUp SET ShipmentListArray=? WHERE consignorCode=?', [
             acceptedArray.toString(),
@@ -170,7 +170,7 @@ const HandoverShipmentRTO = ({route}) => {
     const bagopenCloseHandler = () => {
       db.transaction((tx) => {
         tx.executeSql('UPDATE SyncSellerPickUp SET BagOpenClose="open" WHERE consignorCode=?', [barcode], (tx1, results) => {
-          setAcceptedArray([...acceptedArray, barcode.toString()]);
+          setAcceptedArray(prevarr => [...prevarr, barcode.toString()]);
           UpdateShipmentList();
         },
         error => {
@@ -346,7 +346,7 @@ const HandoverShipmentRTO = ({route}) => {
                     </TouchableOpacity>
                   
                 ):(
-                  <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}>bag open</Text>
+                  <Text style={{fontSize: 18, fontWeight: '500', color: 'black'}}></Text>
                 )}
               </View>
             </View>
