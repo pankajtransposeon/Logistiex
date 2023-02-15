@@ -108,6 +108,7 @@ function StackNavigators({navigation}) {
             loadAPI_Data10();
             loadAPI_Data1();
             loadAPI_Data2();
+            loadAPI_Data02();
             loadAPI_Data3();
             loadAPI_Data4();
             loadAPI_Data5();
@@ -125,6 +126,7 @@ function StackNavigators({navigation}) {
         loadAPI_Data10();
         loadAPI_Data1();
         loadAPI_Data2();
+        loadAPI_Data02();
         loadAPI_Data3();
         loadAPI_Data4();
         loadAPI_Data5();
@@ -407,6 +409,82 @@ const push_Data = () => {
             },);
         })();
     };
+    const createTables02 = () => {
+      db.transaction(txn => {
+          txn.executeSql('DROP TABLE IF EXISTS SellerMainScreenDetailsDelivery', []);
+          txn.executeSql(`CREATE TABLE IF NOT EXISTS SellerMainScreenDetailsDelivery( 
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        clientShipmentReferenceNumber VARCHAR(200),
+        clientRefId VARCHAR(200),
+        awbNo VARCHAR(200),
+        consignorCode VARCHAR(200),
+        packagingStatus VARCHAR(200),
+        packagingId VARCHAR(200),
+        runSheetNumber VARCHAR(200),
+        shipmentStatus VARCHAR(200),
+        shipmentAction VARCHAR(200),
+        rejectedReason VARCHAR(200),
+        actionTime VARCHAR(200),
+        status VARCHAR(200)
+      )`, [], (sqlTxn, res) => {
+              // console.log("table created successfully details213 ");
+              // loadAPI_Data();
+          }, error => {
+              console.log('error on creating table ' + error.message);
+          },);
+      });
+  };
+  const loadAPI_Data02 = () => {
+      // setIsLoading(!isLoading);
+      (async () => {
+          await axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/workload/${userId}`).then(res => {
+              createTables02();
+              console.log('API 02 OK: ' + res.data.data.length);
+              for (let i = 0; i < res.data.data.length; i++) {  //console.log(res.data.data[i].shipmentStatus);
+                  db.transaction(txn => {
+                      txn.executeSql(`INSERT OR REPLACE INTO SellerMainScreenDetailsDelivery( 
+                clientShipmentReferenceNumber ,
+                clientRefId ,
+                awbNo ,
+                consignorCode ,
+                packagingStatus ,
+                packagingId ,
+                runSheetNumber ,
+                shipmentStatus ,
+                shipmentAction ,
+                rejectedReason ,
+                actionTime ,
+                status 
+              ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`, [
+                          res.data.data[i].clientShipmentReferenceNumber,
+                          res.data.data[i].clientRefId,
+                          res.data.data[i].awbNo,
+                          res.data.data[i].consignorCode,
+                          res.data.data[i].packagingStatus,
+                          res.data.data[i].packagingId,
+                          res.data.data[i].runSheetNumber,
+                          res.data.data[i].shipmentStatus,
+                          res.data.data[i].shipmentAction,
+                          res.data.data[i].rejectedReason,
+                          res.data.data[i].actionTime,
+                          res.data.data[i].status,
+                      ], (sqlTxn, _res) => {
+                          // console.log(`\n Data Added to local db successfully 213`);
+                          // console.log(res);
+                      }, error => {
+                          console.log('error on adding data ' + error.message);
+                      },);
+                  });
+              }
+              m++;
+              // console.log('value of m2 '+m);
+              // viewDetails2();
+              // setIsLoading(false);
+          }, error => {
+              console.log(error);
+          },);
+      })();
+  };
     const viewDetails2 = () => {
         db.transaction(tx => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails', [], (tx1, results) => {
