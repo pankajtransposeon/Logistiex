@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { NativeBaseProvider, Image, Box, Fab, Icon, Button ,Alert, Modal, Input} from 'native-base';
+import { NativeBaseProvider, Image, Box, Fab, Icon, Button , Modal, Input} from 'native-base';
 import React, { useEffect, useState , useRef } from 'react';
 import axios from 'axios';
-import {Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet} from 'react-native';
+import {Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet,Alert} from 'react-native';
 import { Center } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -65,6 +65,8 @@ const ShipmentBarcode = ({route}) => {
     const [modalVisible11, setModalVisible11] = useState(false);
     const [DropDownValue11, setDropDownValue11] = useState(null);
     const [PartialCloseData, setPartialCloseData] = useState([]);
+
+    const [showQRCodeModal,setShowQRCodeModal]= useState(true);
     // const PartialClose = 'https://bked.logistiex.com/ADupdatePrams/getPartialClosureReasons';
     const DisplayData11 = async() => {
       db.transaction(tx => {
@@ -93,6 +95,8 @@ const ShipmentBarcode = ({route}) => {
     // useEffect(() => {
     //   partialClose112();
     // }, []);
+
+    
 
     const partialClose112 = () => {
       console.log('partialClose popup shown11');
@@ -222,6 +226,13 @@ const ShipmentBarcode = ({route}) => {
     // });
 
     function CloseBagEndScan(){
+      // if (newaccepted === 0){
+      //   Alert.alert('Bag is Empty', 'Plz add some item before closing bag...', [
+      //     {text: 'OK', onPress: () => {console.log('OK Pressed'); partialClose112();}},
+      //   ]);
+      //   // ToastAndroid.show('Cannot close empty bag. Plz add some items... ',ToastAndroid.SHORT);
+      // return;
+      // }
       partialClose112();
       console.log(bagSeal);
       console.log(acceptedArray);
@@ -252,6 +263,13 @@ const ShipmentBarcode = ({route}) => {
     }
 
     function CloseBag(){
+      // if (newaccepted === 0){
+      //   Alert.alert('Bag is Empty', 'Add some items before closing the bag', [
+      //     {text: 'OK', onPress: () => {console.log('OK Pressed');}},
+      //   ]);
+      //   // ToastAndroid.show('Cannot close empty bag. Plz add some items... ',ToastAndroid.SHORT);
+      // return;
+      // }
       console.log(bagSeal);
       console.log(acceptedArray);
       let date = new Date().getDate();
@@ -300,7 +318,6 @@ const ShipmentBarcode = ({route}) => {
           });
       });
   };
-
      useEffect(() => {
             createTableBag1();
     },[]);
@@ -332,7 +349,7 @@ const ShipmentBarcode = ({route}) => {
 
                 if (results.rowsAffected > 0) {
                   console.log(barcode + 'accepted');
-                  ToastAndroid.show(barcode + ' Accepted',ToastAndroid.SHORT);
+                  // ToastAndroid.show(barcode + ' Accepted',ToastAndroid.SHORT);
 
                 } else {
                   console.log(barcode + 'not accepted');
@@ -349,7 +366,8 @@ const ShipmentBarcode = ({route}) => {
 
       const rejectDetails2 = () => {
         console.log('scan 45456');
-        setnewRejected(newrejected + 1);
+        // setnewRejected(newrejected + 1);
+        ContinueHandle11();
         db.transaction((tx) => {
             tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectedReason=? WHERE clientShipmentReferenceNumber=?', [DropDownValue,barcode], (tx1, results) => {
                 let temp = [];
@@ -422,37 +440,67 @@ const ShipmentBarcode = ({route}) => {
           });
       });
   };
-
-    const getCategories = (data) => {
-      db.transaction(txn => {
-        txn.executeSql(
-          'SELECT * FROM categories WHERE clientShipmentReferenceNumber = ? AND ScanStatus = ? ',
-          [data, 0],
-          (sqlTxn, res) => {
-            console.log('categories retrieved successfully', res.rows.length);
-            setLen(res.rows.length);
-            if (!res.rows.length){
-              alert('You are scanning wrong product, please check.');
-            }
-          },
-          error => {
-            console.log('error on getting categories ' + error.message);
-          },
-        );
-      });
-    };
-
-    const updateCategories = (data) => {
-      db.transaction((tx) => {
-        tx.executeSql(
-          'UPDATE categories set ScanStatus=? where clientShipmentReferenceNumber=?',
-          [1, data],
-          (tx, results) => {
-            console.log('Results', results.rowsAffected);
+  
+  const getCategories = (data) => {
+    db.transaction(txn => {
+      txn.executeSql(
+        'SELECT * FROM SellerMainScreenDetails WHERE clientShipmentReferenceNumber = ? AND status IS NULL ',
+        [data],
+        (sqlTxn, res) => {
+          console.log('categories retrieved successfully', res.rows.length);
+          setLen(res.rows.length);
+          if (!res.rows.length){
+            alert('You are scanning wrong product, Please check.');
           }
-        );
-      });
-    };
+        },
+        error => {
+          console.log('error on getting categories ' + error.message);
+        },
+      );
+    });
+  };
+
+  const updateCategories = (data) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'UPDATE SellerMainScreenDetails set status=? where clientShipmentReferenceNumber=?',
+        ['accepted', data],
+        (tx, results) => {
+          console.log('Results', results.rowsAffected);
+        }
+      );
+    });
+  };
+    // const getCategories = (data) => {
+    //   db.transaction(txn => {
+    //     txn.executeSql(
+    //       'SELECT * FROM categories WHERE clientShipmentReferenceNumber = ? AND ScanStatus = ? ',
+    //       [data, 0],
+    //       (sqlTxn, res) => {
+    //         console.log('categories retrieved successfully', res.rows.length);
+    //         setLen(res.rows.length);
+    //         if (!res.rows.length){
+    //           alert('You are scanning wrong product, please check.');
+    //         }
+    //       },
+    //       error => {
+    //         console.log('error on getting categories ' + error.message);
+    //       },
+    //     );
+    //   });
+    // };
+
+    // const updateCategories = (data) => {
+    //   db.transaction((tx) => {
+    //     tx.executeSql(
+    //       'UPDATE categories set ScanStatus=? where clientShipmentReferenceNumber=?',
+    //       [1, data],
+    //       (tx, results) => {
+    //         console.log('Results', results.rowsAffected);
+    //       }
+    //     );
+    //   });
+    // };
 
     const updateCategories1 = (data) => {
       db.transaction((tx) => {
@@ -483,7 +531,7 @@ const ShipmentBarcode = ({route}) => {
         ContinueHandle();
         Vibration.vibrate(100);
         RNBeep.beep();
-        // ToastAndroid.show(barcode + ' accepted',ToastAndroid.SHORT);
+        ToastAndroid.show(barcode + ' accepted',ToastAndroid.SHORT);
         updateDetails2();
 
 
@@ -529,6 +577,23 @@ const ShipmentBarcode = ({route}) => {
           }));
           setnewAccepted(1 + currentUser.Accepted);
           setnewRejected(currentUser.Rejected);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      getUser();
+    };
+    const ContinueHandle11 = () => {
+      const getUser = async () => {
+        try {
+          const savedUser = await AsyncStorage.getItem('user');
+          const currentUser = JSON.parse(savedUser);
+          await AsyncStorage.setItem('user', JSON.stringify({
+            Accepted: currentUser.Accepted - 1,
+            Rejected: currentUser.Rejected + 1,
+          }));
+          setnewAccepted( currentUser.Accepted-1);
+          setnewRejected(currentUser.Rejected+1);
         } catch (error) {
           console.log(error);
         }
@@ -676,7 +741,7 @@ const ShipmentBarcode = ({route}) => {
       <Modal isOpen={modalVisible11} onClose={() => setModalVisible11(false)} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
-          <Modal.Header>Partial Close Reason Code</Modal.Header>
+          <Modal.Header>Partial Close Reason</Modal.Header>
           <Modal.Body>
             {(PartialCloseData ) &&
             PartialCloseData.map((d,index) => (
@@ -685,7 +750,14 @@ const ShipmentBarcode = ({route}) => {
             <Text style={{color:d.reasonName == DropDownValue11 ? 'white' : 'black'}}>{d.reasonName}</Text></Button>
             ))
           }
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => {partialClose(); setModalVisible11(false);}} >
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => {partialClose(); setModalVisible11(false);  navigation.navigate('POD',{
+              Forward : route.params.Forward,
+              accepted : newaccepted,
+              rejected : newrejected,
+              phone : route.params.phone,
+              userId : route.params.userId,
+              contactPersonName:route.params.contactPersonName,
+            })}} >
             Submit</Button>
           </Modal.Body>
         </Modal.Content>
@@ -742,7 +814,7 @@ const ShipmentBarcode = ({route}) => {
       </Modal>
 
 
-      <Modal isOpen={showCloseBagModal} onClose={() => setShowCloseBagModal(false)} size="lg">
+      <Modal isOpen={showCloseBagModal} onClose={() => {setShowCloseBagModal(false); setShowQRCodeModal(true);}} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
           <Modal.Header>Close Bag</Modal.Header>
@@ -795,6 +867,8 @@ const ShipmentBarcode = ({route}) => {
       </Modal>
 
       <ScrollView style={{paddingTop: 20, paddingBottom: 50}} showsVerticalScrollIndicator={false}>
+      {/* <Modal isOpen={showQRCodeModal} onClose={() => setShowQRCodeModal(false)} size="lg">  
+          <Modal.Body> */}
         <QRCodeScanner
           onRead={onSuccess}
           reactivate={true}
@@ -806,6 +880,8 @@ const ShipmentBarcode = ({route}) => {
             <View><Text>Scanner </Text></View>
           }
         />
+        {/* </Modal.Body>
+      </Modal> */}
 
         <View>
         <Center>
@@ -870,7 +946,27 @@ const ShipmentBarcode = ({route}) => {
           </View>
           <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
             <Button onPress={()=>{
-              setShowCloseBagModal11(true);
+               if (newaccepted === 0){
+                Alert.alert('Bag is Empty', 'No Open bag to Close. End Scan?', [{
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                  {text: 'OK', onPress: () => {console.log('OK Pressed');partialClose112();
+                  // navigation.navigate('POD',{
+                  //     Forward : route.params.Forward,
+                  //     accepted : newaccepted,
+                  //     rejected : newrejected,
+                  //     phone : route.params.phone,
+                  //     userId : route.params.userId,
+                  //     contactPersonName:route.params.contactPersonName,
+                  //   })
+                 }},
+                ]);
+                // ToastAndroid.show('Cannot close empty bag. Plz add some items... ',ToastAndroid.SHORT);
+              return;
+              }else{
+              setShowCloseBagModal11(true);}
               // partialClose112();
             // navigation.navigate('POD',{
             //   Forward : route.params.Forward,
@@ -881,8 +977,14 @@ const ShipmentBarcode = ({route}) => {
             // })
             }} w="48%" size="lg" bg="#004aad">End Scan</Button>
 
-            <Button w="48%" size="lg" bg="#004aad" onPress={() => {
-              setShowCloseBagModal(true);
+            <Button w="48%" size="lg" bg="#004aad" onPress={() => { if (newaccepted === 0){
+        Alert.alert('Bag is Empty', 'No Open Bag to Close', [
+          {text: 'OK', onPress: () => {console.log('OK Pressed');}},
+        ]);
+        // ToastAndroid.show('Cannot close empty bag. Plz add some items... ',ToastAndroid.SHORT);
+      return;
+      }else{
+              setShowCloseBagModal(true);}
               }} >Close bag</Button>
           </View>
           <Center>
