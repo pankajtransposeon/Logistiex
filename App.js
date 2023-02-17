@@ -43,7 +43,7 @@ import {
     TouchableOpacity,
     View,
     StyleSheet,
-    ToastAndroid,
+    ToastAndroid, PermissionsAndroid
 } from 'react-native';
 import {Badge} from 'react-native-paper';
 // import { Icon } from 'native-base';
@@ -74,6 +74,58 @@ function StackNavigators({navigation}) {
     const [data, setData] = useState([]);
     const [isLogin,setIsLogin]=useState(false);
     let m = 0;  
+    useEffect(() => {
+      requestPermissions();
+    }, []);
+  
+    const requestPermissions = async () => {
+      try {
+        const cameraPermission = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: 'Camera Permission',
+            message: 'This app needs access to your camera.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          }
+        );
+        if (cameraPermission !== PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('Camera permission denied');
+        }
+  
+        const storagePermission = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'Storage Permission',
+            message: 'This app needs access to your storage.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          }
+        );
+        if (storagePermission !== PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('Storage permission denied');
+        }
+  
+        const locationPermission = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Location Permission',
+            message: 'This app needs access to your location.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          }
+        );
+        if (locationPermission !== PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('Location permission denied');
+        }
+      } catch (error) {
+        console.warn(error);
+      }
+    };
+  
     const getData = async () => {
         try {
             const value = await AsyncStorage.getItem('@storage_Key');

@@ -45,6 +45,26 @@ export default function Main({navigation, route}) {
     const [SpARC1,setSpARC1] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoading1, setIsLoading1] = useState(false);
+    const [TripValue, setTripValue] = useState('Start Trip');
+    
+    const getDataTrip = async () => {
+      try {
+       
+        const StartEndTrip = await AsyncStorage.getItem('@StartEndTrip');
+        if (StartEndTrip !== null) {
+          const data = JSON.parse(StartEndTrip);
+          setTripValue(data);
+          await AsyncStorage.removeItem('@StartEndTrip');
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+  
+    useEffect(() => {
+      getDataTrip();
+    }, []);
+
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
           loadSellerPickupDetails();
@@ -291,14 +311,27 @@ export default function Main({navigation, route}) {
             </View>
           </Box>
           {it.title==='Seller Deliveries'?
-            // <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries',{Pending:spp1})}>New Delivery</Button>
-            <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>Start Handover</Button>
+            <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries',{Pending:spp1})}>New Delivery</Button>
             :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup')}>New Pickup</Button>
-          }
+            }
         </Box>        
         );
         })}
-        {/* <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>Start Handover</Button> */}
+        <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>Start Handover</Button>
+        <Button
+              variant="outline"
+              onPress={() => {
+                TripValue === 'Start Trip'
+                  ? navigation.navigate('StartTrip')
+                  : TripValue === 'End Trip'
+                  ? navigation.navigate('EndTrip')
+                  : navigation.navigate('StartEndDetails');
+                navigation.closeDrawer();
+              }}
+              mt={4}
+              style={{color: '#004aad', borderColor: '#004aad'}}>
+              <Text style={{color: '#004aad'}}>{TripValue}</Text>
+            </Button>
         {/* <Button w="100%" size="lg" bg="#004aad" mt={-5} onPress={()=>navigation.navigate('SellerHandover')}>Seller Handover</Button> */}
         {/* <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>Start Handover</Button> */}
         <Center>
