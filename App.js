@@ -63,6 +63,8 @@ import ReturnHandoverRejectionTag from './src/components/newSeller/ReturnHandove
 import CloseTrip from './src/components/newSeller/CloseTrip';
 import HandoverShipmentRTO from './src/components/newSeller/HandoverShipmentRTO';
 const db = openDatabase({name: 'rn_sqlite'});
+// import ignoreWarnings from 'react-native-ignore-warnings';
+// ignoreWarnings(['Warning: Each child in a list should have a unique "key" prop.']);
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -108,6 +110,7 @@ function StackNavigators({navigation}) {
             loadAPI_Data10();
             loadAPI_Data1();
             loadAPI_Data2();
+            loadAPI_Data02();
             loadAPI_Data3();
             loadAPI_Data4();
             loadAPI_Data5();
@@ -125,6 +128,7 @@ function StackNavigators({navigation}) {
         loadAPI_Data10();
         loadAPI_Data1();
         loadAPI_Data2();
+        loadAPI_Data02();
         loadAPI_Data3();
         loadAPI_Data4();
         loadAPI_Data5();
@@ -242,7 +246,7 @@ const push_Data = () => {
         db.transaction(txn => {
             txn.executeSql('DROP TABLE IF EXISTS SyncSellerPickUp', []);
             txn.executeSql(`CREATE TABLE IF NOT EXISTS SyncSellerPickUp( consignorCode ID VARCHAR(200) PRIMARY KEY ,userId VARCHAR(100), 
-            consignorName VARCHAR(200),consignorAddress1 VARCHAR(200),consignorAddress2 VARCHAR(200),consignorCity VARCHAR(200),consignorPincode,consignorLocation INT(20),consignorLongitude DECIMAL(20,10),consignorContact VARCHAR(200),ReverseDeliveries INT(20),PRSNumber VARCHAR(200),ForwardPickups INT(20), BagOpenClose VARCHAR(200), ShipmentListArray VARCHAR(800))`, [], (sqlTxn, res) => {
+            consignorName VARCHAR(200),consignorAddress1 VARCHAR(200),consignorAddress2 VARCHAR(200),consignorCity VARCHAR(200),consignorPincode,consignorLocation INT(20),consignorLongitude DECIMAL(20,10),consignorContact VARCHAR(200),ReverseDeliveries INT(20),PRSNumber VARCHAR(200),ForwardPickups INT(20), BagOpenClose VARCHAR(200), ShipmentListArray VARCHAR(800),contactPersonName VARCHAR(100))`, [], (sqlTxn, res) => {
                 // console.log("table created successfully1212");
                 // loadAPI_Data();
             }, error => {
@@ -261,7 +265,8 @@ const push_Data = () => {
                 for (let i = 0; i < res.data.data.length; i++) {
                     // let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
                     db.transaction(txn => {
-                        txn.executeSql('INSERT OR REPLACE INTO SyncSellerPickUp( consignorCode ,userId ,consignorName,consignorAddress1,consignorAddress2,consignorCity,consignorPincode,consignorLocation,consignorLongitude,consignorContact,ReverseDeliveries,PRSNumber,ForwardPickups,BagOpenClose, ShipmentListArray) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [
+                        txn.executeSql('INSERT OR REPLACE INTO SyncSellerPickUp( contactPersonName,consignorCode ,userId ,consignorName,consignorAddress1,consignorAddress2,consignorCity,consignorPincode,consignorLocation,consignorLongitude,consignorContact,ReverseDeliveries,PRSNumber,ForwardPickups,BagOpenClose, ShipmentListArray) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [
+                          res.data.data[i].contactPersonName,
                             res.data.data[i].consignorCode,
                             userId,
                             res.data.data[i].consignorName,
@@ -302,7 +307,8 @@ const push_Data = () => {
                 // console.log(results.rows.length);
                 for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
-                    // console.log(results.rows.item(i).consignorName);
+
+                    console.log(results.rows.item(i).contactPersonName);
                     // var address121 = results.rows.item(i).consignorAddress;
                     // var address_json = JSON.parse(address121);
                     // console.log(typeof (address_json));
@@ -407,6 +413,82 @@ const push_Data = () => {
             },);
         })();
     };
+    const createTables02 = () => {
+      db.transaction(txn => {
+          txn.executeSql('DROP TABLE IF EXISTS SellerMainScreenDetailsDelivery', []);
+          txn.executeSql(`CREATE TABLE IF NOT EXISTS SellerMainScreenDetailsDelivery( 
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        clientShipmentReferenceNumber VARCHAR(200),
+        clientRefId VARCHAR(200),
+        awbNo VARCHAR(200),
+        consignorCode VARCHAR(200),
+        packagingStatus VARCHAR(200),
+        packagingId VARCHAR(200),
+        runSheetNumber VARCHAR(200),
+        shipmentStatus VARCHAR(200),
+        shipmentAction VARCHAR(200),
+        rejectedReason VARCHAR(200),
+        actionTime VARCHAR(200),
+        status VARCHAR(200)
+      )`, [], (sqlTxn, res) => {
+              // console.log("table created successfully details213 ");
+              // loadAPI_Data();
+          }, error => {
+              console.log('error on creating table ' + error.message);
+          },);
+      });
+  };
+  const loadAPI_Data02 = () => {
+      // setIsLoading(!isLoading);
+      (async () => {
+          await axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/workload/${userId}`).then(res => {
+              createTables02();
+              console.log('API 02 OK: ' + res.data.data.length);
+              for (let i = 0; i < res.data.data.length; i++) {  //console.log(res.data.data[i].shipmentStatus);
+                  db.transaction(txn => {
+                      txn.executeSql(`INSERT OR REPLACE INTO SellerMainScreenDetailsDelivery( 
+                clientShipmentReferenceNumber ,
+                clientRefId ,
+                awbNo ,
+                consignorCode ,
+                packagingStatus ,
+                packagingId ,
+                runSheetNumber ,
+                shipmentStatus ,
+                shipmentAction ,
+                rejectedReason ,
+                actionTime ,
+                status 
+              ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`, [
+                          res.data.data[i].clientShipmentReferenceNumber,
+                          res.data.data[i].clientRefId,
+                          res.data.data[i].awbNo,
+                          res.data.data[i].consignorCode,
+                          res.data.data[i].packagingStatus,
+                          res.data.data[i].packagingId,
+                          res.data.data[i].runSheetNumber,
+                          res.data.data[i].shipmentStatus,
+                          res.data.data[i].shipmentAction,
+                          res.data.data[i].rejectedReason,
+                          res.data.data[i].actionTime,
+                          res.data.data[i].status,
+                      ], (sqlTxn, _res) => {
+                          // console.log(`\n Data Added to local db successfully 213`);
+                          // console.log(res);
+                      }, error => {
+                          console.log('error on adding data ' + error.message);
+                      },);
+                  });
+              }
+              m++;
+              // console.log('value of m2 '+m);
+              // viewDetails2();
+              // setIsLoading(false);
+          }, error => {
+              console.log(error);
+          },);
+      })();
+  };
     const viewDetails2 = () => {
         db.transaction(tx => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails', [], (tx1, results) => {

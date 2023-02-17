@@ -3,7 +3,7 @@
 import { NativeBaseProvider, Image, Box, Fab, Icon, Button ,Alert, Modal, Input} from 'native-base';
 import React, { useEffect, useState , useRef } from 'react';
 import axios from 'axios';
-import {Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet} from 'react-native';
+import {PermissionsAndroid, Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet} from 'react-native';
 import { Center } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -21,6 +21,7 @@ import { Console } from 'console';
 // import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import OTPTextInput from 'react-native-otp-textinput';
 import { RNCamera } from 'react-native-camera';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import { panGestureHandlerCustomNativeProps } from 'react-native-gesture-handler/lib/typescript/handlers/PanGestureHandler';
 const db = openDatabase({
   name: 'rn_sqlite',
@@ -72,6 +73,7 @@ const takePicture = async () => {
     if (camera) {
       const options = { quality: 0.5, base64: true };
       const data = await camera.takePictureAsync(options);
+      console.log(data);
       setImages([...images, data.uri]);
     }
   };
@@ -85,27 +87,118 @@ const takePicture = async () => {
           contextType: "shipment",
           hubCode: "HC001"
         };
-    
+  
         const formData = new FormData();
-        formData.append("picture", {
+        const picture = {
           uri: images[i],
           name: `image-${i}.jpg`,
           type: "image/jpeg"
-        });
+        };
+        if (picture.uri) {
+          formData.append("picture", picture, picture.name);
+          console.log(picture.name)
+        }
         formData.append("data", JSON.stringify(data));
-    
-        const response = await fetch(
-          "https://bkedtest.logistiex.com/DSQCPicture/uploadPicture",
-          {
-            method: "POST",
-            body: formData
-          }
-        );
-        const result = await response.json();
-        console.log(result);
+
+        try {
+          const response = await fetch(
+            "https://bkedtest.logistiex.com/DSQCPicture/uploadPicture",
+            {
+              method: "POST",
+              body: formData
+            }
+          );
+          const result = await response.json();
+          console.log("Result:",result);
+        } catch (error) {
+          console.error("Error uploading image:", error);
+        }
       }
     }
   };
+  // const requestCameraPermission = async () => {
+  //   try {
+  //     const granted = await PermissionsAndroid.request(
+  //       PermissionsAndroid.PERMISSIONS.CAMERA,
+  //       {
+  //         title: 'Camera Permission',
+  //         message: 'App needs camera permission',
+  //       },
+  //     );
+  //     // If CAMERA Permission is granted
+  //     return granted === PermissionsAndroid.RESULTS.GRANTED;
+  //   } catch (err) {
+  //     console.warn(err);
+  //     return false;
+  //   }
+  // };
+
+  // const createFormData = (photo, body) => {
+  //   const data = new FormData();
+  
+  //   data.append("file", {
+  //     name: photo.fileName,
+  //     type: photo.type,
+  //     uri:
+  //       Platform.OS === "android" ? photo.uri : photo.uri.replace("file://", "")
+  //   });
+  
+  //   Object.keys(body).forEach(key => {
+  //     data.append(key, body[key]);
+  //   });
+  //   return data;
+  // };
+
+  // const takePicture = async () => {
+  //   let options = {
+  //     mediaType: 'photo',
+  //     quality: 1,
+  //     cameraType: 'back',
+  //     maxWidth: 480,
+  //     maxHeight: 480,
+  //     storageOptions: {
+  //       skipBackup: true,
+  //       path: 'images',
+  //     },
+  //   }
+  //   let isGranted = await requestCameraPermission();
+  //   let result = null;
+  //   if (isGranted) {
+  //     result = await launchCamera(options);
+  //     console.log(result)
+  //   }
+  //   if (result.assets !== undefined) {
+  //     const formDataArray = [];
+  //     result.assets.forEach((asset, index) => {
+  //       const formData = createFormData(asset, {
+  //         useCase: "DSQC",
+  //         type: "front",
+  //         contextId: "SI002",
+  //         contextType: "shipment",
+  //         hubCode: "HC001",
+  //       });
+  //       formData.append('index', index);
+  //       formDataArray.push(formData);
+  //     });
+  //     Promise.all(formDataArray.map((formData) => {
+  //       return fetch('https://bkedtest.logistiex.com/DSQCPicture/uploadPicture', {
+  //         method: 'POST',
+  //         body: formData,
+  //       })
+  //         .then((data) => data.json())
+  //         .then((res) => {
+  //           console.log('upload success', res);
+  //           return res.publicURL;
+  //         })
+  //         .catch((error) => {
+  //           console.log('upload error', error);
+  //           setUploadStatus('error')
+  //         });
+  //     })).then((results) => {
+  //       setImages(results);
+  //     });
+  //   }
+  // }
   
 
   const recordVideo = () => {
@@ -332,7 +425,7 @@ const takePicture = async () => {
         setAcceptedArray([...acceptedArray, barcode.toString()]);
         console.log(acceptedArray);
         db.transaction((tx) => {
-            tx.executeSql('UPDATE SellerMainScreenDetailsRTO SET status="accepted" WHERE clientShipmentReferenceNumber=?', [barcode], (tx1, results) => {
+            tx.executeSql('UPDATE SellerMainScreenDetailsDelivery SET status="accepted" WHERE clientShipmentReferenceNumber=?', [barcode], (tx1, results) => {
                 let temp = [];
                 console.log('Results',results.rowsAffected);
                 console.log(results);
@@ -358,7 +451,7 @@ const takePicture = async () => {
         console.log('scan 45456');
         setnewRejected(newrejected+1);
         db.transaction((tx) => {
-            tx.executeSql('UPDATE SellerMainScreenDetailsRTO SET status="rejected" ,rejectedReason=? WHERE clientShipmentReferenceNumber=?', [DropDownValue,barcode], (tx1, results) => {
+            tx.executeSql('UPDATE SellerMainScreenDetailsDelivery SET status="rejected" ,rejectedReason=? WHERE clientShipmentReferenceNumber=?', [DropDownValue,barcode], (tx1, results) => {
                 let temp = [];
                 // console.log("ddsds4545",tx1);
                 console.log("Rejected Reason : ",DropDownValue);
@@ -383,7 +476,7 @@ const takePicture = async () => {
         console.log('scan 45456');
         setnewTagged(newtagged+1);
         db.transaction((tx) => {
-            tx.executeSql('UPDATE SellerMainScreenDetailsRTO SET status="accepted" ,rejectedReason=? WHERE clientShipmentReferenceNumber=?', [DropDownValue,barcode], (tx1, results) => {
+            tx.executeSql('UPDATE SellerMainScreenDetailsDelivery SET status="accepted" ,rejectedReason=? WHERE clientShipmentReferenceNumber=?', [DropDownValue,barcode], (tx1, results) => {
                 let temp = [];
                 // console.log("ddsds4545",tx1);
                 console.log("Rejected Reason : ",DropDownValue);
@@ -405,7 +498,7 @@ const takePicture = async () => {
 
       const viewDetails2 = () => {
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetailsRTO where status = "accepted"', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetailsDelivery where status = "accepted"', [], (tx1, results) => {
                 let temp = [];
                 console.log(results.rows.length);
                 for (let i = 0; i < results.rows.length; ++i) {
@@ -419,7 +512,7 @@ const takePicture = async () => {
       };
       const viewDetailsR2 = () => {
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetailsRTO where status = "rejected"', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetailsDelivery where status = "rejected"', [], (tx1, results) => {
                 let temp = [];
                 console.log(results.rows.length);
                 // setnewRejected(results.rows.length);
@@ -434,7 +527,7 @@ const takePicture = async () => {
       };
       const partialClose = () => {
         db.transaction((tx) => {
-          tx.executeSql('UPDATE SellerMainScreenDetailsRTO SET status="notPicked" , rejectedReason=? WHERE status IS Null', [DropDownValue11], (tx1, results) => {
+          tx.executeSql('UPDATE SellerMainScreenDetailsDelivery SET status="notPicked" , rejectedReason=? WHERE status IS Null', [DropDownValue11], (tx1, results) => {
               let temp = [];
               // console.log("Not Picked Reason",DropDownValue);
               // console.log('Results',results.rowsAffected);

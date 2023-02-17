@@ -564,6 +564,7 @@ const NewSellerSelection = ({route}) => {
                       consignorCode: route.params.consignorCode,
                       userId: route.params.userId,
                       phone: route.params.phone,
+                      contactPersonName:route.params.contactPersonName,
                       packagingId: route.params.packagingId,
                       // TotalpickUp : newdata[0].totalPickups
                     })
