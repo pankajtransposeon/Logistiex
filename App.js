@@ -1072,7 +1072,9 @@ const push_Data = () => {
                     name="bell-outline"
                     style={{fontSize: 30, color: 'white', marginRight: 5}}
                   />
-                  <Badge
+                 {
+                    data.length ? (
+                      <Badge
                     style={{
                       position: 'absolute',
                       fontSize: 15,
@@ -1081,6 +1083,8 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
+                    ):null
+                  }
                 </TouchableOpacity>
               </View>
             ),
@@ -1126,7 +1130,9 @@ const push_Data = () => {
                     name="bell-outline"
                     style={{fontSize: 30, color: 'white', marginRight: 5}}
                   />
-                  <Badge
+                  {
+                    data.length ? (
+                      <Badge
                     style={{
                       position: 'absolute',
                       fontSize: 15,
@@ -1135,6 +1141,8 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
+                    ):null
+                  }
                 </TouchableOpacity>
               </View>
             ),
@@ -1191,7 +1199,9 @@ const push_Data = () => {
                     name="bell-outline"
                     style={{fontSize: 30, color: 'white', marginRight: 5}}
                   />
-                  <Badge
+                  {
+                    data.length ? (
+                      <Badge
                     style={{
                       position: 'absolute',
                       fontSize: 15,
@@ -1200,6 +1210,8 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
+                    ):null
+                  }
                 </TouchableOpacity>
               </View>
             ),
@@ -1244,7 +1256,9 @@ const push_Data = () => {
                     name="bell-outline"
                     style={{fontSize: 30, color: 'white', marginRight: 5}}
                   />
-                  <Badge
+                  {
+                    data.length ? (
+                      <Badge
                     style={{
                       position: 'absolute',
                       fontSize: 15,
@@ -1253,6 +1267,8 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
+                    ):null
+                  }
                 </TouchableOpacity>
               </View>
             ),
@@ -1297,7 +1313,9 @@ const push_Data = () => {
                     name="bell-outline"
                     style={{fontSize: 30, color: 'white', marginRight: 5}}
                   />
-                  <Badge
+                  {
+                    data.length ? (
+                      <Badge
                     style={{
                       position: 'absolute',
                       fontSize: 15,
@@ -1306,6 +1324,8 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
+                    ):null
+                  }
                 </TouchableOpacity>
               </View>
             ),
@@ -1350,7 +1370,9 @@ const push_Data = () => {
                     name="bell-outline"
                     style={{fontSize: 30, color: 'white', marginRight: 5}}
                   />
-                  <Badge
+                  {
+                    data.length ? (
+                      <Badge
                     style={{
                       position: 'absolute',
                       fontSize: 15,
@@ -1359,6 +1381,8 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
+                    ):null
+                  }
                 </TouchableOpacity>
               </View>
             ),
@@ -1403,7 +1427,9 @@ const push_Data = () => {
                     name="bell-outline"
                     style={{fontSize: 30, color: 'white', marginRight: 5}}
                   />
-                  <Badge
+                  {
+                    data.length ? (
+                      <Badge
                     style={{
                       position: 'absolute',
                       fontSize: 15,
@@ -1412,6 +1438,8 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
+                    ):null
+                  }
                 </TouchableOpacity>
               </View>
             ),
@@ -1457,7 +1485,9 @@ const push_Data = () => {
                     name="bell-outline"
                     style={{fontSize: 30, color: 'white', marginRight: 5}}
                   />
-                  <Badge
+                  {
+                    data.length ? (
+                      <Badge
                     style={{
                       position: 'absolute',
                       fontSize: 15,
@@ -1466,6 +1496,8 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
+                    ):null
+                  }
                 </TouchableOpacity>
               </View>
             ),
@@ -1511,7 +1543,9 @@ const push_Data = () => {
                     name="bell-outline"
                     style={{fontSize: 30, color: 'white', marginRight: 5}}
                   />
-                  <Badge
+                  {
+                    data.length ? (
+                      <Badge
                     style={{
                       position: 'absolute',
                       fontSize: 15,
@@ -1520,6 +1554,8 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
+                    ):null
+                  }
                 </TouchableOpacity>
               </View>
             ),
@@ -1565,7 +1601,9 @@ const push_Data = () => {
                     name="bell-outline"
                     style={{fontSize: 30, color: 'white', marginRight: 5}}
                   />
-                  <Badge
+                  {
+                    data.length ? (
+                      <Badge
                     style={{
                       position: 'absolute',
                       fontSize: 15,
@@ -1574,6 +1612,8 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
+                    ):null
+                  }
                 </TouchableOpacity>
               </View>
             ),
@@ -1618,7 +1658,9 @@ const push_Data = () => {
                     name="bell-outline"
                     style={{fontSize: 30, color: 'white', marginRight: 5}}
                   />
-                  <Badge
+                  {
+                    data.length ? (
+                      <Badge
                     style={{
                       position: 'absolute',
                       fontSize: 15,
@@ -1627,6 +1669,8 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
+                    ):null
+                  }
                 </TouchableOpacity>
               </View>
             ),
@@ -1671,7 +1715,9 @@ const push_Data = () => {
                     name="bell-outline"
                     style={{fontSize: 30, color: 'white', marginRight: 5}}
                   />
-                  <Badge
+                  {
+                    data.length ? (
+                      <Badge
                     style={{
                       position: 'absolute',
                       fontSize: 15,
@@ -1680,6 +1726,8 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
+                    ):null
+                  }
                 </TouchableOpacity>
               </View>
             ),
@@ -1724,7 +1772,9 @@ const push_Data = () => {
                     name="bell-outline"
                     style={{fontSize: 30, color: 'white', marginRight: 5}}
                   />
-                  <Badge
+                  {
+                    data.length ? (
+                      <Badge
                     style={{
                       position: 'absolute',
                       fontSize: 15,
@@ -1733,6 +1783,8 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
+                    ):null
+                  }
                 </TouchableOpacity>
               </View>
             ),
@@ -1777,7 +1829,9 @@ const push_Data = () => {
                     name="bell-outline"
                     style={{fontSize: 30, color: 'white', marginRight: 5}}
                   />
-                  <Badge
+                  {
+                    data.length ? (
+                      <Badge
                     style={{
                       position: 'absolute',
                       fontSize: 15,
@@ -1786,6 +1840,8 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
+                    ):null
+                  }
                 </TouchableOpacity>
               </View>
             ),
@@ -1851,7 +1907,9 @@ const push_Data = () => {
                     name="bell-outline"
                     style={{fontSize: 30, color: 'white', marginRight: 5}}
                   />
-                  <Badge
+                  {
+                    data.length ? (
+                      <Badge
                     style={{
                       position: 'absolute',
                       fontSize: 15,
@@ -1860,6 +1918,8 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
+                    ):null
+                  }
                 </TouchableOpacity>
               </View>
             ),

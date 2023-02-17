@@ -107,7 +107,6 @@ const HandoverShipmentRTO = ({route}) => {
                     temp.push(results.rows.item(i));
                 }
                 setData(temp);
-                console.log(temp, 'datatanmay');
             });
         });
     };
