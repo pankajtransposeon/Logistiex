@@ -223,14 +223,14 @@ export default function Main({navigation, route}) {
             rejectedOrder: spr,
             notPicked: spnp,
         }, 
-        // {
-        //     title: 'Seller Deliveries',
-        //     totalUsers: spts,
-        //     pendingOrder: spp1,
-        //     completedOrder: spc1,
-        //     rejectedOrder: spr1,
-        //     notPicked: spnp1,
-        // },
+        {
+            title: 'Seller Deliveries',
+            totalUsers: spts,
+            pendingOrder: spp1,
+            completedOrder: spc1,
+            rejectedOrder: spr1,
+            notPicked: spnp1,
+        },
         //  {
         //     title: 'Customer Pickups',
         //     totalUsers: 21,
