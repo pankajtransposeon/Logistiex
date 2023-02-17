@@ -88,7 +88,7 @@ useEffect(() => {
     <NativeBaseProvider>
       <ScrollView>
       <Box flex={1} bg="coolGray.100" p={4}>
-            {(data) && data.length &&
+            {(data) &&
                 data.map((d, i)=>{
                 return(
                 <Box key={i} width='100%' marginBottom='5'  alignItems="center">

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { NativeBaseProvider, Box, Image, Center, VStack, Button, Icon, Input, Heading, Alert, Text, Modal } from 'native-base';
+import {NativeBaseProvider, Box, Image, Center, VStack, Button, Icon, Input, Heading, Alert, Text, Modal } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { ActivityIndicator, PermissionsAndroid, Pressable, SafeAreaView, StyleSheet, TouchableHighlight, TouchableOpacity, View } from 'react-native';
+import { PermissionsAndroid, Pressable, SafeAreaView, StyleSheet, TouchableHighlight, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { decode } from "react-native-pure-jwt";
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
-export default function EndTrip({ navigation, route }) {
+export default function EndTrip({navigation,route}) {
 
   const [vehicle, setVehicle] = useState([]);
   const [endkm, setEndkm] = useState('');
@@ -16,44 +16,23 @@ export default function EndTrip({ navigation, route }) {
   const [tripID, setTripID] = useState("");
   const [userId, setUserId] = useState('');
   const [uploadStatus, setUploadStatus] = useState('idle');
-  const [TripValue, setTripValue] = useState('Start Trip');
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const getDataTrip = async () => {
-    try {
-
-      const StartEndTrip = await AsyncStorage.getItem('@StartEndTrip');
-      if (StartEndTrip !== null) {
-        const data = JSON.parse(StartEndTrip);
-        setTripValue(data);
-        await AsyncStorage.removeItem('@StartEndTrip');
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    getDataTrip();
-  }, []);
-
   const getUserId = async () => {
     try {
       const value = await AsyncStorage.getItem('@storage_Key');
       if (value !== null) {
-        const data = JSON.parse(value);
-        setUserId(data.userId);
-        // console.log(data.userId);
+          const data = JSON.parse(value);
+          setUserId(data.userId);
+          // console.log(data.userId);
       } else {
-        setUserId(' ');
+          setUserId(' ');
       }
-    } catch (e) {
+  } catch (e) {
       console.log(e);
-    }
+  }
   };
   useEffect(() => {
     getUserId();
-  }, []);
+}, []);
 
   const requestCameraPermission = async () => {
     try {
@@ -73,51 +52,51 @@ export default function EndTrip({ navigation, route }) {
 
   const createFormData = (photo, body) => {
     const data = new FormData();
-
+  
     data.append("file", {
       name: photo.fileName,
       type: photo.type,
       uri:
         Platform.OS === "android" ? photo.uri : photo.uri.replace("file://", "")
     });
-
+  
     Object.keys(body).forEach(key => {
       data.append(key, body[key]);
     });
     return data;
   };
 
-  const takePhoto = async () => {
+  const takePhoto= async()=>{
     setUploadStatus('uploading');
     setImageUrl("");
     let options = {
-      mediaType: 'photo',
-      quality: 1,
-      cameraType: 'back',
-      maxWidth: 480,
-      maxHeight: 480,
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
+        mediaType:'photo',
+        quality:1,
+        cameraType:'back',
+        maxWidth : 480,
+        maxHeight : 480,
+        storageOptions: {
+          skipBackup: true,
+          path: 'images',
+        },
     }
     let isGranted = await requestCameraPermission();
     let result = null;
-    if (isGranted) {
-      result = await launchCamera(options);
-      console.log(result)
+    if(isGranted){
+        result = await launchCamera(options);
+        console.log(result)
     }
-    if (result.assets !== undefined) {
+    if(result.assets !== undefined){          
       fetch('https://bkedtest.logistiex.com/DSQCPicture/uploadPicture', {
         method: 'POST',
-
+      
         body: createFormData(result.assets[0], {
-          useCase: "DSQC",
-          type: "front",
-          contextId: "SI002",
-          contextType: "shipment",
-          hubCode: "HC001"
-        }),
+                useCase : "DSQC",
+                type : "front",
+                contextId : "SI002",
+                contextType: "shipment",
+                hubCode :"HC001"
+              }),
       })
         .then((data) => data.json())
         .then((res) => {
@@ -130,61 +109,63 @@ export default function EndTrip({ navigation, route }) {
           setUploadStatus('error');
         });
     }
-  }
+}
 
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('@VehicleStartkm')
-      if (value !== null) {
-        const data = JSON.parse(value);
-        setVehicle(data);
-        console.log(data, 'data')
-      }
-    } catch (e) {
-      console.log(e);
+const getData = async () => {
+  try {
+    const value = await AsyncStorage.getItem('@VehicleStartkm')
+    if(value !== null) {
+      const data = JSON.parse(value);
+      setVehicle(data);
+      console.log(data, 'data')
     }
+  } catch(e) {
+    console.log(e);
   }
-  useEffect(() => {
-    getData();
-  }, []);
-  const getTripID = async () => {
-    try {
-      const value = await AsyncStorage.getItem('@TripID')
-      if (value !== null) {
-        const data = JSON.parse(value);
-        setTripID(data);
-      }
-    } catch (e) {
-      console.log(e);
+}
+useEffect(() => {
+  getData();
+}, []);
+const getTripID = async () => {
+  try {
+    const value = await AsyncStorage.getItem('@TripID')
+    if(value !== null) {
+      const data = JSON.parse(value);
+      setTripID(data);
     }
+  } catch(e) {
+    console.log(e);
   }
-  useEffect(() => {
-    getTripID();
-  }, []);
-  const storeDataTripValue = async () => {
-    try {
-      await AsyncStorage.setItem('@StartEndTrip', JSON.stringify('End'));
-      navigation.navigate('StartEndDetails', { tripID: userId + "_" + date })
-    } catch (e) {
-      console.log(e);
-    }
+}
+useEffect(() => {
+  getTripID();
+}, []);
+const storeDataTripValue = async() => {
+  try {
+    await AsyncStorage.setItem('@StartEndTrip', JSON.stringify('End'));
+    navigation.navigate('StartEndDetails',{tripID : userId+"_"+date})
+  } catch (e) {
+    console.log(e);
   }
+}
 
 
-  let current = new Date();
-  let tripid = current.toString();
-  let time = tripid.match(/\d{2}:\d{2}:\d{2}/)[0];
-  let dateStart = 0;
-  let dateEnd = tripid.indexOf(" ", tripid.indexOf(" ", tripid.indexOf(" ") + 1) + 1);
-  let date = dateEnd ? tripid.substring(dateStart, dateEnd + 5) : "No match found";
-  const ImageHandle = () => {
-    (async () => {
+let current=new Date();
+let tripid=current.toString();
+let time = tripid.match(/\d{2}:\d{2}:\d{2}/)[0];
+let dateStart = 0; 
+let dateEnd = tripid.indexOf(" ", tripid.indexOf(" ", tripid.indexOf(" ") + 1) + 1); 
+let date = dateEnd ? tripid.substring(dateStart, dateEnd+5) : "No match found";
+const ImageHandle = () => 
+
+  {
+    (async() => {
       await axios.post('https://bkedtest.logistiex.com/UserTripInfo/updateUserTripEndDetails', {
-        tripID: userId + "_" + date,
-        endTime: time,
-        endkilometer: endkm,
-        endVehicleImageUrl: ImageUrl
-      })
+        tripID : userId+"_"+date, 
+        endTime : time, 
+        endkilometer : endkm, 
+        endVehicleImageUrl : ImageUrl
+        })
         .then(function (res) {
           console.log(res.data, "data send successfully");
           storeDataTripValue();
@@ -192,70 +173,52 @@ export default function EndTrip({ navigation, route }) {
         .catch(function (error) {
           console.log(error);
         });
-    })();
-  }
-  console.log(vehicle);
-
+    }) ();
+   }
+console.log(vehicle);
+  
   return (
     <NativeBaseProvider>
-      <Box flex={1} bg="#004aad" alignItems="center" pt={'4%'}>
-        <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)} size="lg">
-          <Modal.Content maxWidth="350">
-            <Modal.CloseButton />
-            <Modal.Header />
-            <Modal.Body>
+        <Box flex={1} bg="#004aad" alignItems="center" pt={'4%'}>
+            <Box justifyContent="space-between" py={10} px={6} bg="#fff" rounded="xl" width={"90%"} maxWidth="100%" _text={{fontWeight: "medium",}}>
+            <VStack space={6}>
+                <Input disabled selectTextOnFocus={false} editable={false} backgroundColor='gray.300' value={vehicle.vehicle} size="lg" type={"number"} placeholder="Input vehicle KMs" />
 
-              <View style={{ alignSelf: 'center', marginVertical: 5 }}>
-                <Image
-                  source={{ uri: ImageUrl }}
-                  style={{ width: 400, height: 500 }}
-                  alt='image not shown'
-                />
-              </View>
-            </Modal.Body>
-          </Modal.Content>
-        </Modal>
-        <Box justifyContent="space-between" py={10} px={6} bg="#fff" rounded="xl" width={"90%"} maxWidth="100%" _text={{ fontWeight: "medium", }}>
-          <VStack space={6}>
-            <Input disabled selectTextOnFocus={false} editable={false} backgroundColor='gray.300' value={vehicle.vehicle} size="lg" type={"number"} placeholder="Input vehicle KMs" />
+                <Input selectTextOnFocus={false} editable={false} disabled backgroundColor='gray.300' value={vehicle.startkm} size="lg" type={"number"} placeholder="Input vehicle KMs" />
 
-            <Input selectTextOnFocus={false} editable={false} disabled backgroundColor='gray.300' value={vehicle.startkm} size="lg" type={"number"} placeholder="Input vehicle KMs" />
-
-            <Input value={endkm} keyboardType="numeric" onChangeText={setEndkm} size="lg" type={"number"} placeholder="Input vehicle KMs" />
-            {/* <Button py={3} variant='outline' title="Login"  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons></Button> */}
-            <Button py={3} variant='outline' _text={{ color: 'white', fontSize: 20 }} onPress={takePhoto}>
-              {uploadStatus === 'idle' && <MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons>}
-              {uploadStatus === 'uploading' && <ActivityIndicator size="small" color="gray" />}
-              {uploadStatus === 'done' && <MaterialIcons name="check" size={22} color="green" />}
-              {uploadStatus === 'error' && <MaterialIcons name="error" size={22} color="red" />}
-            </Button>
-            {
-              ImageUrl ? (
-                <TouchableOpacity onPress={() => setModalVisible(true)} >
-                      <Image 
+                <Input value={endkm} keyboardType="numeric" onChangeText={setEndkm} size="lg" type={"number"} placeholder="Input vehicle KMs" />
+                {/* <Button py={3} variant='outline' title="Login"  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons></Button> */}
+                <Button py={3} variant='outline' _text={{ color: 'white', fontSize: 20 }} onPress={takePhoto}>
+                {uploadStatus === 'idle' && <MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons>}
+                {uploadStatus === 'uploading' && <ActivityIndicator size="small" color="gray" />}
+                {uploadStatus === 'done' && <MaterialIcons name="check" size={22} color="green" />}
+                {uploadStatus === 'error' && <MaterialIcons name="error" size={22} color="red" />}
+                </Button>
+                {
+                  ImageUrl ? (
+                    <Image 
                       source={{ uri: ImageUrl }} 
                       style={{ width: 300, height: 200 }} 
                       alt = 'image not shown'
                     />
-                    </TouchableOpacity>
-              ) : (
-                null
-              )
-            }
-            {
-              endkm && ImageUrl && (endkm > vehicle.startkm) ? (
-                <Button title="Login" backgroundColor='#004aad' _text={{ color: 'white', fontSize: 20 }} onPress={() => ImageHandle()}>End Trip</Button>
-              ) : (
-                <Button opacity={0.5} disabled={true} title="Login" backgroundColor='#004aad' _text={{ color: 'white', fontSize: 20 }}>End Trip</Button>
-              )
-            }
-          </VStack>
+                  ):(
+                    null
+                  )
+                }
+                {
+                  endkm && ImageUrl && (endkm>vehicle.startkm) ? (
+                    <Button title="Login" backgroundColor='#004aad'  _text={{ color: 'white', fontSize: 20 }} onPress={()=>ImageHandle()}>End Trip</Button>
+                  ) : (
+                    <Button opacity={0.5} disabled={true} title="Login" backgroundColor='#004aad' _text={{ color: 'white', fontSize: 20 }}>End Trip</Button>
+                  )
+                }
+            </VStack>
         </Box>
         <Center>
-          <Image style={{ width: 200, height: 200 }} source={require('../assets/logo.png')} alt={"Logo Image"} />
-
+            <Image style={{ width: 200, height: 200 }} source={require('../assets/logo.png')} alt={"Logo Image"} />
+            
         </Center>
-      </Box>
+        </Box>
     </NativeBaseProvider>
   );
 }
