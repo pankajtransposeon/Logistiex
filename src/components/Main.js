@@ -167,19 +167,29 @@ export default function Main({navigation, route}) {
       setSpr1(1);
       await AsyncStorage.setItem('refresh11', 'notrefresh');
       db.transaction((tx) => {
-        tx.executeSql('SELECT * FROM SellerMainScreenDetailsDelivery WHERE shipmentStatus="RTO" AND status IS NULL', [], (tx1, results) => {
+          tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
+              setSpts(results.rows.length);
+          });
+      });
+      db.transaction((tx) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentStatus="RTO" AND status IS NULL', [], (tx1, results) => {
             setSpp1(results.rows.length);
         });
     });
 
     db.transaction((tx) => {
-        tx.executeSql('SELECT * FROM SellerMainScreenDetailsDelivery WHERE status="accepted"', [], (tx1, results) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="RTO" AND status="accepted"', [], (tx1, results) => {
             let temp = [];
             setSpc1(results.rows.length);
         });
     });
     db.transaction((tx) => {
-        tx.executeSql('SELECT * FROM SellerMainScreenDetailsDelivery WHERE status="notDelivered"', [], (tx1, results) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="RTO" AND status="accepted" OR status="rejected"', [], (tx1, results) => {
+            setSpARC1(results.rows.length);
+        });
+    });
+    db.transaction((tx) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="RTO" AND status="notPicked"', [], (tx1, results) => {
             let temp = [];
             setSpnp1(results.rows.length);
             for (let i = 0; i < results.rows.length; ++i) {
@@ -189,9 +199,9 @@ export default function Main({navigation, route}) {
     });
 
     db.transaction((tx) => {
-        tx.executeSql('SELECT * FROM SellerMainScreenDetailsDelivery WHERE status="rejected"', [], (tx1, results) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetailsRTO where status="rejected"', [], (tx1, results) => {
             setSpr1(results.rows.length);
-            setIsLoading1(false);
+            setIsLoading(false);
         });
     });
      
@@ -201,6 +211,42 @@ export default function Main({navigation, route}) {
         Accepted: 0,
         Rejected: 0,
     };
+
+    // const createTables = () => {
+    //     db.transaction(txn => {
+    //         txn.executeSql('DROP TABLE IF EXISTS categories', []);
+    //         txn.executeSql('CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, clientShipmentReferenceNumber VARCHAR(50), packagingId VARCHAR(50), packagingStatus VARCHAR(50), consignorCode VARCHAR(50), consignorContact VARCHAR(50), PRSNumber VARCHAR(50), ForwardPickups VARCHAR(50), ScanStatus INT(10), UploadStatus INT(10))', [], (sqlTxn, res) => { // console.log("table created successfully");
+    //         }, error => {
+    //             console.log('error on creating table ' + error.message);
+    //         },);
+    //     });
+    // };
+
+    // const addCategory = (clientShipmentReferenceNumber, packagingId, packagingStatus, consignorCode, consignorContact, PRSNumber, ForwardPickups, ScanStatus, UploadStatus) => {
+    //     // console.log(clientShipmentReferenceNumber, packagingId, packagingStatus, consignorCode, consignorContact, PRSNumber, ForwardPickups, ScanStatus, UploadStatus);
+    //     if (!clientShipmentReferenceNumber && !packagingId && !packagingStatus && !consignorCode && !consignorContact && !PRSNumber && !ForwardPickups && !ScanStatus && !UploadStatus) { // eslint-disable-next-line no-alert
+    //         alert('Enter category');
+    //         return false;
+    //     }
+
+    //     db.transaction(txn => {
+    //         txn.executeSql('INSERT INTO categories (clientShipmentReferenceNumber, packagingId, packagingStatus , consignorCode, consignorContact, PRSNumber, ForwardPickups,ScanStatus,UploadStatus) VALUES (?,?,?,?,?,?,?,?,?)', [
+    //             clientShipmentReferenceNumber,
+    //             packagingId,
+    //             packagingStatus,
+    //             consignorCode,
+    //             consignorContact,
+    //             PRSNumber,
+    //             ForwardPickups,
+    //             ScanStatus,
+    //             UploadStatus,
+    //         ], (sqlTxn, res) => {
+    //             // console.log('category added successfully');
+    //         }, error => {
+    //             console.log('error on adding category ' + error.message);
+    //         },);
+    //     });
+    // };
 
     const storeUser = async () => {
         try {
@@ -214,6 +260,89 @@ export default function Main({navigation, route}) {
         storeUser();
     }, []);
 
+
+    // db.transaction(txn => {
+    //     txn.executeSql('DROP TABLE IF EXISTS Sync1', []);
+    //     txn.executeSql('CREATE TABLE IF NOT EXISTS Sync1(userId ID VARCHAR(30) PRIMARY KEY  ,consignorPickupsList INT(15), CustomerPickupsList VARCHAR(50))', [], (sqlTxn, res) => {
+    //         console.log('table created successfully');
+    //     }, error => {
+    //         console.log('error on creating table ' + error.message);
+    //     },);
+    // });
+
+
+    // db.transaction(txn => {
+    //     txn.executeSql('INSERT OR REPLACE INTO Sync1 (userId ,consignorPickupsList , CustomerPickupsList) VALUES (?,?,?)', [
+    //         userId, data1, data2,
+    //     ], (sqlTxn, res) => {
+    //         console.log('Data Added to local db successfully');
+    //         console.log(res);
+    //         console.log(data1 + ' ' + data2);
+    //     }, error => {
+    //         console.log('error on adding data ' + error.message);
+    //     },);
+    // });
+
+    // const viewDetails = () => {
+    //     db.transaction((tx) => {
+    //         tx.executeSql('SELECT * FROM Sync1 where userId=?', [userId], (tx1, results) => {
+    //             let temp = [];
+    //             for (let i = 0; i < results.rows.length; ++i) {
+    //                 temp.push(results.rows.item(i));
+    //                 console.log(results.rows.item(i).consignorPickupsList);
+    //                 setData1(results.rows.item(i).consignorPickupsList);
+    //                 setData2(results.rows.item(i).CustomerPickupsList);
+    //                 ToastAndroid.show('consignorPickupsList :' + results.rows.item(i).consignorPickupsList + '\n' + 'CustomerPickupsList : ' + results.rows.item(i).CustomerPickupsList, ToastAndroid.SHORT);
+    //             }
+    //             // console.log(temp);
+    //             // console.log(tx1);
+    //         });
+    //     });
+    // };
+
+    // useEffect(() => {
+    //     createTables();
+    //     (async () => {
+    //         await axios.get(`https://bked.logistiex.com/SellerMainScreen/getMSD/${
+    //             route.params.userId
+    //         }`).then((res) => {
+    //             setData(res.data.consignorPickupsList);
+    //         }, (error) => {
+    //             alert(error);
+    //         });
+    //     })();
+
+    //     (async () => {
+    //         await axios.get(shipmentData).then((res) => {
+    //             res.data.map(m => {
+    //                 axios.get(`https://bked.logistiex.com/SellerMainScreen/getSellerDetails/${
+    //                     m.consignorCode
+    //                 }`).then((d) => {
+    //                     d.data.totalPickups.map((val) => {
+    //                         addCategory(val.clientShipmentReferenceNumber, val.packagingId, val.packagingStatus, m.consignorCode, m.consignorContact, m.PRSNumber, m.ForwardPickups, 0, 0);
+    //                     });
+    //                 });
+    //             });
+
+    //         }, (error) => {
+    //             alert(error);
+    //         });
+    //     })();
+    // }, []);
+
+    // useEffect(() => {
+    //     (async () => {
+    //         await axios.get(getData).then((res) => {
+    //             setData1(res.data.consignorPickupsList);
+    //             setData2(res.data.CustomerPickupsList);
+    //             console.log(res.data.CustomerPickupsList);
+    //             console.log(res.data.consignorPickupsList);
+    //             // createTables();
+    //         }, (error) => {
+    //             Alert.alert(error);
+    //         });
+    //     })();
+    // }, []);
     const dashboardData = [
         {
             title: 'Seller Pickups',
@@ -310,7 +439,7 @@ export default function Main({navigation, route}) {
             </View>
           </Box>
           {it.title==='Seller Deliveries'?
-            <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries',{Pending:spp1})}>New Delivery</Button>
+            <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries')}>New Pickup</Button>
             :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup')}>New Pickup</Button>
             }
         </Box>        
@@ -339,7 +468,7 @@ export default function Main({navigation, route}) {
       </Box>
       </ScrollView>
       {/* <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} /> */}
-      {(isLoading && isLoading1) ? (
+      {isLoading ? (
         <View
           style={[
             StyleSheet.absoluteFillObject,
