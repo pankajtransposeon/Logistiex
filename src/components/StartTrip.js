@@ -3,7 +3,7 @@ import axios from 'axios';
 import {NativeBaseProvider, Box, Image, Center, VStack, Button, Icon, Input, Heading, Alert, Text, Modal } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { PermissionsAndroid, Pressable, SafeAreaView, StyleSheet, TouchableHighlight, View , ActivityIndicator} from 'react-native';
+import { PermissionsAndroid, Pressable, SafeAreaView, StyleSheet, TouchableHighlight, View , ActivityIndicator, TouchableOpacity} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { decode } from "react-native-pure-jwt";
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
@@ -19,6 +19,7 @@ export default function StartTrip() {
   const [tripID, setTripID] = useState("");
   const [userId, setUserId] = useState('');
   const [uploadStatus, setUploadStatus] = useState('idle');
+  const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
 
   const getUserId = async () => {
@@ -181,8 +182,23 @@ const ImageHandle = () =>
 
   return (
     <NativeBaseProvider>
-        <Box flex={1} bg="#004aad" alignItems="center" pt={'4%'}>
-            
+        <Box flex={1} bg="gray.300" alignItems="center" pt={'4%'}>
+        <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)} size="lg">
+        <Modal.Content maxWidth="350">
+          <Modal.CloseButton />
+          <Modal.Header />
+          <Modal.Body>
+          
+          <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center'}}>
+          <Image 
+                      source={{ uri: ImageUrl }} 
+                      style={{ width: 400, height: 600 }} 
+                      alt = 'image not shown'
+                    />
+          </View>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal>
             <Box justifyContent="space-between" py={10} px={6} bg="#fff" rounded="xl" width={"90%"} maxWidth="100%" _text={{fontWeight: "medium",}}>
             <ScrollView>
             <VStack space={6}>
@@ -197,11 +213,13 @@ const ImageHandle = () =>
                 </Button>
                 {
                   ImageUrl ? (
-                    <Image 
+                    <TouchableOpacity onPress={() => setModalVisible(true)} >
+                      <Image 
                       source={{ uri: ImageUrl }} 
                       style={{ width: 300, height: 200 }} 
                       alt = 'image not shown'
                     />
+                    </TouchableOpacity>
                   ):(
                     null
                   )
@@ -215,12 +233,12 @@ const ImageHandle = () =>
                 }
             </VStack>
             </ScrollView>
+            <Center>
+          <Image style={{ width: 150, height: 100 }} source={require('../assets/image.png')} alt={'Logo Image'} />
+        </Center>
         </Box>
             
-        <Center>
-            <Image style={{ width: 200, height: 200 }} source={require('../assets/logo.png')} alt={"Logo Image"} />
-            
-        </Center>
+        
         </Box>
     </NativeBaseProvider>
   );
