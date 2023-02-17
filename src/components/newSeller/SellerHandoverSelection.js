@@ -565,6 +565,7 @@ const NewSellerSelection = ({route}) => {
                       userId: route.params.userId,
                       phone: route.params.phone,
                       packagingId: route.params.packagingId,
+                      Expected:route.params.Pending
                       // TotalpickUp : newdata[0].totalPickups
                     })
                   }>

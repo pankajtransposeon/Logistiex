@@ -291,13 +291,14 @@ export default function Main({navigation, route}) {
             </View>
           </Box>
           {it.title==='Seller Deliveries'?
-            <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries',{Pending:spp1})}>New Delivery</Button>
+            // <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries',{Pending:spp1})}>New Delivery</Button>
+            <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>Start Handover</Button>
             :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup')}>New Pickup</Button>
-            }
+          }
         </Box>        
         );
         })}
-        <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>Start Handover</Button>
+        {/* <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>Start Handover</Button> */}
         {/* <Button w="100%" size="lg" bg="#004aad" mt={-5} onPress={()=>navigation.navigate('SellerHandover')}>Seller Handover</Button> */}
         {/* <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>Start Handover</Button> */}
         <Center>

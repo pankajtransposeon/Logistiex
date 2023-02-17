@@ -866,7 +866,7 @@ const takePicture = async () => {
               <Button title="Reject Shipment" onPress={() => setModalVisible1(true)} w="90%" size="lg" bg="#004aad" mb={4} mt={4}>Reject/Tag Shipment</Button>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Expected</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.Forward}</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.Expected}</Text>
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Accepted</Text>
