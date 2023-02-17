@@ -8,7 +8,6 @@ import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Icon} from 'native-base';
 import Lottie from 'lottie-react-native';
 import {ProgressBar} from '@react-native-community/progress-bar-android';
-import App from '../../App';
 import {
     NativeBaseProvider,
     Box,
@@ -128,24 +127,23 @@ export default function Main({navigation, route}) {
             });
         });
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentStatus="WFP" AND status IS NULL', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentAction="Seller Pickup" AND status IS NULL', [], (tx1, results) => {
                 setSpp(results.rows.length);
             });
         });
 
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="WFP" AND status="accepted"', [], (tx1, results) => {
-                let temp = [];
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND status="accepted"', [], (tx1, results) => {
                 setSpc(results.rows.length);
             });
         });
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="WFP" AND status="accepted" OR status="rejected"', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND status="accepted" OR status="rejected"', [], (tx1, results) => {
                 setSpARC(results.rows.length);
             });
         });
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentStatus="WFP" AND status="notPicked"', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND status="notPicked"', [], (tx1, results) => {
                 let temp = [];
                 setSpnp(results.rows.length);
                 for (let i = 0; i < results.rows.length; ++i) {
@@ -224,14 +222,15 @@ export default function Main({navigation, route}) {
             completedOrder: spc,
             rejectedOrder: spr,
             notPicked: spnp,
-        }, {
-            title: 'Seller Deliveries',
-            totalUsers: spts,
-            pendingOrder: spp1,
-            completedOrder: spc1,
-            rejectedOrder: spr1,
-            notPicked: spnp1,
-        },
+        }, 
+        // {
+        //     title: 'Seller Deliveries',
+        //     totalUsers: spts,
+        //     pendingOrder: spp1,
+        //     completedOrder: spc1,
+        //     rejectedOrder: spr1,
+        //     notPicked: spnp1,
+        // },
         //  {
         //     title: 'Customer Pickups',
         //     totalUsers: 21,
