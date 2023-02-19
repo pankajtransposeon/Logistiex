@@ -62,9 +62,10 @@ import CloseReasonCode from './src/components/newSeller/CloseReasonCode';
 import ReturnHandoverRejectionTag from './src/components/newSeller/ReturnHandoverRejectionTag';
 import CloseTrip from './src/components/newSeller/CloseTrip';
 import HandoverShipmentRTO from './src/components/newSeller/HandoverShipmentRTO';
+import { LogBox } from 'react-native';
 const db = openDatabase({name: 'rn_sqlite'});
-// import ignoreWarnings from 'react-native-ignore-warnings';
-// ignoreWarnings(['Warning: Each child in a list should have a unique "key" prop.']);
+
+
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -145,7 +146,12 @@ function StackNavigators({navigation}) {
             console.log(e);
         }
     };
-  // loadAPI();
+  
+    useEffect(()=>{
+      // This useEffect  is use to hide warnings in mobile screen .
+      // LogBox.ignoreLogs(['Warning: Each child in a list should have a unique "key" prop.']);
+      LogBox.ignoreAllLogs(true);
+    },[]);
 
     useEffect(() => {
         const StartValue = setInterval(() => {
@@ -215,9 +221,9 @@ const push_Data = () => {
     Login_Data_load();
     
     db.transaction(tx => {
-        tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentStatus="WFP" AND status IS NOT Null', [], (tx1, results) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentAction="Seller Pickup" AND status IS NOT Null', [], (tx1, results) => {
             if (results.rows.length > 0) {
-                ToastAndroid.show('Syncing...', ToastAndroid.SHORT);
+                ToastAndroid.show('Pushing data...', ToastAndroid.SHORT);
                 // setIsLoading(!isLoading);
                 let temp = [];
                 let temp11 = 0;
@@ -247,19 +253,19 @@ const push_Data = () => {
                             pickupTime: new Date().toJSON().slice(0, 10).replace(/-/g, '/'),
                             latitude: results11.rows.item(0).consignorLocation,
                             longitude: results11.rows.item(0).consignorLongitude,
-                            // packagingId : results.rows.item(i).packagingId ,
-                            packagingId: 'PSN00100',
+                            packagingId : results.rows.item(i).packagingId,
+                            // packagingId: 'PSN00100',
                             packageingStatus: 1,
                             PRSNumber: 'results.rows.item(i).PRSNumber',
                             pickupBagId: 'ss121',
                         }).then(response => {
                             temp11++;
                             setIsLoading(false);
-                            // console.log(response.data, 'Data has been pushed');
-                            console.log('Data has been pushed');
+                            console.log(response.data);
+                            console.log('Data has been pushed'+i);
                             if (temp11 === results.rows.length) {
                                 temp11 = 0;
-                                // ToastAndroid.show('Data Pushed Successfully', ToastAndroid.SHORT);
+                                ToastAndroid.show('Data Pushed Successfully', ToastAndroid.SHORT);
                                 console.log('ok now pulling the data');
                                 pull_API_Data();
                             }
@@ -441,7 +447,7 @@ const push_Data = () => {
                             res.data.data[i].awbNo,
                             res.data.data[i].consignorCode,
                             res.data.data[i].packagingStatus,
-                            res.data.data[i].packagingId,
+                            res.data.data[i].packagingAction,
                             res.data.data[i].runSheetNumber,
                             res.data.data[i].shipmentStatus,
                             res.data.data[i].shipmentAction,
