@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {
   Image,
@@ -39,7 +40,7 @@ import PieChart from 'react-native-pie-chart';
 const NewSellerSelection = ({route}) => {
   const [barcodeValue, setBarcodeValue] = useState('');
   const shipmentData = `https://bked.logistiex.com/SellerMainScreen/getSellerDetails/${route.params.paramKey}`;
-  const [acc, setAcc] = useState(0);
+  const [acc, setAcc] = useState(1);
   const [pending, setPending] = useState(route.params.Forward);
   const [reject, setReject] = useState(0);
   const [data, setData] = useState([]);
@@ -54,6 +55,8 @@ const NewSellerSelection = ({route}) => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
+  const [notPicked11,setNotPicked11]=useState(1);
+  const [rejectedOrder11,setRejectedOrder11]=useState(1);
 
   const DisplayData = async () => {
     closePickup11();
@@ -121,9 +124,8 @@ const NewSellerSelection = ({route}) => {
     DisplayData2();
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      // do something
       loadSellerPickupDetails();
     });
     return unsubscribe;
@@ -140,21 +142,84 @@ const NewSellerSelection = ({route}) => {
   };
 
   const loadSellerPickupDetails = () => {
-    setIsLoading(!isLoading);
+    // setIsLoading(!isLoading);
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM SellerMainScreenDetails where consignorCode=? AND status="accepted"',
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=?  AND status="accepted"',
         [route.params.consignorCode],
         (tx1, results) => {
           // let temp = [];
-          console.log(results.rows.length);
-          if (results.rows.length > 0) {
+          // console.log(results.rows.length);
+          // if (results.rows.length > 0) {
             setAcc(results.rows.length);
             console.log(acc);
-            setPending(route.params.Forward - results.rows.length);
+            // setPending(route.params.Forward - results.rows.length);
+            // console.log(pending);
+          // }
+          // setIsLoading(false);
+          // ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
+          // for (let i = 0; i < results.rows.length; ++i) {
+          //     temp.push(results.rows.item(i));
+          // }
+          // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+          // setData(temp);
+        },
+      );
+    });
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status IS NULL',
+        [route.params.consignorCode],
+        (tx1, results) => {
+          // let temp = [];
+          // console.log(results.rows.length);
+          // if (results.rows.length > 0) {
+            setPending(results.rows.length);
             console.log(pending);
-          }
-          setIsLoading(false);
+          // }
+          // setIsLoading(false);
+          // ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
+          // for (let i = 0; i < results.rows.length; ++i) {
+          //     temp.push(results.rows.item(i));
+          // }
+          // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+          // setData(temp);
+        },
+      );
+    });
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status="notPicked"',
+        [route.params.consignorCode],
+        (tx1, results) => {
+          // let temp = [];
+          // console.log(results.rows.length);
+          // if (results.rows.length > 0) {
+            setNotPicked11(results.rows.length);
+            console.log(notPicked11);
+          // }
+          // setIsLoading(false);
+          // ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
+          // for (let i = 0; i < results.rows.length; ++i) {
+          //     temp.push(results.rows.item(i));
+          // }
+          // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
+          // setData(temp);
+        },
+      );
+    });
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status="rejected"',
+        [route.params.consignorCode],
+        (tx1, results) => {
+          // let temp = [];
+          // console.log(results.rows.length);
+          // if (results.rows.length > 0) {
+            setRejectedOrder11(results.rows.length);
+            console.log(rejectedOrder11);
+          // }
+          // setIsLoading(false);
           // ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
           // for (let i = 0; i < results.rows.length; ++i) {
           //     temp.push(results.rows.item(i));
@@ -390,21 +455,31 @@ const NewSellerSelection = ({route}) => {
               flexDirection: 'row',
               marginTop: 30,
             }}>
-            <PieChart
+            {/* <PieChart
               widthAndHeight={160}
               series={[pending, acc]}
               sliceColor={['#F44336', '#4CAF50']}
               doughnut={true}
               coverRadius={0.6}
               coverFill={'#FFF'}
-            />
+            /> */}
+            
+
+             <PieChart
+                widthAndHeight={160}
+                series={[acc, pending, notPicked11, rejectedOrder11]}
+                sliceColor={['#4CAF50', '#2196F3','#FEBE00', '#F44336' ]}
+                doughnut={true}
+                coverRadius={0.6}
+                coverFill={'#FFF'}
+              />
           </View>
           <View
             style={{
               flexDirection: 'row',
               width: '85%',
-              marginTop: 30,
-              marginBottom: 10,
+              marginTop: 25,
+              marginBottom: 5,
               alignSelf: 'center',
               justifyContent: 'space-between',
             }}>
@@ -419,13 +494,47 @@ const NewSellerSelection = ({route}) => {
             </View>
             <View
               style={{
-                backgroundColor: '#F44336',
+                backgroundColor: '#FEBE00',
+                // backgroundColor: '#FFEB3B',
+                width: '48%',
+                padding: 10,
+                borderRadius: 10,
+              }}>
+              <Text style={{color: 'white', alignSelf: 'center'}}>{notPicked11}</Text>
+            </View>
+            
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '85%',
+              marginTop: 5,
+              marginBottom: 10,
+              alignSelf: 'center',
+              justifyContent: 'space-between',
+            }}>
+           <View
+              style={{
+                // backgroundColor: '#F44336',
+                backgroundColor: '#2196F3',
                 width: '48%',
                 padding: 10,
                 borderRadius: 10,
               }}>
               <Text style={{color: 'white', alignSelf: 'center'}}>
                 {pending}
+              </Text>
+            </View>
+            <View
+              style={{
+                // backgroundColor: '#F44336',
+                backgroundColor: '#F44336',
+                width: '48%',
+                padding: 10,
+                borderRadius: 10,
+              }}>
+              <Text style={{color: 'white', alignSelf: 'center'}}>
+                {rejectedOrder11}
               </Text>
             </View>
           </View>

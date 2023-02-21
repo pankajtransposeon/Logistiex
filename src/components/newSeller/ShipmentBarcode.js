@@ -65,7 +65,7 @@ const ShipmentBarcode = ({route}) => {
     const [modalVisible11, setModalVisible11] = useState(false);
     const [DropDownValue11, setDropDownValue11] = useState(null);
     const [PartialCloseData, setPartialCloseData] = useState([]);
-
+    const [closeBagColor,setCloseBagColor]=useState('gray.300');
     const [showQRCodeModal,setShowQRCodeModal]= useState(true);
     // const PartialClose = 'https://bked.logistiex.com/ADupdatePrams/getPartialClosureReasons';
     const DisplayData11 = async() => {
@@ -367,15 +367,24 @@ const ShipmentBarcode = ({route}) => {
       const rejectDetails2 = () => {
         console.log('scan 45456');
         // setnewRejected(newrejected + 1);
-        ContinueHandle11();
+        // ContinueHandle11();
+
+      //   db.transaction((tx) => {
+      //     tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE clientShipmentReferenceNumber=?', [barcode], (tx1, results) => {
+              
+      //     });
+      // });
+
         db.transaction((tx) => {
-            tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectedReason=? WHERE clientShipmentReferenceNumber=?', [DropDownValue,barcode], (tx1, results) => {
+            tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectedReason=? WHERE clientShipmentReferenceNumber=? AND status="accepted"', [DropDownValue,barcode], (tx1, results) => {
                 let temp = [];
+                // ContinueHandle11();
                 // console.log("ddsds4545",tx1);
                 console.log('Rejected Reason : ',DropDownValue);
                 console.log('Results',results.rowsAffected);
                 console.log(results);
                 if (results.rowsAffected > 0) {
+                  ContinueHandle11();
                   console.log(barcode + 'rejected');
                   ToastAndroid.show(barcode + ' Rejected',ToastAndroid.SHORT);
                 } else {
@@ -575,6 +584,7 @@ const ShipmentBarcode = ({route}) => {
             Accepted: currentUser.Accepted + 1,
             Rejected: currentUser.Rejected,
           }));
+        // setnewAccepted(newaccepted+1);
           setnewAccepted(1 + currentUser.Accepted);
           setnewRejected(currentUser.Rejected);
         } catch (error) {
@@ -592,6 +602,8 @@ const ShipmentBarcode = ({route}) => {
             Accepted: currentUser.Accepted - 1,
             Rejected: currentUser.Rejected + 1,
           }));
+      // setnewAccepted( newaccepted-1);
+      //     setnewRejected(newrejected+1);
           setnewAccepted( currentUser.Accepted-1);
           setnewRejected(currentUser.Rejected+1);
         } catch (error) {
@@ -977,13 +989,15 @@ const ShipmentBarcode = ({route}) => {
             // })
             }} w="48%" size="lg" bg="#004aad">End Scan</Button>
 
-            <Button w="48%" size="lg" bg="#004aad" onPress={() => { if (newaccepted === 0){
+            <Button w="48%" size="lg" bg={closeBagColor} onPress={() => { if (newaccepted === 0){
+              setCloseBagColor('gray.300');
         Alert.alert('Bag is Empty', 'No Open Bag to Close', [
           {text: 'OK', onPress: () => {console.log('OK Pressed');}},
         ]);
         // ToastAndroid.show('Cannot close empty bag. Plz add some items... ',ToastAndroid.SHORT);
       return;
       }else{
+        setCloseBagColor('#004aad');
               setShowCloseBagModal(true);}
               }} >Close bag</Button>
           </View>
