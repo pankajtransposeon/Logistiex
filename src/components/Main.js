@@ -385,7 +385,7 @@ export default function Main({navigation, route}) {
       <ScrollView>
       <Box flex={1} bg="gray.300" p={4}>
         {dashboardData.map((it, index)=>{
-        if(it.completedOrder!=0 || it.pendingOrder!=0 || it.notPicked!=0 || it.rejectedOrder!=0){
+        if(it.completedOrder!==0 || it.pendingOrder!==0 || it.notPicked!==0 || it.rejectedOrder!==0){
           return (
           <Box pt={4} mb="6" rounded="md" bg="white" key={index} >
             <Box w="100%" flexDir="row" justifyContent="space-between" mb={4} px={4}>
@@ -448,7 +448,60 @@ export default function Main({navigation, route}) {
         }
         else {
           return (
-            <Text>No Data Available for {it.title}</Text>
+            <Box pt={4} mb="6" rounded="md" bg="white" key={index} >
+            <Box w="100%" flexDir="row" justifyContent="space-between" mb={4} px={4}>
+              <Box w="45%">
+                <Heading size="sm" mb={4}>{it.title}</Heading>
+                <Center>
+                <Text style={{color:'black'}}>Data not available </Text>
+                <Image style={{ width: 80, height: 80 }} source={require('../assets/noDataAvailable.jpg')} alt={'No data Image'} />
+            </Center>
+              </Box>
+              <View style={{width: '50%'}}>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10}}>
+                  <Heading size="sm">{(it.title === 'Seller Pickups' || it.title === 'Seller Deliveries') ? 'Total Sellers' : 'Total Customers'}</Heading>
+                  <Heading size="sm">{it.totalUsers}</Heading>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
+                  <View style={{flexDirection: 'row'}}>
+                    <View style={{width: 15, height: 15, backgroundColor: '#4CAF50', borderRadius: 100, marginTop: 4}} />
+                    <Text style={{marginLeft: 10, fontWeight: '500', fontSize: 14, color: 'black'}}>Completed</Text>
+                  </View>
+                  <Text style={{fontWeight: '500', fontSize: 14, color: 'black'}}>{it.completedOrder}</Text>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
+                  <View style={{flexDirection: 'row'}}>
+                    <View style={{width: 15, height: 15, backgroundColor: '#2196F3', borderRadius: 100, marginTop: 4}} />
+                    <Text style={{marginLeft: 10, fontWeight: '500', fontSize: 14, color: 'black'}}>Pending</Text>
+                  </View>
+                  <Text style={{fontWeight: '500', fontSize: 14, color: 'black'}}>{it.pendingOrder}</Text>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
+                  <View style={{flexDirection: 'row'}}>
+                    <View style={{width: 15, height: 15, backgroundColor: '#FFEB3B', borderRadius: 100, marginTop: 4}} />
+                    {it.title==='Seller Deliveries'?
+                    <Text style={{marginLeft: 10, fontWeight: '500', fontSize: 14, color: 'black'}}>Not Delivered</Text>
+                    :
+                    <Text style={{marginLeft: 10, fontWeight: '500', fontSize: 14, color: 'black'}}>Not Picked</Text>
+                    }
+                  </View>
+                  <Text style={{fontWeight: '500', fontSize: 14, color: 'black'}}>{it.notPicked}</Text>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
+                  <View style={{flexDirection: 'row'}}>
+                    <View style={{width: 15, height: 15, backgroundColor: '#F44336', borderRadius: 100, marginTop: 4}} />
+                    <Text style={{marginLeft: 10, fontWeight: '500', fontSize: 14, color: 'black'}}>Rejected</Text>
+                  </View>
+                  <Text style={{fontWeight: '500', fontSize: 14, color: 'black'}}>{it.rejectedOrder}</Text>
+                </View>
+              </View>
+            </Box>
+            {/* {it.title==='Seller Deliveries'?
+              <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries')}>New Pickup</Button>
+              :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup')}>New Pickup</Button>
+              } */}
+          </Box> 
+            // <Text>No Data Available for {it.title}</Text>
           )
         }
         })}

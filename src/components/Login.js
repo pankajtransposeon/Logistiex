@@ -23,6 +23,7 @@ export default function Login() {
       const jsonValue = JSON.stringify(data);
       await AsyncStorage.setItem('@storage_Key', jsonValue);
       // await AsyncStorage.setItem('load11', 'load');
+     await  AsyncStorage.setItem('lastSyncTime112', '');
       await AsyncStorage.setItem('apiDataLoaded', 'false');
     } catch (e) {
       console.log(e);
