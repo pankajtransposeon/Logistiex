@@ -40,7 +40,7 @@ import {
     TouchableOpacity,
     View,
     StyleSheet,
-    ToastAndroid, PermissionsAndroid
+    ToastAndroid, PermissionsAndroid, Alert,
 } from 'react-native';
 import {Badge} from 'react-native-paper';
 // import { Icon } from 'native-base';
@@ -70,12 +70,13 @@ function StackNavigators({navigation}) {
     const [isLoading, setIsLoading] = useState(false);
     const [userId, setUserId] = useState('');
     const [data, setData] = useState([]);
-    const [isLogin,setIsLogin]=useState(false);
-    let m = 0;  
+    const [isLogin,setIsLogin] = useState(false);
+    const [lastSyncTime11,setLastSyncTime] = useState('');
+    let m = 0;
     useEffect(() => {
       requestPermissions();
     }, []);
-  
+
     const requestPermissions = async () => {
       try {
         const cameraPermission = await PermissionsAndroid.request(
@@ -91,7 +92,7 @@ function StackNavigators({navigation}) {
         if (cameraPermission !== PermissionsAndroid.RESULTS.GRANTED) {
           console.log('Camera permission denied');
         }
-  
+
         const storagePermission = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
           {
@@ -105,7 +106,7 @@ function StackNavigators({navigation}) {
         if (storagePermission !== PermissionsAndroid.RESULTS.GRANTED) {
           console.log('Storage permission denied');
         }
-  
+
         const locationPermission = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           {
@@ -123,7 +124,7 @@ function StackNavigators({navigation}) {
         console.warn(error);
       }
     };
-  
+
     const getData = async () => {
         try {
             const value = await AsyncStorage.getItem('@storage_Key');
@@ -143,7 +144,7 @@ function StackNavigators({navigation}) {
             console.log(e);
         }
     };
-  
+
     useEffect(()=>{
       // This useEffect  is use to hide warnings in mobile screen .
       // LogBox.ignoreLogs(['Warning: Each child in a list should have a unique "key" prop.']);
@@ -157,7 +158,7 @@ function StackNavigators({navigation}) {
         return () => clearInterval(StartValue);
     }, []);
 
- 
+
 
     useEffect(() => {
       (async () => {
@@ -189,12 +190,25 @@ function StackNavigators({navigation}) {
         loadAPI_Data5();
         loadAPI_Data6();
     };
- 
+
     useEffect(() => {
       if (userId !== null) {
         setTimeout(()=>{Login_Data_load();},1000);
       }
     }, [userId]);
+
+    useEffect(() => {
+      if (userId !== null) {
+        AsyncStorage.getItem('lastSyncTime112')
+        .then(data11 => {
+        setLastSyncTime(data11);
+        })
+        .catch(e => {
+        console.log(e);
+        });
+      }
+    }, [userId]);
+
     const Login_Data_load = () => {
       // console.log('Login Data Load called');
       AsyncStorage.getItem('apiDataLoaded')
@@ -216,7 +230,19 @@ const push_Data = () => {
     console.log('push data function');
 
     Login_Data_load();
-    
+
+        var date = new Date();
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        var datetime = 'Last sync \n ' + hours + ':' + minutes + ' ' + ampm;
+        setLastSyncTime(datetime);
+        console.log(datetime);
+        AsyncStorage.setItem('lastSyncTime112', datetime);
+
     db.transaction(tx => {
         tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentAction="Seller Pickup" AND status IS NOT Null', [], (tx1, results) => {
             if (results.rows.length > 0) {
@@ -231,9 +257,9 @@ const push_Data = () => {
                         accepted11[0] = true;
                     }
                     // console.log(results.rows.item(i));
-                    tx.executeSql('SELECT * FROM SyncSellerPickUp where consignorCode=?', [results.rows.item(i).consignorCode], (tx1, results11) => {  
-                      console.log('API push');
-                      console.log(results.rows.item(i).PRSNumber);
+                    tx.executeSql('SELECT * FROM SyncSellerPickUp where consignorCode=?', [results.rows.item(i).consignorCode], (tx1, results11) => {
+                        console.log('API push');
+                        console.log(results.rows.item(i).PRSNumber);
                         setIsLoading(!isLoading);
                         console.log(results11.rows.item(0).consignorLocation);
                         console.log(results.rows.item(i).status);
@@ -250,7 +276,7 @@ const push_Data = () => {
                             pickupTime: new Date().toJSON().slice(0, 10).replace(/-/g, '/'),
                             latitude: results11.rows.item(0).consignorLocation,
                             longitude: results11.rows.item(0).consignorLongitude,
-                            packagingId : results.rows.item(i).packagingId,
+                            packagingId: results.rows.item(i).packagingId,
                             // packagingId: 'PSN00100',
                             packageingStatus: 1,
                             PRSNumber: 'results.rows.item(i).PRSNumber',
@@ -259,12 +285,25 @@ const push_Data = () => {
                             temp11++;
                             setIsLoading(false);
                             console.log(response.data);
-                            console.log('Data has been pushed'+i);
+                            console.log('Data has been pushed' + i);
                             if (temp11 === results.rows.length) {
                                 temp11 = 0;
                                 ToastAndroid.show('Data Pushed Successfully', ToastAndroid.SHORT);
                                 console.log('ok now pulling the data');
                                 pull_API_Data();
+
+                                // Last Sync Time Update code
+                                // var date = new Date();
+                                // var hours = date.getHours();
+                                // var minutes = date.getMinutes();
+                                // var ampm = hours >= 12 ? 'pm' : 'am';
+                                // hours = hours % 12;
+                                // hours = hours ? hours : 12;
+                                // minutes = minutes < 10 ? '0' + minutes : minutes;
+                                // var datetime = 'Last sync \n ' + hours + ':' + minutes + ' ' + ampm;
+                                // setLastSyncTime(datetime);
+                                // console.log(datetime);
+                                // AsyncStorage.setItem('lastSyncTime112', datetime);
                             }
                         }).catch(error => {
                             setIsLoading(false);
@@ -274,13 +313,14 @@ const push_Data = () => {
                     });
                 }
             } else {
-              console.log('pull11');
+                console.log('Only Pulling Data.No data to push...');
                 pull_API_Data();
             }
         },);
     });
 
 };
+
 
     const sync11 = () => {
         NetInfo.fetch().then(state => {
@@ -336,7 +376,7 @@ const push_Data = () => {
                             res.data.data[i].PRSNumber,
                             res.data.data[i].ForwardPickups,
                             'close',
-                            " "
+                            ' ',
                         ], (sqlTxn, _res) => {
                             // console.log(`\n Data Added to local db successfully1212`);
                             // console.log(res);
@@ -599,7 +639,7 @@ const push_Data = () => {
               createTables10();
               // console.log('Table10 API OK 123: ' + res.data.data.length);
               for (let i = 0; i < res.data.data.length; i++) { // console.log(res.data.data[i].consignorCode);
-                 if(res.data.data[i].shipmentStatus === "RTO"){
+                 if (res.data.data[i].shipmentStatus === 'RTO'){
                   db.transaction(txn => {
                     txn.executeSql(`INSERT OR REPLACE INTO SellerMainScreenDetailsRTO( 
               clientShipmentReferenceNumber ,
@@ -1102,12 +1142,13 @@ const push_Data = () => {
                 style={{fontSize: 30, marginLeft: 10, color: 'white'}}
                 onPress={() => {
                 console.log('dashboard menu clicked');
-                  navigation.dispatch(DrawerActions.openDrawer())
+                  navigation.dispatch(DrawerActions.openDrawer());
                 }}
               />
             ),
             headerRight: () => (
               <View style={{flexDirection: 'row', marginRight: 10}}>
+                <Text style={{fontSize: 12, color: 'white'}}>{lastSyncTime11}</Text>
                 <TouchableOpacity
                   style={{marginRight: 15}}
                   onPress={() => {
@@ -1115,7 +1156,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="sync"
-                    style={{fontSize: 30, color: 'white'}}
+                    style={{fontSize: 30, color: 'white',marginTop:5}}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -1125,7 +1166,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="bell-outline"
-                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                    style={{fontSize: 30, color: 'white', marginRight: 5,marginTop:5}}
                   />
                  {
                     data.length ? (
@@ -1138,7 +1179,7 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
-                    ):null
+                    ) : null
                   }
                 </TouchableOpacity>
               </View>
@@ -1166,6 +1207,7 @@ const push_Data = () => {
             ),
             headerRight: () => (
               <View style={{flexDirection: 'row', marginRight: 10}}>
+             <Text style={{fontSize: 12, color: 'white'}}>{lastSyncTime11}</Text>
                 <TouchableOpacity
                   style={{marginRight: 15}}
                   onPress={() => {
@@ -1173,7 +1215,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="sync"
-                    style={{fontSize: 30, color: 'white'}}
+                    style={{fontSize: 30, color: 'white',marginTop:5}}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -1183,7 +1225,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="bell-outline"
-                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                    style={{fontSize: 30, color: 'white', marginRight: 5,marginTop:5}}
                   />
                   {
                     data.length ? (
@@ -1196,7 +1238,7 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
-                    ):null
+                    ) : null
                   }
                 </TouchableOpacity>
               </View>
@@ -1235,6 +1277,7 @@ const push_Data = () => {
             ),
             headerRight: () => (
               <View style={{flexDirection: 'row', marginRight: 10}}>
+             <Text style={{fontSize: 12, color: 'white'}}>{lastSyncTime11}</Text>
                 <TouchableOpacity
                   style={{marginRight: 15}}
                   onPress={() => {
@@ -1242,7 +1285,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="sync"
-                    style={{fontSize: 30, color: 'white'}}
+                    style={{fontSize: 30, color: 'white',marginTop:5}}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -1252,7 +1295,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="bell-outline"
-                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                    style={{fontSize: 30, color: 'white', marginRight: 5,marginTop:5}}
                   />
                   {
                     data.length ? (
@@ -1265,7 +1308,7 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
-                    ):null
+                    ) : null
                   }
                 </TouchableOpacity>
               </View>
@@ -1292,6 +1335,7 @@ const push_Data = () => {
             ),
             headerRight: () => (
               <View style={{flexDirection: 'row', marginRight: 10}}>
+             <Text style={{fontSize: 12, color: 'white'}}>{lastSyncTime11}</Text>
                 <TouchableOpacity
                   style={{marginRight: 15}}
                   onPress={() => {
@@ -1299,7 +1343,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="sync"
-                    style={{fontSize: 30, color: 'white'}}
+                    style={{fontSize: 30, color: 'white',marginTop:5}}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -1309,7 +1353,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="bell-outline"
-                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                    style={{fontSize: 30, color: 'white', marginRight: 5,marginTop:5}}
                   />
                   {
                     data.length ? (
@@ -1322,7 +1366,7 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
-                    ):null
+                    ) : null
                   }
                 </TouchableOpacity>
               </View>
@@ -1349,7 +1393,7 @@ const push_Data = () => {
             ),
             headerRight: () => (
               <View style={{flexDirection: 'row', marginRight: 10}}>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   style={{marginRight: 15}}
                   onPress={() => {
                     sync11();
@@ -1358,7 +1402,7 @@ const push_Data = () => {
                     name="sync"
                     style={{fontSize: 30, color: 'white'}}
                   />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity
                   onPress={() => {
                     navigation.navigate('NewSellerAdditionNotification');
@@ -1379,7 +1423,7 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
-                    ):null
+                    ) : null
                   }
                 </TouchableOpacity>
               </View>
@@ -1406,6 +1450,7 @@ const push_Data = () => {
             ),
             headerRight: () => (
               <View style={{flexDirection: 'row', marginRight: 10}}>
+             <Text style={{fontSize: 12, color: 'white'}}>{lastSyncTime11}</Text>
                 <TouchableOpacity
                   style={{marginRight: 15}}
                   onPress={() => {
@@ -1413,7 +1458,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="sync"
-                    style={{fontSize: 30, color: 'white'}}
+                    style={{fontSize: 30, color: 'white',marginTop:5}}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -1423,7 +1468,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="bell-outline"
-                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                    style={{fontSize: 30, color: 'white', marginRight: 5,marginTop:5}}
                   />
                   {
                     data.length ? (
@@ -1436,7 +1481,7 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
-                    ):null
+                    ) : null
                   }
                 </TouchableOpacity>
               </View>
@@ -1463,6 +1508,7 @@ const push_Data = () => {
             ),
             headerRight: () => (
               <View style={{flexDirection: 'row', marginRight: 10}}>
+             <Text style={{fontSize: 12, color: 'white'}}>{lastSyncTime11}</Text>
                 <TouchableOpacity
                   style={{marginRight: 15}}
                   onPress={() => {
@@ -1470,7 +1516,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="sync"
-                    style={{fontSize: 30, color: 'white'}}
+                    style={{fontSize: 30, color: 'white',marginTop:5}}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -1480,7 +1526,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="bell-outline"
-                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                    style={{fontSize: 30, color: 'white', marginRight: 5,marginTop:5}}
                   />
                   {
                     data.length ? (
@@ -1493,7 +1539,7 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
-                    ):null
+                    ) : null
                   }
                 </TouchableOpacity>
               </View>
@@ -1521,6 +1567,7 @@ const push_Data = () => {
             ),
             headerRight: () => (
               <View style={{flexDirection: 'row', marginRight: 10}}>
+             <Text style={{fontSize: 12, color: 'white'}}>{lastSyncTime11}</Text>
                 <TouchableOpacity
                   style={{marginRight: 15}}
                   onPress={() => {
@@ -1528,7 +1575,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="sync"
-                    style={{fontSize: 30, color: 'white'}}
+                    style={{fontSize: 30, color: 'white',marginTop:5}}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -1538,7 +1585,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="bell-outline"
-                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                    style={{fontSize: 30, color: 'white', marginRight: 5,marginTop:5}}
                   />
                   {
                     data.length ? (
@@ -1551,7 +1598,7 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
-                    ):null
+                    ) : null
                   }
                 </TouchableOpacity>
               </View>
@@ -1579,6 +1626,7 @@ const push_Data = () => {
             ),
             headerRight: () => (
               <View style={{flexDirection: 'row', marginRight: 10}}>
+                <Text style={{fontSize: 12, color: 'white'}}>{lastSyncTime11}</Text>
                 <TouchableOpacity
                   style={{marginRight: 15}}
                   onPress={() => {
@@ -1586,7 +1634,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="sync"
-                    style={{fontSize: 30, color: 'white'}}
+                    style={{fontSize: 30, color: 'white',marginTop:5}}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -1596,7 +1644,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="bell-outline"
-                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                    style={{fontSize: 30, color: 'white', marginRight: 5,marginTop:5}}
                   />
                   {
                     data.length ? (
@@ -1609,7 +1657,7 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
-                    ):null
+                    ) : null
                   }
                 </TouchableOpacity>
               </View>
@@ -1637,6 +1685,7 @@ const push_Data = () => {
             ),
             headerRight: () => (
               <View style={{flexDirection: 'row', marginRight: 10}}>
+             <Text style={{fontSize: 12, color: 'white'}}>{lastSyncTime11}</Text>
                 <TouchableOpacity
                   style={{marginRight: 15}}
                   onPress={() => {
@@ -1644,7 +1693,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="sync"
-                    style={{fontSize: 30, color: 'white'}}
+                    style={{fontSize: 30, color: 'white',marginTop:5}}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -1654,7 +1703,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="bell-outline"
-                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                    style={{fontSize: 30, color: 'white', marginRight: 5,marginTop:5}}
                   />
                   {
                     data.length ? (
@@ -1667,7 +1716,7 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
-                    ):null
+                    ) : null
                   }
                 </TouchableOpacity>
               </View>
@@ -1694,6 +1743,7 @@ const push_Data = () => {
             ),
             headerRight: () => (
               <View style={{flexDirection: 'row', marginRight: 10}}>
+             <Text style={{fontSize: 12, color: 'white'}}>{lastSyncTime11}</Text>
                 <TouchableOpacity
                   style={{marginRight: 15}}
                   onPress={() => {
@@ -1701,7 +1751,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="sync"
-                    style={{fontSize: 30, color: 'white'}}
+                    style={{fontSize: 30, color: 'white',marginTop:5}}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -1711,7 +1761,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="bell-outline"
-                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                    style={{fontSize: 30, color: 'white', marginRight: 5,marginTop:5}}
                   />
                   {
                     data.length ? (
@@ -1724,7 +1774,7 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
-                    ):null
+                    ) : null
                   }
                 </TouchableOpacity>
               </View>
@@ -1751,6 +1801,7 @@ const push_Data = () => {
             ),
             headerRight: () => (
               <View style={{flexDirection: 'row', marginRight: 10}}>
+             <Text style={{fontSize: 12, color: 'white'}}>{lastSyncTime11}</Text>
                 <TouchableOpacity
                   style={{marginRight: 15}}
                   onPress={() => {
@@ -1758,7 +1809,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="sync"
-                    style={{fontSize: 30, color: 'white'}}
+                    style={{fontSize: 30, color: 'white',marginTop:5}}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -1768,7 +1819,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="bell-outline"
-                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                    style={{fontSize: 30, color: 'white', marginRight: 5,marginTop:5}}
                   />
                   {
                     data.length ? (
@@ -1781,7 +1832,7 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
-                    ):null
+                    ) : null
                   }
                 </TouchableOpacity>
               </View>
@@ -1808,6 +1859,7 @@ const push_Data = () => {
             ),
             headerRight: () => (
               <View style={{flexDirection: 'row', marginRight: 10}}>
+             <Text style={{fontSize: 12, color: 'white'}}>{lastSyncTime11}</Text>
                 <TouchableOpacity
                   style={{marginRight: 15}}
                   onPress={() => {
@@ -1815,7 +1867,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="sync"
-                    style={{fontSize: 30, color: 'white'}}
+                    style={{fontSize: 30, color: 'white',marginTop:5}}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -1825,7 +1877,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="bell-outline"
-                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                    style={{fontSize: 30, color: 'white', marginRight: 5,marginTop:5}}
                   />
                   {
                     data.length ? (
@@ -1838,7 +1890,7 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
-                    ):null
+                    ) : null
                   }
                 </TouchableOpacity>
               </View>
@@ -1865,6 +1917,7 @@ const push_Data = () => {
             ),
             headerRight: () => (
               <View style={{flexDirection: 'row', marginRight: 10}}>
+             {/* <Text style={{fontSize: 12, color: 'white'}}>{lastSyncTime11}</Text>
                 <TouchableOpacity
                   style={{marginRight: 15}}
                   onPress={() => {
@@ -1872,9 +1925,9 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="sync"
-                    style={{fontSize: 30, color: 'white'}}
+                    style={{fontSize: 30, color: 'white',marginTop:5}}
                   />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity
                   onPress={() => {
                     navigation.navigate('NewSellerAdditionNotification');
@@ -1882,7 +1935,7 @@ const push_Data = () => {
                   }}>
                   <MaterialIcons
                     name="bell-outline"
-                    style={{fontSize: 30, color: 'white', marginRight: 5}}
+                    style={{fontSize: 30, color: 'white', marginRight: 5,marginTop:5}}
                   />
                   {
                     data.length ? (
@@ -1895,7 +1948,7 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
-                    ):null
+                    ) : null
                   }
                 </TouchableOpacity>
               </View>
@@ -1943,7 +1996,7 @@ const push_Data = () => {
             ),
             headerRight: () => (
               <View style={{flexDirection: 'row', marginRight: 10}}>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   style={{marginRight: 15}}
                   onPress={() => {
                     sync11();
@@ -1951,8 +2004,8 @@ const push_Data = () => {
                   <MaterialIcons
                     name="sync"
                     style={{fontSize: 30, color: 'white'}}
-                  />
-                </TouchableOpacity>
+                  /> */}
+                {/* </TouchableOpacity> */}
                 <TouchableOpacity
                   onPress={() => {
                     navigation.navigate('NewSellerAdditionNotification');
@@ -1973,7 +2026,7 @@ const push_Data = () => {
                     }}>
                     {data.length}
                   </Badge>
-                    ):null
+                    ) : null
                   }
                 </TouchableOpacity>
               </View>
@@ -2231,7 +2284,7 @@ function CustomDrawerContent({navigation}) {
               <Text style={{color: '#004aad'}}>{TripValue}</Text>
             </Button>
 
-            
+
           </Box>
         </View>
       ) : null}
