@@ -53,6 +53,7 @@ export default function Main({navigation, route}) {
         if (StartEndTrip !== null) {
           const data = JSON.parse(StartEndTrip);
           setTripValue(data);
+          console.log(data, 'startEnddata')
           await AsyncStorage.removeItem('@StartEndTrip');
         }
       } catch (e) {
@@ -80,6 +81,19 @@ export default function Main({navigation, route}) {
             } 
         } catch (e) {
             console.log(e);
+        }
+
+        try {
+       
+          const StartEndTrip = await AsyncStorage.getItem('@StartEndTrip');
+          if (StartEndTrip !== null) {
+            const data = JSON.parse(StartEndTrip);
+            setTripValue(data);
+            console.log(data, 'startEnddata')
+            await AsyncStorage.removeItem('@StartEndTrip');
+          }
+        } catch (e) {
+          console.log(e);
         }
     };
 

@@ -76,7 +76,7 @@ const HandoverShipmentRTO = ({route}) => {
         console.log('scan 4545454');
 
         db.transaction((tx) => {
-            tx.executeSql('UPDATE SellerMainScreenDetailsRTO SET status="accepted" WHERE consignorCode=?', [barcode], (tx1, results) => {
+            tx.executeSql('UPDATE SellerMainScreenDetailsRTO SET status="accepted" WHERE (awbNo = ? OR clientShipmentReferenceNumber = ? OR clientRefId = ?)', [barcode, barcode, barcode], (tx1, results) => {
                 let temp = [];
                 console.log('Results',results.rowsAffected);
                 console.log(results);
@@ -107,7 +107,6 @@ const HandoverShipmentRTO = ({route}) => {
                     temp.push(results.rows.item(i));
                 }
                 setData(temp);
-                console.log(temp, 'datatanmay');
             });
         });
     };
@@ -115,8 +114,8 @@ const HandoverShipmentRTO = ({route}) => {
     const getCategories = (data) => {
       db.transaction(txn => {
         txn.executeSql(
-          'SELECT * FROM SellerMainScreenDetailsRTO WHERE consignorCode = ? AND status = \'Rejected\' ',
-          [data],
+          'SELECT * FROM SellerMainScreenDetailsRTO WHERE (awbNo = ? OR clientShipmentReferenceNumber = ? OR clientRefId = ?) AND status = \'Rejected\' ',
+          [data, data, data],
           (sqlTxn, res) => {
             console.log('categories retrieved successfully', res.rows.length);
             if (!res.rows.length){
@@ -153,7 +152,6 @@ const HandoverShipmentRTO = ({route}) => {
     };
 
     const UpdateShipmentList = () => {
-      // console.log('ram', acceptedArray.toString())
       db.transaction(txn => {
         txn.executeSql('UPDATE SyncSellerPickUp SET ShipmentListArray=? WHERE consignorCode=?', [
             acceptedArray.toString(),
