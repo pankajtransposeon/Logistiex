@@ -89,7 +89,7 @@ useEffect(() => {
       <ScrollView>
       <Box flex={1} bg="coolGray.100" p={4}>
             {(data) &&
-                data.map((d, i)=>{
+                data.map((d, i )=>{
                 return(
                 <Box key={i} width='100%' marginBottom='5'  alignItems="center">
                     <Box width='100%' rounded="lg" overflow="hidden" borderColor="coolGray.100" borderWidth="1" _dark={{

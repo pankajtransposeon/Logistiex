@@ -8,7 +8,7 @@ export default function StartEndDetails({navigation,route}) {
   const [printData,setPrintData]=useState([])
   
     useEffect(() => {
-        axios.get("https://bked.logistiex.com/UserTripInfo/getUserTripInfo", {
+        axios.get("https://bkedtest.logistiex.com/UserTripInfo/getUserTripInfo", {
         params: {
         tripID: route.params.tripID, 
       }
@@ -17,7 +17,7 @@ export default function StartEndDetails({navigation,route}) {
       setData(response.data);
       setPrintData(response.data.res_data);
       }).catch(error => {
-      console.log(error);
+      console.log(error, 'error');
       });
     }, []);
     
