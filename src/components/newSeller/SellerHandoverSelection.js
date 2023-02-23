@@ -61,7 +61,7 @@ const NewSellerSelection = ({route}) => {
   const notPicked = () => {
     db.transaction(tx => {
       tx.executeSql(
-        'UPDATE SellerMainScreenDetailsDelivery SET status="notDelivered" , rejectedReason=? WHERE status IS Null',
+        'UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectedReason=? WHERE status IS Null',
         [DropDownValue],
         (tx1, results) => {
           let temp = [];
