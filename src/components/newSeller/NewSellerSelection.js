@@ -36,6 +36,7 @@ const db = openDatabase({
 });
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import PieChart from 'react-native-pie-chart';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NewSellerSelection = ({route}) => {
   const [barcodeValue, setBarcodeValue] = useState('');
@@ -62,6 +63,7 @@ const NewSellerSelection = ({route}) => {
     closePickup11();
   };
   const notPicked = () => {
+    AsyncStorage.setItem('refresh11', 'refresh');
     db.transaction(tx => {
       tx.executeSql(
         'UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE status IS Null',
@@ -131,6 +133,24 @@ const NewSellerSelection = ({route}) => {
     return unsubscribe;
   }, [navigation]);
 
+  const getData = async () => {
+    try {
+        const value = await AsyncStorage.getItem('refresh11');
+        if (value === 'refresh') {
+            loadSellerPickupDetails();
+        } 
+    } catch (e) {
+        console.log(e);
+    }
+   
+};
+
+useEffect(() => {
+    const StartValue = setInterval(() => {
+        getData();
+    }, 100);
+    return () => clearInterval(StartValue);
+}, []);
   //   useEffect(() => {
   //     (async () => {
   //         loadSellerPickupDetails();
@@ -141,7 +161,12 @@ const NewSellerSelection = ({route}) => {
     loadSellerPickupDetails();
   };
 
-  const loadSellerPickupDetails = () => {
+  const loadSellerPickupDetails = async() => {
+    setAcc(1);
+        setPending(1);
+        setNotPicked11(1);
+        setRejectedOrder11(1);
+    await AsyncStorage.setItem('refresh11', 'notrefresh');
     // setIsLoading(!isLoading);
     db.transaction(tx => {
       tx.executeSql(
@@ -152,7 +177,7 @@ const NewSellerSelection = ({route}) => {
           // console.log(results.rows.length);
           // if (results.rows.length > 0) {
             setAcc(results.rows.length);
-            console.log(acc);
+            // console.log(acc);
             // setPending(route.params.Forward - results.rows.length);
             // console.log(pending);
           // }
@@ -175,7 +200,7 @@ const NewSellerSelection = ({route}) => {
           // console.log(results.rows.length);
           // if (results.rows.length > 0) {
             setPending(results.rows.length);
-            console.log(pending);
+            // console.log(pending);
           // }
           // setIsLoading(false);
           // ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
@@ -196,7 +221,7 @@ const NewSellerSelection = ({route}) => {
           // console.log(results.rows.length);
           // if (results.rows.length > 0) {
             setNotPicked11(results.rows.length);
-            console.log(notPicked11);
+            // console.log(notPicked11);
           // }
           // setIsLoading(false);
           // ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
@@ -217,7 +242,7 @@ const NewSellerSelection = ({route}) => {
           // console.log(results.rows.length);
           // if (results.rows.length > 0) {
             setRejectedOrder11(results.rows.length);
-            console.log(rejectedOrder11);
+            // console.log(rejectedOrder11);
           // }
           // setIsLoading(false);
           // ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
@@ -490,7 +515,7 @@ const NewSellerSelection = ({route}) => {
                 padding: 10,
                 borderRadius: 10,
               }}>
-              <Text style={{color: 'white', alignSelf: 'center'}}>{acc}</Text>
+              <Text style={{color: 'white', alignSelf: 'center'}}>Accepted : {acc}</Text>
             </View>
             <View
               style={{
@@ -500,7 +525,7 @@ const NewSellerSelection = ({route}) => {
                 padding: 10,
                 borderRadius: 10,
               }}>
-              <Text style={{color: 'white', alignSelf: 'center'}}>{notPicked11}</Text>
+              <Text style={{color: 'white', alignSelf: 'center'}}>Not Picked : {notPicked11}</Text>
             </View>
             
           </View>
@@ -522,7 +547,7 @@ const NewSellerSelection = ({route}) => {
                 borderRadius: 10,
               }}>
               <Text style={{color: 'white', alignSelf: 'center'}}>
-                {pending}
+                Pending : {pending}
               </Text>
             </View>
             <View
@@ -534,7 +559,7 @@ const NewSellerSelection = ({route}) => {
                 borderRadius: 10,
               }}>
               <Text style={{color: 'white', alignSelf: 'center'}}>
-                {rejectedOrder11}
+                Rejected : {rejectedOrder11}
               </Text>
             </View>
           </View>
