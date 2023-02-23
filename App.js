@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import 'react-native-gesture-handler';
 import {
@@ -227,7 +229,7 @@ function StackNavigators({navigation}) {
         });
     };
 const push_Data = () => {
-    console.log('push data function');
+    console.log('push data function',new Date().toJSON().slice(0, 10).replace(/-/g, '/'));
 
     Login_Data_load();
 
@@ -238,6 +240,7 @@ const push_Data = () => {
         hours = hours % 12;
         hours = hours ? hours : 12;
         minutes = minutes < 10 ? '0' + minutes : minutes;
+        var time=hours + ':' + minutes + ' ' + ampm;
         var datetime = 'Last sync \n ' + hours + ':' + minutes + ' ' + ampm;
         setLastSyncTime(datetime);
         console.log(datetime);
@@ -273,11 +276,10 @@ const push_Data = () => {
                             isAccepted: accepted11[0],
                             rejectionReason: results.rows.item(i).rejectedReason,
                             consignorCode: results.rows.item(i).consignorCode,
-                            pickupTime: new Date().toJSON().slice(0, 10).replace(/-/g, '/'),
+                            pickupTime : time,
                             latitude: results11.rows.item(0).consignorLocation,
                             longitude: results11.rows.item(0).consignorLongitude,
                             packagingId: results.rows.item(i).packagingId,
-                            // packagingId: 'PSN00100',
                             packageingStatus: 1,
                             PRSNumber: 'results.rows.item(i).PRSNumber',
                             pickupBagId: 'ss121',
@@ -410,7 +412,7 @@ const push_Data = () => {
                     // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
                     // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
                 }
-                if (m === 6){
+                if (m === 7){
                   ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
                   setIsLoading(false);
                   setIsLogin(true);
@@ -420,7 +422,7 @@ const push_Data = () => {
 
                   AsyncStorage.setItem('refresh11', 'refresh');
                 } else {
-                console.log('Only ' + m + ' APIs loaded out of 6 ');
+                console.log('Only ' + m + ' APIs loaded out of 7 ');
               }
                 // m++;
                 // ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
@@ -579,6 +581,7 @@ const push_Data = () => {
               // console.log('value of m2 '+m);
               // viewDetails2();
               // setIsLoading(false);
+              AsyncStorage.setItem('refresh11', 'refresh');
           }, error => {
               console.log(error);
           },);
@@ -966,11 +969,11 @@ const push_Data = () => {
                 //     temp.push(results.rows.item(i));
                 // }
                 // m++;
-                if (m <= 5){
-                  // ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
-                  console.log('Waiting for ' + ( 6 - m ) + ' API to load. Plz wait...');
-                  // m = 0;
-                }
+                // if (m <= 6){
+                //   // ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
+                //   console.log('Waiting for ' + ( 7 - m ) + ' API to load. Plz wait...');
+                //   // m = 0;
+                // }
               //  else {
               //   console.log('Only ' + m + ' APIs loaded out of 6 ');
               // }

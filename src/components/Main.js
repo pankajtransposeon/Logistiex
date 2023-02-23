@@ -467,7 +467,7 @@ export default function Main({navigation, route}) {
               <Box w="45%">
                 <Heading size="sm" mb={4}>{it.title}</Heading>
                 <Center>
-                <Text style={{color:'black'}}>Data not available </Text>
+                <Text style={{color:'black'}}>No assignment for {it.title} </Text>
                 <Image style={{ width: 80, height: 80 }} source={require('../assets/noDataAvailable.jpg')} alt={'No data Image'} />
             </Center>
               </Box>
