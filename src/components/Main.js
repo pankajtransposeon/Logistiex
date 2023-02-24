@@ -466,7 +466,7 @@ export default function Main({navigation, route}) {
               </View>
             </Box>
             {it.title==='Seller Deliveries'?
-              <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries')}>New Pickup</Button>
+              <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries',{Forward:Forward, Reverse:Reverse, Trip:TripValue})}>New Delivery</Button>
               :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup',{Forward:Forward, Reverse:Reverse, Trip:TripValue})}>New Pickup</Button>
               }
           </Box>        
