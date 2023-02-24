@@ -45,6 +45,8 @@ export default function Main({navigation, route}) {
     const [isLoading, setIsLoading] = useState(false);
     const [isLoading1, setIsLoading1] = useState(false);
     const [TripValue, setTripValue] = useState('Start Trip');
+    const [Forward,setForward] = useState(0);
+    const [Reverse,setReverse] = useState(0);
     
     const getDataTrip = async () => {
       try {
@@ -145,6 +147,11 @@ export default function Main({navigation, route}) {
                 setSpp(results.rows.length);
             });
         });
+        db.transaction((tx) => {
+          tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentAction="Seller Pickup"', [], (tx1, results) => {
+              setForward(results.rows.length);
+          });
+      });
 
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND status="accepted"', [], (tx1, results) => {
@@ -190,6 +197,11 @@ export default function Main({navigation, route}) {
             setSpp1(results.rows.length);
         });
     });
+    db.transaction((tx) => {
+      tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentAction="Seller Delivery"', [], (tx1, results) => {
+          setReverse(results.rows.length);
+      });
+  });
 
     db.transaction((tx) => {
         tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND status="accepted"', [], (tx1, results) => {
@@ -455,7 +467,7 @@ export default function Main({navigation, route}) {
             </Box>
             {it.title==='Seller Deliveries'?
               <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries')}>New Pickup</Button>
-              :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup')}>New Pickup</Button>
+              :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup',{Forward:Forward, Reverse:Reverse, Trip:TripValue})}>New Pickup</Button>
               }
           </Box>        
           );
