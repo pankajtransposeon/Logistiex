@@ -236,12 +236,12 @@ const push_Data = () => {
         var date = new Date();
         var hours = date.getHours();
         var minutes = date.getMinutes();
-        var ampm = hours >= 12 ? 'pm' : 'am';
+        var ampm = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12;
         hours = hours ? hours : 12;
         minutes = minutes < 10 ? '0' + minutes : minutes;
-        var time=hours + ':' + minutes + ' ' + ampm;
-        var datetime = 'Last sync \n ' + hours + ':' + minutes + ' ' + ampm;
+        var time = hours + ':' + minutes + ' ' + ampm;
+        var datetime = 'Last Sync\n' + hours + ':' + minutes + ' ' + ampm;
         setLastSyncTime(datetime);
         console.log(datetime);
         AsyncStorage.setItem('lastSyncTime112', datetime);
@@ -280,9 +280,13 @@ const push_Data = () => {
                             latitude: results11.rows.item(0).consignorLocation,
                             longitude: results11.rows.item(0).consignorLongitude,
                             packagingId: results.rows.item(i).packagingId,
-                            packageingStatus: 1,
+                            packagingStatus: 1,
                             PRSNumber: 'results.rows.item(i).PRSNumber',
-                            pickupBagId: 'ss121',
+                            // pickupBagId: 'ss121',
+                            bagId:'ss121',
+                            scanStatus:'ok',
+                            bagSealNo:'bagseaalno',
+                            eventTime:'time',
                         }).then(response => {
                             temp11++;
                             setIsLoading(false);
