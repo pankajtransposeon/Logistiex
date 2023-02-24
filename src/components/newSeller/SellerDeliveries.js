@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import {
-    ArrowForwardIcon,
+    ChevronRightIcon,
     NativeBaseProvider,
     Box,
     Image,
@@ -39,7 +39,7 @@ const SellerDeliveries = ({route}) => {
         (async () => {
             loadDetails();
         })();
-    }, [data]);
+    }, []);
     const searched = (keyword1) => (c) => {
         let f = c.consignorName;
         return (f.includes(keyword1));
@@ -81,7 +81,7 @@ return (
                 <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{single.ForwardPickups}</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >{single.ReverseDeliveries}</Text></DataTable.Cell>
-                <ArrowForwardIcon style={{color:'#004aad',marginTop:8}} />
+                <ChevronRightIcon style={{color:'#004aad',marginTop:8}} />
               </DataTable.Row>
             ))
           :
