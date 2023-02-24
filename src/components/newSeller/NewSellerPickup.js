@@ -71,9 +71,10 @@ return (
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Forward Pickups</Text></DataTable.Title>
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Reverse Deliveries</Text></DataTable.Title>
             </DataTable.Header>
-            {route.params.Trip!='Start Trip' ?
-            data && data.length > 0  &&
+            {route.params.Trip !== 'Start Trip' ?
+            data && data.length > 0  && ((Math.abs(route.params.Forward) + Math.abs(route.params.Reverse)) !== 0) &&
             data.filter(searched(keyword)).map((single, i) => (
+                // if(route.params.Forward !=0 && route.params.Reverse !=0){
               <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} key={single.consignorName} onPress={() =>{navigation.navigate('NewSellerSelection',{
                 paramKey : single.consignorCode,
                 Forward : route.params.Forward,
@@ -94,9 +95,10 @@ return (
                 <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >{route.params.Reverse}</Text></DataTable.Cell>
                 <ChevronRightIcon style={{color:'#004aad',marginTop:8}} />
               </DataTable.Row>
+            // }
             ))
         :
-        data && data.length > 0  &&
+        data && data.length > 0  && ((Math.abs(route.params.Forward) + Math.abs(route.params.Reverse)) !== 0) &&
             data.filter(searched(keyword)).map((single, i) => (
               <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} key={single.consignorName} >
                 <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>

@@ -62,8 +62,9 @@ return (
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Forward Pickups</Text></DataTable.Title>
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Return Deliveries</Text></DataTable.Title>
             </DataTable.Header>
-            {data && data.length > 0 ?
+            {data && data.length > 0  ?
             data.filter(searched(keyword)).map((single, i) => (
+                 (Math.abs(single.ForwardPickups) + Math.abs(single.ReverseDeliveries)) !== 0 &&
               <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} key={single.consignorName} onPress={() =>{navigation.navigate('SellerHandoverSelection',{
                 paramKey : single.consignorCode,
                 Forward : single.ForwardPickups,
