@@ -23,6 +23,7 @@ import {
   Alert,
   TouchableWithoutFeedbackBase,
   ToastAndroid,
+  Linking,
 } from 'react-native';
 import Lottie from 'lottie-react-native';
 import {ProgressBar} from '@react-native-community/progress-bar-android';
@@ -320,11 +321,13 @@ useEffect(() => {
   };
 
   const triggerCall = () => {
-    const args = {
-      number: phone,
-      prompt: false,
-    };
-    call(args).catch(console.error);
+    console.log(phone);
+    Linking.openURL('tel:' + phone);
+    // const args = {
+    //   number: phone,
+    //   prompt: false,
+    // };
+    // call(args).catch(console.error);
   };
 
   var TotalpickUp = 0;

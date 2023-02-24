@@ -314,7 +314,7 @@ const push_Data = () => {
                         }).catch(error => {
                             setIsLoading(false);
                             console.log(error);
-                        });
+                        }); 
 
                     });
                 }
