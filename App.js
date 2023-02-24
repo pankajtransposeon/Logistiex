@@ -283,10 +283,10 @@ const push_Data = () => {
                             packagingStatus: 1,
                             PRSNumber: 'results.rows.item(i).PRSNumber',
                             // pickupBagId: 'ss121',
-                            bagId:'ss121',
-                            scanStatus:'ok',
-                            bagSealNo:'bagseaalno',
-                            eventTime:'time',
+                            bagId:"ss121",
+                            scanStatus:"1221",
+                            bagSealNo:"21212",
+                            eventTime:"47474"
                         }).then(response => {
                             temp11++;
                             setIsLoading(false);
