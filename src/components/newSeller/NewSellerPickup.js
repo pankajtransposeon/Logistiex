@@ -104,6 +104,8 @@ return (
                 consignorCity :single.consignorCity,
                 consignorPincode :single.consignorPincode,
                 // consignorAddress : JSON.parse(single.consignorAddress),
+                consignorLatitude :single.consignorLocation,
+                consignorLongitude :single.consignorLongitude,
                 contactPersonName:single.contactPersonName,
                 consignorName : single.consignorName,
                 PRSNumber : single.PRSNumber,

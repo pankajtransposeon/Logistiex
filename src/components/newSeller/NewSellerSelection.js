@@ -362,6 +362,25 @@ useEffect(() => {
     setDropDownValue(item);
   }
 
+  function openMap() {
+    var url = null;
+    if(route.params.consignorLatitude && route.params.consignorLongitude){
+      url="https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination="+route.params.consignorLatitude+","+route.params.consignorLongitude;
+    }
+    else{
+      url="https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination="+type;
+    }
+    Linking.canOpenURL(url)
+    .then(supported => {
+      if (!supported) {
+        console.log('Can\'t handle url: ' + url);
+      } else {
+        return Linking.openURL(url);
+      }
+    })
+    .catch(err => console.error('An error occurred', err)); 
+  }
+
   return (
     <NativeBaseProvider>
         <View>
@@ -644,13 +663,15 @@ useEffect(() => {
                         </Text>
                       </View>
                       <TouchableOpacity
-                        onPress={() =>
-                          navigation.navigate('MapScreen', {
-                            address: type,
-                            latitude: 0,
-                            longitude: 0,
-                          })
-                        }>
+                        // onPress={() =>
+                        //   navigation.navigate('MapScreen', {
+                        //     address: type,
+                        //     latitude: 0,
+                        //     longitude: 0,
+                        //   })
+                        // }
+                        onPress={()=>openMap()}
+                        >
                         <View style={styles.outer1}>
                           <Text style={{color: '#6DB1E1', fontWeight: '700'}}>
                             Get Direction
