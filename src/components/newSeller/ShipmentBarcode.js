@@ -87,8 +87,8 @@ const ShipmentBarcode = ({
     const [len, setLen] = useState(0);
     const [DropDownValue, setDropDownValue] = useState(null);
     const [rejectedData, setRejectedData] = useState([]);
-    const [acceptedArray, setAcceptedArray] = useState([]);
-    // const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
+    const [acceptedArray,setAcceptedArray] = useState([]);
+        // const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
     const [latitude, setLatitude] = useState(0);
     const [longitude, setLongitude] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
@@ -110,10 +110,10 @@ const ShipmentBarcode = ({
     const [modalVisible11, setModalVisible11] = useState(false);
     const [DropDownValue11, setDropDownValue11] = useState(null);
     const [PartialCloseData, setPartialCloseData] = useState([]);
-    const [closeBagColor, setCloseBagColor] = useState('gray.300');
-    const [showQRCodeModal, setShowQRCodeModal] = useState(true);
+    const [closeBagColor,setCloseBagColor]=useState('gray.300');
+    const [showQRCodeModal,setShowQRCodeModal]= useState(true);
     // const PartialClose = 'https://bked.logistiex.com/ADupdatePrams/getPartialClosureReasons';
-    const DisplayData11 = async () => {
+    const DisplayData11 = async() => {
       db.transaction(tx => {
         tx.executeSql('SELECT * FROM PartialCloseReasons', [], (tx1, results) => {
           let temp = [];
@@ -229,20 +229,20 @@ const ShipmentBarcode = ({
       current_location();
     }, []);
 
-    const submitForm11 = () => {
-      alert('Your Data has submitted');
-      axios.post('https://bked.logistiex.com/SellerMainScreen/postRD', {
-          excepted: route.params.Forward,
-          accepted: route.params.accepted,
-          rejected: route.params.rejected,
-          nothandedOver: 0,
-          feUserID: route.params.userId,
-          receivingDate: new Date().toJSON().slice(0, 10).replace(/-/g, '/'),
-          receivingTime: new Date().toLocaleString(),
-          latitude11: latitude11,
-          longitude11: longitude11,
-          ReceiverMobileNo: route.params.phone,
-          ReceiverName: name,
+  const submitForm11 = () => {
+    alert('Your Data has submitted');
+    axios.post('https://bked.logistiex.com/SellerMainScreen/postRD', {
+      excepted:route.params.Forward,
+      accepted: route.params.accepted,
+      rejected:route.params.rejected,
+      nothandedOver:0,
+      feUserID: route.params.userId,
+      receivingDate : new Date().toJSON().slice(0,10).replace(/-/g,'/'),
+      receivingTime: new Date().toLocaleString(),
+      latitude11 : latitude11,
+      longitude11 : longitude11,
+      ReceiverMobileNo : route.params.phone,
+      ReceiverName: name,
 
         })
         .then(function (response) {
@@ -256,7 +256,7 @@ const ShipmentBarcode = ({
 
     const sendSmsOtp = async () => {
       console.log(mobileNumber);
-      const response = await axios.post('https://bked.logistiex.com/SMS/msg', {
+      const response = await axios.post('https://bkedtest.logistiex.com/SMS/msg', {
         'mobileNumber': mobileNumber,
       }).then(setShowModal11(true)).catch((err => console.log("OTP not send")));
       // if (response.status === 200) {
@@ -275,24 +275,25 @@ const ShipmentBarcode = ({
       // setModalVisible11(false);
     }
 
-    function validateOTP() {
+    function validateOTP(){
       axios.post('https://bked.logistiex.com/SMS/OTPValidate', {
-          mobileNumber: mobileNumber,
-          otp: inputOtp,
-        })
-        .then(response => {
-          if (response.data.return) {
-            submitForm11();
-            setInputOtp('');
-            setShowModal11(false);
-          } else {
-            alert('Invalid OTP, please try again !!');
-          }
-        })
-        .catch(error => {
+        mobileNumber: mobileNumber,
+        otp: inputOtp,
+      })
+      .then(response => {
+        if (response.data.return){
+          submitForm11();
+          setInputOtp('');
+          setShowModal11(false);
+        }
+        else {
           alert('Invalid OTP, please try again !!');
-          console.log(error);
-        });
+        }
+      })
+      .catch(error => {
+        alert('Invalid OTP, please try again !!');
+        console.log(error);
+      });
     }
 
 
@@ -721,18 +722,18 @@ const ShipmentBarcode = ({
                 let res = results.rows.item(0);
                 console.log(res, 'tanmay');
                 axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
-                    clientShipmentReferenceNumber: res.clientShipmentReferenceNumber,
-                    feUserID: route.params.userId,
-                    isAccepted: 'false',
-                    rejectionReason: 'null',
-                    consignorCode: res.consignorCode,
-                    pickupTime: new Date().toJSON().slice(0, 10).replace(/-/g, '/'),
-                    latitude: 0,
-                    longitude: 0,
-                    packagingId: 'ss',
-                    packageingStatus: 1,
-                    PRSNumber: res.PRSNumber,
-                  })
+                  clientShipmentReferenceNumber: res.clientShipmentReferenceNumber,
+                  feUserID: route.params.userId,
+                  isAccepted: 'false',
+                  rejectionReason: 'null',
+                  consignorCode: res.consignorCode,
+                  pickupTime: new Date().toJSON().slice(0, 10).replace(/-/g, '/'),
+                  latitude: 0,
+                  longitude: 0,
+                  packagingId: 'ss',
+                  packageingStatus: 1,
+                  PRSNumber: res.PRSNumber,
+                })
                   .then(function (response) {
                     console.log(response.data, 'hello');
                     updateCategories1(res.clientShipmentReferenceNumber);
@@ -789,18 +790,18 @@ const ShipmentBarcode = ({
 
     const submitForm = () => {
       axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
-          clientShipmentReferenceNumber: route.params.barcode,
-          feUserID: route.params.userId,
-          isAccepted: 'false',
-          rejectionReason: DropDownValue,
-          consignorCode: route.params.consignorCode,
-          pickupTime: new Date().toJSON().slice(0, 10).replace(/-/g, '/'),
-          latitude: latitude,
-          longitude: longitude,
-          packagingId: 'PL00000026',
-          packageingStatus: 1,
-          PRSNumber: route.params.PRSNumber,
-        })
+        clientShipmentReferenceNumber : route.params.barcode,
+        feUserID: route.params.userId,
+        isAccepted : 'false',
+        rejectionReason : DropDownValue,
+        consignorCode : route.params.consignorCode,
+        pickupTime : new Date().toJSON().slice(0,10).replace(/-/g,'/'),
+        latitude : latitude,
+        longitude : longitude,
+        packagingId : 'PL00000026',
+        packageingStatus : 1,
+        PRSNumber : route.params.PRSNumber,
+      })
         .then(function (response) {
           console.log(response.data, 'Data has been pushed');
           // ContinueHandle();

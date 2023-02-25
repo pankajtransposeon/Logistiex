@@ -34,7 +34,6 @@ const POD = ({route}) => {
   const [newaccepted, setnewAccepted] = useState(route.params.accepted);
   const [newrejected, setnewRejected] = useState(route.params.rejected);
   const [newNotPicked, setNewNotPicked] = useState(route.params.notPicked);
-  // const PartialClose = 'https://bked.logistiex.com/ADupdatePrams/getPartialClosureReasons';
   const DisplayData11 = async() => {
     db.transaction(tx => {
       tx.executeSql('SELECT * FROM PartialCloseReasons', [], (tx1, results) => {
@@ -148,7 +147,7 @@ useEffect(() => {
 
 const submitForm11 = () => {
   alert('Your Data has submitted');
-  axios.post('https://bked.logistiex.com/SellerMainScreen/postRD', {
+  axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
     excepted:route.params.Forward,
     accepted: route.params.accepted,
     rejected:route.params.rejected,
@@ -173,13 +172,13 @@ const submitForm11 = () => {
 
 const sendSmsOtp = async () => {
   console.log(mobileNumber);
-  const response = await axios.post('https://bked.logistiex.com/SMS/msg', {
+  const response = await axios.post('https://bkedtest.logistiex.com/SMS/msg', {
     'mobileNumber': mobileNumber,
   }).then(setShowModal11(true)).catch((err=>console.log("OTP not send")));
 };
   // const sendSmsOtp = async () => {
   //   console.log(mobileNumber);
-  //   const response = await axios.post('https://bked.logistiex.com/SMS/msg', {
+  //   const response = await axios.post('https://bkedtest.logistiex.com/SMS/msg', {
   //     "mobileNumber": mobileNumber,
   //   });
   //   if(response.status === 200) {
@@ -199,7 +198,7 @@ const sendSmsOtp = async () => {
   }
 
   function validateOTP(){
-    axios.post("https://bked.logistiex.com/SMS/OTPValidate", {
+    axios.post("https://bkedtest.logistiex.com/SMS/OTPValidate", {
       mobileNumber: mobileNumber,
       otp: inputOtp
     })

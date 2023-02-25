@@ -38,7 +38,7 @@ const HandoverShipment = ({route}) => {
     const [len, setLen] = useState(0);
     const [DropDownValue, setDropDownValue] = useState(null);
     const [rejectedData, setRejectedData] = useState([]);
-    const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
+    const RejectReason = 'https://bkedtest.logistiex.com/ADupdatePrams/getUSER';
     const [latitude, setLatitude] = useState(0);
     const [longitude , setLongitude] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
@@ -263,7 +263,7 @@ const HandoverShipment = ({route}) => {
               if (len > 0) {
                 let res = results.rows.item(0);
                 console.log(res, 'tanmay');
-                axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
+                axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
                   clientShipmentReferenceNumber: res.clientShipmentReferenceNumber,
                   feUserID: route.params.userId,
                   isAccepted: 'false',
@@ -328,7 +328,7 @@ const HandoverShipment = ({route}) => {
     }, []);
 
     const submitForm = () => {
-      axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
+      axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
         clientShipmentReferenceNumber : route.params.barcode,
         feUserID: route.params.userId,
         isAccepted : 'false',

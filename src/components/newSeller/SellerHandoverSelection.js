@@ -38,7 +38,7 @@ import PieChart from 'react-native-pie-chart';
 
 const NewSellerSelection = ({route}) => {
   const [barcodeValue, setBarcodeValue] = useState('');
-  const shipmentData = `https://bked.logistiex.com/SellerMainScreen/getSellerDetails/${route.params.paramKey}`;
+  const shipmentData = `https://bkedtest.logistiex.com/SellerMainScreen/getSellerDetails/${route.params.paramKey}`;
   const [acc, setAcc] = useState(0);
   const [pending, setPending] = useState(route.params.Pending);
   const [reject, setReject] = useState(0);
