@@ -45,8 +45,6 @@ import {
     ToastAndroid, PermissionsAndroid, Alert,
 } from 'react-native';
 import {Badge} from 'react-native-paper';
-// import { Icon } from 'native-base';
-// import * as newseller112 from "./src/components/newSeller/NewSellerPickup";
 import Lottie from 'lottie-react-native';
 import {ProgressBar} from '@react-native-community/progress-bar-android';
 import NetInfo from '@react-native-community/netinfo';
