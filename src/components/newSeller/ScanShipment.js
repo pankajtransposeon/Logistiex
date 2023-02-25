@@ -44,7 +44,7 @@ const ScanShipment = ({route}) => {
     const [DropDownValue, setDropDownValue] = useState(null);
     const [rejectedData, setRejectedData] = useState([]);
     const [acceptedArray,setAcceptedArray]=useState([]);
-        // const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
+        // const RejectReason = 'https://bkedtest.logistiex.com/ADupdatePrams/getUSER';
     const [latitude, setLatitude] = useState(0);
     const [longitude , setLongitude] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
@@ -204,7 +204,7 @@ const takePicture = async () => {
   const recordVideo = () => {
     console.log('Recording a video is not implemented yet');
   };
-    // const PartialClose = 'https://bked.logistiex.com/ADupdatePrams/getPartialClosureReasons';
+    // const PartialClose = 'https://bkedtest.logistiex.com/ADupdatePrams/getPartialClosureReasons';
     const DisplayData11 = async() => {
       db.transaction(tx => {
         tx.executeSql('SELECT * FROM PartialCloseReasons', [], (tx1, results) => {
@@ -276,7 +276,7 @@ const takePicture = async () => {
   
   const submitForm11 = () => {
     alert('Your Data has submitted');
-    axios.post('https://bked.logistiex.com/SellerMainScreen/postRD', {
+    axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
       excepted:route.params.Forward,
       accepted: route.params.accepted,
       rejected:route.params.rejected,
@@ -301,7 +301,7 @@ const takePicture = async () => {
   
     const sendSmsOtp = async () => {
       console.log(mobileNumber);
-      const response = await axios.post('https://bked.logistiex.com/SMS/msg', {
+      const response = await axios.post('https://bkedtest.logistiex.com/SMS/msg', {
         "mobileNumber": mobileNumber,
       });
       if(response.status === 200) {
@@ -321,7 +321,7 @@ const takePicture = async () => {
     }
   
     function validateOTP(){
-      axios.post("https://bked.logistiex.com/SMS/OTPValidate", {
+      axios.post("https://bkedtest.logistiex.com/SMS/OTPValidate", {
         mobileNumber: mobileNumber,
         otp: inputOtp
       })

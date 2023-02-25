@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-const baseurl = 'https://bked.logistiex.com/';
+const baseurl = 'https://bkedtest.logistiex.com/';
 //Dynamic allocation of backend data to access at any required page
 
 export const loginUrl = `${baseurl}Login/login`;

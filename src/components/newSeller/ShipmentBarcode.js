@@ -43,7 +43,7 @@ const ShipmentBarcode = ({route}) => {
     const [DropDownValue, setDropDownValue] = useState(null);
     const [rejectedData, setRejectedData] = useState([]);
     const [acceptedArray,setAcceptedArray] = useState([]);
-        // const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
+        // const RejectReason = 'https://bkedtest.logistiex.com/ADupdatePrams/getUSER';
     const [latitude, setLatitude] = useState(0);
     const [longitude , setLongitude] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
@@ -67,7 +67,7 @@ const ShipmentBarcode = ({route}) => {
     const [PartialCloseData, setPartialCloseData] = useState([]);
     const [closeBagColor,setCloseBagColor]=useState('gray.300');
     const [showQRCodeModal,setShowQRCodeModal]= useState(true);
-    // const PartialClose = 'https://bked.logistiex.com/ADupdatePrams/getPartialClosureReasons';
+    // const PartialClose = 'https://bkedtest.logistiex.com/ADupdatePrams/getPartialClosureReasons';
     const DisplayData11 = async() => {
       db.transaction(tx => {
         tx.executeSql('SELECT * FROM PartialCloseReasons', [], (tx1, results) => {
@@ -150,7 +150,7 @@ const ShipmentBarcode = ({route}) => {
 
   const submitForm11 = () => {
     alert('Your Data has submitted');
-    axios.post('https://bked.logistiex.com/SellerMainScreen/postRD', {
+    axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
       excepted:route.params.Forward,
       accepted: route.params.accepted,
       rejected:route.params.rejected,
@@ -175,7 +175,7 @@ const ShipmentBarcode = ({route}) => {
 
     const sendSmsOtp = async () => {
       console.log(mobileNumber);
-      const response = await axios.post('https://bked.logistiex.com/SMS/msg', {
+      const response = await axios.post('https://bkedtest.logistiex.com/SMS/msg', {
         'mobileNumber': mobileNumber,
       }).then(setShowModal11(true)).catch((err=>console.log("OTP not send")));
       // if (response.status === 200) {
@@ -195,7 +195,7 @@ const ShipmentBarcode = ({route}) => {
     }
 
     function validateOTP(){
-      axios.post('https://bked.logistiex.com/SMS/OTPValidate', {
+      axios.post('https://bkedtest.logistiex.com/SMS/OTPValidate', {
         mobileNumber: mobileNumber,
         otp: inputOtp,
       })
@@ -638,7 +638,7 @@ const ShipmentBarcode = ({route}) => {
               if (len > 0) {
                 let res = results.rows.item(0);
                 console.log(res, 'tanmay');
-                axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
+                axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
                   clientShipmentReferenceNumber: res.clientShipmentReferenceNumber,
                   feUserID: route.params.userId,
                   isAccepted: 'false',
@@ -703,7 +703,7 @@ const ShipmentBarcode = ({route}) => {
     }, []);
 
     const submitForm = () => {
-      axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
+      axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
         clientShipmentReferenceNumber : route.params.barcode,
         feUserID: route.params.userId,
         isAccepted : 'false',

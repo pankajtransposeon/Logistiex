@@ -41,7 +41,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NewSellerSelection = ({route}) => {
   const [barcodeValue, setBarcodeValue] = useState('');
-  const shipmentData = `https://bked.logistiex.com/SellerMainScreen/getSellerDetails/${route.params.paramKey}`;
+  const shipmentData = `https://bkedtest.logistiex.com/SellerMainScreen/getSellerDetails/${route.params.paramKey}`;
   const [acc, setAcc] = useState(1);
   const [pending, setPending] = useState(route.params.Forward);
   const [reject, setReject] = useState(0);

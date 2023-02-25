@@ -40,7 +40,7 @@ const HandoverShipmentRTO = ({route}) => {
     const [len, setLen] = useState(0);
     // const [DropDownValue, setDropDownValue] = useState(null);
     // const [rejectedData, setRejectedData] = useState([]);
-    // const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
+    // const RejectReason = 'https://bkedtest.logistiex.com/ADupdatePrams/getUSER';
     // const [latitude, setLatitude] = useState(0);
     // const [longitude , setLongitude] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
