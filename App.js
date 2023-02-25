@@ -193,7 +193,7 @@ function StackNavigators({navigation}) {
 
     useEffect(() => {
       if (userId !== null) {
-        setTimeout(()=>{Login_Data_load();},1000);
+        setTimeout(()=>{Login_Data_load();},1500);
       }
     }, [userId]);
 
@@ -268,23 +268,54 @@ const push_Data = () => {
                         // console.log(new Date().toJSON().slice(0,10).replace(/-/g,'/'));
                         console.log('value of temp is :' + temp11 + ' ' + results.rows.length);
 
+                        /*
+                        clientShipmentReferenceNumber: {type: String,required: true,},
+                        awbNo:{type: String,required: true,},
+                        clientRefId:{type: String,required: true,},
+                        courierCode:{type: String,required: true,},
+                        feUserID: {type: String,required: true,},
+                        isAccepted: {type: Boolean,required: true,},
+                        rejectionReasonL1: {type: String,required: false,},
+                        rejectionReasonL2: {type: String,required: false,},
+                        rejectionStage:{type: String,required: false,},
+                        consignorCode: {type: String,required: true,},
+                        eventTime: {type: String,required: true,},
+                        latitude: {type: Number,required: true,},
+                        longitude: {type: Number,required: true,},
+                        packagingId: {type: String,required: false,},
+                        packagingStatus: {type: Number,required: false,},
+                        bagId:{type: String,required: false,},
+                        bagSealNo:{type: String,required: false,},
+                        runsheetNo: {type: String,required: true,},
+                        scanStatus:{type: Number,required: true,},
+                        files:{type: String,required: false,},
+                        tags:{type: String,required: false,}
+                        */
+
                         axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
                             clientShipmentReferenceNumber: results.rows.item(i).clientShipmentReferenceNumber,
-                            feUserID: userId,
-                            isAccepted: accepted11[0],
-                            rejectionReason: results.rows.item(i).rejectedReason,
-                            consignorCode: results.rows.item(i).consignorCode,
-                            pickupTime : time,
-                            latitude: results11.rows.item(0).consignorLocation,
-                            longitude: results11.rows.item(0).consignorLongitude,
-                            packagingId: results.rows.item(i).packagingId,
-                            packagingStatus: 1,
-                            PRSNumber: 'results.rows.item(i).PRSNumber',
-                            // pickupBagId: 'ss121',
-                            bagId:"ss121",
-                            scanStatus:"1221",
-                            bagSealNo:"21212",
-                            eventTime:"47474"
+                              awbNo: results.rows.item(i).awbNo,
+                              clientRefId: results.rows.item(i).clientRefId,
+                              courierCode: 'courierCode',
+                              feUserID: userId,
+                              isAccepted: accepted11[0],
+                              rejectionReasonL1: results.rows.item(i).rejectedReason,
+                              rejectionReasonL2: '',
+                              rejectionStage:'',
+                              consignorCode: results.rows.item(i).consignorCode,
+                              eventTime: time.toString(),
+                              latitude: results11.rows.item(0).consignorLocation,
+                              longitude: results11.rows.item(0).consignorLongitude,
+                              // packagingId: results.rows.item(i).packagingId,
+                              packagingId: '',
+                              packagingStatus: 1,
+                              // PRSNumber: 'results.rows.item(i).PRSNumber',
+                              runsheetNo: 'runSheetNo',
+                              bagId: '',
+                              scanStatus: 1,
+                              bagSealNo: '',
+                              files: '',
+                              tags: '',
                         }).then(response => {
                             temp11++;
                             setIsLoading(false);
@@ -312,7 +343,7 @@ const push_Data = () => {
                         }).catch(error => {
                             setIsLoading(false);
                             console.log(error);
-                        }); 
+                        });
 
                     });
                 }
