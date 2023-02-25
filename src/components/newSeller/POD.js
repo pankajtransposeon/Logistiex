@@ -29,7 +29,11 @@ const POD = ({route}) => {
   const [modalVisible11, setModalVisible11] = useState(false);
   const [DropDownValue11, setDropDownValue11] = useState(null);
   const [PartialCloseData, setPartialCloseData] = useState([]);
-  // const PartialClose = 'https://bkedtest.logistiex.com/ADupdatePrams/getPartialClosureReasons';
+
+  const [expected, setExpected] = useState(route.params.Forward);
+  const [newaccepted, setnewAccepted] = useState(route.params.accepted);
+  const [newrejected, setnewRejected] = useState(route.params.rejected);
+  const [newNotPicked, setNewNotPicked] = useState(route.params.notPicked);
   const DisplayData11 = async() => {
     db.transaction(tx => {
       tx.executeSql('SELECT * FROM PartialCloseReasons', [], (tx1, results) => {
@@ -57,6 +61,41 @@ const POD = ({route}) => {
   // useEffect(() => {
   //   partialClose112();
   // }, []);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      displayDataSPScan();
+    });
+    return unsubscribe;
+  }, [navigation]);
+  const displayDataSPScan = async () => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=?  AND status="accepted"',
+        [route.params.consignorCode],
+        (tx1, results) => {
+          setnewAccepted(results.rows.length);
+        },
+      );
+    });
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status="notPicked"',
+        [route.params.consignorCode],
+        (tx1, results) => {
+          setNewNotPicked(results.rows.length);
+        },
+      );
+    });
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status="rejected"',
+        [route.params.consignorCode],
+        (tx1, results) => {
+          setnewRejected(results.rows.length);
+        },
+      );
+    });
+  };
 
   const partialClose112 = () => {
     if (route.params.accepted + route.params.rejected === route.params.Forward){
@@ -224,15 +263,15 @@ const sendSmsOtp = async () => {
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Accepted</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.accepted}</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{newaccepted}</Text>
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Rejected</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.rejected}</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{newrejected}</Text>
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: 'lightgray', borderBottomLeftRadius: 5, borderBottomRightRadius: 5, padding: 10}}>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>Not Handed Over</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>{0}</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>Not Picked</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{newNotPicked}</Text>
               </View></Center>
           <Center>
             <Input mx="3" mt={4} placeholder="Receiver Name" w="90%" bg="gray.200" size="lg" value={name} onChangeText={(e)=>setName(e)} />

@@ -1,33 +1,77 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { NativeBaseProvider, Image, Box, Fab, Icon, Button , Modal, Input} from 'native-base';
-import React, { useEffect, useState , useRef } from 'react';
+import {
+  NativeBaseProvider,
+  Image,
+  Box,
+  Fab,
+  Icon,
+  Button,
+  Modal,
+  Input
+} from 'native-base';
+import React, {
+  useEffect,
+  useState,
+  useRef
+} from 'react';
 import axios from 'axios';
-import {Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet,Alert} from 'react-native';
-import { Center } from 'native-base';
-import { useNavigation } from '@react-navigation/native';
+import {
+  Text,
+  View,
+  ScrollView,
+  Vibration,
+  ToastAndroid,
+  TouchableOpacity,
+  StyleSheet,
+  Alert
+} from 'react-native';
+import {
+  Center
+} from 'native-base';
+import {
+  useNavigation
+} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import { RNCamera } from 'react-native-camera';
-import { openDatabase } from 'react-native-sqlite-storage';
+import {
+  RNCamera
+} from 'react-native-camera';
+import {
+  openDatabase
+} from 'react-native-sqlite-storage';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import NetInfo from '@react-native-community/netinfo';
 import RNBeep from 'react-native-a-beep';
-import { Picker } from '@react-native-picker/picker';
+import {
+  Picker
+} from '@react-native-picker/picker';
 import GetLocation from 'react-native-get-location';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-import { backgroundColor, borderColor, height, marginTop, style } from 'styled-system';
-import { Console } from 'console';
+import {
+  backgroundColor,
+  borderColor,
+  height,
+  marginTop,
+  style
+} from 'styled-system';
+import {
+  Console
+} from 'console';
 // import GetLocation from 'react-native-get-location';
 // import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import OTPTextInput from 'react-native-otp-textinput';
-import { err } from 'react-native-svg/lib/typescript/xml';
+import {
+  err
+} from 'react-native-svg/lib/typescript/xml';
 
 const db = openDatabase({
   name: 'rn_sqlite',
 });
 
-const ShipmentBarcode = ({route}) => {
+const ShipmentBarcode = ({
+    route
+  }) => {
     // const [barcodeValue,setBarcodeValue] = useState('');
     // const [packageValue,setpackageValue] = useState('');
     // const [otp,setOtp] = useState('');
@@ -38,14 +82,15 @@ const ShipmentBarcode = ({route}) => {
     const [expected, setExpected] = useState(0);
     const [newaccepted, setnewAccepted] = useState(0);
     const [newrejected, setnewRejected] = useState(0);
+    const [newNotPicked, setNewNotPicked] = useState(0);
     const [barcode, setBarcode] = useState('');
     const [len, setLen] = useState(0);
     const [DropDownValue, setDropDownValue] = useState(null);
     const [rejectedData, setRejectedData] = useState([]);
     const [acceptedArray,setAcceptedArray] = useState([]);
-        // const RejectReason = 'https://bkedtest.logistiex.com/ADupdatePrams/getUSER';
+        // const RejectReason = 'https://bked.logistiex.com/ADupdatePrams/getUSER';
     const [latitude, setLatitude] = useState(0);
-    const [longitude , setLongitude] = useState(0);
+    const [longitude, setLongitude] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
     const [bagId, setBagId] = useState('');
     const [bagIdNo, setBagIdNo] = useState(1);
@@ -60,27 +105,27 @@ const ShipmentBarcode = ({route}) => {
     const [inputOtp, setInputOtp] = useState('');
     const [mobileNumber, setMobileNumber] = useState(route.params.phone);
     const [latitude11, setLatitude11] = useState(0);
-    const [longitude11 , setLongitude11] = useState(0);
+    const [longitude11, setLongitude11] = useState(0);
     const [showModal11, setShowModal11] = useState(false);
     const [modalVisible11, setModalVisible11] = useState(false);
     const [DropDownValue11, setDropDownValue11] = useState(null);
     const [PartialCloseData, setPartialCloseData] = useState([]);
     const [closeBagColor,setCloseBagColor]=useState('gray.300');
     const [showQRCodeModal,setShowQRCodeModal]= useState(true);
-    // const PartialClose = 'https://bkedtest.logistiex.com/ADupdatePrams/getPartialClosureReasons';
+    // const PartialClose = 'https://bked.logistiex.com/ADupdatePrams/getPartialClosureReasons';
     const DisplayData11 = async() => {
       db.transaction(tx => {
         tx.executeSql('SELECT * FROM PartialCloseReasons', [], (tx1, results) => {
-            let temp = [];
-            // console.log(results.rows.length);
-            for (let i = 0; i < results.rows.length; ++i) {
-                temp.push(results.rows.item(i));
-            }
-            // console.log('Data from Local Database partialClosure : \n ', temp);
-        setPartialCloseData(temp);
-            // console.log('Table6 DB OK:', temp.length);
+          let temp = [];
+          // console.log(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+          }
+          // console.log('Data from Local Database partialClosure : \n ', temp);
+          setPartialCloseData(temp);
+          // console.log('Table6 DB OK:', temp.length);
         });
-    });
+      });
       // await fetch(PartialClose)
       // .then((response) => response.json())
       // .then((json) => {
@@ -91,22 +136,55 @@ const ShipmentBarcode = ({route}) => {
     useEffect(() => {
       DisplayData11();
     }, []);
-
+    useEffect(() => {
+      const unsubscribe = navigation.addListener('focus', () => {
+        displayDataSPScan();
+      });
+      return unsubscribe;
+    }, [navigation]);
     // useEffect(() => {
     //   partialClose112();
     // }, []);
 
-    
+    const displayDataSPScan = async () => {
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=?  AND status="accepted"',
+          [route.params.consignorCode],
+          (tx1, results) => {
+            setnewAccepted(results.rows.length);
+          },
+        );
+      });
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status="notPicked"',
+          [route.params.consignorCode],
+          (tx1, results) => {
+            setNewNotPicked(results.rows.length);
+          },
+        );
+      });
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status="rejected"',
+          [route.params.consignorCode],
+          (tx1, results) => {
+            setnewRejected(results.rows.length);
+          },
+        );
+      });
+    };
 
     const partialClose112 = () => {
       console.log('partialClose popup shown11');
-      if (newaccepted + newrejected === route.params.Forward){
+      if (newaccepted + newrejected === route.params.Forward) {
         console.log(newaccepted);
         sendSmsOtp();
       } else {
         setModalVisible11(true);
       }
-          };
+    };
 
     // const clearText = () => {
     //   otpInput.current.clear();
@@ -116,41 +194,44 @@ const ShipmentBarcode = ({route}) => {
     //   otpInput.current.setValue("1234");
     // }
 
-  useEffect(() => {
-    const current_location = () => {
+    useEffect(() => {
+      const current_location = () => {
 
-      return GetLocation.getCurrentPosition({
-          enableHighAccuracy: true,
-          timeout: 10000,
-      })
-      .then(latestLocation => {
-          console.log('latest location ' + JSON.stringify(latestLocation));
-          return latestLocation;
-      }).then(location => {
-          const currentLoc = { latitude11: location.latitude11, longitude11: location.longitude11 };
-          setLatitude11(location.latitude11);
-          setLongitude11(location.longitude11);
-          return currentLoc;
-      }).catch(error => {
-          RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-              interval: 10000,
-              fastInterval: 5000,
+        return GetLocation.getCurrentPosition({
+            enableHighAccuracy: true,
+            timeout: 10000,
           })
-          .then(status=>{
-              if (status)
-                  {console.log('Location enabled');}
-          }).catch(err=>{
+          .then(latestLocation => {
+            console.log('latest location ' + JSON.stringify(latestLocation));
+            return latestLocation;
+          }).then(location => {
+            const currentLoc = {
+              latitude11: location.latitude11,
+              longitude11: location.longitude11
+            };
+            setLatitude11(location.latitude11);
+            setLongitude11(location.longitude11);
+            return currentLoc;
+          }).catch(error => {
+            RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+                interval: 10000,
+                fastInterval: 5000,
+              })
+              .then(status => {
+                if (status) {
+                  console.log('Location enabled');
+                }
+              }).catch(err => {});
+            return false;
           });
-          return false;
-      });
-  };
+      };
 
-    current_location();
-  }, []);
+      current_location();
+    }, []);
 
   const submitForm11 = () => {
     alert('Your Data has submitted');
-    axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
+    axios.post('https://bked.logistiex.com/SellerMainScreen/postRD', {
       excepted:route.params.Forward,
       accepted: route.params.accepted,
       rejected:route.params.rejected,
@@ -163,21 +244,21 @@ const ShipmentBarcode = ({route}) => {
       ReceiverMobileNo : route.params.phone,
       ReceiverName: name,
 
-  })
-      .then(function (response) {
+        })
+        .then(function (response) {
           console.log(response.data, 'hello');
           alert('Your Data has submitted');
-      })
-      .catch(function (error) {
+        })
+        .catch(function (error) {
           console.log(error);
-      });
-  };
+        });
+    };
 
     const sendSmsOtp = async () => {
       console.log(mobileNumber);
       const response = await axios.post('https://bkedtest.logistiex.com/SMS/msg', {
         'mobileNumber': mobileNumber,
-      }).then(setShowModal11(true)).catch((err=>console.log("OTP not send")));
+      }).then(setShowModal11(true)).catch((err => console.log("OTP not send")));
       // if (response.status === 200) {
       //   setShowModal11(true);
       // }
@@ -190,12 +271,12 @@ const ShipmentBarcode = ({route}) => {
       // if(item=='Partial Dispatch'){
       //   navigation.navigate('Dispatch');
       // }
-        setDropDownValue11(item);
+      setDropDownValue11(item);
       // setModalVisible11(false);
     }
 
     function validateOTP(){
-      axios.post('https://bkedtest.logistiex.com/SMS/OTPValidate', {
+      axios.post('https://bked.logistiex.com/SMS/OTPValidate', {
         mobileNumber: mobileNumber,
         otp: inputOtp,
       })
@@ -225,7 +306,7 @@ const ShipmentBarcode = ({route}) => {
     //       console.log("fdfdd "+barcode);
     // });
 
-    function CloseBagEndScan(){
+    function CloseBagEndScan() {
       // if (newaccepted === 0){
       //   Alert.alert('Bag is Empty', 'Plz add some item before closing bag...', [
       //     {text: 'OK', onPress: () => {console.log('OK Pressed'); partialClose112();}},
@@ -246,23 +327,23 @@ const ShipmentBarcode = ({route}) => {
       console.log(bagId);
       db.transaction(txn => {
         txn.executeSql('INSERT OR REPLACE INTO closeBag1( bagId,bagSeal,AcceptedList) VALUES (?,?,?)', [
-            bagId11,
-            bagSeal,
-            acceptedArray.toString(),
+          bagId11,
+          bagSeal,
+          acceptedArray.toString(),
         ], (sqlTxn, _res) => {
-       setBagIdNo(bagIdNo + 1);
-       setAcceptedArray([]);
-       setBagSeal('');
-            console.log('\n Data Added to local db successfully closebag');
-            console.log(_res);
-            viewDetailBag();
+          setBagIdNo(bagIdNo + 1);
+          setAcceptedArray([]);
+          setBagSeal('');
+          console.log('\n Data Added to local db successfully closebag');
+          console.log(_res);
+          viewDetailBag();
         }, error => {
-            console.log('error on adding data ' + error.message);
-        },);
-    });
+          console.log('error on adding data ' + error.message);
+        }, );
+      });
     }
 
-    function CloseBag(){
+    function CloseBag() {
       // if (newaccepted === 0){
       //   Alert.alert('Bag is Empty', 'Add some items before closing the bag', [
       //     {text: 'OK', onPress: () => {console.log('OK Pressed');}},
@@ -282,204 +363,206 @@ const ShipmentBarcode = ({route}) => {
       console.log(bagId);
       db.transaction(txn => {
         txn.executeSql('INSERT OR REPLACE INTO closeBag1( bagId,bagSeal,AcceptedList) VALUES (?,?,?)', [
-            bagId11,
-            bagSeal,
-            acceptedArray.toString(),
+          bagId11,
+          bagSeal,
+          acceptedArray.toString(),
         ], (sqlTxn, _res) => {
-       setBagIdNo(bagIdNo + 1);
-       setAcceptedArray([]);
-       setBagSeal('');
-            console.log('\n Data Added to local db successfully closebag');
+          setBagIdNo(bagIdNo + 1);
+          setAcceptedArray([]);
+          setBagSeal('');
+          console.log('\n Data Added to local db successfully closebag');
 
-            console.log(_res);
-            viewDetailBag();
+          console.log(_res);
+          viewDetailBag();
         }, error => {
-            console.log('error on adding data ' + error.message);
-        },);
-    });
+          console.log('error on adding data ' + error.message);
+        }, );
+      });
     }
     const viewDetailBag = () => {
       db.transaction(tx => {
-          tx.executeSql('SELECT * FROM closeBag1', [], (tx1, results) => {
-              let temp = [];
-              console.log(results.rows.length);
-              for (let i = 0; i < results.rows.length; ++i) {
-                  temp.push(results.rows.item(i));
-                  // console.log(results.rows.item(i).consignorName);
-                  // var address121 = results.rows.item(i).AcceptedList;
-                  // var address_json = JSON.parse(address121);
-                  // console.log(typeof (address_json));
-                  // console.log("Address from local db : " , address_json);
-                  // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
-              }
-              // ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
-              console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
-              // console.log('Table1 DB OK:', temp.length);
-          });
+        tx.executeSql('SELECT * FROM closeBag1', [], (tx1, results) => {
+          let temp = [];
+          console.log(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+            // console.log(results.rows.item(i).consignorName);
+            // var address121 = results.rows.item(i).AcceptedList;
+            // var address_json = JSON.parse(address121);
+            // console.log(typeof (address_json));
+            // console.log("Address from local db : " , address_json);
+            // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
+          }
+          // ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
+          console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
+          // console.log('Table1 DB OK:', temp.length);
+        });
       });
-  };
-     useEffect(() => {
-            createTableBag1();
-    },[]);
+    };
+    useEffect(() => {
+      createTableBag1();
+    }, []);
 
     const createTableBag1 = () => {
       db.transaction(txn => {
-          txn.executeSql('DROP TABLE IF EXISTS closeBag1', []);
-          txn.executeSql(`CREATE TABLE IF NOT EXISTS closeBag1( 
+        txn.executeSql('DROP TABLE IF EXISTS closeBag1', []);
+        txn.executeSql(`CREATE TABLE IF NOT EXISTS closeBag1( 
             bagId VARCHAR(100) PRIMARY KEY ,
         bagSeal VARCHAR(100),
         AcceptedList VARCHAR(600)
       )`, [], (sqlTxn, res) => {
-              console.log('table created successfully details213 ');
-              // loadAPI_Data();
-          }, error => {
-              console.log('error on creating table ' + error.message);
-          },);
+          console.log('table created successfully details213 ');
+          // loadAPI_Data();
+        }, error => {
+          console.log('error on creating table ' + error.message);
+        }, );
       });
-  };
-      const updateDetails2 = () => {
-        console.log('scan ' + barcode.toString());
-        setAcceptedArray([...acceptedArray, barcode.toString()]);
-        console.log(acceptedArray);
-        db.transaction((tx) => {
-            tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" WHERE clientShipmentReferenceNumber=?', [barcode], (tx1, results) => {
-                let temp = [];
-                console.log('Results',results.rowsAffected);
-                console.log(results);
+    };
+    const updateDetails2 = () => {
+      console.log('scan ' + barcode.toString());
+      setAcceptedArray([...acceptedArray, barcode.toString()]);
+      console.log(acceptedArray);
+      db.transaction((tx) => {
+        tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" WHERE awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?', [barcode,barcode,barcode], (tx1, results) => {
+          let temp = [];
+          console.log('Results', results.rowsAffected);
+          console.log(results);
 
-                if (results.rowsAffected > 0) {
-                  console.log(barcode + 'accepted');
-                  // ToastAndroid.show(barcode + ' Accepted',ToastAndroid.SHORT);
+          if (results.rowsAffected > 0) {
+            console.log(barcode + 'accepted');
+            displayDataSPScan();
+            // ToastAndroid.show(barcode + ' Accepted',ToastAndroid.SHORT);
 
-                } else {
-                  console.log(barcode + 'not accepted');
-                }
-                console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
-                // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
-                // viewDetails2();
-            });
+          } else {
+            console.log(barcode + 'not accepted');
+          }
+          console.log(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+          }
+          // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+          // viewDetails2();
         });
-      };
+      });
+    };
 
-      const rejectDetails2 = () => {
-        console.log('scan 45456');
-        // setnewRejected(newrejected + 1);
-        // ContinueHandle11();
+    const rejectDetails2 = () => {
+      console.log('scan 45456');
+      // setnewRejected(newrejected + 1);
+      // ContinueHandle11();
 
       //   db.transaction((tx) => {
       //     tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE clientShipmentReferenceNumber=?', [barcode], (tx1, results) => {
-              
+
       //     });
       // });
 
-        db.transaction((tx) => {
-            tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectedReason=? WHERE clientShipmentReferenceNumber=? AND status="accepted"', [DropDownValue,barcode], (tx1, results) => {
-                let temp = [];
-                // ContinueHandle11();
-                // console.log("ddsds4545",tx1);
-                console.log('Rejected Reason : ',DropDownValue);
-                console.log('Results',results.rowsAffected);
-                console.log(results);
-                if (results.rowsAffected > 0) {
-                  ContinueHandle11();
-                  console.log(barcode + 'rejected');
-                  ToastAndroid.show(barcode + ' Rejected',ToastAndroid.SHORT);
-                } else {
-                  console.log(barcode + 'failed to reject item locally');
-                }
-                console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
-                // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
-                // viewDetailsR2();
-            });
-        });
-      };
-
-      const viewDetails2 = () => {
-        db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails where status = "accepted"', [], (tx1, results) => {
-                let temp = [];
-                console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                    console.log('barcode ' + results.rows.item(i).awbNo);
-                }
-                // ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
-                console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
-            });
-        });
-      };
-      const viewDetailsR2 = () => {
-        db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails where status = "rejected"', [], (tx1, results) => {
-                let temp = [];
-                console.log(results.rows.length);
-                // setnewRejected(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                    console.log('barcode ' + results.rows.item(i).awbNo);
-                }
-                // ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
-                console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
-            });
-        });
-      };
-      const partialClose = () => {
-        db.transaction((tx) => {
-          tx.executeSql('UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE status IS Null', [DropDownValue11], (tx1, results) => {
-              let temp = [];
-              // console.log("Not Picked Reason",DropDownValue);
-              // console.log('Results',results.rowsAffected);
-              // console.log(results);
-              // if (results.rowsAffected > 0) {
-              //   console.log('notPicked done');
-              // } else {
-              //   console.log('failed to add notPicked item locally');
-              // }
-              console.log(results.rows.length);
-              for (let i = 0; i < results.rows.length; ++i) {
-                  temp.push(results.rows.item(i));
-              }
-              // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
-          });
-      });
-  };
-  
-  const getCategories = (data) => {
-    db.transaction(txn => {
-      txn.executeSql(
-        'SELECT * FROM SellerMainScreenDetails WHERE clientShipmentReferenceNumber = ? AND status IS NULL ',
-        [data],
-        (sqlTxn, res) => {
-          console.log('categories retrieved successfully', res.rows.length);
-          setLen(res.rows.length);
-          if (!res.rows.length){
-            alert('You are scanning wrong product, Please check.');
-          }
-        },
-        error => {
-          console.log('error on getting categories ' + error.message);
-        },
-      );
-    });
-  };
-
-  const updateCategories = (data) => {
-    db.transaction((tx) => {
-      tx.executeSql(
-        'UPDATE SellerMainScreenDetails set status=? where clientShipmentReferenceNumber=?',
-        ['accepted', data],
-        (tx, results) => {
+      db.transaction((tx) => {
+        tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectedReason=?  WHERE status="accepted" AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [DropDownValue, barcode,barcode,barcode], (tx1, results) => {
+          let temp = [];
+          // ContinueHandle11();
+          // console.log("ddsds4545",tx1);
+          console.log('Rejected Reason : ', DropDownValue);
           console.log('Results', results.rowsAffected);
-        }
-      );
-    });
-  };
+          console.log(results);
+          if (results.rowsAffected > 0) {
+            // ContinueHandle11();
+            console.log(barcode + 'rejected');
+            ToastAndroid.show(barcode + ' Rejected', ToastAndroid.SHORT);
+            displayDataSPScan();
+          } else {
+            console.log(barcode + 'failed to reject item locally');
+          }
+          console.log(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+          }
+          // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+          // viewDetailsR2();
+        });
+      });
+    };
+
+    const viewDetails2 = () => {
+      db.transaction((tx) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails where status = "accepted"', [], (tx1, results) => {
+          let temp = [];
+          console.log(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+            console.log('barcode ' + results.rows.item(i).awbNo);
+          }
+          // ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
+          console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
+        });
+      });
+    };
+    const viewDetailsR2 = () => {
+      db.transaction((tx) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails where status = "rejected"', [], (tx1, results) => {
+          let temp = [];
+          console.log(results.rows.length);
+          // setnewRejected(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+            console.log('barcode ' + results.rows.item(i).awbNo);
+          }
+          // ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
+          console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
+        });
+      });
+    };
+    const partialClose = () => {
+      db.transaction((tx) => {
+        tx.executeSql('UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE status IS Null', [DropDownValue11], (tx1, results) => {
+          let temp = [];
+          // console.log("Not Picked Reason",DropDownValue);
+          // console.log('Results',results.rowsAffected);
+          // console.log(results);
+          // if (results.rowsAffected > 0) {
+          //   console.log('notPicked done');
+          // } else {
+          //   console.log('failed to add notPicked item locally');
+          // }
+          console.log(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+          }
+          // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+        });
+      });
+    };
+
+    const getCategories = (data) => {
+      db.transaction(txn => {
+        txn.executeSql(
+          'SELECT * FROM SellerMainScreenDetails WHERE status IS NULL AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber = ?) ',
+          [data,data,data],
+          (sqlTxn, res) => {
+            console.log('categories retrieved successfully', res.rows.length);
+            setLen(res.rows.length);
+            if (!res.rows.length) {
+              alert('You are scanning wrong product, Please check.');
+            }
+          },
+          error => {
+            console.log('error on getting categories ' + error.message);
+          },
+        );
+      });
+    };
+
+    const updateCategories = (data) => {
+      db.transaction((tx) => {
+        tx.executeSql(
+          'UPDATE SellerMainScreenDetails set status=? where clientShipmentReferenceNumber=?',
+          ['accepted', data],
+          (tx, results) => {
+            console.log('Results', results.rowsAffected);
+          }
+        );
+      });
+    };
     // const getCategories = (data) => {
     //   db.transaction(txn => {
     //     txn.executeSql(
@@ -537,34 +620,34 @@ const ShipmentBarcode = ({route}) => {
 
     useEffect(() => {
       if (len) {
-        ContinueHandle();
+        // ContinueHandle();
         Vibration.vibrate(100);
         RNBeep.beep();
-        ToastAndroid.show(barcode + ' accepted',ToastAndroid.SHORT);
+        ToastAndroid.show(barcode + ' accepted', ToastAndroid.SHORT);
         updateDetails2();
-
+        displayDataSPScan();
 
         setLen(false);
-        updateCategories(barcode);
+        // updateCategories(barcode);
       }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [len]);
 
-    const displaydata = async() => {
+    const displaydata = async () => {
       db.transaction(tx => {
         tx.executeSql('SELECT * FROM ShipmentRejectReasons', [], (tx1, results) => {
-            let temp = [];
-            // console.log(results.rows.length);
-            for (let i = 0; i < results.rows.length; ++i) {
-                temp.push(results.rows.item(i));
-            }
-            // ToastAndroid.show('Sync Successful3', ToastAndroid.SHORT);
-            setRejectedData(temp);
+          let temp = [];
+          // console.log(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+          }
+          // ToastAndroid.show('Sync Successful3', ToastAndroid.SHORT);
+          setRejectedData(temp);
 
-            // console.log('Data from Local Database reject reasons: \n ', JSON.stringify(temp, null, 4),);
-            // console.log('Table3 DB OK:', temp.length);
-        },);
-    });
+          // console.log('Data from Local Database reject reasons: \n ', JSON.stringify(temp, null, 4),);
+          // console.log('Table3 DB OK:', temp.length);
+        }, );
+      });
       // await fetch(RejectReason)
       // .then((response) => response.json())
       // .then((json) => {
@@ -575,53 +658,53 @@ const ShipmentBarcode = ({route}) => {
     const navigation = useNavigation();
     const [count, setcount] = useState(0);
 
-    const ContinueHandle = () => {
-      const getUser = async () => {
-        try {
-          const savedUser = await AsyncStorage.getItem('user');
-          const currentUser = JSON.parse(savedUser);
-          await AsyncStorage.setItem('user', JSON.stringify({
-            Accepted: currentUser.Accepted + 1,
-            Rejected: currentUser.Rejected,
-          }));
-        // setnewAccepted(newaccepted+1);
-          setnewAccepted(1 + currentUser.Accepted);
-          setnewRejected(currentUser.Rejected);
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      getUser();
-    };
-    const ContinueHandle11 = () => {
-      const getUser = async () => {
-        try {
-          const savedUser = await AsyncStorage.getItem('user');
-          const currentUser = JSON.parse(savedUser);
-          await AsyncStorage.setItem('user', JSON.stringify({
-            Accepted: currentUser.Accepted - 1,
-            Rejected: currentUser.Rejected + 1,
-          }));
-      // setnewAccepted( newaccepted-1);
-      //     setnewRejected(newrejected+1);
-          setnewAccepted( currentUser.Accepted-1);
-          setnewRejected(currentUser.Rejected+1);
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      getUser();
-    };
+    // const ContinueHandle = () => {
+    //   const getUser = async () => {
+    //     try {
+    //       const savedUser = await AsyncStorage.getItem('user');
+    //       const currentUser = JSON.parse(savedUser);
+    //       await AsyncStorage.setItem('user', JSON.stringify({
+    //         Accepted: currentUser.Accepted + 1,
+    //         Rejected: currentUser.Rejected,
+    //       }));
+    //     // setnewAccepted(newaccepted+1);
+    //       setnewAccepted(1 + currentUser.Accepted);
+    //       setnewRejected(currentUser.Rejected);
+    //     } catch (error) {
+    //       console.log(error);
+    //     }
+    //   };
+    //   getUser();
+    // };
+    // const ContinueHandle11 = () => {
+    //   const getUser = async () => {
+    //     try {
+    //       const savedUser = await AsyncStorage.getItem('user');
+    //       const currentUser = JSON.parse(savedUser);
+    //       await AsyncStorage.setItem('user', JSON.stringify({
+    //         Accepted: currentUser.Accepted - 1,
+    //         Rejected: currentUser.Rejected + 1,
+    //       }));
+    //   // setnewAccepted( newaccepted-1);
+    //   //     setnewRejected(newrejected+1);
+    //       setnewAccepted( currentUser.Accepted-1);
+    //       setnewRejected(currentUser.Rejected+1);
+    //     } catch (error) {
+    //       console.log(error);
+    //     }
+    //   };
+    //   getUser();
+    // };
 
-    useEffect(() => {
-      async function userdata() {
-        const savedUser = await AsyncStorage.getItem('user');
-        const currentUser = JSON.parse(savedUser);
-        setnewAccepted(currentUser.Accepted);
-        setnewRejected(currentUser.Rejected);
-      }
-      userdata();
-    }, [newaccepted, newrejected]);
+    // useEffect(() => {
+    //   async function userdata() {
+    //     const savedUser = await AsyncStorage.getItem('user');
+    //     const currentUser = JSON.parse(savedUser);
+    //     setnewAccepted(currentUser.Accepted);
+    //     setnewRejected(currentUser.Rejected);
+    //   }
+    //   userdata();
+    // }, [newaccepted, newrejected]);
 
     const handleSync = () => {
       const unsubscribe = NetInfo.addEventListener(state => {
@@ -638,7 +721,7 @@ const ShipmentBarcode = ({route}) => {
               if (len > 0) {
                 let res = results.rows.item(0);
                 console.log(res, 'tanmay');
-                axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
+                axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
                   clientShipmentReferenceNumber: res.clientShipmentReferenceNumber,
                   feUserID: route.params.userId,
                   isAccepted: 'false',
@@ -677,33 +760,36 @@ const ShipmentBarcode = ({route}) => {
         return GetLocation.getCurrentPosition({
             enableHighAccuracy: true,
             timeout: 10000,
-        })
-        .then(latestLocation => {
+          })
+          .then(latestLocation => {
             // console.log('latest location ' + JSON.stringify(latestLocation));
             return latestLocation;
-        }).then(location => {
-            const currentLoc = { latitude: location.latitude, longitude: location.longitude };
+          }).then(location => {
+            const currentLoc = {
+              latitude: location.latitude,
+              longitude: location.longitude
+            };
             setLatitude(location.latitude);
             setLongitude(location.longitude);
             return currentLoc;
-        }).catch(error => {
+          }).catch(error => {
             RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
                 interval: 10000,
                 fastInterval: 5000,
-            })
-            .then(status=>{
-                if (status)
-                    {console.log('Location enabled');}
-            }).catch(err=>{
-            });
+              })
+              .then(status => {
+                if (status) {
+                  console.log('Location enabled');
+                }
+              }).catch(err => {});
             return false;
-        });
-    };
-    current_location();
+          });
+      };
+      current_location();
     }, []);
 
     const submitForm = () => {
-      axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
+      axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
         clientShipmentReferenceNumber : route.params.barcode,
         feUserID: route.params.userId,
         isAccepted : 'false',
@@ -718,13 +804,14 @@ const ShipmentBarcode = ({route}) => {
       })
         .then(function (response) {
           console.log(response.data, 'Data has been pushed');
-          ContinueHandle();
+          // ContinueHandle();
           // navigation.navigate('ShipmentBarcode');
         })
         .catch(function (error) {
           console.log(error);
         });
     };
+
     function handleButtonPress(item) {
       setDropDownValue(item);
       submitForm();
@@ -766,8 +853,10 @@ const ShipmentBarcode = ({route}) => {
               Forward : route.params.Forward,
               accepted : newaccepted,
               rejected : newrejected,
+              notPicked : newNotPicked,
               phone : route.params.phone,
               userId : route.params.userId,
+              consignorCode:route.params.consignorCode,
               contactPersonName:route.params.contactPersonName,
             })}} >
             Submit</Button>
@@ -951,32 +1040,33 @@ const ShipmentBarcode = ({route}) => {
                 <Text style={{fontSize: 18, fontWeight: '500'}}>{newrejected}</Text>
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: 'lightgray', borderBottomLeftRadius: 5, borderBottomRightRadius: 5, padding: 10}}>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>Not Handed Over</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>{0}</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>Not Picked</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{newNotPicked}</Text>
               </View>
             </View>
           </View>
           <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
             <Button onPress={()=>{
                if (newaccepted === 0){
-                Alert.alert('Bag is Empty', 'No Open bag to Close. End Scan?', [{
-                  text: 'Cancel',
-                  onPress: () => console.log('Cancel Pressed'),
-                  style: 'cancel',
-                },
-                  {text: 'OK', onPress: () => {console.log('OK Pressed');partialClose112();
-                  // navigation.navigate('POD',{
-                  //     Forward : route.params.Forward,
-                  //     accepted : newaccepted,
-                  //     rejected : newrejected,
-                  //     phone : route.params.phone,
-                  //     userId : route.params.userId,
-                  //     contactPersonName:route.params.contactPersonName,
-                  //   })
-                 }},
-                ]);
-                // ToastAndroid.show('Cannot close empty bag. Plz add some items... ',ToastAndroid.SHORT);
-              return;
+                partialClose112();
+                // Alert.alert('Bag is Empty', 'No Open bag to Close. End Scan?', [{
+                //   text: 'Cancel',
+                //   onPress: () => console.log('Cancel Pressed'),
+                //   style: 'cancel',
+                // },
+                //   {text: 'OK', onPress: () => {console.log('OK Pressed');partialClose112();
+                //   // navigation.navigate('POD',{
+                //   //     Forward : route.params.Forward,
+                //   //     accepted : newaccepted,
+                //   //     rejected : newrejected,
+                //   //     phone : route.params.phone,
+                //   //     userId : route.params.userId,
+                //   //     contactPersonName:route.params.contactPersonName,
+                //   //   })
+                //  }},
+                // ]);
+                // // ToastAndroid.show('Cannot close empty bag. Plz add some items... ',ToastAndroid.SHORT);
+              // return;
               }else{
               setShowCloseBagModal11(true);}
               // partialClose112();
@@ -991,11 +1081,11 @@ const ShipmentBarcode = ({route}) => {
 
             <Button w="48%" size="lg" bg={closeBagColor} onPress={() => { if (newaccepted === 0){
               setCloseBagColor('gray.300');
-        Alert.alert('Bag is Empty', 'No Open Bag to Close', [
-          {text: 'OK', onPress: () => {console.log('OK Pressed');}},
-        ]);
-        // ToastAndroid.show('Cannot close empty bag. Plz add some items... ',ToastAndroid.SHORT);
-      return;
+      //   Alert.alert('Bag is Empty', 'No Open Bag to Close', [
+      //     {text: 'OK', onPress: () => {console.log('OK Pressed');}},
+      //   ]);
+      //   // ToastAndroid.show('Cannot close empty bag. Plz add some items... ',ToastAndroid.SHORT);
+      // return;
       }else{
         setCloseBagColor('#004aad');
               setShowCloseBagModal(true);}
