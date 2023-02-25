@@ -33,6 +33,7 @@ export default function Login() {
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem('@storage_Key');
+      // const value2=AsyncStorage.getItem('apiDataLoaded');
       if (value !== null) {
         const data = JSON.parse(value);
         navigation.navigate('Main', {

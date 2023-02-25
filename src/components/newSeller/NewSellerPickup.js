@@ -122,7 +122,7 @@ return (
             );
           })}
                 <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1,marginRight:50}}><Text style={styles.fontvalue} >{pending11} /{route.params.Forward}</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1,marginRight:50}}><Text style={styles.fontvalue} >{pending11}/{route.params.Forward}</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1,marginRight:-70}}><Text style={styles.fontvalue} >{route.params.Reverse}</Text></DataTable.Cell>
                 <ChevronRightIcon style={{color:'#004aad',marginTop:8}} />
               </DataTable.Row>
@@ -133,8 +133,8 @@ return (
             data.filter(searched(keyword)).map((single, i) => (
               <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} key={single.consignorName} onPress={() =>{navigation.navigate('StartTrip')}} >
                 <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{route.params.Forward - pending11} /{route.params.Forward}</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >{route.params.Reverse}</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1,marginRight:50}}><Text style={styles.fontvalue} >{pending11}/{route.params.Forward}</Text></DataTable.Cell>
+                <DataTable.Cell style={{flex: 1,marginRight:-70}}><Text style={styles.fontvalue} >{route.params.Reverse}</Text></DataTable.Cell>
                 <ChevronRightIcon style={{color:'#004aad',marginTop:8}} />
               </DataTable.Row>
             ))}
