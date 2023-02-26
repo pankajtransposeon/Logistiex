@@ -193,7 +193,7 @@ function StackNavigators({navigation}) {
 
     useEffect(() => {
       if (userId !== null) {
-        setTimeout(()=>{Login_Data_load();},1500);
+        setTimeout(()=>{Login_Data_load();},10);
       }
     }, [userId]);
 
@@ -221,6 +221,13 @@ function StackNavigators({navigation}) {
         AsyncStorage.setItem('apiDataLoaded', 'true');
           // return;
         }
+        })
+        .catch(e => {
+        console.log(e);
+        });
+        AsyncStorage.getItem('lastSyncTime112')
+        .then(data11 => {
+        setLastSyncTime(data11);
         })
         .catch(e => {
         console.log(e);

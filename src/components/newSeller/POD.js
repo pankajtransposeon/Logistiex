@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { ArrowForwardIcon, NativeBaseProvider, Box, Image, Center,Input, Modal, Heading} from 'native-base';
-import{StyleSheet ,Text ,TouchableOpacity ,View ,ScrollView ,TextInput ,getPick ,Alert} from 'react-native';
+import {StyleSheet ,Text ,TouchableOpacity ,View ,ScrollView ,TextInput ,getPick ,Alert, ToastAndroid} from 'react-native';
 import axios from 'axios';
 import { HStack ,Button } from 'native-base';
 import React, { useState, useEffect, useRef } from 'react';
@@ -18,7 +18,7 @@ const db = openDatabase({
 });
 const POD = ({route}) => {
 
-  var otpInput = useRef(null)
+  var otpInput = useRef(null);
   const navigation = useNavigation();
   const [name, setName] = useState(route.params.contactPersonName);
   const [inputOtp, setInputOtp] = useState('');
@@ -48,14 +48,14 @@ const POD = ({route}) => {
       });
   });
     // await fetch(PartialClose)
-    // .then((response) => response.json()) 
+    // .then((response) => response.json())
     // .then((json) => {
     //   setPartialCloseData(json);
     // })
-    // .catch((error) => alert(error)) 
-  }
+    // .catch((error) => alert(error))
+  };
   useEffect(() => {
-    DisplayData11();   
+    DisplayData11();
   }, []);
 
   // useEffect(() => {
@@ -103,15 +103,15 @@ const POD = ({route}) => {
     } else {
       setModalVisible11(true);
     }
-        }
+        };
 
   const clearText = () => {
     otpInput.current.clear();
-  }
+  };
 
   const setText = () => {
-    otpInput.current.setValue("1234");
-  }
+    otpInput.current.setValue('1234');
+  };
 
 useEffect(() => {
   const current_location = () => {
@@ -121,7 +121,7 @@ useEffect(() => {
         timeout: 10000,
     })
     .then(latestLocation => {
-        console.log('latest location '+JSON.stringify(latestLocation))
+        console.log('latest location ' + JSON.stringify(latestLocation));
         return latestLocation;
     }).then(location => {
         const currentLoc = { latitude11: location.latitude11, longitude11: location.longitude11 };
@@ -134,12 +134,12 @@ useEffect(() => {
             fastInterval: 5000,
         })
         .then(status=>{
-            if(status)
-                console.log('Location enabled');
+            if (status)
+                {console.log('Location enabled');}
         }).catch(err=>{
-        })
+        });
         return false;
-    })
+    });
 };
 
   current_location();
@@ -158,23 +158,23 @@ const submitForm11 = () => {
     latitude11 : latitude11,
     longitude11 : longitude11,
     ReceiverMobileNo : route.params.phone,
-    ReceiverName: name
-    
+    ReceiverName: name,
+
 })
     .then(function (response) {
-        console.log(response.data, "hello");
+        console.log(response.data, 'hello');
         alert('Your Data has submitted');
     })
     .catch(function (error) {
         console.log(error);
     });
-}
+};
 
 const sendSmsOtp = async () => {
   console.log(mobileNumber);
   const response = await axios.post('https://bkedtest.logistiex.com/SMS/msg', {
     'mobileNumber': mobileNumber,
-  }).then(setShowModal11(true)).catch((err=>console.log("OTP not send")));
+  }).then(setShowModal11(true)).catch((err=>console.log('OTP not send')));
 };
   // const sendSmsOtp = async () => {
   //   console.log(mobileNumber);
@@ -183,7 +183,7 @@ const sendSmsOtp = async () => {
   //   });
   //   if(response.status === 200) {
   //     setShowModal11(true);
-  //   } 
+  //   }
   //   else {
   //     console.log("Otp not send", response);
   //   }
@@ -198,24 +198,28 @@ const sendSmsOtp = async () => {
   }
 
   function validateOTP(){
-    axios.post("https://bkedtest.logistiex.com/SMS/OTPValidate", {
+    axios.post('https://bkedtest.logistiex.com/SMS/OTPValidate', {
       mobileNumber: mobileNumber,
-      otp: inputOtp
+      otp: inputOtp,
     })
     .then(response => {
-      if(response.data.return){
-        submitForm11();
-        setInputOtp("");
+      if (response.data.return){
+        // submitForm11();
+        setInputOtp('');
         setShowModal11(false);
+        ToastAndroid.show('Submit successful',ToastAndroid.SHORT);
+        navigation.navigate('Main',{
+          userId:route.params.userId,
+        });
       }
-      else{
-        alert("Invalid OTP, please try again !!");
+      else {
+        alert('Invalid OTP, please try again !!');
       }
     })
     .catch(error => {
-      alert("Invalid OTP, please try again !!");
+      alert('Invalid OTP, please try again !!');
       console.log(error);
-    })
+    });
   }
 
   return (
@@ -244,9 +248,9 @@ const sendSmsOtp = async () => {
           <Modal.Body>
             {(PartialCloseData ) &&
             PartialCloseData.map((d,index) => (
-            <Button key={d.reasonID} flex="1" mt={2} marginBottom={1.5} 
-             marginTop={1.5} style={{backgroundColor: d.reasonName === DropDownValue11 ? "#6666FF":"#C8C8C8"}}  title={d.reasonName} onPress={() => handleButtonPress11(d.reasonName)} >
-            <Text style={{color:d.reasonName==DropDownValue11?'white':'black'}}>{d.reasonName}</Text></Button>
+            <Button key={d.reasonID} flex="1" mt={2} marginBottom={1.5}
+             marginTop={1.5} style={{backgroundColor: d.reasonName === DropDownValue11 ? '#6666FF' : '#C8C8C8'}}  title={d.reasonName} onPress={() => handleButtonPress11(d.reasonName)} >
+            <Text style={{color:d.reasonName == DropDownValue11 ? 'white' : 'black'}}>{d.reasonName}</Text></Button>
             ))
           }
             <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => setModalVisible11(false)} >
@@ -280,10 +284,10 @@ const sendSmsOtp = async () => {
             {/* <Button w="90%" mt={2} size="lg" style={{backgroundColor:'#004aad', color:'#fff'}}  title="Submit"  onPress={() => setModalVisible11(true)} >Partial Close</Button> */}
           </Center>
           <Center>
-            <Image style={{ width:150, height:150 }} source={require('../../assets/image.png')} alt={"Logo Image"} />
+            <Image style={{ width:150, height:150 }} source={require('../../assets/image.png')} alt={'Logo Image'} />
           </Center>
         </ScrollView>
-      </View> 
+      </View>
     </NativeBaseProvider>
   );
 };
@@ -304,14 +308,14 @@ export const styles = StyleSheet.create({
       paddingBottom:10,
       backgroundColor:'#eee',
       width: 'auto',
-      borderRadius:0
+      borderRadius:0,
   },
 
   text:{
     paddingLeft:20,
     color:'#000',
     fontWeight:'normal',
-    fontSize:18
+    fontSize:18,
   },
   container:{
       flex:1,
@@ -324,7 +328,7 @@ export const styles = StyleSheet.create({
       justifyContent:'space-between',
       width: 'auto',
       borderWidth:1,
-      borderColor:'#eee'
+      borderColor:'#eee',
 
   },
 
@@ -332,15 +336,15 @@ export const styles = StyleSheet.create({
 
       paddingLeft:30,
       color:'#000',
-      fontSize:15
+      fontSize:15,
 
 
   },
   otp:{
-      backgroundColor:'#004aad', 
+      backgroundColor:'#004aad',
       color:'#000',
       marginTop:5,
-      borderRadius:10
-     
-  }
-})
+      borderRadius:10,
+
+  },
+});

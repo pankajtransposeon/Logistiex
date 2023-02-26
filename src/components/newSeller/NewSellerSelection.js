@@ -386,7 +386,7 @@ useEffect(() => {
         <View>
           <Modal
             isOpen={modalVisible}
-            onClose={() => setModalVisible(false)}
+            onClose={() => {setModalVisible(false); setDropDownValue('');}}
             size="lg">
             <Modal.Content maxWidth="350">
               <Modal.CloseButton />
@@ -437,7 +437,7 @@ useEffect(() => {
           </Modal>
           <Modal
             isOpen={modalVisible2}
-            onClose={() => setModalVisible2(false)}
+            onClose={() => {setModalVisible2(false); setDropDownValue('');}}
             size="lg">
             <Modal.Content maxWidth="350">
               <Modal.CloseButton />
