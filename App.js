@@ -144,7 +144,27 @@ function StackNavigators({navigation}) {
             console.log(e);
         }
     };
+    const getDataTrip = async () => {
+      try {
+       
+        const StartEndTrip = await AsyncStorage.getItem('@StartEndTrip');
+        if (StartEndTrip !== null) {
+          const data = JSON.parse(StartEndTrip);
+          setTripValue(data);
+          console.log(data, 'startEnddata')
+          // await AsyncStorage.setItem('@StartEndTrip', JSON.stringify(data)); 
+          // await AsyncStorage.removeItem('@StartEndTrip');
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+  
+    useEffect(() => {
+      getDataTrip();
+    }, []);
 
+    
     useEffect(()=>{
       // This useEffect  is use to hide warnings in mobile screen .
       // LogBox.ignoreLogs(['Warning: Each child in a list should have a unique "key" prop.']);
@@ -2221,7 +2241,7 @@ function CustomDrawerContent({navigation}) {
   const [language, setLanguage] = useState('');
   const [email, SetEmail] = useState('');
   const [name, setName] = useState('');
-  const [TripValue, setTripValue] = useState('Start Trip');
+  const [tripValue, setTripValue] = useState('Start Trip');
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem('@storage_Key');
@@ -2233,18 +2253,28 @@ function CustomDrawerContent({navigation}) {
         setName('');
         SetEmail('');
       }
+    } catch (e) {
+      console.log(e);
+    }
+    try {
       const StartEndTrip = await AsyncStorage.getItem('@StartEndTrip');
       if (StartEndTrip !== null) {
         const data = JSON.parse(StartEndTrip);
-        console.log(data, 'dasdas');
         setTripValue(data);
-        await AsyncStorage.removeItem('@StartEndTrip');
+        // await AsyncStorage.removeItem('@StartEndTrip');
       }
     } catch (e) {
       console.log(e);
     }
   };
-
+  const handleStartEndTrip = async (newValue) => {
+    setTripValue(newValue);
+    try {
+      await AsyncStorage.setItem('@StartEndTrip', JSON.stringify(newValue));
+    } catch (e) {
+      console.log(e);
+    }
+  };
   useEffect(() => {
     const StartValue = setInterval(() => {
       getData();
@@ -2260,7 +2290,6 @@ function CustomDrawerContent({navigation}) {
       console.log(e);
     }
   };
-
   return (
     <NativeBaseProvider>
       {email ? (
@@ -2315,16 +2344,16 @@ function CustomDrawerContent({navigation}) {
             <Button
               variant="outline"
               onPress={() => {
-                TripValue === 'Start Trip'
+                tripValue === 'Start Trip'
                   ? navigation.navigate('StartTrip')
-                  : TripValue === 'End Trip'
+                  : tripValue === 'End Trip'
                   ? navigation.navigate('EndTrip')
                   : navigation.navigate('StartEndDetails');
                 navigation.closeDrawer();
               }}
               mt={4}
               style={{color: '#004aad', borderColor: '#004aad'}}>
-              <Text style={{color: '#004aad'}}>{TripValue}</Text>
+              <Text style={{color: '#004aad'}}>{tripValue}</Text>
             </Button>
 
 
