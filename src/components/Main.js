@@ -44,7 +44,7 @@ export default function Main({navigation, route}) {
     const [SpARC1,setSpARC1] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoading1, setIsLoading1] = useState(false);
-    const [TripValue, setTripValue] = useState('Start Trip');
+    const [tripValue, setTripValue] = useState('Start Trip');
     const [Forward,setForward] = useState(0);
     const [Reverse,setReverse] = useState(0);
     
@@ -56,7 +56,7 @@ export default function Main({navigation, route}) {
           const data = JSON.parse(StartEndTrip);
           setTripValue(data);
           console.log(data, 'startEnddata')
-          await AsyncStorage.removeItem('@StartEndTrip');
+          // await AsyncStorage.removeItem('@StartEndTrip');
         }
       } catch (e) {
         console.log(e);
@@ -74,7 +74,15 @@ export default function Main({navigation, route}) {
         return unsubscribe;
       }, [navigation]);
 
-
+      const handleStartEndTrip = async (newValue) => {
+        setTripValue(newValue);
+        try {
+          await AsyncStorage.setItem('@StartEndTrip', JSON.stringify(newValue));
+        } catch (e) {
+          console.log(e);
+        }
+      };
+      
       const getData = async () => {
         try {
             const value = await AsyncStorage.getItem('refresh11');
@@ -92,7 +100,7 @@ export default function Main({navigation, route}) {
             const data = JSON.parse(StartEndTrip);
             setTripValue(data);
             console.log(data, 'startEnddata')
-            await AsyncStorage.removeItem('@StartEndTrip');
+            // await AsyncStorage.removeItem('@StartEndTrip');
           }
         } catch (e) {
           console.log(e);
@@ -466,8 +474,8 @@ export default function Main({navigation, route}) {
               </View>
             </Box>
             {it.title==='Seller Deliveries'?
-              <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries',{Forward:Forward, Reverse:Reverse, Trip:TripValue})}>New Delivery</Button>
-              :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup',{Forward:Forward, Reverse:Reverse, Trip:TripValue})}>New Pickup</Button>
+              <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries',{Forward:Forward, Reverse:Reverse, Trip:tripValue})}>New Delivery</Button>
+              :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup',{Forward:Forward, Reverse:Reverse, Trip:tripValue})}>New Pickup</Button>
               }
           </Box>        
           );
@@ -538,16 +546,16 @@ export default function Main({navigation, route}) {
         <Button
           variant="outline"
           onPress={() => {
-            TripValue === 'Start Trip'
+            tripValue === 'Start Trip'
               ? navigation.navigate('StartTrip')
-              : TripValue === 'End Trip'
+              : tripValue === 'End Trip'
               ? navigation.navigate('EndTrip')
               : navigation.navigate('StartEndDetails');
             navigation.closeDrawer();
           }}
           mt={4}
           style={{color: '#004aad', borderColor: '#004aad'}}>
-          <Text style={{color: '#004aad'}}>{TripValue}</Text>
+          <Text style={{color: '#004aad'}}>{tripValue}</Text>
         </Button>
         {/* <Button w="100%" size="lg" bg="#004aad" mt={-5} onPress={()=>navigation.navigate('SellerHandover')}>Seller Handover</Button> */}
         {/* <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>Start Handover</Button> */}
