@@ -22,9 +22,18 @@ export default function Login() {
     try {
       const jsonValue = JSON.stringify(data);
       await AsyncStorage.setItem('@storage_Key', jsonValue);
-      // await AsyncStorage.setItem('load11', 'load');
-     await  AsyncStorage.setItem('lastSyncTime112', '');
       await AsyncStorage.setItem('apiDataLoaded', 'false');
+      var date = new Date();
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        var time = hours + ':' + minutes + ' ' + ampm;
+        var datetime = 'Last Sync\n' + hours + ':' + minutes + ' ' + ampm;
+        console.log(datetime);
+        AsyncStorage.setItem('lastSyncTime112', datetime);
     } catch (e) {
       console.log(e);
     }
@@ -33,9 +42,9 @@ export default function Login() {
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem('@storage_Key');
-      // const value2=AsyncStorage.getItem('apiDataLoaded');
       if (value !== null) {
         const data = JSON.parse(value);
+        // await AsyncStorage.setItem('apiDataLoaded', 'false');
         navigation.navigate('Main', {
           userId : data.userId,
         });
@@ -68,7 +77,7 @@ export default function Login() {
         navigation.navigate('Main', {
           userId : response.data.userDetails.userId,
         });
-      }, 1000);
+      }, 100);
     }, (error) => {
       console.log(error);
       setLoginClicked(false);
