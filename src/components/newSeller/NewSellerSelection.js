@@ -67,7 +67,7 @@ const NewSellerSelection = ({route}) => {
     AsyncStorage.setItem('refresh11', 'refresh');
     db.transaction(tx => {
       tx.executeSql(
-        'UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE status IS Null',
+        'UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE shipmentAction="Seller Pickup" AND status IS Null',
         [DropDownValue],
         (tx1, results) => {
           let temp = [];

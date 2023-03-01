@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
   NativeBaseProvider,
@@ -112,7 +113,18 @@ const ShipmentBarcode = ({
     const [PartialCloseData, setPartialCloseData] = useState([]);
     const [closeBagColor,setCloseBagColor] = useState('gray.300');
     const [showQRCodeModal,setShowQRCodeModal] = useState(true);
-    // const PartialClose = 'https://bked.logistiex.com/ADupdatePrams/getPartialClosureReasons';
+
+  const [scanned, setScanned] = useState(true);
+    const scannerRef = useRef(null);
+
+    const reloadScanner = () => {
+      if (scannerRef.current) {
+        scannerRef.current.reactivate();
+      }
+    };
+    useEffect(() => {
+    reloadScanner();
+    }, []);
     const DisplayData11 = async() => {
       db.transaction(tx => {
         tx.executeSql('SELECT * FROM PartialCloseReasons', [], (tx1, results) => {
@@ -199,6 +211,7 @@ const ShipmentBarcode = ({
           contactPersonName:route.params.contactPersonName,
         });
       } else {
+        setDropDownValue11('');
         setModalVisible11(true);
       }
     };
@@ -285,9 +298,11 @@ const ShipmentBarcode = ({
     };
 
     function handleButtonPress11(item) {
-      // if(item=='Partial Dispatch'){
-      //   navigation.navigate('Dispatch');
-      // }
+      if (item === 'Partial Dispatch'){
+        setDropDownValue11('');
+        setModalVisible11(false);
+        navigation.navigate('Dispatch');
+      }
       setDropDownValue11(item);
       // setModalVisible11(false);
     }
@@ -433,7 +448,7 @@ const ShipmentBarcode = ({
         bagSeal VARCHAR(100),
         AcceptedList VARCHAR(600)
       )`, [], (sqlTxn, res) => {
-          console.log('table created successfully details213 ');
+          // console.log('table created successfully details213 ');
           // loadAPI_Data();
         }, error => {
           console.log('error on creating table ' + error.message);
@@ -471,15 +486,16 @@ const ShipmentBarcode = ({
 const barcodeCheck11 = ()=>{
     db.transaction((tx) => {
       tx.executeSql('Select * FROM SellerMainScreenDetails WHERE status IS NOT NULL AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?)', [barcode,barcode,barcode], (tx1, results) => {
-        console.log('Results121', results.rows.length,results);
-        if (results.rows.length > 0) {
-          ToastAndroid.show(barcode + ' already scanned',ToastAndroid.SHORT);
-        } else {
+        console.log('Results121', results.rows.length);
+        console.log(barcode);
+        if (results.rows.length === 0) {
           ToastAndroid.show('Scanning wrong product',ToastAndroid.SHORT);
+        } else {
+          ToastAndroid.show(barcode + ' already scanned',ToastAndroid.SHORT);
         }
       });
     });
-  }; 
+  };
 
     const rejectDetails2 = () => {
       console.log('scan 45456');
@@ -554,7 +570,7 @@ const barcodeCheck11 = ()=>{
     };
     const partialClose = () => {
       db.transaction((tx) => {
-        tx.executeSql('UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE status IS Null', [DropDownValue11], (tx1, results) => {
+        tx.executeSql('UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE shipmentAction="Seller Pickup" AND status IS Null', [DropDownValue11], (tx1, results) => {
           let temp = [];
           // console.log("Not Picked Reason",DropDownValue);
           // console.log('Results',results.rowsAffected);
@@ -583,11 +599,31 @@ const barcodeCheck11 = ()=>{
           'SELECT * FROM SellerMainScreenDetails WHERE status IS NULL AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber = ?) ',
           [data,data,data],
           (sqlTxn, res) => {
-            console.log('categories retrieved successfully', res.rows.length);
+            // console.log('categories retrieved successfully', res.rows.length);
+            console.log('ok1111',data);
             setLen(res.rows.length);
+            setBarcode(data);
             if (!res.rows.length) {
               // alert('You are scanning wrong product, Please check.');
-              barcodeCheck11();
+              console.log(data);
+              console.log('ok2222',data);
+
+              // barcodeCheck11();
+              db.transaction((tx) => {
+                console.log('ok3333',data);
+
+                tx.executeSql('Select * FROM SellerMainScreenDetails WHERE status IS NOT NULL AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?)', [data,data,data], (tx1, results) => {
+                  console.log('Results121', results.rows.length);
+                  console.log('ok4444',data);
+
+                  console.log(data);
+                  if (results.rows.length === 0) {
+                    ToastAndroid.show('Scanning wrong product',ToastAndroid.SHORT);
+                  } else {
+                    ToastAndroid.show(data + ' already scanned',ToastAndroid.SHORT);
+                  }
+                });
+              });
             }
           },
           error => {
@@ -652,8 +688,8 @@ const barcodeCheck11 = ()=>{
     };
     const onSuccess = e => {
       console.log(e.data, 'barcode');
-      getCategories(e.data);
       setBarcode(e.data);
+      getCategories(e.data);
     };
     const onSuccess11 = e => {
       Vibration.vibrate(100);
@@ -882,18 +918,22 @@ const barcodeCheck11 = ()=>{
           </Modal.Body>
         </Modal.Content>
       </Modal>
-      <Modal isOpen={modalVisible11} onClose={() => {setModalVisible11(false);setDropDownValue11('');}} size="lg">
+      <Modal isOpen={modalVisible11} onClose={() => {setModalVisible11(false); setDropDownValue11('');}} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
           <Modal.Header>Partial Close Reason</Modal.Header>
           <Modal.Body>
-            {(PartialCloseData ) &&
-            PartialCloseData.map((d,index) => (
-            <Button key={d.reasonID} flex="1" mt={2} marginBottom={1.5}
-             marginTop={1.5} style={{backgroundColor: d.reasonName === DropDownValue11 ? '#6666FF' : '#C8C8C8'}}  title={d.reasonName} onPress={() => handleButtonPress11(d.reasonName)} >
-            <Text style={{color:d.reasonName == DropDownValue11 ? 'white' : 'black'}}>{d.reasonName}</Text></Button>
-            ))
-          }
+{
+(PartialCloseData) && PartialCloseData.map(
+    (d, index) => ((newaccepted === 0 && d.reasonName === 'Partial Dispatch') ? (<Button h="12" paddingBottom={5} key={d.reasonID} flex="1" mt={2} marginBottom={1.4}
+             marginTop={1.4} style={{backgroundColor: d.reasonName === DropDownValue11 ? '#6666FF' : '#C8C8C8',opacity: 0.4}}  title={d.reasonName}  > <Text style={{color:d.reasonName === DropDownValue11 ? 'white' : 'black',alignContent:'center',paddingTop:-5}}> {
+            d.reasonName
+    } </Text></Button >) : (<Button h="12" paddingBottom={5} key={d.reasonID} flex="1" mt={2} marginBottom={1.4} marginTop={1.4} style={{backgroundColor: d.reasonName === DropDownValue11 ? '#6666FF' : '#C8C8C8'}}  title={d.reasonName} onPress={() => handleButtonPress11(d.reasonName)}> <Text style={{color:d.reasonName === DropDownValue11 ? 'white' : 'black',alignContent:'center',paddingTop:-5}}> {
+   d.reasonName
+} </Text></Button >)
+
+))}
+
             <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => {partialClose(); setModalVisible11(false);  navigation.navigate('POD',{
               Forward : route.params.Forward,
               accepted : newaccepted,
@@ -922,7 +962,7 @@ const barcodeCheck11 = ()=>{
           </Center>
         </ScrollView>
       </View>
-      <Modal isOpen={showCloseBagModal11} onClose={() => { setShowCloseBagModal11(false);}} size="lg">
+      <Modal isOpen={showCloseBagModal11} onClose={() => { setShowCloseBagModal11(false); reloadScanner(); setScanned(true);}} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
           <Modal.Header>Close Bag</Modal.Header>
@@ -960,7 +1000,7 @@ const barcodeCheck11 = ()=>{
       </Modal>
 
 
-      <Modal isOpen={showCloseBagModal} onClose={() => {setShowCloseBagModal(false); setShowQRCodeModal(true);}} size="lg">
+      <Modal isOpen={showCloseBagModal} onClose={() => {setShowCloseBagModal(false); setShowQRCodeModal(true); reloadScanner(); }} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
           <Modal.Header>Close Bag</Modal.Header>
@@ -972,7 +1012,8 @@ const barcodeCheck11 = ()=>{
           // showMarker={true}
           reactivateTimeout={2000}
           flashMode={RNCamera.Constants.FlashMode.off}
-          ref={(node) => { this.scanner = node; }}
+          // ref={(node) => { this.scanner = node; }}
+          // ref={scannerRef}
           containerStyle={{ height:116,marginBottom:'55%' }}
           cameraStyle={{ height: 90, marginTop: 95,marginBottom:'15%', width: 289, alignSelf: 'center', justifyContent: 'center' }}
           // cameraProps={{ ratio:'1:2' }}
@@ -997,7 +1038,7 @@ const barcodeCheck11 = ()=>{
         </Modal.Content>
       </Modal>
 
-      <Modal isOpen={modalVisible} onClose={() => {setModalVisible(false);setDropDownValue('')}} size="lg">
+      <Modal isOpen={modalVisible} onClose={() => {setModalVisible(false); setDropDownValue('');}} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
           <Modal.Header>Reject Reason</Modal.Header>
@@ -1015,17 +1056,19 @@ const barcodeCheck11 = ()=>{
       <ScrollView style={{paddingTop: 20, paddingBottom: 50}} showsVerticalScrollIndicator={false}>
       {/* <Modal isOpen={showQRCodeModal} onClose={() => setShowQRCodeModal(false)} size="lg">
           <Modal.Body> */}
-        <QRCodeScanner
+        {scanned && <QRCodeScanner
           onRead={onSuccess}
           reactivate={true}
           reactivateTimeout={3000}
+          ref={scannerRef}
           flashMode={RNCamera.Constants.FlashMode.off}
           containerStyle={{width: '100%', alignSelf: 'center', backgroundColor: 'white'}}
           cameraStyle={{width: '90%', alignSelf: 'center'}}
           topContent={
-            <View><Text>Scanner </Text></View>
+            <View><Text>Scan your Shipments </Text></View>
           }
         />
+  }
         {/* </Modal.Body>
       </Modal> */}
 

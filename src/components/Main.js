@@ -55,7 +55,7 @@ export default function Main({navigation, route}) {
         if (StartEndTrip !== null) {
           const data = JSON.parse(StartEndTrip);
           setTripValue(data);
-          console.log(data, 'startEnddata')
+          // console.log(data, 'startEnddata')
           // await AsyncStorage.removeItem('@StartEndTrip');
         }
       } catch (e) {
@@ -70,6 +70,7 @@ export default function Main({navigation, route}) {
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
           loadSellerPickupDetails();
+          loadSellerDeliveryDetails();
         });
         return unsubscribe;
       }, [navigation]);
@@ -88,6 +89,7 @@ export default function Main({navigation, route}) {
             const value = await AsyncStorage.getItem('refresh11');
             if (value === 'refresh') {
                 loadSellerPickupDetails();
+                loadSellerDeliveryDetails();
             } 
         } catch (e) {
             console.log(e);
@@ -99,7 +101,7 @@ export default function Main({navigation, route}) {
           if (StartEndTrip !== null) {
             const data = JSON.parse(StartEndTrip);
             setTripValue(data);
-            console.log(data, 'startEnddata')
+            // console.log(data, 'startEnddata')
             // await AsyncStorage.removeItem('@StartEndTrip');
           }
         } catch (e) {
@@ -113,38 +115,39 @@ export default function Main({navigation, route}) {
         }, 100);
         return () => clearInterval(StartValue);
     }, []);
-    useEffect(() => {
-      const unsubscribe = navigation.addListener('focus', () => {
-        loadSellerDeliveryDetails();
-      });
-      return unsubscribe;
-    }, [navigation]);
+    // useEffect(() => {
+    //   const unsubscribe = navigation.addListener('focus', () => {
+    //     loadSellerDeliveryDetails();
+    //   });
+    //   return unsubscribe;
+    // }, [navigation]);
 
 
-    const getData1 = async () => {
-      try {
-          const value = await AsyncStorage.getItem('refresh11');
-          if (value === 'refresh') {
-           loadSellerDeliveryDetails();
-          } 
-      } catch (e) {
-          console.log(e);
-      }
-  };
+  //   const getData1 = async () => {
+  //     try {
+  //         const value = await AsyncStorage.getItem('refresh11');
+  //         if (value === 'refresh') {
+  //          loadSellerDeliveryDetails();
+  //         } 
+  //     } catch (e) {
+  //         console.log(e);
+  //     }
+  // };
 
-  useEffect(() => {
-      const StartValue = setInterval(() => {
-          getData1();
-      }, 100);
-      return () => clearInterval(StartValue);
-  }, []);
+  // useEffect(() => {
+  //     const StartValue = setInterval(() => {
+  //         getData1();
+  //     }, 100);
+  //     return () => clearInterval(StartValue);
+  // }, []);
 
     const loadSellerPickupDetails = async() => {
+      setIsLoading(!isLoading);
         setSpp(1);
         setSpnp(1);
         setSpc(1);
         setSpr(1);
-        await AsyncStorage.setItem('refresh11', 'notrefresh');
+        // await AsyncStorage.setItem('refresh11', 'notrefresh');
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
                 setSpts(results.rows.length);
@@ -187,9 +190,10 @@ export default function Main({navigation, route}) {
                 setIsLoading(false);
             });
         });
-       
     };
+
     const loadSellerDeliveryDetails = async() => {
+      setIsLoading(!isLoading);
       setSpp1(1);
       setSpnp1(1);
       setSpc1(1);
