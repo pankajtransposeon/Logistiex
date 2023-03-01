@@ -197,19 +197,7 @@ useEffect(() => {
         'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status IS NULL',
         [route.params.consignorCode],
         (tx1, results) => {
-          // let temp = [];
-          // console.log(results.rows.length);
-          // if (results.rows.length > 0) {
             setPending(results.rows.length);
-            // console.log(pending);
-          // }
-          // setIsLoading(false);
-          // ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
-          // for (let i = 0; i < results.rows.length; ++i) {
-          //     temp.push(results.rows.item(i));
-          // }
-          // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
-          // setData(temp);
         },
       );
     });
@@ -218,19 +206,7 @@ useEffect(() => {
         'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status="notPicked"',
         [route.params.consignorCode],
         (tx1, results) => {
-          // let temp = [];
-          // console.log(results.rows.length);
-          // if (results.rows.length > 0) {
             setNotPicked11(results.rows.length);
-            // console.log(notPicked11);
-          // }
-          // setIsLoading(false);
-          // ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
-          // for (let i = 0; i < results.rows.length; ++i) {
-          //     temp.push(results.rows.item(i));
-          // }
-          // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
-          // setData(temp);
         },
       );
     });
@@ -239,19 +215,7 @@ useEffect(() => {
         'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status="rejected"',
         [route.params.consignorCode],
         (tx1, results) => {
-          // let temp = [];
-          // console.log(results.rows.length);
-          // if (results.rows.length > 0) {
             setRejectedOrder11(results.rows.length);
-            // console.log(rejectedOrder11);
-          // }
-          // setIsLoading(false);
-          // ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
-          // for (let i = 0; i < results.rows.length; ++i) {
-          //     temp.push(results.rows.item(i));
-          // }
-          // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
-          // setData(temp);
         },
       );
     });
