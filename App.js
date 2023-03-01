@@ -75,9 +75,7 @@ function StackNavigators({navigation}) {
     let m = 0;
     useEffect(() => {
       requestPermissions();
-    }, []);
-
-    const requestPermissions = async () => {
+    }, []);    const requestPermissions = async () => {
       try {
         const cameraPermission = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.CAMERA,
@@ -151,7 +149,7 @@ function StackNavigators({navigation}) {
         if (StartEndTrip !== null) {
           const data = JSON.parse(StartEndTrip);
           setTripValue(data);
-          console.log(data, 'startEnddata')
+          // console.log(data, 'startEnddata')
           // await AsyncStorage.setItem('@StartEndTrip', JSON.stringify(data)); 
           // await AsyncStorage.removeItem('@StartEndTrip');
         }
@@ -274,7 +272,7 @@ const push_Data = () => {
     db.transaction(tx => {
         tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentAction="Seller Pickup" AND status IS NOT Null', [], (tx1, results) => {
             if (results.rows.length > 0) {
-                ToastAndroid.show('Pushing data...', ToastAndroid.SHORT);
+                ToastAndroid.show('Syncing data...', ToastAndroid.SHORT);
                 // setIsLoading(!isLoading);
                 let temp = [];
                 let temp11 = 0;
@@ -350,7 +348,7 @@ const push_Data = () => {
                             console.log('Data has been pushed' + i);
                             if (temp11 === results.rows.length) {
                                 temp11 = 0;
-                                ToastAndroid.show('Data Pushed Successfully', ToastAndroid.SHORT);
+                                // ToastAndroid.show('Data Pushed Successfully', ToastAndroid.SHORT);
                                 console.log('ok now pulling the data');
                                 pull_API_Data();
 
