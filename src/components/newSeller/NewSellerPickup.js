@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import {
-    ChevronRightIcon,
+    ArrowForwardIcon,
     NativeBaseProvider,
     Box,
     Image,
@@ -13,12 +13,13 @@ import {DataTable, Searchbar, Text, Card} from 'react-native-paper';
 import {openDatabase} from 'react-native-sqlite-storage';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
-
+import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 const db = openDatabase({name: 'rn_sqlite'});
 
 const NewSellerPickup = ({route}) => {
 
     const [data, setData] = useState([]);
+    const [data1, setData1] = useState([]);
     const [keyword, setKeyword] = useState('');
     const [pending11,setPending] =useState(0);
     const navigation = useNavigation();
@@ -37,20 +38,21 @@ const NewSellerPickup = ({route}) => {
                 console.log(results.rows.length);
                 for (let i = 0; i < results.rows.length; ++i) {
                     temp.push(results.rows.item(i));
-                    // console.log(results.rows.item(i).consignorName);
-                    // var address121 = results.rows.item(i).consignorAddress;
-                    // var address_json = JSON.parse(address121);
-                    // console.log(typeof (address_json));
-                    // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
-                    // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
                 }
-                // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
                 setData(temp);
-                // setIsLoading(false);
             });
         });
         console.log("ok999"+route.params.consignorCode);
-
+        db.transaction((tx) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup"', [], (tx1, results) => { // ToastAndroid.show("Loading...", ToastAndroid.SHORT);
+                let temp = [];
+                console.log(results.rows.length);
+                for (let i = 0; i < results.rows.length; ++i) {
+                    temp.push(results.rows.item(i));
+                }
+                setData1(temp);
+            });
+        });
         db.transaction(tx => {
             tx.executeSql(
               'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status IS  NULL',
@@ -74,7 +76,6 @@ const NewSellerPickup = ({route}) => {
         return (f.includes(keyword1));
     };
 
-
 return (
   <NativeBaseProvider>
     <Box flex={1} bg="#fff"  width="auto" maxWidth="100%">
@@ -87,7 +88,7 @@ return (
       <ScrollView style={styles.homepage} showsVerticalScrollIndicator={true} showsHorizontalScrollIndicator={false}>
         <Card>
           <DataTable>
-            <DataTable.Header style={{height:'auto', backgroundColor: '#004aad', borderTopLeftRadius: 5, borderTopRightRadius: 5}}  >
+            <DataTable.Header style={{height:'auto', backgroundColor: '#004aad', borderTopLeftRadius: 5, borderTopRightRadius: 5, borderWidth:2, borderColor:'white'}}  >
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Seller Name</Text></DataTable.Title>
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Forward Pickups</Text></DataTable.Title>
               <DataTable.Title style={{flex: 1.2,marginRight:-35}}><Text style={{ textAlign: 'center', color:'white'}}>Reverse Deliveries</Text></DataTable.Title>
@@ -96,7 +97,7 @@ return (
             data && data.length > 0  && ((Math.abs(route.params.Forward) + Math.abs(route.params.Reverse)) !== 0) &&
             data.filter(searched(keyword)).map((single, i) => (
                 // if(route.params.Forward !=0 && route.params.Reverse !=0){
-              <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} key={single.consignorName} onPress={() =>{navigation.navigate('NewSellerSelection',{
+              <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1, borderWidth:2, borderColor:'white'}} key={single.consignorName} onPress={() =>{navigation.navigate('NewSellerSelection',{
                 paramKey : single.consignorCode,
                 Forward : route.params.Forward,
                 consignorAddress1 :single.consignorAddress1,
@@ -126,18 +127,18 @@ return (
                 <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1,marginRight:50}}><Text style={styles.fontvalue} >{pending11}/{route.params.Forward}</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1,marginRight:-70}}><Text style={styles.fontvalue} >{route.params.Reverse}</Text></DataTable.Cell>
-                <ChevronRightIcon style={{color:'#004aad',marginTop:8}} />
+                <MaterialIcons name="arrow-right-bold" style={{fontSize: 30, color:'#004aad',marginTop:8}} />
               </DataTable.Row>
             // }
             ))
         :
         data && data.length > 0  && ((Math.abs(route.params.Forward) + Math.abs(route.params.Reverse)) !== 0) &&
             data.filter(searched(keyword)).map((single, i) => (
-              <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} key={single.consignorName} onPress={() =>{navigation.navigate('StartTrip')}} >
+              <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1, borderWidth:2, borderColor:'white'}} key={single.consignorName} onPress={() =>{navigation.navigate('StartTrip')}} >
                 <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1,marginRight:50}}><Text style={styles.fontvalue} >{pending11}/{route.params.Forward}</Text></DataTable.Cell>
-                <DataTable.Cell style={{flex: 1,marginRight:-70}}><Text style={styles.fontvalue} >{route.params.Reverse}</Text></DataTable.Cell>
-                <ChevronRightIcon style={{color:'#004aad',marginTop:8}} />
+                <DataTable.Cell style={{flex: 1,marginRight:-60}}><Text style={styles.fontvalue} >{route.params.Reverse}</Text></DataTable.Cell>
+                <MaterialIcons name="arrow-right-bold" style={{fontSize: 30, color:'#004aad',marginTop:8}} />
               </DataTable.Row>
             ))}
           </DataTable>

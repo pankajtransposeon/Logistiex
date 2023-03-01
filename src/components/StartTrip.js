@@ -39,6 +39,15 @@ export default function StartTrip() {
   useEffect(() => {
     getUserId();
 }, []);
+useEffect(() => {
+  axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/vehicleNumber/${userId}`).then(response => {
+console.log('data',response);
+setVehicle(response.data.data.vehicleNumber);
+}).catch(error => {
+console.log(error, 'error');
+});
+}, [userId]);
+console.log(vehicle);
   const requestCameraPermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -84,10 +93,10 @@ export default function StartTrip() {
   const storeDataTripValue = async() => {
     try {
       await AsyncStorage.setItem('@StartEndTrip', JSON.stringify('End Trip'));
-      await AsyncStorage.setItem('@VehicleStartkm', JSON.stringify({
-        vehicle,
-        startkm
-      }));
+      // await AsyncStorage.setItem('@VehicleStartkm', JSON.stringify({
+      //   vehicle,
+      //   startkm
+      // }));
       navigation.navigate('Main');
     } catch (e) {
       console.log(e);
@@ -202,7 +211,7 @@ const ImageHandle = () =>
             <Box justifyContent="space-between" py={10} px={6} bg="#fff" rounded="xl" width={"90%"} maxWidth="100%" _text={{fontWeight: "medium",}}>
             <ScrollView>
             <VStack space={6}>
-                <Input value={vehicle} onChangeText={setVehicle} size="lg" placeholder="Enter your vehicle no." />
+                <Input editable={false} value={vehicle} size="lg" placeholder="Vehicle No." />
                 <Input keyboardType="numeric" value={startkm} onChangeText={setStartKm} size="lg" type={"number"} placeholder="Input vehicle KMs" />
                 {/* <Button py={3} title="Login" variant='outline'  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons></Button> */}
                 <Button py={3} variant='outline' _text={{ color: 'white', fontSize: 20 }} onPress={takePhoto}>
