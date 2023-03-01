@@ -96,7 +96,7 @@ export default function Login() {
               <Alert w="100%" status={message === 1 ? 'success' : 'error'}>
                 <VStack space={1} flexShrink={1} w="100%" alignItems="center">
                   <Alert.Icon size="4xl" />
-                  <Text my={3} fontSize="md" fontWeight="medium">{message === 1 ? 'Successfully logged in' : 'Please enter correct details'}</Text>
+                  <Text my={3} fontSize="md" fontWeight="medium">{message === 1 ? 'Successfully logged in' : 'Incorrect username or password'}</Text>
                 </VStack>
               </Alert>
             </Modal.Body>
