@@ -21,8 +21,8 @@ const Dispatch = ({route}) => {
 
     const onSuccess = e => {	
         console.log(e.data, 'barcode');	
-        getCategories(e.data);	
-        setBarcode(e.data);	
+        // getCategories(e.data);	
+        // setBarcode(e.data);	
       }
       const requestCameraPermission = async () => {
         try {
@@ -117,9 +117,12 @@ const Dispatch = ({route}) => {
             </View>
           </View>
           </ScrollView>
-          <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center'}}>
-            <Button w="48%" size="lg" style={{backgroundColor:'#004aad', color:'#fff'}}  title="Dispatch">Dispatch</Button>
-            <Button w="48%" size="lg" style={{backgroundColor:'#004aad', color:'#fff'}}  title="Scan">Scan</Button>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center'}}>
+            <Center>
+
+            <Button w="60%" size="lg" style={{backgroundColor:'#004aad', color:'#fff',marginLeft:'8%',}}  title="Dispatch">Dispatch</Button>
+            </Center>
+            {/* <Button w="48%" size="lg" style={{backgroundColor:'#004aad', color:'#fff'}}  title="Scan">Scan</Button> */}
           </View>
           <Center>
             <Image style={{ width:150, height:150 }} source={require('../../assets/image.png')} alt={"Logo Image"} />
