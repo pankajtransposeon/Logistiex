@@ -42,8 +42,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const NewSellerSelection = ({route}) => {
   const [barcodeValue, setBarcodeValue] = useState('');
   const shipmentData = `https://bkedtest.logistiex.com/SellerMainScreen/getSellerDetails/${route.params.paramKey}`;
-  const [acc, setAcc] = useState(1);
+  const [acc, setAcc] = useState(0);
   const [pending, setPending] = useState(route.params.Forward);
+  const [Forward,setForward]=useState("");
   const [reject, setReject] = useState(0);
   const [data, setData] = useState([]);
   const [order, setOrder] = useState([]);
@@ -59,8 +60,8 @@ const NewSellerSelection = ({route}) => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
-  const [notPicked11,setNotPicked11]=useState(1);
-  const [rejectedOrder11,setRejectedOrder11]=useState(1);
+  const [notPicked11,setNotPicked11] = useState(0);
+  const [rejectedOrder11,setRejectedOrder11] = useState(0);
 
   const DisplayData = async () => {
     closePickup11();
@@ -69,8 +70,8 @@ const NewSellerSelection = ({route}) => {
     AsyncStorage.setItem('refresh11', 'refresh');
     db.transaction(tx => {
       tx.executeSql(
-        'UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE shipmentAction="Seller Pickup" AND status IS Null',
-        [DropDownValue],
+        'UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?',
+        [DropDownValue,route.params.consignorCode],
         (tx1, results) => {
           let temp = [];
           // console.log("Not Picked Reason",DropDownValue);
@@ -158,11 +159,11 @@ const NewSellerSelection = ({route}) => {
         const value = await AsyncStorage.getItem('refresh11');
         if (value === 'refresh') {
             loadSellerPickupDetails();
-        } 
+        }
     } catch (e) {
         console.log(e);
     }
-   
+
 };
 
 useEffect(() => {
@@ -182,13 +183,22 @@ useEffect(() => {
   };
 
   const loadSellerPickupDetails = async() => {
-    setAcc(1);
-        setPending(1);
-        setNotPicked11(1);
-        setRejectedOrder11(1);
+    // setAcc(1);
+    //     setPending(1);
+    //     setNotPicked11(1);
+    //     setRejectedOrder11(1);
     await AsyncStorage.setItem('refresh11', 'notrefresh');
     // setIsLoading(!isLoading);
     db.transaction(tx => {
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? ',
+          [route.params.consignorCode],
+          (tx1, results) => {
+              setForward(results.rows.length);
+          },
+        );
+      });
       tx.executeSql(
         'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=?  AND status="accepted"',
         [route.params.consignorCode],
@@ -211,15 +221,7 @@ useEffect(() => {
         },
       );
     });
-    db.transaction(tx => {
-      tx.executeSql(
-        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status IS NULL',
-        [route.params.consignorCode],
-        (tx1, results) => {
-            setPending(results.rows.length);
-        },
-      );
-    });
+
     db.transaction(tx => {
       tx.executeSql(
         'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status="notPicked"',
@@ -238,6 +240,15 @@ useEffect(() => {
         },
       );
     });
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status IS NULL',
+        [route.params.consignorCode],
+        (tx1, results) => {
+            setPending(results.rows.length);
+        },
+      );
+    });
   };
 
   let r = [];
@@ -251,7 +262,9 @@ useEffect(() => {
             var len = results.rows.length;
             // console.log(len);
             // setAcc(len);
-            setPending(route.params.Forward - len);
+            // setPending(route.params.Forward - len);
+            setPending(Forward - len);
+
           },
         );
       });
@@ -349,11 +362,11 @@ useEffect(() => {
 
   function openMap() {
     var url = null;
-    if(route.params.consignorLatitude && route.params.consignorLongitude){
-      url="https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination="+route.params.consignorLatitude+","+route.params.consignorLongitude;
+    if (route.params.consignorLatitude && route.params.consignorLongitude){
+      url = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination=' + route.params.consignorLatitude + ',' + route.params.consignorLongitude;
     }
-    else{
-      url="https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination="+type;
+    else {
+      url = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination=' + type;
     }
     Linking.canOpenURL(url)
     .then(supported => {
@@ -363,7 +376,7 @@ useEffect(() => {
         return Linking.openURL(url);
       }
     })
-    .catch(err => console.error('An error occurred', err)); 
+    .catch(err => console.error('An error occurred', err));
   }
 
   return (
@@ -495,8 +508,8 @@ useEffect(() => {
               coverRadius={0.6}
               coverFill={'#FFF'}
             /> */}
-            
 
+            {(acc !== 0 || pending !== 0 || notPicked11 !== 0 || rejectedOrder11 !== 0) ?
              <PieChart
                 widthAndHeight={160}
                 series={[acc, pending, notPicked11, rejectedOrder11]}
@@ -504,7 +517,9 @@ useEffect(() => {
                 doughnut={true}
                 coverRadius={0.6}
                 coverFill={'#FFF'}
-              />
+              /> :  <Center>
+              <Image style={{ width: 140, height: 140 }} source={require('../../assets/noDataAvailable.jpg')} alt={'No data Image'} />
+          </Center>}
           </View>
           <View
             style={{
@@ -534,7 +549,7 @@ useEffect(() => {
               }}>
               <Text style={{color: 'white', alignSelf: 'center'}}>Not Picked : {notPicked11}</Text>
             </View>
-            
+
           </View>
           <View
             style={{
@@ -702,7 +717,7 @@ useEffect(() => {
                   }
                   onPress={() =>
                     navigation.navigate('ShipmentBarcode', {
-                      Forward: route.params.Forward,
+                      Forward: Forward,
                       PRSNumber: route.params.PRSNumber,
                       consignorCode: route.params.consignorCode,
                       userId: route.params.userId,

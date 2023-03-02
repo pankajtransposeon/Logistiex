@@ -142,10 +142,10 @@ export default function Main({navigation, route}) {
 
     const loadSellerPickupDetails = async() => {
       setIsLoading(!isLoading);
-        setSpp(1);
-        setSpnp(1);
-        setSpc(1);
-        setSpr(1);
+        // setSpp(1);
+        // setSpnp(1);
+        // setSpc(1);
+        // setSpr(1);
         // await AsyncStorage.setItem('refresh11', 'notrefresh');
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
@@ -193,10 +193,10 @@ export default function Main({navigation, route}) {
 
     const loadSellerDeliveryDetails = async() => {
       setIsLoading(!isLoading);
-      setSpp1(1);
-      setSpnp1(1);
-      setSpc1(1);
-      setSpr1(1);
+      // setSpp1(1);
+      // setSpnp1(1);
+      // setSpc1(1);
+      // setSpr1(1);
       await AsyncStorage.setItem('refresh11', 'notrefresh');
       db.transaction((tx) => {
           tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
