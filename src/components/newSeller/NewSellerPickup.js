@@ -24,6 +24,8 @@ const NewSellerPickup = ({route}) => {
     const [pending11,setPending] =useState([]);
     const [value,setValue] =useState([]);
     const [reverse,setReverse] =useState([]);
+    const [forward111,setForward111]=useState(0);
+
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -154,23 +156,55 @@ return (
             data && data.length > 0  && ((Math.abs(route.params.Forward) + Math.abs(route.params.Reverse)) !== 0) &&
             data.filter(searched(keyword)).map((single, i) => (
                 // if(route.params.Forward !=0 && route.params.Reverse !=0){
-              <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1, borderWidth:2, borderColor:'white'}} key={single.consignorName} onPress={() =>{navigation.navigate('NewSellerSelection',{
-                paramKey : single.consignorCode,
-                Forward : route.params.Forward,
-                consignorAddress1 :single.consignorAddress1,
-                consignorAddress2 :single.consignorAddress2,
-                consignorCity :single.consignorCity,
-                consignorPincode :single.consignorPincode,
-                // consignorAddress : JSON.parse(single.consignorAddress),
-                consignorLatitude :single.consignorLocation,
-                consignorLongitude :single.consignorLongitude,
-                contactPersonName:single.contactPersonName,
-                consignorName : single.consignorName,
-                PRSNumber : single.PRSNumber,
-                consignorCode : single.consignorCode,
-                userId : single.userId,
-                phone : single.consignorContact,
-              });}}>
+              <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1, borderWidth:2, borderColor:'white'}} key={single.consignorName} onPress={() =>{
+                // var forward11 = 0;
+                db.transaction((tx) => {
+                tx.executeSql(
+                  'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=?',
+                  [single.consignorCode],
+                  (tx1, results) => {
+                    // setForward111(results.rows.length);
+                    console.log(results.rows.length);
+                    navigation.navigate('NewSellerSelection',{
+                      paramKey : single.consignorCode,
+                      // Forward : route.params.Forward,
+                      Forward : results.rows.length,
+                      consignorAddress1 :single.consignorAddress1,
+                      consignorAddress2 :single.consignorAddress2,
+                      consignorCity :single.consignorCity,
+                      consignorPincode :single.consignorPincode,
+                      // consignorAddress : JSON.parse(single.consignorAddress),
+                      consignorLatitude :single.consignorLocation,
+                      consignorLongitude :single.consignorLongitude,
+                      contactPersonName:single.contactPersonName,
+                      consignorName : single.consignorName,
+                      PRSNumber : single.PRSNumber,
+                      consignorCode : single.consignorCode,
+                      userId : single.userId,
+                      phone : single.consignorContact,
+                    });
+                  },
+                );
+              });
+              // navigation.navigate('NewSellerSelection',{
+              //   paramKey : single.consignorCode,
+              //   // Forward : route.params.Forward,
+              //   Forward : forward111,
+              //   consignorAddress1 :single.consignorAddress1,
+              //   consignorAddress2 :single.consignorAddress2,
+              //   consignorCity :single.consignorCity,
+              //   consignorPincode :single.consignorPincode,
+              //   // consignorAddress : JSON.parse(single.consignorAddress),
+              //   consignorLatitude :single.consignorLocation,
+              //   consignorLongitude :single.consignorLongitude,
+              //   contactPersonName:single.contactPersonName,
+              //   consignorName : single.consignorName,
+              //   PRSNumber : single.PRSNumber,
+              //   consignorCode : single.consignorCode,
+              //   userId : single.userId,
+              //   phone : single.consignorContact,
+              // });
+              }}>
                 <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1,marginRight:50}}><Text style={styles.fontvalue} >{value[i]}/{pending11[i]}</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1,marginRight:-70}}><Text style={styles.fontvalue} >{reverse[i]}</Text></DataTable.Cell>

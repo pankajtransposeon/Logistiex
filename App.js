@@ -122,7 +122,7 @@ function StackNavigators({navigation}) {
         console.warn(error);
       }
     };
-
+ 
     const getData = async () => {
         try {
             const value = await AsyncStorage.getItem('@storage_Key');
@@ -148,7 +148,7 @@ function StackNavigators({navigation}) {
         const StartEndTrip = await AsyncStorage.getItem('@StartEndTrip');
         if (StartEndTrip !== null) {
           const data = JSON.parse(StartEndTrip);
-          setTripValue(data);
+          // setTripValue(data);
           // console.log(data, 'startEnddata')
           // await AsyncStorage.setItem('@StartEndTrip', JSON.stringify(data)); 
           // await AsyncStorage.removeItem('@StartEndTrip');
