@@ -53,6 +53,8 @@ const NewSellerSelection = ({route}) => {
   const [phone, setPhone] = useState(route.params.phone);
   const [type, setType] = useState('');
   const [DropDownValue, setDropDownValue] = useState(null);
+  const [DropDownValue1, setDropDownValue1] = useState(null);
+  const [rejectStage, setRejectStage] = useState(null);
   const [CloseData, setCloseData] = useState([]);
   const [NotAttemptData, setNotAttemptData] = useState([]);
   const navigation = useNavigation();
@@ -87,6 +89,23 @@ const NewSellerSelection = ({route}) => {
           // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
         },
       );
+    });
+    axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
+    consignorCode:route.params.consignorCode,
+    rejectionReasonL1: DropDownValue,
+    rejectionReasonL2:DropDownValue1,
+    feUserID: route.params.userId,
+    latitude : route.params.consignorLatitude,
+    longitude : route.params.consignorLongitude,
+    eventTime: new Date().toLocaleString(),
+    rejectionStage:rejectStage 
+})
+    .then(function (response) {
+        console.log(response.data);
+        alert('Your Data has submitted');
+    })
+    .catch(function (error) {
+        console.log(error);
     });
   };
   const closePickup11 = () => {
@@ -332,11 +351,13 @@ useEffect(() => {
       setModalVisible(false);
     } else {
       setDropDownValue(item);
+      setRejectStage("L1")
     }
     // setModalVisible(false);
   }
   function handleButtonPress2(item) {
-    setDropDownValue(item);
+    setDropDownValue1(item);
+    setRejectStage("L2")
   }
 
   function openMap() {
@@ -414,7 +435,7 @@ useEffect(() => {
           </Modal>
           <Modal
             isOpen={modalVisible2}
-            onClose={() => {setModalVisible2(false); setDropDownValue('');}}
+            onClose={() => {setModalVisible2(false); setDropDownValue1('');}}
             size="lg">
             <Modal.Content maxWidth="350">
               <Modal.CloseButton />
@@ -430,7 +451,7 @@ useEffect(() => {
                       marginTop={1.5}
                       style={{
                         backgroundColor:
-                          d.reasonName === DropDownValue
+                          d.reasonName === DropDownValue1
                             ? '#6666FF'
                             : '#C8C8C8',
                       }}
@@ -439,7 +460,7 @@ useEffect(() => {
                       <Text
                         style={{
                           color:
-                            d.reasonName == DropDownValue ? 'white' : 'black',
+                            d.reasonName == DropDownValue1 ? 'white' : 'black',
                         }}>
                         {d.reasonName}
                       </Text>
