@@ -258,7 +258,7 @@ export default function EndTrip({ navigation, route }) {
               )
             }
             {
-              endkm && ImageUrl && (endkm > vehicle.startkm) ? (
+              endkm && ImageUrl && (endkm > startkm) ? (
                 <Button title="Login" backgroundColor='#004aad' _text={{ color: 'white', fontSize: 20 }} onPress={() => ImageHandle()}>End Trip</Button>
               ) : (
                 <Button opacity={0.5} disabled={true} title="Login" backgroundColor='#004aad' _text={{ color: 'white', fontSize: 20 }}>End Trip</Button>

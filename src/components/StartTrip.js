@@ -40,7 +40,7 @@ export default function StartTrip() {
     getUserId();
 }, []);
 useEffect(() => {
-  axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/vehicleNumber/${userId}`).then(response => {
+axios.get(`https://bkedtest.logistiex.com/SellerMainScreen/vehicleNumber/${userId}`).then(response => {
 console.log('data',response);
 setVehicle(response.data.data.vehicleNumber);
 }).catch(error => {
@@ -180,8 +180,14 @@ const ImageHandle = () =>
         startVehicleImageUrl : ImageUrl
         })
         .then(function (res) {
-          console.log('dscsdc', res.data);
-          storeDataTripValue();
+          console.log('dscsdc', res.data.msg);
+          // storeDataTripValue();
+          if(res.data.msg=="TripID already exists"){
+          alert("Trip ID already exists")
+          }
+          else {
+            storeDataTripValue();
+          }
         })
         .catch(function (error) {
           console.log(error);
