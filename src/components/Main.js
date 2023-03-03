@@ -47,25 +47,66 @@ export default function Main({navigation, route}) {
     const [tripValue, setTripValue] = useState('Start Trip');
     const [Forward,setForward] = useState(0);
     const [Reverse,setReverse] = useState(0);
-    
-    const getDataTrip = async () => {
-      try {
-       
-        const StartEndTrip = await AsyncStorage.getItem('@StartEndTrip');
-        if (StartEndTrip !== null) {
-          const data = JSON.parse(StartEndTrip);
-          setTripValue(data);
-          // console.log(data, 'startEnddata')
-          // await AsyncStorage.removeItem('@StartEndTrip');
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
+    const [id, setId] = useState('');
+   const [tripData, setTripData]=useState([])
   
-    useEffect(() => {
-      getDataTrip();
-    }, []);
+  const getUserId = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@storage_Key');
+      if (value !== null) {
+        const data = JSON.parse(value);
+        setId(data.userId)
+      } else {
+        setId('')
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  useEffect(() => {
+    getUserId();
+  }, []);
+  let current = new Date();
+  let tripid = current.toString();
+  let dateStart = 0;
+  let dateEnd = tripid.indexOf(" ", tripid.indexOf(" ", tripid.indexOf(" ") + 1) + 1);
+  let date = dateEnd ? tripid.substring(dateStart, dateEnd + 5) : "No match found";
+  useEffect(() => {
+    if(id){
+    axios.get("https://bkedtest.logistiex.com/UserTripInfo/getUserTripInfo", {
+    params: {
+    tripID: id + "_" + date, 
+  }
+  }).then(response => {
+  console.log('data',response.data);
+  setTripData(response.data.res_data);
+  }).catch(error => {
+  console.log(error, 'error');
+  });
+  
+}
+if(tripData.startTime){
+  setTripValue('End Trip')
+}
+if(tripData.startTime && tripData.endTime){
+  setTripValue('Start Trip')
+}
+}, []);
+console.log(tripData.startTime)
+    // const getDataTrip = async () => {
+    //   try {
+       
+    //     const StartEndTrip = await AsyncStorage.getItem('@StartEndTrip');
+    //     if (StartEndTrip !== null) {
+    //       const data = JSON.parse(StartEndTrip);
+    //       setTripValue(data);
+          
+    //     }
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
+    // };
+  
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -75,14 +116,6 @@ export default function Main({navigation, route}) {
         return unsubscribe;
       }, [navigation]);
 
-      const handleStartEndTrip = async (newValue) => {
-        setTripValue(newValue);
-        try {
-          await AsyncStorage.setItem('@StartEndTrip', JSON.stringify(newValue));
-        } catch (e) {
-          console.log(e);
-        }
-      };
       
       const getData = async () => {
         try {
@@ -95,17 +128,16 @@ export default function Main({navigation, route}) {
             console.log(e);
         }
 
-        try {
+        // try {
        
-          const StartEndTrip = await AsyncStorage.getItem('@StartEndTrip');
-          if (StartEndTrip !== null) {
-            const data = JSON.parse(StartEndTrip);
-            setTripValue(data);
-            // await AsyncStorage.removeItem('@StartEndTrip');
-          }
-        } catch (e) {
-          console.log(e);
-        }
+        //   const StartEndTrip = await AsyncStorage.getItem('@StartEndTrip');
+        //   if (StartEndTrip !== null) {
+        //     const data = JSON.parse(StartEndTrip);
+        //     setTripValue(data);
+        //   }
+        // } catch (e) {
+        //   console.log(e);
+        // }
     };
 
     useEffect(() => {

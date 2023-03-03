@@ -149,10 +149,10 @@ return (
           </DataTable.Header>
           {route.params.Trip !== 'Start Trip' && data && data.length > 0 && (Math.abs(route.params.Forward) + Math.abs(route.params.Reverse)) !== 0 && data.filter(searched(keyword)).map((single, i) => (
           ((value[i] != pending11[i]) ?
-          <DataTable.Row style={{ height: 'auto', backgroundColor: '#eeeeee', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' }} key={single.consignorName} onPress={() => {
+          <DataTable.Row style={{ height: 'auto', backgroundColor: '#eeeeee', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white',elevation: 5, }} key={single.consignorName} onPress={() => {
            navigation.navigate('NewSellerSelection', {
           paramKey: single.consignorCode,
-          Forward: route.params.Forward,
+          Forward: pending11[i],
           consignorAddress1: single.consignorAddress1,
           consignorAddress2: single.consignorAddress2,
           consignorCity: single.consignorCity,
@@ -170,26 +170,36 @@ return (
     <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
     <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{value[i]}/{pending11[i]}</Text></DataTable.Cell>
     <DataTable.Cell style={{ flex: 1, marginRight: -70 }}><Text style={styles.fontvalue}>{reverse[i]}</Text></DataTable.Cell>
-    <MaterialIcons name="arrow-right-bold" style={{ fontSize: 30, color: '#004aad', marginTop: 8 }} />
+    {/* <MaterialIcons name="arrow-right-bold" style={{ fontSize: 30, color: '#004aad', marginTop: 8 }} /> */}
   </DataTable.Row>
   :
   <DataTable.Row style={{ height: 'auto', backgroundColor: '#90ee90', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' }} key={single.consignorName} >
     <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
     <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{value[i]}/{pending11[i]}</Text></DataTable.Cell>
     <DataTable.Cell style={{ flex: 1, marginRight: -60 }}><Text style={styles.fontvalue}>{reverse[i]}</Text></DataTable.Cell>
-    <MaterialIcons name="check" style={{ fontSize: 30, color: 'green', marginTop: 8 }} />
+    {/* <MaterialIcons name="check" style={{ fontSize: 30, color: 'green', marginTop: 8 }} /> */}
   </DataTable.Row>
 )
 ))}
-      {route.params.Trip === 'Start Trip' && data && data.length > 0  && ((Math.abs(route.params.Forward) + Math.abs(route.params.Reverse)) !== 0) &&
-          data.filter(searched(keyword)).map((single, i) => (
-            <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1, borderWidth:2, borderColor:'white'}} key={single.consignorName} onPress={() =>{navigation.navigate('StartTrip')}} >
-              <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
-              <DataTable.Cell style={{flex: 1,marginRight:50}}><Text style={styles.fontvalue} >{value[i]}/{pending11[i]}</Text></DataTable.Cell>
-              <DataTable.Cell style={{flex: 1,marginRight:-60}}><Text style={styles.fontvalue} >{reverse[i]}</Text></DataTable.Cell>
-              <MaterialIcons name="arrow-right-bold" style={{fontSize: 30, color:'#004aad',marginTop:8}} />
-            </DataTable.Row>
-          ))}
+      {route.params.Trip === 'Start Trip' && data && data.length > 0 && (Math.abs(route.params.Forward) + Math.abs(route.params.Reverse)) !== 0 && data.filter(searched(keyword)).map((single, i) => (
+          ((value[i] != pending11[i]) ?
+          <DataTable.Row style={{ height: 'auto', backgroundColor: '#eeeeee', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' ,elevation: 5,}} key={single.consignorName} onPress={() => {
+           navigation.navigate('StartTrip');
+  }}>
+    <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
+    <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{value[i]}/{pending11[i]}</Text></DataTable.Cell>
+    <DataTable.Cell style={{ flex: 1, marginRight: -70 }}><Text style={styles.fontvalue}>{reverse[i]}</Text></DataTable.Cell>
+    {/* <MaterialIcons name="arrow-right-bold" style={{ fontSize: 30, color: '#004aad', marginTop: 8 }} /> */}
+  </DataTable.Row>
+  :
+  <DataTable.Row style={{ height: 'auto', backgroundColor: '#90ee90', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' }} key={single.consignorName} >
+    <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
+    <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{value[i]}/{pending11[i]}</Text></DataTable.Cell>
+    <DataTable.Cell style={{ flex: 1, marginRight: -60 }}><Text style={styles.fontvalue}>{reverse[i]}</Text></DataTable.Cell>
+    {/* <MaterialIcons name="check" style={{ fontSize: 30, color: 'green', marginTop: 8 }} /> */}
+  </DataTable.Row>
+)
+))}
         </DataTable>
       </Card>
     </ScrollView>
