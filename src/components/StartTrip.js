@@ -92,7 +92,7 @@ console.log(vehicle);
 
   const storeDataTripValue = async() => {
     try {
-      await AsyncStorage.setItem('@StartEndTrip', JSON.stringify('End Trip'));
+      // await AsyncStorage.setItem('@StartEndTrip', JSON.stringify('End Trip'));
       // await AsyncStorage.setItem('@VehicleStartkm', JSON.stringify({
       //   vehicle,
       //   startkm

@@ -102,7 +102,7 @@ const NewSellerSelection = ({route}) => {
 })
     .then(function (response) {
         console.log(response.data);
-        alert('Your Data has submitted');
+        alert('Success');
     })
     .catch(function (error) {
         console.log(error);

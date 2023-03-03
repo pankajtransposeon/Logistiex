@@ -2239,7 +2239,9 @@ function CustomDrawerContent({navigation}) {
   const [language, setLanguage] = useState('');
   const [email, SetEmail] = useState('');
   const [name, setName] = useState('');
+  const [id, setId] = useState('');
   const [tripValue, setTripValue] = useState('Start Trip');
+  const [tripData, setTripData]=useState([])
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem('@storage_Key');
@@ -2247,32 +2249,52 @@ function CustomDrawerContent({navigation}) {
         const data = JSON.parse(value);
         setName(data.UserName);
         SetEmail(data.UserEmail);
+        setId(data.userId)
       } else {
         setName('');
         SetEmail('');
+        setId('');
       }
     } catch (e) {
       console.log(e);
     }
-    try {
-      const StartEndTrip = await AsyncStorage.getItem('@StartEndTrip');
-      if (StartEndTrip !== null) {
-        const data = JSON.parse(StartEndTrip);
-        setTripValue(data);
-        // await AsyncStorage.removeItem('@StartEndTrip');
-      }
-    } catch (e) {
-      console.log(e);
-    }
+    // try {
+    //   const StartEndTrip = await AsyncStorage.getItem('@StartEndTrip');
+    //   if (StartEndTrip !== null) {
+    //     const data = JSON.parse(StartEndTrip);
+    //     setTripValue(data);
+    //   }
+    // } catch (e) {
+    //   console.log(e);
+    // }
   };
-  const handleStartEndTrip = async (newValue) => {
-    setTripValue(newValue);
-    try {
-      await AsyncStorage.setItem('@StartEndTrip', JSON.stringify(newValue));
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  let current = new Date();
+  let tripid = current.toString();
+  let dateStart = 0;
+  let dateEnd = tripid.indexOf(" ", tripid.indexOf(" ", tripid.indexOf(" ") + 1) + 1);
+  let date = dateEnd ? tripid.substring(dateStart, dateEnd + 5) : "No match found";
+  useEffect(() => {
+    if(id){
+    axios.get("https://bkedtest.logistiex.com/UserTripInfo/getUserTripInfo", {
+    params: {
+    tripID: id + "_" + date, 
+  }
+  }).then(response => {
+  console.log('data',response.data);
+  setTripData(response.data.res_data);
+  }).catch(error => {
+  console.log(error, 'error');
+  });
+  
+}
+if(tripData.startTime){
+  setTripValue('End Trip')
+}
+if(tripData.startTime && tripData.endTime){
+  setTripValue('Start Trip')
+}
+}, []);
+console.log(tripData)
   useEffect(() => {
     const StartValue = setInterval(() => {
       getData();
@@ -2283,7 +2305,7 @@ function CustomDrawerContent({navigation}) {
   const LogoutHandle = async () => {
     try {
       await AsyncStorage.removeItem('@storage_Key');
-      await AsyncStorage.removeItem('@StartEndTrip');
+      // await AsyncStorage.removeItem('@StartEndTrip');
     } catch (e) {
       console.log(e);
     }

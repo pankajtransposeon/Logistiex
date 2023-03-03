@@ -164,7 +164,7 @@ export default function EndTrip({ navigation, route }) {
   }, []);
   const storeDataTripValue = async () => {
     try {
-      await AsyncStorage.setItem('@StartEndTrip', JSON.stringify('Start Trip'));
+      // await AsyncStorage.setItem('@StartEndTrip', JSON.stringify('Start Trip'));
       navigation.navigate('StartEndDetails', { tripID: userId + "_" + date })
     } catch (e) {
       console.log(e);
@@ -232,11 +232,11 @@ export default function EndTrip({ navigation, route }) {
         </Modal>
         <Box justifyContent="space-between" py={10} px={6} bg="#fff" rounded="xl" width={"90%"} maxWidth="100%" _text={{ fontWeight: "medium", }}>
           <VStack space={6}>
-            <Input disabled selectTextOnFocus={false} editable={false} backgroundColor='gray.300' value={vehicle} size="lg" type={"number"} placeholder="Input vehicle KMs" />
+            <Input disabled selectTextOnFocus={false} editable={false} backgroundColor='gray.300' value={vehicle} size="lg" type={"number"} placeholder="Vehicle Number" />
 
-            <Input selectTextOnFocus={false} editable={false} disabled backgroundColor='gray.300' value={startkm} size="lg" type={"number"} placeholder="Input vehicle KMs" />
+            <Input selectTextOnFocus={false} editable={false} disabled backgroundColor='gray.300' value={startkm} size="lg" type={"number"} placeholder="Start Km" />
 
-            <Input value={endkm} keyboardType="numeric" onChangeText={setEndkm} size="lg" type={"number"} placeholder="Input vehicle KMs" />
+            <Input value={endkm} keyboardType="numeric" onChangeText={setEndkm} size="lg" type={"number"} placeholder="Input End KMs" />
             {/* <Button py={3} variant='outline' title="Login"  _text={{ color: 'white', fontSize: 20 }} onPress={()=>takePhoto()}><MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons></Button> */}
             <Button py={3} variant='outline' _text={{ color: 'white', fontSize: 20 }} onPress={takePhoto}>
               {uploadStatus === 'idle' && <MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons>}
