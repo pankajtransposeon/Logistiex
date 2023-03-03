@@ -2293,7 +2293,7 @@ if(tripData.startTime){
 if(tripData.startTime && tripData.endTime){
   setTripValue('Start Trip')
 }
-}, []);
+}, [id]);
 console.log(tripData)
   useEffect(() => {
     const StartValue = setInterval(() => {
