@@ -75,7 +75,7 @@ export default function Main({navigation, route}) {
     if(id){
     axios.get("https://bkedtest.logistiex.com/UserTripInfo/getUserTripInfo", {
     params: {
-    tripID: id + "_" + date, 
+    tripID: id+'_'+date, 
   }
   }).then(response => {
   console.log('data',response.data);
@@ -91,8 +91,8 @@ if(tripData.startTime){
 if(tripData.startTime && tripData.endTime){
   setTripValue('Start Trip')
 }
-}, []);
-console.log(tripData.startTime)
+}, [id]);
+console.log(tripValue)
     // const getDataTrip = async () => {
     //   try {
        

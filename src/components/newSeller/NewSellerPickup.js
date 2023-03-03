@@ -41,15 +41,7 @@ const NewSellerPickup = ({route}) => {
               setData(temp);
           });
       });
-      db.transaction((tx) => {
-          tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND status IS  NULL', [], (tx1, results) => { // ToastAndroid.show("Loading...", ToastAndroid.SHORT);
-              let temp = [];
-              for (let i = 0; i < results.rows.length; ++i) {
-                  temp.push(results.rows.item(i));
-              }
-              setData1(temp);
-          });
-      });
+      
   };
   useEffect(() => {
       if (data.length > 0) {
@@ -57,7 +49,7 @@ const NewSellerPickup = ({route}) => {
         data.forEach((single) => {
           db.transaction((tx) => {
             tx.executeSql(
-              'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status IS NULL',
+              'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status="accepted" OR status="rejected"',
               [single.consignorCode],
               (tx1, results) => {
                 counts.push(results.rows.length);
@@ -76,7 +68,7 @@ const NewSellerPickup = ({route}) => {
         data.forEach((single) => {
           db.transaction((tx) => {
             tx.executeSql(
-              'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status IS NOT NULL',
+              'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status IS NULL',
               [single.consignorCode],
               (tx1, results) => {
                 counts.push(results.rows.length);
@@ -118,17 +110,6 @@ const NewSellerPickup = ({route}) => {
       let f = c.consignorName;
       return (f.includes(keyword1));
   };
-  const getPendingCount = (consignorCode) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status IS NULL',
-          [consignorCode],
-          (tx1, results) => {
-            setPending(results.rows.length);
-          },
-        );
-      });
-    }
    
 return (
 <NativeBaseProvider>
@@ -152,7 +133,7 @@ return (
           <DataTable.Row style={{ height: 'auto', backgroundColor: '#eeeeee', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white',elevation: 5, }} key={single.consignorName} onPress={() => {
            navigation.navigate('NewSellerSelection', {
           paramKey: single.consignorCode,
-          Forward: pending11[i],
+          Forward: value[i],
           consignorAddress1: single.consignorAddress1,
           consignorAddress2: single.consignorAddress2,
           consignorCity: single.consignorCity,
@@ -168,14 +149,14 @@ return (
           });
   }}>
     <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
-    <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{value[i]}/{pending11[i]}</Text></DataTable.Cell>
+    <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{pending11[i]}/{value[i]}</Text></DataTable.Cell>
     <DataTable.Cell style={{ flex: 1, marginRight: -70 }}><Text style={styles.fontvalue}>{reverse[i]}</Text></DataTable.Cell>
     {/* <MaterialIcons name="arrow-right-bold" style={{ fontSize: 30, color: '#004aad', marginTop: 8 }} /> */}
   </DataTable.Row>
   :
   <DataTable.Row style={{ height: 'auto', backgroundColor: '#90ee90', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' }} key={single.consignorName} >
     <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
-    <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{value[i]}/{pending11[i]}</Text></DataTable.Cell>
+    <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{pending11[i]}/{value[i]}</Text></DataTable.Cell>
     <DataTable.Cell style={{ flex: 1, marginRight: -60 }}><Text style={styles.fontvalue}>{reverse[i]}</Text></DataTable.Cell>
     {/* <MaterialIcons name="check" style={{ fontSize: 30, color: 'green', marginTop: 8 }} /> */}
   </DataTable.Row>
@@ -187,14 +168,14 @@ return (
            navigation.navigate('StartTrip');
   }}>
     <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
-    <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{value[i]}/{pending11[i]}</Text></DataTable.Cell>
+    <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{pending11[i]}/{value[i]}</Text></DataTable.Cell>
     <DataTable.Cell style={{ flex: 1, marginRight: -70 }}><Text style={styles.fontvalue}>{reverse[i]}</Text></DataTable.Cell>
     {/* <MaterialIcons name="arrow-right-bold" style={{ fontSize: 30, color: '#004aad', marginTop: 8 }} /> */}
   </DataTable.Row>
   :
   <DataTable.Row style={{ height: 'auto', backgroundColor: '#90ee90', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' }} key={single.consignorName} >
     <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
-    <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{value[i]}/{pending11[i]}</Text></DataTable.Cell>
+    <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{pending11[i]}/{value[i]}</Text></DataTable.Cell>
     <DataTable.Cell style={{ flex: 1, marginRight: -60 }}><Text style={styles.fontvalue}>{reverse[i]}</Text></DataTable.Cell>
     {/* <MaterialIcons name="check" style={{ fontSize: 30, color: 'green', marginTop: 8 }} /> */}
   </DataTable.Row>

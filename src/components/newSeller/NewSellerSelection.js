@@ -11,6 +11,8 @@ import {
   Box,
   Heading,
   Modal,
+  VStack,
+  Alert
 } from 'native-base';
 import {
   StyleSheet,
@@ -20,7 +22,6 @@ import {
   ScrollView,
   TextInput,
   getPick,
-  Alert,
   TouchableWithoutFeedbackBase,
   ToastAndroid,
   Linking,
@@ -62,6 +63,9 @@ const NewSellerSelection = ({route}) => {
   const [modalVisible2, setModalVisible2] = useState(false);
   const [notPicked11,setNotPicked11] = useState(0);
   const [rejectedOrder11,setRejectedOrder11] = useState(0);
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   const DisplayData = async () => {
     closePickup11();
@@ -102,11 +106,15 @@ const NewSellerSelection = ({route}) => {
 })
     .then(function (response) {
         console.log(response.data);
-        alert('Success');
+        setMessage('Successfully submitted');
+        setStatus('success');
     })
     .catch(function (error) {
         console.log(error);
+        setMessage('Submission failed');
+        setStatus('error');
     });
+    setShowModal(true);
   };
   const closePickup11 = () => {
     db.transaction(tx => {
@@ -382,6 +390,19 @@ useEffect(() => {
   return (
     <NativeBaseProvider>
         <View>
+        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <Modal.Content backgroundColor={status === 'success' ? '#dcfce7' : '#fee2e2'}>
+        <Modal.CloseButton />
+        <Modal.Body>
+        <Alert w="100%" status={status === 'success' ? 'success' : 'error'}>
+        <VStack space={1} flexShrink={1} w="100%" alignItems="center">
+        <Alert.Icon size="4xl" />
+        <Text my={3} fontSize="md" fontWeight="medium">{message}</Text>
+        </VStack>
+        </Alert>
+        </Modal.Body>
+        </Modal.Content>
+        </Modal>
           <Modal
             isOpen={modalVisible}
             onClose={() => {setModalVisible(false); setDropDownValue('');}}

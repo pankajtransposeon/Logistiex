@@ -20,6 +20,9 @@ export default function StartTrip() {
   const [userId, setUserId] = useState('');
   const [uploadStatus, setUploadStatus] = useState('idle');
   const [modalVisible, setModalVisible] = useState(false);
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState('');
+  const [showModal, setShowModal] = useState(false);
   const navigation = useNavigation();
 
   const getUserId = async () => {
@@ -97,7 +100,7 @@ console.log(vehicle);
       //   vehicle,
       //   startkm
       // }));
-      navigation.navigate('Main');
+      navigation.navigate('Main',{tripID:userId+"_"+date});
     } catch (e) {
       console.log(e);
     }
@@ -183,10 +186,13 @@ const ImageHandle = () =>
           console.log('dscsdc', res.data.msg);
           // storeDataTripValue();
           if(res.data.msg=="TripID already exists"){
-          alert("Trip ID already exists")
+            setMessage('TripID already exists');
+            setStatus('error');
           }
           else {
             storeDataTripValue();
+            setMessage('Trip Started Successfully');
+            setStatus('success');
           }
         })
         .catch(function (error) {
@@ -198,6 +204,19 @@ const ImageHandle = () =>
   return (
     <NativeBaseProvider>
         <Box flex={1} bg="gray.300" alignItems="center" pt={'4%'}>
+        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <Modal.Content backgroundColor={status === 'success' ? '#dcfce7' : '#fee2e2'}>
+        <Modal.CloseButton />
+        <Modal.Body>
+        <Alert w="100%" status={status === 'success' ? 'success' : 'error'}>
+        <VStack space={1} flexShrink={1} w="100%" alignItems="center">
+        <Alert.Icon size="4xl" />
+        <Text my={3} fontSize="md" fontWeight="medium">{message}</Text>
+        </VStack>
+        </Alert>
+        </Modal.Body>
+        </Modal.Content>
+        </Modal>
         <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
@@ -241,7 +260,7 @@ const ImageHandle = () =>
                 }
                 {
                   startkm && vehicle && ImageUrl && tripid ? (
-                    <Button title="Login" backgroundColor= {'#004aad'} _text={{ color: 'white', fontSize: 20 }} onPress={()=>ImageHandle()}>Start Trip</Button>
+                    <Button title="Login" backgroundColor= {'#004aad'} _text={{ color: 'white', fontSize: 20 }} onPress={()=>{ImageHandle(); setShowModal(true)}}>Start Trip</Button>
                   ) : (
                     <Button opacity={0.5}  disabled={true} title="Login" backgroundColor= {'#004aad'} _text={{ color: 'white', fontSize: 20 }}>Start Trip</Button>
                   )
