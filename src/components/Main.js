@@ -93,39 +93,38 @@ export default function Main({navigation, route}) {
 // }
 // }, [id,date]);
 // console.log(tripValue)
-useEffect(() => {
-  let timerId;
-  
+const fetchData = () => {
   if (id) {
-    axios.get("https://bkedtest.logistiex.com/UserTripInfo/getUserTripInfo", {
-      params: {
-        tripID: id + "_" + date, 
-      }
-    }).then(response => {
-      console.log('data',response.data);
-      setTripData(response.data.res_data);
-    }).catch(error => {
-      console.log(error, 'error');
-    });
-    
+    axios
+      .get("https://bkedtest.logistiex.com/UserTripInfo/getUserTripInfo", {
+        params: {
+          tripID: id + "_" + date,
+        },
+      })
+      .then((response) => {
+        console.log("data", response.data);
+        setTripData(response.data.res_data);
+      })
+      .catch((error) => {
+        console.log(error, "error");
+      });
   }
-  
+};
+
+useEffect(() => {
+  const timeoutId = setTimeout(fetchData, 1000);
+
+  return () => clearTimeout(timeoutId);
+}, [id, date]);
+
+useEffect(() => {
   if (tripData.startTime) {
-    setTripValue('End Trip');
-    timerId = setTimeout(() => {
-      setTripValue('Start Trip');
-    }, 5000); 
+    setTripValue("End Trip");
   }
-  
   if (tripData.startTime && tripData.endTime) {
-    setTripValue('Start Trip');
-    clearTimeout(timerId);
+    setTripValue("Start Trip");
   }
-  
-  return () => {
-    clearTimeout(timerId);
-  };
-}, [id, date, tripData]);
+}, [tripData]);
     // const getDataTrip = async () => {
     //   try {
        
