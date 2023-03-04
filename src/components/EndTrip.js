@@ -198,18 +198,23 @@ export default function EndTrip({ navigation, route }) {
   console.log(vehicle);
 
   useEffect(() => {
-    axios.get("https://bkedtest.logistiex.com/UserTripInfo/getUserTripInfo", {
-    params: {
-    tripID: userId + "_" + date, 
-  }
-  }).then(response => {
-  console.log('data',response.data.res_data);
-  setVehicle(response.data.res_data.vehicleNumber);
-  setStartkm(response.data.res_data.startKilometer)
-  }).catch(error => {
-  console.log(error, 'error');
-  });
-}, []);
+    const timer = setTimeout(() => {
+      axios.get("https://bkedtest.logistiex.com/UserTripInfo/getUserTripInfo", {
+        params: {
+          tripID: userId + "_" + date, 
+        }
+      })
+        .then(response => {
+          console.log('data',response.data.res_data);
+          setVehicle(response.data.res_data.vehicleNumber);
+          setStartkm(response.data.res_data.startKilometer)
+        })
+        .catch(error => {
+          console.log(error, 'error');
+        });
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [userId, date]);
 
   return (
     <NativeBaseProvider>
