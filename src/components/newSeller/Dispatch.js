@@ -34,45 +34,13 @@ const Dispatch = ({route}) => {
     //   }
 
 
-    const [sealIDList, setSealIDList] = useState([]);
+    const [sealIDList, setSealIDList] = useState(["SI001003","SI001004"]);
     const [sealIDData, setSealIDData] = useState({});
 
 
-    // useEffect(() => {
-    //   showList();
-    //   // if (sealIDList.length > 0) {
-    //   //   const newData = {};
-    //   //   sealIDList.forEach(({sealID}) => {
-    //   //     db.transaction(tx => {
-    //   //       tx.executeSql(
-    //   //         'SELECT bagId, AcceptedList FROM closeBag1 WHERE bagSeal = ?',
-    //   //         [sealID],
-    //   //         (tx, results) => {
-    //   //           if (results.rows.length > 0) {
-    //   //             const row = results.rows.item(0);
-    //   //             newData[sealID] = {
-    //   //               bagID: row.bagId,
-    //   //               acceptedItemsCount: JSON.parse(row.AcceptedList).length,
-    //   //             };
-    //   //             console.log('Data retrieved successfully for sealID:', sealID);
-    //   //           }
-    //   //           // else {
-    //   //           //   newData[sealID] = {
-    //   //           //     bagID: '',
-    //   //           //     acceptedItemsCount: 0,
-    //   //           //   };
-    //   //           //   console.log('No data found for sealID:', sealID);
-    //   //           // }
-    //   //           setSealIDData(prevData => ({...prevData, ...newData}));
-    //   //         },
-    //   //         error => {
-    //   //           console.log('Error occurred while retrieving data:', error);
-    //   //         },
-    //   //       );
-    //   //     });
-    //   //   });
-    //   // }
-    // }, [sealIDList]);
+    useEffect(() => {
+      showList();
+    }, [sealIDList]);
 
     const showList = ()=>{
       console.log('showlist called',sealIDList+""+sealIDList.length);
@@ -358,7 +326,7 @@ const Dispatch = ({route}) => {
             {Object.keys(sealIDData).map((sealID, index) => (
           <View key={index} style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 1, borderColor: 'lightgray', padding: 10}}>
             <Text style={{fontSize: 16, fontWeight: '500'}}>{sealIDData[sealID].bagID}</Text>
-            <Text style={{fontSize: 16, fontWeight: '500'}}>{sealIDData[sealID].accepted_items.length}</Text>
+            {/* <Text style={{fontSize: 16, fontWeight: '500'}}>{sealIDData[sealID].accepted_items.length}</Text> */}
           </View>
         ))}
               {/* <Text style={{fontSize: 16, fontWeight: '500'}}>0</Text> */}
