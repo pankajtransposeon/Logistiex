@@ -1,6 +1,6 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
 import { Container, Header, Content, Item, Input,Modal, Icon, Button, NativeBaseProvider, Center, Image} from 'native-base';
 import axios from 'axios';
@@ -34,7 +34,7 @@ const Dispatch = ({route}) => {
     //   }
 
 
-    const [sealIDList, setSealIDList] = useState(["SI001003","SI001004"]);
+    const [sealIDList, setSealIDList] = useState([]);
     const [sealIDData, setSealIDData] = useState({});
 
 
@@ -46,13 +46,15 @@ const Dispatch = ({route}) => {
       console.log('showlist called',sealIDList+""+sealIDList.length);
       if (sealIDList.length > 0) {
         const newData = {};
-        sealIDList.forEach(({sealID}) => {
+        sealIDList.map(sealID => {
+          console.log(sealID +'sealID in show list ');
+          //  sealID = 'SI001004';
           db.transaction(tx => {
             tx.executeSql(
-              'SELECT bagId, AcceptedList FROM closeBag1 WHERE bagSeal = ?',
-              [sealID],
+              'SELECT bagId, AcceptedList FROM closeBag1 WHERE consignorCode=? AND bagSeal = ?',
+              [route.params.consignorCode,sealID],
               (tx, results) => {
-                console.log(results.rows);
+                console.log(results);
                 if (results.rows.length > 0) {
                   const row = results.rows.item(0);
                   console.log(JSON.parse(row.AcceptedList)+" ",row.bagId);
@@ -63,10 +65,10 @@ const Dispatch = ({route}) => {
                   console.log('Data retrieved successfully for sealID:', sealID);
                 }
                 else {
-                  newData[sealID] = {
-                    bagID: '',
-                    acceptedItemsCount: 0,
-                  };
+                  // newData[sealID] = {
+                  //   bagID: '',
+                  //   acceptedItemsCount: 0,
+                  // };
                   console.log('No data found for sealID:', sealID);
                 }
                 setSealIDData(prevData => ({...prevData, ...newData}));
@@ -79,6 +81,7 @@ const Dispatch = ({route}) => {
         });
       }
     };
+   
 
       const requestCameraPermission = async () => {
         try {
@@ -137,6 +140,28 @@ const Dispatch = ({route}) => {
             (tx1, results) => {
               setScanned(results.rows.length);
             },
+          );
+        });
+        db.transaction(tx => {
+          tx.executeSql(
+            'SELECT bagSeal FROM  closeBag1 WHERE  consignorCode=? And status="Scanned"',
+            [route.params.consignorCode],
+            (tx, results) => {
+              const newSealIds = [];
+    
+              for (let i = 0; i < results.rows.length; i++) {
+                const row = results.rows.item(i);
+                if (!sealIDList.includes(row.bagSeal)) {
+                  newSealIds.push(row.bagSeal);
+                }
+              }
+    
+              // Update the state with the new array of sealids
+              setSealIDList(prevSealIds => [...prevSealIds, ...newSealIds]);
+            },
+            error => {
+              console.error('Error fetching bagSeal:', error);
+            }
           );
         });
       };
@@ -261,7 +286,12 @@ const Dispatch = ({route}) => {
 
       // }
 
-
+      const sealIDData11 = Object.keys(sealIDData)
+      .filter((sealID) => sealID.toLowerCase().includes(keyword.toLowerCase()))
+      .reduce((obj, key) => {
+        obj[key] = sealIDData[key];
+        return obj;
+      }, {});
 
       const openCamera = async()=>{
         let options = {
@@ -290,7 +320,7 @@ const Dispatch = ({route}) => {
         <Text style={{fontSize:20, marginTop:10, textAlign:'center',fontWeight:'500'}}>List of Bags to Dispatch</Text>
         {/* <View style={styles.container}> */}
         <Searchbar
-        placeholder="Search Bag"
+        placeholder="Search Bag from BagSeal"
         onChangeText={(e) => setKeyword(e)}
         value={keyword}
         style={{width:'90%', backgroundColor:'#E0E0E0',marginLeft:22,marginTop:10}}
@@ -323,10 +353,10 @@ const Dispatch = ({route}) => {
             </View>
             {/* <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 1, borderColor: 'lightgray', padding: 10}}> */}
 
-            {Object.keys(sealIDData).map((sealID, index) => (
+            {Object.keys(sealIDData11).map((sealID, index) => (
           <View key={index} style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 1, borderColor: 'lightgray', padding: 10}}>
-            <Text style={{fontSize: 16, fontWeight: '500'}}>{sealIDData[sealID].bagID}</Text>
-            {/* <Text style={{fontSize: 16, fontWeight: '500'}}>{sealIDData[sealID].accepted_items.length}</Text> */}
+            <Text style={{fontSize: 16, fontWeight: '500'}}>{sealIDData11[sealID].bagID}</Text>
+            <Text style={{fontSize: 16, fontWeight: '500'}}>{sealIDData11[sealID].acceptedItemsCount}</Text>
           </View>
         ))}
               {/* <Text style={{fontSize: 16, fontWeight: '500'}}>0</Text> */}
