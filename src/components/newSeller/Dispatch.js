@@ -320,7 +320,7 @@ const Dispatch = ({route}) => {
         <Text style={{fontSize:20, marginTop:10, textAlign:'center',fontWeight:'500'}}>List of Bags to Dispatch</Text>
         {/* <View style={styles.container}> */}
         <Searchbar
-        placeholder="Search Bag from BagSeal"
+        placeholder="Search Bag Seal ID"
         onChangeText={(e) => setKeyword(e)}
         value={keyword}
         style={{width:'90%', backgroundColor:'#E0E0E0',marginLeft:22,marginTop:10}}
