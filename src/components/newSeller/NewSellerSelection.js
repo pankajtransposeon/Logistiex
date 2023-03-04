@@ -205,8 +205,12 @@ useEffect(() => {
         (tx1, results) => {
           // let temp = [];
           // console.log(results.rows.length);
-          // if (results.rows.length > 0) {
-            setAcc(results.rows.length);
+          setAcc(results.rows.length);
+          if (results.rows.length === 0) {
+            tx.executeSql('DROP TABLE IF EXISTS closeBag1', []);
+
+          }
+            // setAcc(results.rows.length);
             // console.log(acc);
             // setPending(route.params.Forward - results.rows.length);
             // console.log(pending);

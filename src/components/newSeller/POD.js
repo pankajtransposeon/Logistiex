@@ -207,7 +207,33 @@ const sendSmsOtp = async () => {
         // submitForm11();
         setInputOtp('');
         setShowModal11(false);
-        ToastAndroid.show('Submit successful',ToastAndroid.SHORT);
+
+
+        db.transaction((tx) => {
+          tx.executeSql('UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?', [DropDownValue11,route.params.consignorCode], (tx1, results) => {
+            let temp = [];
+            // console.log("Not Picked Reason",DropDownValue);
+            // console.log('Results',results.rowsAffected);
+            // console.log(results);
+            if (results.rowsAffected > 0) {
+              console.log('notPicked done');
+              ToastAndroid.show('Partial Closed Successfully',ToastAndroid.SHORT);
+              // setDropDownValue11('');
+  
+            }
+            //  else {
+            //   console.log('failed to add notPicked item locally');
+            // }
+            console.log(results.rows.length);
+            for (let i = 0; i < results.rows.length; ++i) {
+              temp.push(results.rows.item(i));
+            }
+            // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+          });
+        });
+
+
+        ToastAndroid.show('Submit Successful',ToastAndroid.SHORT);
         navigation.navigate('Main',{
           userId:route.params.userId,
         });
