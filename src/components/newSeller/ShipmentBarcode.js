@@ -211,6 +211,7 @@ const ShipmentBarcode = ({
           notPicked : newNotPicked,
           phone : route.params.phone,
           userId : route.params.userId,
+          DropDownValue:DropDownValue11,
           consignorCode:route.params.consignorCode,
           contactPersonName:route.params.contactPersonName,
         });
@@ -305,7 +306,8 @@ const ShipmentBarcode = ({
       if (item === 'Partial Dispatch'){
         setDropDownValue11('');
         setModalVisible11(false);
-        navigation.navigate('Dispatch');
+        navigation.navigate('Dispatch',{
+          consignorCode:route.params.consignorCode});
       }
       setDropDownValue11(item);
       // setModalVisible11(false);
@@ -360,62 +362,61 @@ const ShipmentBarcode = ({
       console.log(bagId);
 
 
-//       db.transaction(tx => {
-//         tx.executeSql(
-//           'SELECT * FROM closeBag1 ',
-//           [],
-//           (tx, results) => {
-//             console.log(results.rows.length);
-//             serialNo = results.rows.length + 1;
-//             const bagID = route.params.userId+currentDate+(results.rows.length+1);
-//             console.log(bagID);
-// console.log(results);
-//             // Insert a row into the table
-//             tx.executeSql(
-//               'INSERT INTO closeBag1 (bagSeal, bagId, bagDate, AcceptedList,status) VALUES (?, ?, ?, ?,?)',
-//               [bagSeal, route.params.userId+'-'+currentDate+'-'+(results.rows.length+1), currentDate, JSON.stringify(acceptedArray),'scanPending'],
-//               (tx, results11) => {
-//                 console.log('Row inserted successfully');
-//                 setBagIdNo(bagIdNo + 1);
-//                 setAcceptedArray([]);
-//                 setBagSeal('');
-//                 console.log('\n Data Added to local db successfully closeBag');
-//                 ToastAndroid.show('Bag closed successfully',ToastAndroid.SHORT);
-//                 console.log(results11);
-//                 viewDetailBag();
-//               },
-//               error => {
-//                 console.log('Error occurred while inserting a row:', error);
-//               },
-//             );
-//           },
-//           error => {
-//             console.log('Error occurred while generating a unique bag ID:', error);
-//           },
-//         );
-//       });
-
-      db.transaction(txn => {
-        txn.executeSql('INSERT OR REPLACE INTO closeBag1( bagId,bagSeal,AcceptedList) VALUES (?,?,?)', [
-          bagId11,
-          bagSeal,
-          acceptedArray.toString(),
-        ], (sqlTxn, _res) => {
-
-
-          setBagIdNo(bagIdNo + 1);
-          setAcceptedArray([]);
-          setBagSeal('');
-          console.log('\n Data Added to local db successfully closebag');
-          ToastAndroid.show('Bag closed successfully',ToastAndroid.SHORT);
-          console.log(_res);
-          viewDetailBag();
-
-
-        }, error => {
-          console.log('error on adding data ' + error.message);
-        }, );
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM closeBag1 ',
+          [],
+          (tx, results) => {
+            console.log(results.rows.length);
+            serialNo = results.rows.length + 1;
+            const bagID = route.params.userId+currentDate+(results.rows.length+1);
+            console.log(bagID);
+            console.log(results);
+            tx.executeSql(
+              'INSERT INTO closeBag1 (bagSeal, bagId, bagDate, AcceptedList,status,consignorCode) VALUES (?, ?, ?, ?,?,?)',
+              [bagSeal, route.params.userId+'-'+currentDate+'-'+(results.rows.length+1), currentDate, JSON.stringify(acceptedArray),'scanPending',route.params.consignorCode],
+              (tx, results11) => {
+                console.log('Row inserted successfully');
+                setBagIdNo(bagIdNo + 1);
+                setAcceptedArray([]);
+                setBagSeal('');
+                console.log('\n Data Added to local db successfully closeBag');
+                ToastAndroid.show('Bag closed successfully',ToastAndroid.SHORT);
+                console.log(results11);
+                viewDetailBag();
+              },
+              error => {
+                console.log('Error occurred while inserting a row:', error);
+              },
+            );
+          },
+          error => {
+            console.log('Error occurred while generating a unique bag ID:', error);
+          },
+        );
       });
+
+      // db.transaction(txn => {
+      //   txn.executeSql('INSERT OR REPLACE INTO closeBag1( bagId,bagSeal,AcceptedList) VALUES (?,?,?)', [
+      //     bagId11,
+      //     bagSeal,
+      //     acceptedArray.toString(),
+      //   ], (sqlTxn, _res) => {
+
+
+      //     setBagIdNo(bagIdNo + 1);
+      //     setAcceptedArray([]);
+      //     setBagSeal('');
+      //     console.log('\n Data Added to local db successfully closebag');
+      //     ToastAndroid.show('Bag closed successfully',ToastAndroid.SHORT);
+      //     console.log(_res);
+      //     viewDetailBag();
+
+
+      //   }, error => {
+      //     console.log('error on adding data ' + error.message);
+      //   }, );
+      // });
     }
 
     function CloseBag() {
@@ -429,23 +430,61 @@ const ShipmentBarcode = ({
       let bagId11 = route.params.userId + date11 + bagIdNo;
       setBagId(route.params.userId + date11 + bagIdNo);
       console.log(bagId);
-      db.transaction(txn => {
-        txn.executeSql('INSERT OR REPLACE INTO closeBag1( bagId,bagSeal,AcceptedList) VALUES (?,?,?)', [
-          bagId11,
-          bagSeal,
-          acceptedArray.toString(),
-        ], (sqlTxn, _res) => {
-          setBagIdNo(bagIdNo + 1);
-          setAcceptedArray([]);
-          setBagSeal('');
-          console.log('\n Data Added to local db successfully closebag');
-          ToastAndroid.show('Bag successfully closed',ToastAndroid.SHORT);
-          console.log(_res);
-          viewDetailBag();
-        }, error => {
-          console.log('error on adding data ' + error.message);
-        }, );
+
+
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM closeBag1 ',
+          [],
+          (tx, results) => {
+            console.log(results.rows.length);
+            serialNo = results.rows.length + 1;
+            const bagID = route.params.userId+currentDate+(results.rows.length+1);
+            console.log(bagID);
+            console.log(results);
+            
+            tx.executeSql(
+              'INSERT INTO closeBag1 (bagSeal, bagId, bagDate, AcceptedList,status,consignorCode) VALUES (?, ?, ?, ?,?,?)',
+              [bagSeal, route.params.userId+'-'+currentDate+'-'+(results.rows.length+1), currentDate, JSON.stringify(acceptedArray),'scanPending',route.params.consignorCode],
+              (tx, results11) => {
+                console.log('Row inserted successfully');
+                setBagIdNo(bagIdNo + 1);
+                setAcceptedArray([]);
+                setBagSeal('');
+                console.log('\n Data Added to local db successfully closeBag');
+                ToastAndroid.show('Bag closed successfully',ToastAndroid.SHORT);
+                console.log(results11);
+                viewDetailBag();
+              },
+              error => {
+                console.log('Error occurred while inserting a row:', error);
+              },
+            );
+          },
+          error => {
+            console.log('Error occurred while generating a unique bag ID:', error);
+          },
+        );
       });
+
+
+      // db.transaction(txn => {
+      //   txn.executeSql('INSERT OR REPLACE INTO closeBag1( bagId,bagSeal,AcceptedList) VALUES (?,?,?)', [
+      //     bagId11,
+      //     bagSeal,
+      //     acceptedArray.toString(),
+      //   ], (sqlTxn, _res) => {
+      //     setBagIdNo(bagIdNo + 1);
+      //     setAcceptedArray([]);
+      //     setBagSeal('');
+      //     console.log('\n Data Added to local db successfully closebag');
+      //     ToastAndroid.show('Bag successfully closed',ToastAndroid.SHORT);
+      //     console.log(_res);
+      //     viewDetailBag();
+      //   }, error => {
+      //     console.log('error on adding data ' + error.message);
+      //   }, );
+      // });
     }
     const viewDetailBag = () => {
       db.transaction(tx => {
@@ -472,33 +511,33 @@ const ShipmentBarcode = ({
     }, []);
 
     const createTableBag1 = () => {
-      db.transaction(txn => {
-        txn.executeSql('DROP TABLE IF EXISTS closeBag1', []);
-        txn.executeSql(`CREATE TABLE IF NOT EXISTS closeBag1( 
-            bagId VARCHAR(100) PRIMARY KEY ,
-        bagSeal VARCHAR(100),
-        AcceptedList VARCHAR(600)
-      )`, [], (sqlTxn, res) => {
-          // console.log('table created successfully details213 ');
-          // loadAPI_Data();
-        }, error => {
-          console.log('error on creating table ' + error.message);
-        }, );
-      });
-
-      // db.transaction(tx => {
-      //   // tx.executeSql('DROP TABLE IF EXISTS closeBag1', []);
-      //   tx.executeSql(
-      //     'CREATE TABLE IF NOT EXISTS closeBag1 (bagSeal TEXT PRIMARY KEY, bagId TEXT, bagDate TEXT, AcceptedList TEXT,status TEXT)',
-      //     [],
-      //     (tx, results) => {
-      //       console.log('Table created successfully');
-      //     },
-      //     error => {
-      //       console.log('Error occurred while creating the table:', error);
-      //     },
-      //   );
+      // db.transaction(txn => {
+      //   txn.executeSql('DROP TABLE IF EXISTS closeBag1', []);
+      //   txn.executeSql(`CREATE TABLE IF NOT EXISTS closeBag1( 
+      //       bagId VARCHAR(100) PRIMARY KEY ,
+      //   bagSeal VARCHAR(100),
+      //   AcceptedList VARCHAR(600)
+      // )`, [], (sqlTxn, res) => {
+      //     // console.log('table created successfully details213 ');
+      //     // loadAPI_Data();
+      //   }, error => {
+      //     console.log('error on creating table ' + error.message);
+      //   }, );
       // });
+
+      db.transaction(tx => {
+        // tx.executeSql('DROP TABLE IF EXISTS closeBag1', []);
+        tx.executeSql(
+          'CREATE TABLE IF NOT EXISTS closeBag1 (bagSeal TEXT PRIMARY KEY, bagId TEXT, bagDate TEXT, AcceptedList TEXT,status TEXT,consignorCode Text)',
+          [],
+          (tx, results) => {
+            console.log('Table created successfully');
+          },
+          error => {
+            console.log('Error occurred while creating the table:', error);
+          },
+        );
+      });
     };
     const updateDetails2 = () => {
       console.log('scan ' + barcode.toString());
@@ -554,7 +593,7 @@ const barcodeCheck11 = ()=>{
       // });
 
       db.transaction((tx) => {
-        tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectedReason=?  WHERE status="accepted" And consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [route.params.consignorCode,DropDownValue, barcode,barcode,barcode], (tx1, results) => {
+        tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectedReason=?  WHERE status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [DropDownValue,route.params.consignorCode, barcode,barcode,barcode], (tx1, results) => {
           let temp = [];
           // ContinueHandle11();
           // console.log("ddsds4545",tx1);
@@ -614,28 +653,30 @@ const barcodeCheck11 = ()=>{
       });
     };
     const partialClose = () => {
-      db.transaction((tx) => {
-        tx.executeSql('UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?', [DropDownValue11,route.params.consignorCode], (tx1, results) => {
-          let temp = [];
-          // console.log("Not Picked Reason",DropDownValue);
-          // console.log('Results',results.rowsAffected);
-          // console.log(results);
-          if (results.rowsAffected > 0) {
-            console.log('notPicked done');
-            ToastAndroid.show('Partial Closed Successfully',ToastAndroid.SHORT);
-            setDropDownValue11('');
+      setDropDownValue11('');
 
-          }
-          //  else {
-          //   console.log('failed to add notPicked item locally');
-          // }
-          console.log(results.rows.length);
-          for (let i = 0; i < results.rows.length; ++i) {
-            temp.push(results.rows.item(i));
-          }
-          // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
-        });
-      });
+      // db.transaction((tx) => {
+      //   tx.executeSql('UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?', [DropDownValue11,route.params.consignorCode], (tx1, results) => {
+      //     let temp = [];
+      //     // console.log("Not Picked Reason",DropDownValue);
+      //     // console.log('Results',results.rowsAffected);
+      //     // console.log(results);
+      //     if (results.rowsAffected > 0) {
+      //       console.log('notPicked done');
+      //       ToastAndroid.show('Partial Closed Successfully',ToastAndroid.SHORT);
+      //       setDropDownValue11('');
+
+      //     }
+      //     //  else {
+      //     //   console.log('failed to add notPicked item locally');
+      //     // }
+      //     console.log(results.rows.length);
+      //     for (let i = 0; i < results.rows.length; ++i) {
+      //       temp.push(results.rows.item(i));
+      //     }
+      //     // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+      //   });
+      // });
     };
 
     const getCategories = (data) => {
@@ -987,6 +1028,7 @@ const barcodeCheck11 = ()=>{
               phone : route.params.phone,
               userId : route.params.userId,
               consignorCode:route.params.consignorCode,
+              DropDownValue:DropDownValue11,
               contactPersonName:route.params.contactPersonName,
             });}} >
             Submit</Button>

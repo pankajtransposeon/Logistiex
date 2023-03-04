@@ -272,7 +272,7 @@ const push_Data = () => {
     db.transaction(tx => {
         tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentAction="Seller Pickup" AND status IS NOT Null', [], (tx1, results) => {
             if (results.rows.length > 0) {
-                ToastAndroid.show('Syncing data...', ToastAndroid.SHORT);
+                ToastAndroid.show('Synchronizing data...', ToastAndroid.SHORT);
                 // setIsLoading(!isLoading);
                 let temp = [];
                 let temp11 = 0;
@@ -408,7 +408,7 @@ const push_Data = () => {
                 console.log('error on creating table ' + error.message);
             },);
         });
-    };
+    }; 
     const loadAPI_Data1 = () => {
 
         setIsLoading(!isLoading);
