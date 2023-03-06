@@ -2295,13 +2295,13 @@ function CustomDrawerContent({navigation}) {
     const timeoutId = setTimeout(fetchData, 1000);
   
     return () => clearTimeout(timeoutId);
-  }, [id, date]);
+  }, []);
   
   useEffect(() => {
-    if (tripData.startTime) {
+    if (tripData && tripData.startTime && !tripData.endTime) {
       setTripValue("End Trip");
     }
-    if (tripData.startTime && tripData.endTime) {
+    else{
       setTripValue("Start Trip");
     }
   }, [tripData]);

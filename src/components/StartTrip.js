@@ -20,8 +20,8 @@ export default function StartTrip() {
   const [userId, setUserId] = useState('');
   const [uploadStatus, setUploadStatus] = useState('idle');
   const [modalVisible, setModalVisible] = useState(false);
-  const [message, setMessage] = useState('');
-  const [status, setStatus] = useState('');
+  const [message, setMessage] = useState(0);
+  const [status, setStatus] = useState('info');
   const [showModal, setShowModal] = useState(false);
   const navigation = useNavigation();
 
@@ -186,14 +186,13 @@ const ImageHandle = () =>
           console.log('dscsdc', res.data.msg);
           // storeDataTripValue();
           if(res.data.msg=="TripID already exists"){
-            setMessage('TripID already exists');
-            setStatus('error');
+            setMessage(2);
           }
           else {
             storeDataTripValue();
-            setMessage('Trip Started Successfully');
-            setStatus('success');
+            setMessage(1);
           }
+          setShowModal(true);
         })
         .catch(function (error) {
           console.log(error);
@@ -205,17 +204,17 @@ const ImageHandle = () =>
     <NativeBaseProvider>
         <Box flex={1} bg="gray.300" alignItems="center" pt={'4%'}>
         <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-        <Modal.Content backgroundColor={status === 'success' ? '#dcfce7' : '#fee2e2'}>
-        <Modal.CloseButton />
-        <Modal.Body>
-        <Alert w="100%" status={status === 'success' ? 'success' : 'error'}>
-        <VStack space={1} flexShrink={1} w="100%" alignItems="center">
-        <Alert.Icon size="4xl" />
-        <Text my={3} fontSize="md" fontWeight="medium">{message}</Text>
-        </VStack>
-        </Alert>
-        </Modal.Body>
-        </Modal.Content>
+          <Modal.Content backgroundColor={message === 1 ? '#dcfce7' : '#fee2e2'}>
+            <Modal.CloseButton />
+            <Modal.Body>
+              <Alert w="100%" status={message === 1 ? 'success' : 'error'}>
+                <VStack space={1} flexShrink={1} w="100%" alignItems="center">
+                  <Alert.Icon size="4xl" />
+                  <Text my={3} fontSize="md" fontWeight="medium">{message === 1 ? 'Trip Started Successfully' : 'Trip ID already exists'}</Text>
+                </VStack>
+              </Alert>
+            </Modal.Body>
+          </Modal.Content>
         </Modal>
         <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)} size="lg">
         <Modal.Content maxWidth="350">
@@ -260,7 +259,7 @@ const ImageHandle = () =>
                 }
                 {
                   startkm && vehicle && ImageUrl && tripid ? (
-                    <Button title="Login" backgroundColor= {'#004aad'} _text={{ color: 'white', fontSize: 20 }} onPress={()=>{ImageHandle(); setShowModal(true)}}>Start Trip</Button>
+                    <Button title="Login" backgroundColor= {'#004aad'} _text={{ color: 'white', fontSize: 20 }} onPress={()=>{ImageHandle()}}>Start Trip</Button>
                   ) : (
                     <Button opacity={0.5}  disabled={true} title="Login" backgroundColor= {'#004aad'} _text={{ color: 'white', fontSize: 20 }}>Start Trip</Button>
                   )

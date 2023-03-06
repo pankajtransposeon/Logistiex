@@ -212,9 +212,9 @@ export default function EndTrip({ navigation, route }) {
         .catch(error => {
           console.log(error, 'error');
         });
-    }, 2000);
+    }, 1000);
     return () => clearTimeout(timer);
-  }, [userId, date]);
+  }, [userId]);
 
   return (
     <NativeBaseProvider>

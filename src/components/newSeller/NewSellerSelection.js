@@ -394,19 +394,28 @@ useEffect(() => {
   return (
     <NativeBaseProvider>
         <View>
-        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <Modal>
         <Modal.Content backgroundColor={status === 'success' ? '#dcfce7' : '#fee2e2'}>
         <Modal.CloseButton />
         <Modal.Body>
-        <Alert w="100%" status={status === 'success' ? 'success' : 'error'}>
-        <VStack space={1} flexShrink={1} w="100%" alignItems="center">
-        <Alert.Icon size="4xl" />
-        <Text my={3} fontSize="md" fontWeight="medium">{message}</Text>
-        </VStack>
+        {status === 'success' ? (
+        <Alert w="100%" status="success">
+          <VStack space={1} flexShrink={1} w="100%" alignItems="center">
+            <Alert.Icon size="4xl" />
+            <Text my={3} fontSize="md" fontWeight="medium">{message}</Text>
+          </VStack>
         </Alert>
-        </Modal.Body>
-        </Modal.Content>
-        </Modal>
+        ) : (
+        <Alert w="100%" status="error">
+          <VStack space={1} flexShrink={1} w="100%" alignItems="center">
+            <Alert.Icon size="4xl" />
+            <Text my={3} fontSize="md" fontWeight="medium">{message}</Text>
+          </VStack>
+        </Alert>
+      )}
+    </Modal.Body>
+    </Modal.Content>
+    </Modal>
           <Modal
             isOpen={modalVisible}
             onClose={() => {setModalVisible(false); setDropDownValue('');}}

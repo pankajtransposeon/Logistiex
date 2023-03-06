@@ -49,7 +49,7 @@ const NewSellerPickup = ({route}) => {
         data.forEach((single) => {
           db.transaction((tx) => {
             tx.executeSql(
-              'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status="accepted" OR status="rejected"',
+              'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status IS NOT NULL',
               [single.consignorCode],
               (tx1, results) => {
                 counts.push(results.rows.length);
@@ -68,7 +68,7 @@ const NewSellerPickup = ({route}) => {
         data.forEach((single) => {
           db.transaction((tx) => {
             tx.executeSql(
-              'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status IS NULL',
+              'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=?',
               [single.consignorCode],
               (tx1, results) => {
                 counts.push(results.rows.length);
@@ -130,7 +130,7 @@ return (
           </DataTable.Header>
           {route.params.Trip !== 'Start Trip' && data && data.length > 0 && (Math.abs(route.params.Forward) + Math.abs(route.params.Reverse)) !== 0 && data.filter(searched(keyword)).map((single, i) => (
           ((value[i] != pending11[i]) ?
-          <DataTable.Row style={{ height: 'auto', backgroundColor: '#eeeeee', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white',elevation: 5, }} key={single.consignorName} onPress={() => {
+          <DataTable.Row style={{ height: 'auto', backgroundColor: '#eeeeee', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white',elevation: 8, }} key={single.consignorName} onPress={() => {
            navigation.navigate('NewSellerSelection', {
           paramKey: single.consignorCode,
           Forward: value[i],
@@ -164,7 +164,7 @@ return (
 ))}
       {route.params.Trip === 'Start Trip' && data && data.length > 0 && (Math.abs(route.params.Forward) + Math.abs(route.params.Reverse)) !== 0 && data.filter(searched(keyword)).map((single, i) => (
           ((value[i] != pending11[i]) ?
-          <DataTable.Row style={{ height: 'auto', backgroundColor: '#eeeeee', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' ,elevation: 5,}} key={single.consignorName} onPress={() => {
+          <DataTable.Row style={{ height: 'auto', backgroundColor: '#eeeeee', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' ,elevation: 8,}} key={single.consignorName} onPress={() => {
            navigation.navigate('StartTrip');
   }}>
     <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
