@@ -21,7 +21,7 @@ import {openDatabase} from 'react-native-sqlite-storage';
 const db = openDatabase({name: 'rn_sqlite'});
 import PieChart from 'react-native-pie-chart';
 import { StyleSheet } from 'react-native';
-
+import { useIsFocused } from "@react-navigation/native"; 
 
 export default function Main({navigation, route}) {
     // const userId = route.params.userId;
@@ -49,7 +49,7 @@ export default function Main({navigation, route}) {
     const [Reverse,setReverse] = useState(0);
     const [id, setId] = useState('');
    const [tripData, setTripData]=useState([])
-  
+   const focus = useIsFocused();
   const getUserId = async () => {
     try {
       const value = await AsyncStorage.getItem('@storage_Key');
@@ -111,12 +111,15 @@ const fetchData = () => {
   }
 };
 
-useEffect(() => {
-  const timeoutId = setTimeout(fetchData, 1000);
-
-  return () => clearTimeout(timeoutId);
-}, [id, date]);
-
+// useEffect(() => {
+//   const timeoutId = setTimeout(fetchData, 1000);
+//   return () => clearTimeout(timeoutId);
+// }, [id, date]);
+useEffect(() => {   
+  if(focus == true){ 
+     fetchData();
+  }
+}, [focus]);
 useEffect(() => {
   if (tripData && tripData.startTime && !tripData.endTime) {
     setTripValue("End Trip");

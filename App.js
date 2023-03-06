@@ -15,7 +15,7 @@ import {
     Center,
 } from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {NavigationContainer, DrawerActions} from '@react-navigation/native';
+import {NavigationContainer, DrawerActions, useIsFocused} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import Login from './src/components/Login';
@@ -2293,7 +2293,6 @@ function CustomDrawerContent({navigation}) {
   
   useEffect(() => {
     const timeoutId = setTimeout(fetchData, 1000);
-  
     return () => clearTimeout(timeoutId);
   }, []);
   
