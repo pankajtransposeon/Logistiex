@@ -165,7 +165,7 @@ return (
       {route.params.Trip === 'Start Trip' && data && data.length > 0 && (Math.abs(route.params.Forward) + Math.abs(route.params.Reverse)) !== 0 && data.filter(searched(keyword)).map((single, i) => (
           ((value[i] != pending11[i]) ?
           <DataTable.Row style={{ height: 'auto', backgroundColor: '#eeeeee', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' ,elevation: 8,}} key={single.consignorName} onPress={() => {
-           navigation.navigate('StartTrip');
+           navigation.navigate('MyTrip', {userId: route.params.userId});
   }}>
     <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
     <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{pending11[i]}/{value[i]}</Text></DataTable.Cell>

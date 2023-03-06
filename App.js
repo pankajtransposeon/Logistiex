@@ -60,6 +60,7 @@ import ReturnHandoverRejectionTag from './src/components/newSeller/ReturnHandove
 import CloseTrip from './src/components/newSeller/CloseTrip';
 import HandoverShipmentRTO from './src/components/newSeller/HandoverShipmentRTO';
 import { LogBox } from 'react-native';
+import MyTrip from './src/components/MyTrip';
 const db = openDatabase({name: 'rn_sqlite'});
 
 
@@ -2167,13 +2168,34 @@ const push_Data = () => {
         />
 
         <Stack.Screen
+          name="MyTrip"
+          component={MyTrip}
+          options={{
+            headerTitle: props => (
+              <NativeBaseProvider>
+                <Heading style={{color: 'white'}} size="md">
+                  My Trip
+                </Heading>
+              </NativeBaseProvider>
+            ),
+            headerLeft: () => (
+              <MaterialIcons
+                name="menu"
+                style={{fontSize: 30, marginLeft: 10, color: 'white'}}
+                onPress={() => navigation.toggleDrawer()}
+              />
+            ),
+          }}
+        />
+
+        <Stack.Screen
           name="StartEndDetails"
           component={StartEndDetails}
           options={{
             headerTitle: props => (
               <NativeBaseProvider>
                 <Heading style={{color: 'white'}} size="md">
-                  Get Detail
+                  Trip Details
                 </Heading>
               </NativeBaseProvider>
             ),
@@ -2373,16 +2395,12 @@ function CustomDrawerContent({navigation}) {
             <Button
               variant="outline"
               onPress={() => {
-                tripValue === 'Start Trip'
-                  ? navigation.navigate('StartTrip')
-                  : tripValue === 'End Trip'
-                  ? navigation.navigate('EndTrip')
-                  : navigation.navigate('StartEndDetails');
+                navigation.navigate('MyTrip', {userId: id});
                 navigation.closeDrawer();
               }}
               mt={4}
               style={{color: '#004aad', borderColor: '#004aad'}}>
-              <Text style={{color: '#004aad'}}>{tripValue}</Text>
+              <Text style={{color: '#004aad'}}>My Trip</Text>
             </Button>
 
 
