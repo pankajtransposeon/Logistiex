@@ -1908,7 +1908,7 @@ const push_Data = () => {
             headerTitle: props => (
               <NativeBaseProvider>
                 <Heading style={{color: 'white'}} size="md">
-                  Scan Shipment Barcode
+                  Scan Shipment
                 </Heading>
               </NativeBaseProvider>
             ),

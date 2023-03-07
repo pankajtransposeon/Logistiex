@@ -71,28 +71,7 @@ export default function Main({navigation, route}) {
   let dateStart = 0;
   let dateEnd = tripid.indexOf(" ", tripid.indexOf(" ", tripid.indexOf(" ") + 1) + 1);
   let date = dateEnd ? tripid.substring(dateStart, dateEnd + 5) : "No match found";
-//   useEffect(() => {
-//     if(id){
-//     axios.get("https://bkedtest.logistiex.com/UserTripInfo/getUserTripInfo", {
-//     params: {
-//     tripID: id+'_'+date, 
-//   }
-//   }).then(response => {
-//   console.log('data',response.data);
-//   setTripData(response.data.res_data);
-//   }).catch(error => {
-//   console.log(error, 'error');
-//   });
-  
-// }
-// if(tripData.startTime){
-//   setTripValue('End Trip')
-// }
-// if(tripData.startTime && tripData.endTime){
-//   setTripValue('Start Trip')
-// }
-// }, [id,date]);
-// console.log(tripValue)
+
 const fetchData = () => {
   if (id) {
     axios
@@ -111,10 +90,6 @@ const fetchData = () => {
   }
 };
 
-// useEffect(() => {
-//   const timeoutId = setTimeout(fetchData, 1000);
-//   return () => clearTimeout(timeoutId);
-// }, [id, date]);
 useEffect(() => {   
   if(focus == true){ 
      fetchData();
@@ -128,20 +103,7 @@ useEffect(() => {
     setTripValue("Start Trip");
   }
 }, [tripData]);
-    // const getDataTrip = async () => {
-    //   try {
-       
-    //     const StartEndTrip = await AsyncStorage.getItem('@StartEndTrip');
-    //     if (StartEndTrip !== null) {
-    //       const data = JSON.parse(StartEndTrip);
-    //       setTripValue(data);
-          
-    //     }
-    //   } catch (e) {
-    //     console.log(e);
-    //   }
-    // };
-  
+
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -163,16 +125,6 @@ useEffect(() => {
             console.log(e);
         }
 
-        // try {
-       
-        //   const StartEndTrip = await AsyncStorage.getItem('@StartEndTrip');
-        //   if (StartEndTrip !== null) {
-        //     const data = JSON.parse(StartEndTrip);
-        //     setTripValue(data);
-        //   }
-        // } catch (e) {
-        //   console.log(e);
-        // }
     };
 
     useEffect(() => {
@@ -181,31 +133,7 @@ useEffect(() => {
         }, 100);
         return () => clearInterval(StartValue);
     }, []);
-    // useEffect(() => {
-    //   const unsubscribe = navigation.addListener('focus', () => {
-    //     loadSellerDeliveryDetails();
-    //   });
-    //   return unsubscribe;
-    // }, [navigation]);
-
-
-  //   const getData1 = async () => {
-  //     try {
-  //         const value = await AsyncStorage.getItem('refresh11');
-  //         if (value === 'refresh') {
-  //          loadSellerDeliveryDetails();
-  //         } 
-  //     } catch (e) {
-  //         console.log(e);
-  //     }
-  // };
-
-  // useEffect(() => {
-  //     const StartValue = setInterval(() => {
-  //         getData1();
-  //     }, 100);
-  //     return () => clearInterval(StartValue);
-  // }, []);
+   
 
     const loadSellerPickupDetails = async() => {
       setIsLoading(!isLoading);
@@ -293,7 +221,7 @@ useEffect(() => {
         });
     });
     db.transaction((tx) => {
-        tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND status="notPicked"', [], (tx1, results) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND status="notDelivered"', [], (tx1, results) => {
             let temp = [];
             setSpnp1(results.rows.length);
             for (let i = 0; i < results.rows.length; ++i) {
@@ -303,7 +231,7 @@ useEffect(() => {
     });
 
     db.transaction((tx) => {
-        tx.executeSql('SELECT * FROM SellerMainScreenDetailsRTO where status="rejected"', [], (tx1, results) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND status="rejected"', [], (tx1, results) => {
             setSpr1(results.rows.length);
             setIsLoading(false);
         });

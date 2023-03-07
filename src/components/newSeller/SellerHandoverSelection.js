@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {
   Image,
@@ -10,6 +11,8 @@ import {
   Box,
   Heading,
   Modal,
+  VStack,
+  Alert
 } from 'native-base';
 import {
   StyleSheet,
@@ -19,9 +22,9 @@ import {
   ScrollView,
   TextInput,
   getPick,
-  Alert,
   TouchableWithoutFeedbackBase,
   ToastAndroid,
+  Linking,
 } from 'react-native';
 import Lottie from 'lottie-react-native';
 import {ProgressBar} from '@react-native-community/progress-bar-android';
@@ -35,12 +38,14 @@ const db = openDatabase({
 });
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import PieChart from 'react-native-pie-chart';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const NewSellerSelection = ({route}) => {
+const SellerHandoverSelection = ({route}) => {
   const [barcodeValue, setBarcodeValue] = useState('');
   const shipmentData = `https://bkedtest.logistiex.com/SellerMainScreen/getSellerDetails/${route.params.paramKey}`;
   const [acc, setAcc] = useState(0);
-  const [pending, setPending] = useState(route.params.Pending);
+  const [pending, setPending] = useState(route.params.Forward);
+  const [Forward,setForward]=useState("");
   const [reject, setReject] = useState(0);
   const [data, setData] = useState([]);
   const [order, setOrder] = useState([]);
@@ -49,38 +54,58 @@ const NewSellerSelection = ({route}) => {
   const [phone, setPhone] = useState(route.params.phone);
   const [type, setType] = useState('');
   const [DropDownValue, setDropDownValue] = useState(null);
+  const [DropDownValue1, setDropDownValue1] = useState(null);
+  const [rejectStage, setRejectStage] = useState(null);
   const [CloseData, setCloseData] = useState([]);
   const [NotAttemptData, setNotAttemptData] = useState([]);
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
+  const [notPicked11,setNotPicked11] = useState(0);
+  const [rejectedOrder11,setRejectedOrder11] = useState(0);
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   const DisplayData = async () => {
     closePickup11();
   };
   const notPicked = () => {
+    AsyncStorage.setItem('refresh11', 'refresh');
     db.transaction(tx => {
       tx.executeSql(
-        'UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectedReason=? WHERE status IS Null',
-        [DropDownValue],
+        'UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectedReason=? WHERE shipmentAction="Seller Delivery" AND status IS Null And consignorCode=?',
+        [DropDownValue,route.params.consignorCode],
         (tx1, results) => {
           let temp = [];
-          // console.log("Not Picked Reason",DropDownValue);
-          // console.log('Results',results.rowsAffected);
-          // console.log(results);
-          // if (results.rowsAffected > 0) {
-          //   console.log('notPicked done');
-          // } else {
-          //   console.log('failed to add notPicked item locally');
-          // }
           console.log(results.rows.length);
           for (let i = 0; i < results.rows.length; ++i) {
             temp.push(results.rows.item(i));
           }
-          // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
         },
       );
     });
+    axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
+    consignorCode:route.params.consignorCode,
+    rejectionReasonL1: DropDownValue,
+    rejectionReasonL2:DropDownValue1,
+    feUserID: route.params.userId,
+    latitude : route.params.consignorLatitude,
+    longitude : route.params.consignorLongitude,
+    eventTime: new Date().toLocaleString(),
+    rejectionStage:rejectStage 
+})
+    .then(function (response) {
+        console.log(response.data);
+        setMessage('Successfully submitted');
+        setStatus('success');
+    })
+    .catch(function (error) {
+        console.log(error);
+        setMessage('Submission failed');
+        setStatus('error');
+    });
+    setShowModal(true);
   };
   const closePickup11 = () => {
     db.transaction(tx => {
@@ -90,7 +115,6 @@ const NewSellerSelection = ({route}) => {
         for (let i = 0; i < results.rows.length; ++i) {
           temp.push(results.rows.item(i));
         }
-        // console.log('Data from Local Database CPR: \n ', temp);
         setCloseData(temp);
       });
     });
@@ -108,7 +132,6 @@ const NewSellerSelection = ({route}) => {
           temp.push(results.rows.item(i));
         }
         setNotAttemptData(temp);
-        // console.log('Data from Local Database  NAR: \n ', JSON.stringify(temp,null,4));
       });
     });
   };
@@ -121,46 +144,87 @@ const NewSellerSelection = ({route}) => {
     DisplayData2();
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      // do something
       loadSellerPickupDetails();
     });
     return unsubscribe;
   }, [navigation]);
 
-  //   useEffect(() => {
-  //     (async () => {
-  //         loadSellerPickupDetails();
-  //     })();
-  // }, []);
+  const getData = async () => {
+    try {
+        const value = await AsyncStorage.getItem('refresh11');
+        if (value === 'refresh') {
+            loadSellerPickupDetails();
+        }
+    } catch (e) {
+        console.log(e);
+    }
+
+};
+
+useEffect(() => {
+    const StartValue = setInterval(() => {
+        getData();
+    }, 100);
+    return () => clearInterval(StartValue);
+}, []);
 
   const sync11 = () => {
     loadSellerPickupDetails();
   };
 
-  const loadSellerPickupDetails = () => {
-    setIsLoading(!isLoading);
+  const loadSellerPickupDetails = async() => {
+    await AsyncStorage.setItem('refresh11', 'notrefresh');
     db.transaction(tx => {
+      db.transaction(tx => {
+        tx.executeSql(
+          'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? ',
+          [route.params.consignorCode],
+          (tx1, results) => {
+              setForward(results.rows.length);
+          },
+        );
+      });
       tx.executeSql(
-        'SELECT * FROM SellerMainScreenDetails where consignorCode=? AND status="accepted"',
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=?  AND status="accepted"',
         [route.params.consignorCode],
         (tx1, results) => {
           // let temp = [];
-          console.log(results.rows.length);
-          if (results.rows.length > 0) {
-            setAcc(results.rows.length);
-            console.log(acc);
-            setPending(route.params.Pending - results.rows.length);
-            console.log(pending);
+          // console.log(results.rows.length);
+          setAcc(results.rows.length);
+          if (results.rows.length === 0) {
+            tx.executeSql('DROP TABLE IF EXISTS closeBag1', []);
+
           }
-          setIsLoading(false);
-          // ToastAndroid.show("Loading Successfull",ToastAndroid.SHORT);
-          // for (let i = 0; i < results.rows.length; ++i) {
-          //     temp.push(results.rows.item(i));
-          // }
-          // console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
-          // setData(temp);
+        },
+      );
+    });
+
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status="notDelivered"',
+        [route.params.consignorCode],
+        (tx1, results) => {
+            setNotPicked11(results.rows.length);
+        },
+      );
+    });
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status="rejected"',
+        [route.params.consignorCode],
+        (tx1, results) => {
+            setRejectedOrder11(results.rows.length);
+        },
+      );
+    });
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status IS NULL',
+        [route.params.consignorCode],
+        (tx1, results) => {
+            setPending(results.rows.length);
         },
       );
     });
@@ -175,9 +239,8 @@ const NewSellerSelection = ({route}) => {
           [1],
           (tx, results) => {
             var len = results.rows.length;
-            // console.log(len);
-            // setAcc(len);
-            setPending(route.params.Pending - len);
+            setPending(Forward - len);
+
           },
         );
       });
@@ -194,11 +257,6 @@ const NewSellerSelection = ({route}) => {
         for (let i = 0; i < results.rows.length; ++i) {
           temp.push(results.rows.item(i));
           console.log(results.rows.item(i).consignorName);
-          // var address121 = results.rows.item(i).consignorAddress;
-          // var address_json = JSON.parse(address121);
-          // console.log(typeof (address_json));
-          // console.log("Address from local db : " + address_json.consignorAddress1 + " " + address_json.consignorAddress2);
-          // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
         }
         console.log(
           'Data from Local Database : \n ',
@@ -225,16 +283,13 @@ const NewSellerSelection = ({route}) => {
     setIsLoading ? navigation.navigate('loading1') : null;
     setTimeout(() => {
       setIsLoading(false);
-      navigation.navigate('NewSellerSelection');
+      navigation.navigate('SellerHandoverSelection');
     }, 3000);
   };
 
   const triggerCall = () => {
-    const args = {
-      number: phone,
-      prompt: false,
-    };
-    call(args).catch(console.error);
+    console.log(phone);
+    Linking.openURL('tel:' + phone);
   };
 
   var TotalpickUp = 0;
@@ -253,7 +308,6 @@ const NewSellerSelection = ({route}) => {
       addresss += route.params.consignorPincode;
     }
     setType(addresss);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleButtonPress(item) {
@@ -262,23 +316,65 @@ const NewSellerSelection = ({route}) => {
       setModalVisible(false);
     } else {
       setDropDownValue(item);
+      setRejectStage("L1")
     }
-    // setModalVisible(false);
   }
   function handleButtonPress2(item) {
-    setDropDownValue(item);
+    setDropDownValue1(item);
+    setRejectStage("L2")
+  }
+
+  function openMap() {
+    var url = null;
+    if (route.params.consignorLatitude && route.params.consignorLongitude){
+      url = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination=' + route.params.consignorLatitude + ',' + route.params.consignorLongitude;
+    }
+    else {
+      url = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination=' + type;
+    }
+    Linking.canOpenURL(url)
+    .then(supported => {
+      if (!supported) {
+        console.log('Can\'t handle url: ' + url);
+      } else {
+        return Linking.openURL(url);
+      }
+    })
+    .catch(err => console.error('An error occurred', err));
   }
 
   return (
     <NativeBaseProvider>
         <View>
+        <Modal>
+        <Modal.Content backgroundColor={status === 'success' ? '#dcfce7' : '#fee2e2'}>
+        <Modal.CloseButton />
+        <Modal.Body>
+        {status === 'success' ? (
+        <Alert w="100%" status="success">
+          <VStack space={1} flexShrink={1} w="100%" alignItems="center">
+            <Alert.Icon size="4xl" />
+            <Text my={3} fontSize="md" fontWeight="medium">{message}</Text>
+          </VStack>
+        </Alert>
+        ) : (
+        <Alert w="100%" status="error">
+          <VStack space={1} flexShrink={1} w="100%" alignItems="center">
+            <Alert.Icon size="4xl" />
+            <Text my={3} fontSize="md" fontWeight="medium">{message}</Text>
+          </VStack>
+        </Alert>
+      )}
+    </Modal.Body>
+    </Modal.Content>
+    </Modal>
           <Modal
             isOpen={modalVisible}
-            onClose={() => setModalVisible(false)}
+            onClose={() => {setModalVisible(false); setDropDownValue('');}}
             size="lg">
             <Modal.Content maxWidth="350">
               <Modal.CloseButton />
-              <Modal.Header>Close Pickup Reason Code</Modal.Header>
+              <Modal.Header>Close Delivery Reason Code</Modal.Header>
               <Modal.Body>
                 {CloseData.map((d, index) => (
                   <Button
@@ -325,7 +421,7 @@ const NewSellerSelection = ({route}) => {
           </Modal>
           <Modal
             isOpen={modalVisible2}
-            onClose={() => setModalVisible2(false)}
+            onClose={() => {setModalVisible2(false); setDropDownValue1('');}}
             size="lg">
             <Modal.Content maxWidth="350">
               <Modal.CloseButton />
@@ -341,7 +437,7 @@ const NewSellerSelection = ({route}) => {
                       marginTop={1.5}
                       style={{
                         backgroundColor:
-                          d.reasonName === DropDownValue
+                          d.reasonName === DropDownValue1
                             ? '#6666FF'
                             : '#C8C8C8',
                       }}
@@ -350,7 +446,7 @@ const NewSellerSelection = ({route}) => {
                       <Text
                         style={{
                           color:
-                            d.reasonName == DropDownValue ? 'white' : 'black',
+                            d.reasonName == DropDownValue1 ? 'white' : 'black',
                         }}>
                         {d.reasonName}
                       </Text>
@@ -390,21 +486,25 @@ const NewSellerSelection = ({route}) => {
               flexDirection: 'row',
               marginTop: 30,
             }}>
-            <PieChart
-              widthAndHeight={160}
-              series={[pending, acc]}
-              sliceColor={['#F44336', '#4CAF50']}
-              doughnut={true}
-              coverRadius={0.6}
-              coverFill={'#FFF'}
-            />
+
+            {(acc !== 0 || pending !== 0 || notPicked11 !== 0 || rejectedOrder11 !== 0) ?
+             <PieChart
+                widthAndHeight={160}
+                series={[acc, pending, notPicked11, rejectedOrder11]}
+                sliceColor={['#4CAF50', '#2196F3','#FEBE00', '#F44336' ]}
+                doughnut={true}
+                coverRadius={0.6}
+                coverFill={'#FFF'}
+              /> :  <Center>
+              <Image style={{ width: 140, height: 140 }} source={require('../../assets/noDataAvailable.jpg')} alt={'No data Image'} />
+          </Center>}
           </View>
           <View
             style={{
               flexDirection: 'row',
               width: '85%',
-              marginTop: 30,
-              marginBottom: 10,
+              marginTop: 25,
+              marginBottom: 5,
               alignSelf: 'center',
               justifyContent: 'space-between',
             }}>
@@ -415,17 +515,51 @@ const NewSellerSelection = ({route}) => {
                 padding: 10,
                 borderRadius: 10,
               }}>
-              <Text style={{color: 'white', alignSelf: 'center'}}>{acc}</Text>
+              <Text style={{color: 'white', alignSelf: 'center'}}>Accepted : {acc}</Text>
             </View>
             <View
               style={{
+                backgroundColor: '#FEBE00',
+                // backgroundColor: '#FFEB3B',
+                width: '48%',
+                padding: 10,
+                borderRadius: 10,
+              }}>
+              <Text style={{color: 'white', alignSelf: 'center'}}>Not Delivered : {notPicked11}</Text>
+            </View>
+
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '85%',
+              marginTop: 5,
+              marginBottom: 10,
+              alignSelf: 'center',
+              justifyContent: 'space-between',
+            }}>
+           <View
+              style={{
+                // backgroundColor: '#F44336',
+                backgroundColor: '#2196F3',
+                width: '48%',
+                padding: 10,
+                borderRadius: 10,
+              }}>
+              <Text style={{color: 'white', alignSelf: 'center'}}>
+                Pending : {pending}
+              </Text>
+            </View>
+            <View
+              style={{
+                // backgroundColor: '#F44336',
                 backgroundColor: '#F44336',
                 width: '48%',
                 padding: 10,
                 borderRadius: 10,
               }}>
               <Text style={{color: 'white', alignSelf: 'center'}}>
-                {pending}
+                Rejected : {rejectedOrder11}
               </Text>
             </View>
           </View>
@@ -507,13 +641,8 @@ const NewSellerSelection = ({route}) => {
                         </Text>
                       </View>
                       <TouchableOpacity
-                        onPress={() =>
-                          navigation.navigate('MapScreen', {
-                            address: type,
-                            latitude: 0,
-                            longitude: 0,
-                          })
-                        }>
+                        onPress={()=>openMap()}
+                        >
                         <View style={styles.outer1}>
                           <Text style={{color: '#6DB1E1', fontWeight: '700'}}>
                             Get Direction
@@ -542,7 +671,7 @@ const NewSellerSelection = ({route}) => {
                   }
                   onPress={() => setModalVisible(true)}
                   style={{backgroundColor: '#004aad', width: '48%'}}>
-                  Close Handover
+                  Close Delivery
                 </Button>
                 <Button
                   style={{
@@ -559,13 +688,14 @@ const NewSellerSelection = ({route}) => {
                   }
                   onPress={() =>
                     navigation.navigate('ScanShipment', {
-                      Forward: route.params.Forward,
+                      Forward: Forward,
                       PRSNumber: route.params.PRSNumber,
                       consignorCode: route.params.consignorCode,
                       userId: route.params.userId,
                       phone: route.params.phone,
+                      contactPersonName:route.params.contactPersonName,
                       packagingId: route.params.packagingId,
-                      Expected:route.params.Pending
+                      Expected: pending,
                       // TotalpickUp : newdata[0].totalPickups
                     })
                   }>
@@ -588,7 +718,7 @@ const NewSellerSelection = ({route}) => {
   );
 };
 
-export default NewSellerSelection;
+export default SellerHandoverSelection;
 export const styles = StyleSheet.create({
   scanbtn: {
     width: 140,
