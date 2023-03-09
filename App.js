@@ -1616,7 +1616,7 @@ const push_Data = () => {
             headerTitle: props => (
               <NativeBaseProvider>
                 <Heading style={{color: 'white'}} size="md">
-                Seller Handover Scan
+                Handover Scan
                 </Heading>
               </NativeBaseProvider>
             ),

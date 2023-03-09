@@ -14,6 +14,7 @@ import {openDatabase} from 'react-native-sqlite-storage';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 
+import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 const db = openDatabase({name: 'rn_sqlite'});
 
 const SellerHandover = ({route}) => {
@@ -127,7 +128,7 @@ const SellerHandover = ({route}) => {
 
               {displayData && data.length > 0
                 ? Object.keys(displayData11).map((consignorCode, index) =>
-                    displayData11[consignorCode].expected > 0 ? (
+                    displayData11[consignorCode].expected > 0 ? displayData11[consignorCode].expected !== displayData11[consignorCode].scanned?(
                       <DataTable.Row
                         style={{
                           height: 'auto',
@@ -151,8 +152,38 @@ const SellerHandover = ({route}) => {
                             {displayData11[consignorCode].scanned}
                           </Text>
                         </DataTable.Cell>
+                        {/* <MaterialIcons name="check" style={{ fontSize: 30, color: 'green', marginTop: 8 }} /> */}
+
+                      </DataTable.Row>):(
+                        <DataTable.Row
+                        style={{
+                          height: 'auto',
+                          backgroundColor: '#90ee90',
+                          borderBottomWidth: 1,
+                        }}
+                        key={consignorCode}>
+                        <DataTable.Cell style={{flex: 1.7}}>
+                          <Text style={styles.fontvalue}>
+                            {displayData11[consignorCode].consignorName}
+                          </Text>
+                        </DataTable.Cell>
+
+                        <DataTable.Cell style={{flex: 1, marginRight: 5 }}>
+                          <Text style={styles.fontvalue}>
+                            {displayData11[consignorCode].expected}
+                          </Text>
+                        </DataTable.Cell>
+                        <DataTable.Cell style={{flex: 1, marginRight: -45}}>
+                          <Text style={styles.fontvalue}>
+                            {displayData11[consignorCode].scanned}
+                          </Text>
+                        </DataTable.Cell>
+                        <MaterialIcons name="check" style={{ fontSize: 30, color: 'green', marginTop: 8 }} />
                       </DataTable.Row>
-                    ) : null,
+                        // null
+                        
+                        )
+                     : null,
                   )
                 : null}
             </DataTable>
