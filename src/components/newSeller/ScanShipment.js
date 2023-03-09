@@ -28,13 +28,6 @@ const db = openDatabase({
 });
 
 const ScanShipment = ({route}) => {
-    // const [barcodeValue,setBarcodeValue] = useState('');
-    // const [packageValue,setpackageValue] = useState('');
-    // const [otp,setOtp] = useState('');
-    // const [flag, setflag] = useState(false);
-    // const [showModal, setShowModal] = useState(false);
-    // const [refresh, setRefresh] = useState(false);
-    // const [pending, setPending] = useState(0);
     const [expected, setExpected] = useState(0);
     const [newaccepted, setnewAccepted] = useState(0);
     const [newrejected, setnewRejected] = useState(0);
@@ -116,95 +109,11 @@ const takePicture = async () => {
       }
     }
   };
-  // const requestCameraPermission = async () => {
-  //   try {
-  //     const granted = await PermissionsAndroid.request(
-  //       PermissionsAndroid.PERMISSIONS.CAMERA,
-  //       {
-  //         title: 'Camera Permission',
-  //         message: 'App needs camera permission',
-  //       },
-  //     );
-  //     // If CAMERA Permission is granted
-  //     return granted === PermissionsAndroid.RESULTS.GRANTED;
-  //   } catch (err) {
-  //     console.warn(err);
-  //     return false;
-  //   }
-  // };
-
-  // const createFormData = (photo, body) => {
-  //   const data = new FormData();
-  
-  //   data.append("file", {
-  //     name: photo.fileName,
-  //     type: photo.type,
-  //     uri:
-  //       Platform.OS === "android" ? photo.uri : photo.uri.replace("file://", "")
-  //   });
-  
-  //   Object.keys(body).forEach(key => {
-  //     data.append(key, body[key]);
-  //   });
-  //   return data;
-  // };
-
-  // const takePicture = async () => {
-  //   let options = {
-  //     mediaType: 'photo',
-  //     quality: 1,
-  //     cameraType: 'back',
-  //     maxWidth: 480,
-  //     maxHeight: 480,
-  //     storageOptions: {
-  //       skipBackup: true,
-  //       path: 'images',
-  //     },
-  //   }
-  //   let isGranted = await requestCameraPermission();
-  //   let result = null;
-  //   if (isGranted) {
-  //     result = await launchCamera(options);
-  //     console.log(result)
-  //   }
-  //   if (result.assets !== undefined) {
-  //     const formDataArray = [];
-  //     result.assets.forEach((asset, index) => {
-  //       const formData = createFormData(asset, {
-  //         useCase: "DSQC",
-  //         type: "front",
-  //         contextId: "SI002",
-  //         contextType: "shipment",
-  //         hubCode: "HC001",
-  //       });
-  //       formData.append('index', index);
-  //       formDataArray.push(formData);
-  //     });
-  //     Promise.all(formDataArray.map((formData) => {
-  //       return fetch('https://bkedtest.logistiex.com/DSQCPicture/uploadPicture', {
-  //         method: 'POST',
-  //         body: formData,
-  //       })
-  //         .then((data) => data.json())
-  //         .then((res) => {
-  //           console.log('upload success', res);
-  //           return res.publicURL;
-  //         })
-  //         .catch((error) => {
-  //           console.log('upload error', error);
-  //           setUploadStatus('error')
-  //         });
-  //     })).then((results) => {
-  //       setImages(results);
-  //     });
-  //   }
-  // }
   
 
   const recordVideo = () => {
     console.log('Recording a video is not implemented yet');
   };
-    // const PartialClose = 'https://bkedtest.logistiex.com/ADupdatePrams/getPartialClosureReasons';
     const DisplayData11 = async() => {
       db.transaction(tx => {
         tx.executeSql('SELECT * FROM PartialCloseReasons', [], (tx1, results) => {
@@ -218,20 +127,10 @@ const takePicture = async () => {
             // console.log('Table6 DB OK:', temp.length);
         });
     });
-      // await fetch(PartialClose)
-      // .then((response) => response.json()) 
-      // .then((json) => {
-      //   setPartialCloseData(json);
-      // })
-      // .catch((error) => alert(error)) 
     }
     useEffect(() => {
       DisplayData11();   
     }, []);
-  
-    // useEffect(() => {
-    //   partialClose112();
-    // }, []);
   
     const partialClose112 = () => {
       if (newaccepted + newrejected === 5){
@@ -342,15 +241,6 @@ const takePicture = async () => {
     }
 
     
-    // useEffect(() => {
-    //   setBagId();
-    // }, [bagId]);
-
-    // useEffect(() => {
-    //       updateDetails2();
-    //       console.log("fdfdd "+barcode);
-    // });
-    
     function CloseBag(){
       console.log(bagSeal);
       console.log(acceptedArray);
@@ -387,16 +277,8 @@ const takePicture = async () => {
               console.log(results.rows.length);
               for (let i = 0; i < results.rows.length; ++i) {
                   temp.push(results.rows.item(i));
-                  // console.log(results.rows.item(i).consignorName);
-                  // var address121 = results.rows.item(i).AcceptedList;
-                  // var address_json = JSON.parse(address121);
-                  // console.log(typeof (address_json));
-                  // console.log("Address from local db : " , address_json);
-                  // ToastAndroid.show('consignorName:' + results.rows.item(i).consignorName + "\n" + 'PRSNumber : ' + results.rows.item(i).PRSNumber, ToastAndroid.SHORT);
               }
-              // ToastAndroid.show("Sync Successful",ToastAndroid.SHORT);
               console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
-              // console.log('Table1 DB OK:', temp.length);
           });
       });
   };
@@ -425,7 +307,7 @@ const takePicture = async () => {
         setAcceptedArray([...acceptedArray, barcode.toString()]);
         console.log(acceptedArray);
         db.transaction((tx) => {
-            tx.executeSql('UPDATE SellerMainScreenDetailsDelivery SET status="accepted" WHERE clientShipmentReferenceNumber=?', [barcode], (tx1, results) => {
+            tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" WHERE  consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [route.params.consignorCode,barcode,barcode,barcode], (tx1, results) => {
                 let temp = [];
                 console.log('Results',results.rowsAffected);
                 console.log(results);
@@ -529,14 +411,6 @@ const takePicture = async () => {
         db.transaction((tx) => {
           tx.executeSql('UPDATE SellerMainScreenDetailsDelivery SET status="notPicked" , rejectedReason=? WHERE status IS Null', [DropDownValue11], (tx1, results) => {
               let temp = [];
-              // console.log("Not Picked Reason",DropDownValue);
-              // console.log('Results',results.rowsAffected);
-              // console.log(results);
-              // if (results.rowsAffected > 0) {
-              //   console.log('notPicked done');
-              // } else {
-              //   console.log('failed to add notPicked item locally');
-              // }
               console.log(results.rows.length);
               for (let i = 0; i < results.rows.length; ++i) {
                   temp.push(results.rows.item(i));
@@ -624,12 +498,6 @@ const takePicture = async () => {
             // console.log('Table3 DB OK:', temp.length);
         },);
     });
-      // await fetch(RejectReason)
-      // .then((response) => response.json())
-      // .then((json) => {
-      //   setRejectedData(json);
-      // })
-      // .catch((error) => alert(error));
     };
     const navigation = useNavigation();
     const [count, setcount] = useState(0);
