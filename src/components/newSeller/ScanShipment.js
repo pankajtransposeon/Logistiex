@@ -61,587 +61,492 @@ const ScanShipment = ({route}) => {
     const [PartialCloseData, setPartialCloseData] = useState([]);
     // const camera = useRef(null);
     const [images, setImages] = useState([]);
-
-const takePicture = async () => {
-    if (camera) {
-      const options = { quality: 0.5, base64: true };
-      const data = await camera.takePictureAsync(options);
-      console.log(data);
-      setImages([...images, data.uri]);
-    }
-  };
-  const handleUpload = async () => {
-    if (images.length > 0) {
-      for (let i = 0; i < images.length; i++) {
-        const data = {
+    const requestCameraPermission = async () => {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: 'Camera Permission',
+            message: 'App needs camera permission',
+          },
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+    };
+  
+    const createFormData = (photo, body) => {
+      const data = new FormData();
+  
+      data.append("file", {
+        name: photo.fileName,
+        type: photo.type,
+        uri:
+          Platform.OS === "android" ? photo.uri : photo.uri.replace("file://", "")
+      });
+  
+      Object.keys(body).forEach(key => {
+        data.append(key, body[key]);
+      });
+      return data;
+    };
+  
+    const takePicture = async () => {
+  let options = {
+    mediaType: 'photo',
+    quality: 1,
+    cameraType: 'back',
+    maxWidth: 480,
+    maxHeight: 480,
+    storageOptions: {
+      skipBackup: true,
+      path: 'images',
+    },
+  }
+  let isGranted = await requestCameraPermission();
+  let results = [];
+  if (isGranted) {
+    results = await launchCamera({ ...options, multiple: true });
+    console.log(results)
+  }
+  if (results.assets !== undefined) {
+    const urls = [];
+    for (let i = 0; i < results.assets.length; i++) {
+      const result = results.assets[i];
+      try {
+        const formData = createFormData(result, {
           useCase: "DSQC",
           type: "front",
           contextId: "SI002",
           contextType: "shipment",
           hubCode: "HC001"
-        };
-  
-        const formData = new FormData();
-        const picture = {
-          uri: images[i],
-          name: `image-${i}.jpg`,
-          type: "image/jpeg"
-        };
-        if (picture.uri) {
-          formData.append("picture", picture, picture.name);
-          console.log(picture.name)
-        }
-        formData.append("data", JSON.stringify(data));
-
-        try {
-          const response = await fetch(
-            "https://bkedtest.logistiex.com/DSQCPicture/uploadPicture",
-            {
-              method: "POST",
-              body: formData
-            }
-          );
-          const result = await response.json();
-          console.log("Result:",result);
-        } catch (error) {
-          console.error("Error uploading image:", error);
-        }
+        });
+        const response = await fetch('https://bkedtest.logistiex.com/DSQCPicture/uploadPicture', {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await response.json();
+        console.log('upload success', data);
+        urls.push(data.publicURL);
+      } catch (error) {
+        console.log('upload error', error);
+        return;
       }
     }
-  };
+    setImages(urls);
+  }
+    }
+    console.log('image1',images[0]);
+    console.log('image12',images[1]);
+// const takePicture = async () => {
+//     if (camera) {
+//       const options = { quality: 0.5, base64: true };
+//       const data = await camera.takePictureAsync(options);
+//       console.log(data);
+//       setImages([...images, data.uri]);
+//     }
+//   };
+//   const handleUpload = async () => {
+//     if (images.length > 0) {
+//       for (let i = 0; i < images.length; i++) {
+//         const data = {
+//           useCase: "DSQC",
+//           type: "front",
+//           contextId: "SI002",
+//           contextType: "shipment",
+//           hubCode: "HC001"
+//         };
+  
+//         const formData = new FormData();
+//         const picture = {
+//           uri: images[i],
+//           name: `image-${i}.jpg`,
+//           type: "image/jpeg"
+//         };
+//         if (picture.uri) {
+//           formData.append("picture", picture, picture.name);
+//           console.log(picture.name)
+//         }
+//         formData.append("data", JSON.stringify(data));
+
+//         try {
+//           const response = await fetch(
+//             "https://bkedtest.logistiex.com/DSQCPicture/uploadPicture",
+//             {
+//               method: "POST",
+//               body: formData
+//             }
+//           );
+//           const result = await response.json();
+//           console.log("Result:",result);
+//         } catch (error) {
+//           console.error("Error uploading image:", error);
+//         }
+//       }
+//     }
+//   };
   
 
   const recordVideo = () => {
     console.log('Recording a video is not implemented yet');
   };
-    const DisplayData11 = async() => {
-      db.transaction(tx => {
-        tx.executeSql('SELECT * FROM PartialCloseReasons', [], (tx1, results) => {
-            let temp = [];
-            // console.log(results.rows.length);
-            for (let i = 0; i < results.rows.length; ++i) {
-                temp.push(results.rows.item(i));
-            }
-            // console.log('Data from Local Database partialClosure : \n ', temp);
-        setPartialCloseData(temp);
-            // console.log('Table6 DB OK:', temp.length);
-        });
-    });
-    }
-    useEffect(() => {
-      DisplayData11();   
-    }, []);
   
-    const partialClose112 = () => {
-      if (newaccepted + newrejected === 5){
-        sendSmsOtp();
-      } else {
-        setModalVisible11(true);
-      }
-          }
-    
+  const scannerRef = useRef(null);
+
+  const reloadScanner = () => {
+    if (scannerRef.current) {
+      scannerRef.current.reactivate();
+    }
+  };
+  useEffect(() => {
+  reloadScanner();
+  }, []);
   
   useEffect(() => {
-    const current_location = () => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      displayDataSPScan();
+    });
+    return unsubscribe;
+  }, [navigation]);
   
+
+  const displayDataSPScan = async () => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=?  AND status="accepted"',
+        [route.params.consignorCode],
+        (tx1, results) => {
+          setnewAccepted(results.rows.length);
+        },
+      );
+    });
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status="notPicked"',
+        [route.params.consignorCode],
+        (tx1, results) => {
+          setNewNotPicked(results.rows.length);
+        },
+      );
+    });
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status="rejected"',
+        [route.params.consignorCode],
+        (tx1, results) => {
+          setnewRejected(results.rows.length);
+        },
+      );
+    });
+  };
+
+  useEffect(() => {
+    const current_location = () => {
+
       return GetLocation.getCurrentPosition({
           enableHighAccuracy: true,
           timeout: 10000,
-      })
-      .then(latestLocation => {
-          console.log('latest location '+JSON.stringify(latestLocation))
+        })
+        .then(latestLocation => {
+          console.log('latest location ' + JSON.stringify(latestLocation));
           return latestLocation;
-      }).then(location => {
-          const currentLoc = { latitude11: location.latitude11, longitude11: location.longitude11 };
+        }).then(location => {
+          const currentLoc = {
+            latitude11: location.latitude11,
+            longitude11: location.longitude11,
+          };
           setLatitude11(location.latitude11);
           setLongitude11(location.longitude11);
           return currentLoc;
-      }).catch(error => {
+        }).catch(error => {
           RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
               interval: 10000,
               fastInterval: 5000,
-          })
-          .then(status=>{
-              if(status)
-                  console.log('Location enabled');
-          }).catch(err=>{
-          })
+            })
+            .then(status => {
+              if (status) {
+                console.log('Location enabled');
+              }
+            }).catch(err => {});
           return false;
-      })
-  };
-  
+        });
+    };
+
     current_location();
   }, []);
-  
-  const submitForm11 = () => {
-    alert('Your Data has submitted');
-    axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
-      excepted:route.params.Forward,
-      accepted: route.params.accepted,
-      rejected:route.params.rejected,
-      nothandedOver:0,
-      feUserID: route.params.userId,
-      receivingDate : new Date().toJSON().slice(0,10).replace(/-/g,'/'),
-      receivingTime: new Date().toLocaleString(),
-      latitude11 : latitude11,
-      longitude11 : longitude11,
-      ReceiverMobileNo : route.params.phone,
-      ReceiverName: name
-      
-  })
-      .then(function (response) {
-          console.log(response.data, "hello");
-          alert('Your Data has submitted');
-      })
-      .catch(function (error) {
-          console.log(error);
-      });
-  }
-  
-    const sendSmsOtp = async () => {
-      console.log(mobileNumber);
-      const response = await axios.post('https://bkedtest.logistiex.com/SMS/msg', {
-        "mobileNumber": mobileNumber,
-      });
-      if(response.status === 200) {
-        setShowModal11(true);
-      } 
-      else {
-        console.log("Otp not send", response);
-      }
-    }
-  
-    function handleButtonPress11(item) {
-      // if(item=='Partial Dispatch'){
-      //   navigation.navigate('Dispatch');
-      // }
-        setDropDownValue11(item);
-      // setModalVisible11(false);
-    }
-  
-    function validateOTP(){
-      axios.post("https://bkedtest.logistiex.com/SMS/OTPValidate", {
-        mobileNumber: mobileNumber,
-        otp: inputOtp
-      })
-      .then(response => {
-        if(response.data.return){
-          submitForm11();
-          setInputOtp("");
-          setShowModal11(false);
-        }
-        else{
-          alert("Invalid OTP, please try again !!");
-        }
-      })
-      .catch(error => {
-        alert("Invalid OTP, please try again !!");
-        console.log(error);
-      })
-    }
 
-    
-    function CloseBag(){
-      console.log(bagSeal);
-      console.log(acceptedArray);
-      let date = new Date().getDate();
-      let month = new Date().getMonth() + 1;
-      let year = new Date().getFullYear();
-      let date11 = date + '' + month + '' + year;
-      // console.log(route.params.userId + date11 + bagIdNo);
-      let bagId11 = route.params.userId + date11 + bagIdNo;
-      setBagId(route.params.userId + date11 + bagIdNo);
-      console.log(bagId);
-      db.transaction(txn => {
-        txn.executeSql('INSERT OR REPLACE INTO closeBag1( bagId,bagSeal,AcceptedList) VALUES (?,?,?)', [
-            bagId11,
-            bagSeal,
-            acceptedArray.toString(),
-        ], (sqlTxn, _res) => {
-       setBagIdNo(bagIdNo + 1);
-       setAcceptedArray([]);
-       setBagSeal('');
-            console.log(`\n Data Added to local db successfully closebag`);
 
-            console.log(_res);
-            viewDetailBag();
-        }, error => {
-            console.log('error on adding data ' + error.message);
-        },);
+  const updateDetails2 = () => {
+    console.log('scan ' + barcode.toString());
+    setAcceptedArray([...acceptedArray, barcode.toString()]);
+    console.log(acceptedArray);
+    db.transaction((tx) => {
+      tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" WHERE  consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [route.params.consignorCode,barcode,barcode,barcode], (tx1, results) => {
+        let temp = [];
+        console.log('Results', results.rowsAffected);
+        console.log(results);
+
+        if (results.rowsAffected > 0) {
+          console.log(barcode + 'accepted');
+          displayDataSPScan();
+
+        } else {
+          console.log(barcode + 'not accepted');
+        }
+        console.log(results.rows.length);
+        for (let i = 0; i < results.rows.length; ++i) {
+          temp.push(results.rows.item(i));
+        }
+        
+      });
     });
-    }
-    const viewDetailBag = () => {
-      db.transaction(tx => {
-          tx.executeSql('SELECT * FROM closeBag1', [], (tx1, results) => {
-              let temp = [];
-              console.log(results.rows.length);
-              for (let i = 0; i < results.rows.length; ++i) {
-                  temp.push(results.rows.item(i));
-              }
-              console.log("Data from Local Database : \n ", JSON.stringify(temp, null, 4));
-          });
-      });
   };
 
-     useEffect(() => {
-            createTableBag1();
-    },[]);
+  const rejectDetails2 = () => {
 
-    const createTableBag1 = () => {
-      db.transaction(txn => {
-          txn.executeSql('DROP TABLE IF EXISTS closeBag1', []);
-          txn.executeSql(`CREATE TABLE IF NOT EXISTS closeBag1( 
-            bagId VARCHAR(100) PRIMARY KEY ,
-        bagSeal VARCHAR(100),
-        AcceptedList VARCHAR(600)
-      )`, [], (sqlTxn, res) => {
-              console.log("table created successfully details213 ");
-              // loadAPI_Data();
-          }, error => {
-              console.log('error on creating table ' + error.message);
-          },);
+    db.transaction((tx) => {
+      tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectedReason=?  WHERE status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [DropDownValue,route.params.consignorCode, barcode,barcode,barcode], (tx1, results) => {
+        let temp = [];
+        console.log('Rejected Reason : ', DropDownValue);
+        console.log('Results', results.rowsAffected);
+        console.log(results);
+        if (results.rowsAffected > 0) {
+          // ContinueHandle11();
+          console.log(barcode + 'rejected');
+          ToastAndroid.show(barcode + ' Rejected', ToastAndroid.SHORT);
+          setDropDownValue('');
+          console.log(acceptedArray);
+          const newArray = acceptedArray.filter(item => item !== barcode);
+          console.log(newArray);
+          setAcceptedArray(newArray);
+          displayDataSPScan();
+        } else {
+          console.log(barcode + 'failed to reject item locally');
+        }
+        console.log(results.rows.length);
+        for (let i = 0; i < results.rows.length; ++i) {
+          temp.push(results.rows.item(i));
+        }
+        // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+        // viewDetailsR2();
       });
-  };
-      const updateDetails2 = () => {
-        console.log('scan '+barcode.toString());
-        setAcceptedArray([...acceptedArray, barcode.toString()]);
-        console.log(acceptedArray);
-        db.transaction((tx) => {
-            tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" WHERE  consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [route.params.consignorCode,barcode,barcode,barcode], (tx1, results) => {
-                let temp = [];
-                console.log('Results',results.rowsAffected);
-                console.log(results);
-
-                if (results.rowsAffected > 0) {
-                  console.log(barcode + 'accepted');
-                  ToastAndroid.show(barcode +" Accepted",ToastAndroid.SHORT);
-
-                } else {
-                  console.log(barcode + 'not accepted');
-                }
-                console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++ i) {
-                    temp.push(results.rows.item(i));
-                }
-                // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
-                // viewDetails2();
-            });
-        });
-      };
-
-      const rejectDetails2 = () => {
-        console.log('scan 45456');
-        setnewRejected(newrejected+1);
-        db.transaction((tx) => {
-            tx.executeSql('UPDATE SellerMainScreenDetailsDelivery SET status="rejected" ,rejectedReason=? WHERE clientShipmentReferenceNumber=?', [DropDownValue,barcode], (tx1, results) => {
-                let temp = [];
-                // console.log("ddsds4545",tx1);
-                console.log("Rejected Reason : ",DropDownValue);
-                console.log('Results',results.rowsAffected);
-                console.log(results);
-                if (results.rowsAffected > 0) {
-                  console.log(barcode + 'rejected');
-                  ToastAndroid.show(barcode +" Rejected",ToastAndroid.SHORT);
-                } else {
-                  console.log(barcode + 'failed to reject item locally');
-                }
-                console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++ i) {
-                    temp.push(results.rows.item(i));
-                }
-                // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
-                // viewDetailsR2();
-            });
-        });
-      };
-      const taggedDetails = () => {
-        console.log('scan 45456');
-        setnewTagged(newtagged+1);
-        db.transaction((tx) => {
-            tx.executeSql('UPDATE SellerMainScreenDetailsDelivery SET status="accepted" ,rejectedReason=? WHERE clientShipmentReferenceNumber=?', [DropDownValue,barcode], (tx1, results) => {
-                let temp = [];
-                // console.log("ddsds4545",tx1);
-                console.log("Rejected Reason : ",DropDownValue);
-                console.log('Results',results.rowsAffected);
-                console.log(results);
-                if (results.rowsAffected > 0) {
-                  console.log(barcode + 'rejected');
-                  ToastAndroid.show(barcode +" Rejected",ToastAndroid.SHORT);
-                } else {
-                  console.log(barcode + 'failed to reject item locally');
-                }
-                console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++ i) {
-                    temp.push(results.rows.item(i));
-                }
-            });
-        });
-      };
-
-      const viewDetails2 = () => {
-        db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetailsDelivery where status = "accepted"', [], (tx1, results) => {
-                let temp = [];
-                console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                    console.log('barcode ' + results.rows.item(i).awbNo);
-                }
-                // ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
-                console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
-            });
-        });
-      };
-      const viewDetailsR2 = () => {
-        db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetailsDelivery where status = "rejected"', [], (tx1, results) => {
-                let temp = [];
-                console.log(results.rows.length);
-                // setnewRejected(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                    console.log('barcode ' + results.rows.item(i).awbNo);
-                }
-                // ToastAndroid.show('Sync Successful',ToastAndroid.SHORT);
-                console.log('Data from Local Database : \n ', JSON.stringify(temp, null, 4));
-            });
-        });
-      };
-      const partialClose = () => {
-        db.transaction((tx) => {
-          tx.executeSql('UPDATE SellerMainScreenDetailsDelivery SET status="notPicked" , rejectedReason=? WHERE status IS Null', [DropDownValue11], (tx1, results) => {
-              let temp = [];
-              console.log(results.rows.length);
-              for (let i = 0; i < results.rows.length; ++i) {
-                  temp.push(results.rows.item(i));
-              }
-              // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
-          });
-      });
-  }
-
-    const getCategories = (data) => {
-      db.transaction(txn => {
-        txn.executeSql(
-          'SELECT * FROM categories WHERE clientShipmentReferenceNumber = ? AND ScanStatus = ? ',
-          [data, 0],
-          (sqlTxn, res) => {
-            console.log('categories retrieved successfully', res.rows.length);
-            setLen(res.rows.length);
-            if (!res.rows.length){
-              alert('You are scanning wrong product, please check.');
-            }
-          },
-          error => {
-            console.log('error on getting categories ' + error.message);
-          },
-        );
-      });
-    };
-
-    const updateCategories = (data) => {
-      db.transaction((tx) => {
-        tx.executeSql(
-          'UPDATE categories set ScanStatus=? where clientShipmentReferenceNumber=?',
-          [1, data],
-          (tx, results) => {
-            console.log('Results', results.rowsAffected);
-          }
-        );
-      });
-    };
-
-    const updateCategories1 = (data) => {
-      db.transaction((tx) => {
-        tx.executeSql(
-          'UPDATE categories set ScanStatus=?, UploadStatus=? where clientShipmentReferenceNumber=?',
-          [1, 1, data],
-          (tx, results) => {
-            console.log('Results', results.rowsAffected);
-          }
-        );
-      });
-    };
-    const onSuccess = e => {
-      console.log(e.data, 'barcode');
-      getCategories(e.data);
-      setBarcode(e.data);
-    };
-
-    useEffect(() => {
-      if (len) {
-        ContinueHandle();
-        Vibration.vibrate(100);
-        RNBeep.beep();
-        // ToastAndroid.show(barcode + ' accepted',ToastAndroid.SHORT);
-        updateDetails2();
-
-
-        setLen(false);
-        updateCategories(barcode);
-      }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [len]);
-
-    const displaydata = async() => {
-      db.transaction(tx => {
-        tx.executeSql('SELECT * FROM ShipmentRejectReasons', [], (tx1, results) => {
-            let temp = [];
-            // console.log(results.rows.length);
-            for (let i = 0; i < results.rows.length; ++i) {
-                temp.push(results.rows.item(i));
-            }
-            // ToastAndroid.show('Sync Successful3', ToastAndroid.SHORT);
-            setRejectedData(temp);
-
-            // console.log('Data from Local Database reject reasons: \n ', JSON.stringify(temp, null, 4),);
-            // console.log('Table3 DB OK:', temp.length);
-        },);
     });
-    };
-    const navigation = useNavigation();
-    const [count, setcount] = useState(0);
+  };
 
-    const ContinueHandle = () => {
-      const getUser = async () => {
-        try {
-          const savedUser = await AsyncStorage.getItem('user');
-          const currentUser = JSON.parse(savedUser);
-          await AsyncStorage.setItem('user', JSON.stringify({
-            Accepted: currentUser.Accepted + 1,
-            Rejected: currentUser.Rejected,
-          }));
-          setnewAccepted(1 + currentUser.Accepted);
-          setnewRejected(currentUser.Rejected);
-        } catch (error) {
-          console.log(error);
+  
+  const getCategories = (data) => {
+    db.transaction(txn => {
+      txn.executeSql(
+        'SELECT * FROM SellerMainScreenDetails WHERE status IS NULL AND  consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber = ?) ',
+        [route.params.consignorCode,data,data,data],
+        (sqlTxn, res) => {
+          console.log('ok1111',data);
+          setLen(res.rows.length);
+          setBarcode(data);
+          if (!res.rows.length) {
+            console.log(data);
+            console.log('ok2222',data);
+
+            db.transaction((tx) => {
+              console.log('ok3333',data);
+
+              tx.executeSql('Select * FROM SellerMainScreenDetails WHERE status IS NOT NULL And consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?)', [route.params.consignorCode,data,data,data], (tx1, results) => {
+                console.log('Results121', results.rows.length);
+                console.log('ok4444',data);
+
+                console.log(data);
+                if (results.rows.length === 0) {
+                  ToastAndroid.show('Scanning wrong product',ToastAndroid.SHORT);
+                } else {
+                  ToastAndroid.show(data + ' already scanned',ToastAndroid.SHORT);
+                }
+              });
+            });
+          }
+        },
+        error => {
+          console.log('error on getting categories ' + error.message);
+        },
+      );
+    });
+  };
+
+  const updateCategories = (data) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'UPDATE SellerMainScreenDetails set status=? where clientShipmentReferenceNumber=?',
+        ['accepted', data],
+        (tx, results) => {
+          console.log('Results', results.rowsAffected);
         }
-      };
-      getUser();
-    };
+      );
+    });
+  };
 
-    useEffect(() => {
-      async function userdata() {
-        const savedUser = await AsyncStorage.getItem('user');
-        const currentUser = JSON.parse(savedUser);
-        setnewAccepted(currentUser.Accepted);
-        setnewRejected(currentUser.Rejected);
+  const updateCategories1 = (data) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'UPDATE categories set ScanStatus=?, UploadStatus=? where clientShipmentReferenceNumber=?',
+        [1, 1, data],
+        (tx, results) => {
+          console.log('Results', results.rowsAffected);
+        }
+      );
+    });
+  };
+  const onSuccess = e => {
+    console.log(e.data, 'barcode');
+    setBarcode(e.data);
+    getCategories(e.data);
+  };
+  const onSuccess11 = e => {
+    Vibration.vibrate(100);
+    RNBeep.beep();
+    console.log(e.data, 'sealID');
+    setBagSeal(e.data);
+  };
+
+  useEffect(() => {
+    if (len) {
+      Vibration.vibrate(100);
+      RNBeep.beep();
+      ToastAndroid.show(barcode + ' Accepted', ToastAndroid.SHORT);
+      updateDetails2();
+      displayDataSPScan();
+
+      setLen(false);
+    }
+  }, [len]);
+
+  const displaydata = async () => {
+    db.transaction(tx => {
+      tx.executeSql('SELECT * FROM ShipmentRejectReasons', [], (tx1, results) => {
+        let temp = [];
+        // console.log(results.rows.length);
+        for (let i = 0; i < results.rows.length; ++i) {
+          temp.push(results.rows.item(i));
+        }
+        setRejectedData(temp);
+      }, );
+    });
+  };
+  const navigation = useNavigation();
+  const [count, setcount] = useState(0);
+
+  const handleSync = () => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      if (!state.isConnected) {
+        alert('check net connection');
+        return;
       }
-      userdata();
-    }, [newaccepted, newrejected]);
-
-    const handleSync = () => {
-      const unsubscribe = NetInfo.addEventListener(state => {
-        if (!state.isConnected) {
-          alert('check net connection');
-          return;
-        }
-        db.transaction((tx) => {
-          tx.executeSql(
-            'SELECT * FROM categories where ScanStatus = ? AND UploadStatus = ?',
-            [1, 0],
-            (tx, results) => {
-              var len = results.rows.length;
-              if (len > 0) {
-                let res = results.rows.item(0);
-                console.log(res, 'tanmay');
-                axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
-                  clientShipmentReferenceNumber: res.clientShipmentReferenceNumber,
-                  feUserID: route.params.userId,
-                  isAccepted: 'false',
-                  rejectionReason: 'null',
-                  consignorCode: res.consignorCode,
-                  pickupTime: new Date().toJSON().slice(0, 10).replace(/-/g, '/'),
-                  latitude: 0,
-                  longitude: 0,
-                  packagingId: 'ss',
-                  packageingStatus: 1,
-                  PRSNumber: res.PRSNumber,
+      db.transaction((tx) => {
+        tx.executeSql(
+          'SELECT * FROM categories where ScanStatus = ? AND UploadStatus = ?',
+          [1, 0],
+          (tx, results) => {
+            var len = results.rows.length;
+            if (len > 0) {
+              let res = results.rows.item(0);
+              console.log(res, 'tanmay');
+              axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
+                clientShipmentReferenceNumber: res.clientShipmentReferenceNumber,
+                feUserID: route.params.userId,
+                isAccepted: 'false',
+                rejectionReason: 'null',
+                consignorCode: res.consignorCode,
+                pickupTime: new Date().toJSON().slice(0, 10).replace(/-/g, '/'),
+                latitude: 0,
+                longitude: 0,
+                packagingId: 'ss',
+                packageingStatus: 1,
+                PRSNumber: res.PRSNumber,
+              })
+                .then(function (response) {
+                  console.log(response.data, 'hello');
+                  updateCategories1(res.clientShipmentReferenceNumber);
+                  alert('Data send on Server');
                 })
-                  .then(function (response) {
-                    console.log(response.data, 'hello');
-                    updateCategories1(res.clientShipmentReferenceNumber);
-                    alert('Data send on Server');
-                  })
-                  .catch(function (error) {
-                    console.log(error);
-                  });
-              } else {
-                alert('No data found');
-              }
+                .catch(function (error) {
+                  console.log(error);
+                });
+            } else {
+              alert('No data found');
             }
-          );
-        });
+          }
+        );
       });
-      // Unsubscribe
-      unsubscribe();
-    };
-    useEffect(() => {
-      displaydata();
-    }, []);
-    useEffect(() => {
-      const current_location = () => {
-        return GetLocation.getCurrentPosition({
-            enableHighAccuracy: true,
-            timeout: 10000,
+    });
+    // Unsubscribe
+    unsubscribe();
+  };
+  useEffect(() => {
+    displaydata();
+  }, []);
+  useEffect(() => {
+    const current_location = () => {
+      return GetLocation.getCurrentPosition({
+          enableHighAccuracy: true,
+          timeout: 10000,
         })
         .then(latestLocation => {
-            // console.log('latest location ' + JSON.stringify(latestLocation));
-            return latestLocation;
+          // console.log('latest location ' + JSON.stringify(latestLocation));
+          return latestLocation;
         }).then(location => {
-            const currentLoc = { latitude: location.latitude, longitude: location.longitude };
-            setLatitude(location.latitude);
-            setLongitude(location.longitude);
-            return currentLoc;
+          const currentLoc = {
+            latitude: location.latitude,
+            longitude: location.longitude,
+          };
+          setLatitude(location.latitude);
+          setLongitude(location.longitude);
+          return currentLoc;
         }).catch(error => {
-            RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-                interval: 10000,
-                fastInterval: 5000,
+          RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+              interval: 10000,
+              fastInterval: 5000,
             })
-            .then(status=>{
-                if (status)
-                    {console.log('Location enabled');}
-            }).catch(err=>{
-            });
-            return false;
+            .then(status => {
+              if (status) {
+                console.log('Location enabled');
+              }
+            }).catch(err => {});
+          return false;
         });
     };
     current_location();
-    }, []);
+  }, []);
 
-    const submitForm = () => {
-      axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
-        clientShipmentReferenceNumber : route.params.barcode,
-        feUserID: route.params.userId,
-        isAccepted : 'false',
-        rejectionReason : DropDownValue,
-        consignorCode : route.params.consignorCode,
-        pickupTime : new Date().toJSON().slice(0,10).replace(/-/g,'/'),
-        latitude : latitude,
-        longitude : longitude,
-        packagingId : 'PL00000026',
-        packageingStatus : 1,
-        PRSNumber : route.params.PRSNumber,
+  const submitForm = () => {
+    axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
+      clientShipmentReferenceNumber : route.params.barcode,
+      feUserID: route.params.userId,
+      isAccepted : 'false',
+      rejectionReason : DropDownValue,
+      consignorCode : route.params.consignorCode,
+      pickupTime : new Date().toJSON().slice(0,10).replace(/-/g,'/'),
+      latitude : latitude,
+      longitude : longitude,
+      packagingId : 'PL00000026',
+      packageingStatus : 1,
+      PRSNumber : route.params.PRSNumber,
+    })
+      .then(function (response) {
+        console.log(response.data, 'Data has been pushed');
       })
-        .then(function (response) {
-          console.log(response.data, 'Data has been pushed');
-          ContinueHandle();
-          // navigation.navigate('ScanShipment');
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    };
-    function handleButtonPress(item) {
-      setDropDownValue(item);
-      submitForm();
-    }
-    
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
 
+  function handleButtonPress(item) {
+    setDropDownValue(item);
+    submitForm();
+  }
   return (
     <NativeBaseProvider>
 
-      <Modal isOpen={modalVisible} onClose={() => {setModalVisible(false); setImages([])}} size="lg">
+      <Modal isOpen={modalVisible} onClose={() => {setModalVisible(false)}} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
           <Modal.Header>Return Handover Rejection Tag</Modal.Header>
@@ -652,7 +557,7 @@ const takePicture = async () => {
             ))}
             <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
             <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} marginRight={1} onPress={()=>{setModalVisible(false);rejectDetails2();setImages([])}}>Reject Shipment</Button>
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={()=>{setModalVisible(false); taggedDetails(); setImages([])}} >Tag Shipment</Button>
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={()=>{setModalVisible(false);setImages([])}} >Tag Shipment</Button>
             </View>
           </Modal.Body>
         </Modal.Content>
@@ -758,6 +663,8 @@ const takePicture = async () => {
               rejected : newtagged,
               phone : route.params.phone,
               userId : route.params.userId,
+              consignorCode:route.params.consignorCode,
+              contactPersonName:route.params.contactPersonName,
             })
             }} w="48%" size="lg" bg="#004aad">End Scan</Button>
             <Button w="48%" size="lg" bg="#004aad" >Resume</Button>

@@ -693,7 +693,7 @@ useEffect(() => {
                       consignorCode: route.params.consignorCode,
                       userId: route.params.userId,
                       phone: route.params.phone,
-                      contactPersonName:route.params.contactPersonName,
+                      contactPersonName:route.params.consignorName,
                       packagingId: route.params.packagingId,
                       Expected: pending,
                       // TotalpickUp : newdata[0].totalPickups
