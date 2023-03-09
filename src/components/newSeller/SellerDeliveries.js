@@ -49,7 +49,7 @@ import {
           data.forEach((single) => {
             db.transaction((tx) => {
               tx.executeSql(
-                'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status IS NOT NULL',
+                'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status IS NOT NULL',
                 [single.consignorCode],
                 (tx1, results) => {
                   counts.push(results.rows.length);
@@ -150,13 +150,13 @@ import {
     }}>
       <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
       <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{value[i]}</Text></DataTable.Cell>
-      <DataTable.Cell style={{ flex: 1, marginRight: -70 }}><Text style={styles.fontvalue}>{reverse[i]}</Text></DataTable.Cell>
+      <DataTable.Cell style={{ flex: 1, marginRight: -70 }}><Text style={styles.fontvalue}>{pending11[i]}/{reverse[i]}</Text></DataTable.Cell>
     </DataTable.Row>
     :
     <DataTable.Row style={{ height: 'auto', backgroundColor: '#90ee90', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' }} key={single.consignorName} >
       <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
       <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{value[i]}</Text></DataTable.Cell>
-      <DataTable.Cell style={{ flex: 1, marginRight: -60 }}><Text style={styles.fontvalue}>{reverse[i]}</Text></DataTable.Cell>
+      <DataTable.Cell style={{ flex: 1, marginRight: -70 }}><Text style={styles.fontvalue}>{pending11[i]}/{reverse[i]}</Text></DataTable.Cell>
     </DataTable.Row>
   )
   ))}
@@ -167,13 +167,13 @@ import {
     }}>
       <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
       <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{value[i]}</Text></DataTable.Cell>
-      <DataTable.Cell style={{ flex: 1, marginRight: -70 }}><Text style={styles.fontvalue}>{reverse[i]}</Text></DataTable.Cell>
+      <DataTable.Cell style={{ flex: 1, marginRight: -70 }}><Text style={styles.fontvalue}>{pending11[i]}/{reverse[i]}</Text></DataTable.Cell>
     </DataTable.Row>
     :
     <DataTable.Row style={{ height: 'auto', backgroundColor: '#90ee90', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' }} key={single.consignorName} >
       <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
       <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{value[i]}</Text></DataTable.Cell>
-      <DataTable.Cell style={{ flex: 1, marginRight: -60 }}><Text style={styles.fontvalue}>{reverse[i]}</Text></DataTable.Cell>
+      <DataTable.Cell style={{ flex: 1, marginRight: -60 }}><Text style={styles.fontvalue}>{pending11[i]}/{reverse[i]}</Text></DataTable.Cell>
     </DataTable.Row>
   )
   ))}

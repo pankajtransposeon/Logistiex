@@ -20,7 +20,7 @@ const CollectPOD = ({route}) => {
 
   var otpInput = useRef(null)
   const navigation = useNavigation();
-  const [name, setName] = useState('');
+  const [name, setName] = useState(route.params.contactPersonName);
   const [inputOtp, setInputOtp] = useState('');
   const [mobileNumber, setMobileNumber] = useState(route.params.phone);
   const [latitude11, setLatitude11] = useState(0);
@@ -131,18 +131,12 @@ const submitForm11 = () => {
     });
 }
 
-  const sendSmsOtp = async () => {
-    console.log(mobileNumber);
-    const response = await axios.post('https://bkedtest.logistiex.com/SMS/msg', {
-      "mobileNumber": mobileNumber,
-    });
-    if(response.status === 200) {
-      setShowModal11(true);
-    } 
-    else {
-      console.log("Otp not send", response);
-    }
-  }
+const sendSmsOtp = async () => {
+  console.log(mobileNumber);
+  const response = await axios.post('https://bkedtest.logistiex.com/SMS/msg', {
+    'mobileNumber': mobileNumber,
+  }).then(setShowModal11(true)).catch((err=>console.log('OTP not send')));
+};
 
   function handleButtonPress11(item) {
     // if(item=='Partial Dispatch'){
@@ -153,24 +147,45 @@ const submitForm11 = () => {
   }
 
   function validateOTP(){
-    axios.post("https://bkedtest.logistiex.com/SMS/OTPValidate", {
+    axios.post('https://bkedtest.logistiex.com/SMS/OTPValidate', {
       mobileNumber: mobileNumber,
-      otp: inputOtp
+      otp: inputOtp,
     })
     .then(response => {
-      if(response.data.return){
-        submitForm11();
-        setInputOtp("");
+      if (response.data.return){
+        // submitForm11();
+        setInputOtp('');
         setShowModal11(false);
+
+
+        db.transaction((tx) => {
+          tx.executeSql('UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectedReason=? WHERE shipmentAction="Seller Delivery" AND status IS Null And consignorCode=?', [DropDownValue11,route.params.consignorCode], (tx1, results) => {
+            let temp = [];
+            if (results.rowsAffected > 0) {
+              ToastAndroid.show('Partial Closed Successfully',ToastAndroid.SHORT);
+  
+            }
+            console.log(results.rows.length);
+            for (let i = 0; i < results.rows.length; ++i) {
+              temp.push(results.rows.item(i));
+            }
+          });
+        });
+
+
+        ToastAndroid.show('Submit Successful',ToastAndroid.SHORT);
+        navigation.navigate('Main',{
+          userId:route.params.userId,
+        });
       }
-      else{
-        alert("Invalid OTP, please try again !!");
+      else {
+        alert('Invalid OTP, please try again !!');
       }
     })
     .catch(error => {
-      alert("Invalid OTP, please try again !!");
+      alert('Invalid OTP, please try again !!');
       console.log(error);
-    })
+    });
   }
 
   return (
