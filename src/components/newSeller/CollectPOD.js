@@ -225,7 +225,7 @@ const sendSmsOtp = async () => {
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: 'lightgray', borderBottomLeftRadius: 5, borderBottomRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Not Handed Over</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>{0}</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.notDelivered}</Text>
               </View>
             </View>
           <Center>
