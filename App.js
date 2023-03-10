@@ -509,8 +509,9 @@ const push_Data = () => {
           shipmentAction VARCHAR(200),
           rejectedReason VARCHAR(200),
           actionTime VARCHAR(200),
-          status VARCHAR(200)
-        )`, [], (sqlTxn, res) => {
+          status VARCHAR(200),
+          handoverStatus VARCHAR(200)
+          )`, [], (sqlTxn, res) => {
                 // console.log("table created successfully details213 ");
                 // loadAPI_Data();
             }, error => {
@@ -538,8 +539,9 @@ const push_Data = () => {
                   shipmentAction ,
                   rejectedReason ,
                   actionTime ,
-                  status 
-                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`, [
+                  status,
+                  handoverStatus
+                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`, [
                             res.data.data[i].clientShipmentReferenceNumber,
                             res.data.data[i].clientRefId,
                             res.data.data[i].awbNo,
@@ -552,6 +554,7 @@ const push_Data = () => {
                             res.data.data[i].rejectedReason,
                             res.data.data[i].actionTime,
                             res.data.data[i].status,
+                            res.data.data[i].handoverStatus,
                         ], (sqlTxn, _res) => {
                             // console.log(`\n Data Added to local db successfully 213`);
                             // console.log(res);
