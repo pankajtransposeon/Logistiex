@@ -3,7 +3,7 @@
 import { NativeBaseProvider, Image, Box, Fab, Icon, Button ,Alert, Modal, Input} from 'native-base';
 import React, { useEffect, useState , useRef } from 'react';
 import axios from 'axios';
-import {PermissionsAndroid, Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet} from 'react-native';
+import {ActivityIndicator, PermissionsAndroid, Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet} from 'react-native';
 import { Center } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -32,12 +32,13 @@ const ScanShipment = ({route}) => {
     const [newaccepted, setnewAccepted] = useState(0);
     const [newrejected, setnewRejected] = useState(0);
     const [newtagged, setnewTagged] = useState(0);
+    const [notDelivered, setnotDelivered] = useState(0);
     const [barcode, setBarcode] = useState('');
     const [len, setLen] = useState(0);
     const [DropDownValue, setDropDownValue] = useState(null);
     const [rejectedData, setRejectedData] = useState([]);
     const [acceptedArray,setAcceptedArray]=useState([]);
-        // const RejectReason = 'https://bkedtest.logistiex.com/ADupdatePrams/getUSER';
+    const [uploadStatus, setUploadStatus] = useState('idle');
     const [latitude, setLatitude] = useState(0);
     const [longitude , setLongitude] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
@@ -49,17 +50,8 @@ const ScanShipment = ({route}) => {
 
 
     var otpInput = useRef(null)
-    // const navigation = useNavigation();
-    const [name, setName] = useState('');
-    const [inputOtp, setInputOtp] = useState('');
-    const [mobileNumber, setMobileNumber] = useState(route.params.phone);
-    const [latitude11, setLatitude11] = useState(0);
-    const [longitude11 , setLongitude11] = useState(0);
-    const [showModal11, setShowModal11] = useState(false);
-    const [modalVisible11, setModalVisible11] = useState(false);
-    const [DropDownValue11, setDropDownValue11] = useState(null);
-    const [PartialCloseData, setPartialCloseData] = useState([]);
-    // const camera = useRef(null);
+    const [ImageUrl, setImageUrl] = useState('');
+    const [imageUrls, setImageUrls] = useState([]);
     const [images, setImages] = useState([]);
     const requestCameraPermission = async () => {
       try {
@@ -92,107 +84,55 @@ const ScanShipment = ({route}) => {
       });
       return data;
     };
-  
+    // var imageUrls = [];
     const takePicture = async () => {
-  let options = {
-    mediaType: 'photo',
-    quality: 1,
-    cameraType: 'back',
-    maxWidth: 480,
-    maxHeight: 480,
-    storageOptions: {
-      skipBackup: true,
-      path: 'images',
-    },
-  }
-  let isGranted = await requestCameraPermission();
-  let results = [];
-  if (isGranted) {
-    results = await launchCamera({ ...options, multiple: true });
-    console.log(results)
-  }
-  if (results.assets !== undefined) {
-    const urls = [];
-    for (let i = 0; i < results.assets.length; i++) {
-      const result = results.assets[i];
-      try {
-        const formData = createFormData(result, {
+      setUploadStatus('uploading');
+      setImageUrl("");
+      let options = {
+        mediaType: 'photo',
+        quality: 1,
+        cameraType: 'back',
+        maxWidth: 480,
+        maxHeight: 480,
+        storageOptions: {
+          skipBackup: true,
+          path: 'images',
+        },
+      }
+      let isGranted = await requestCameraPermission();
+      let result = null;
+      if (isGranted) {
+        result = await launchCamera(options);
+        console.log(result)
+      }
+      if (result.assets !== undefined) {
+        const newImage = result.assets[0];
+        const formData = createFormData(newImage, {
           useCase: "DSQC",
           type: "front",
           contextId: "SI002",
           contextType: "shipment",
           hubCode: "HC001"
         });
-        const response = await fetch('https://bkedtest.logistiex.com/DSQCPicture/uploadPicture', {
+        
+        fetch('https://bkedtest.logistiex.com/DSQCPicture/uploadPicture', {
           method: 'POST',
           body: formData,
+        })
+        .then((data) => data.json())
+        .then((res) => {
+          setImageUrl(res.publicURL);
+          setUploadStatus('done');  
+          console.log('upload success', res);
+          setImageUrls(prevImageUrls => [...prevImageUrls, res.publicURL]);
+        })
+        .catch((error) => {
+          console.log('upload error', error);
+          setUploadStatus('error');
         });
-        const data = await response.json();
-        console.log('upload success', data);
-        urls.push(data.publicURL);
-      } catch (error) {
-        console.log('upload error', error);
-        return;
       }
-    }
-    setImages(urls);
   }
-    }
-    console.log('image1',images[0]);
-    console.log('image12',images[1]);
-// const takePicture = async () => {
-//     if (camera) {
-//       const options = { quality: 0.5, base64: true };
-//       const data = await camera.takePictureAsync(options);
-//       console.log(data);
-//       setImages([...images, data.uri]);
-//     }
-//   };
-//   const handleUpload = async () => {
-//     if (images.length > 0) {
-//       for (let i = 0; i < images.length; i++) {
-//         const data = {
-//           useCase: "DSQC",
-//           type: "front",
-//           contextId: "SI002",
-//           contextType: "shipment",
-//           hubCode: "HC001"
-//         };
-  
-//         const formData = new FormData();
-//         const picture = {
-//           uri: images[i],
-//           name: `image-${i}.jpg`,
-//           type: "image/jpeg"
-//         };
-//         if (picture.uri) {
-//           formData.append("picture", picture, picture.name);
-//           console.log(picture.name)
-//         }
-//         formData.append("data", JSON.stringify(data));
-
-//         try {
-//           const response = await fetch(
-//             "https://bkedtest.logistiex.com/DSQCPicture/uploadPicture",
-//             {
-//               method: "POST",
-//               body: formData
-//             }
-//           );
-//           const result = await response.json();
-//           console.log("Result:",result);
-//         } catch (error) {
-//           console.error("Error uploading image:", error);
-//         }
-//       }
-//     }
-//   };
-  
-
-  const recordVideo = () => {
-    console.log('Recording a video is not implemented yet');
-  };
-  
+console.log('length',imageUrls.length)
   const scannerRef = useRef(null);
 
   const reloadScanner = () => {
@@ -224,10 +164,10 @@ const ScanShipment = ({route}) => {
     });
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status="notPicked"',
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status="notDelivered"',
         [route.params.consignorCode],
         (tx1, results) => {
-          setNewNotPicked(results.rows.length);
+          setnotDelivered(results.rows.length);
         },
       );
     });
@@ -237,6 +177,15 @@ const ScanShipment = ({route}) => {
         [route.params.consignorCode],
         (tx1, results) => {
           setnewRejected(results.rows.length);
+        },
+      );
+    });
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status="tagged"',
+        [route.params.consignorCode],
+        (tx1, results) => {
+          setnewTagged(results.rows.length);
         },
       );
     });
@@ -283,7 +232,7 @@ const ScanShipment = ({route}) => {
     setAcceptedArray([...acceptedArray, barcode.toString()]);
     console.log(acceptedArray);
     db.transaction((tx) => {
-      tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" WHERE  consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [route.params.consignorCode,barcode,barcode,barcode], (tx1, results) => {
+      tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" WHERE  shipmentAction="Seller Delivery" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [route.params.consignorCode,barcode,barcode,barcode], (tx1, results) => {
         let temp = [];
         console.log('Results', results.rowsAffected);
         console.log(results);
@@ -307,7 +256,7 @@ const ScanShipment = ({route}) => {
   const rejectDetails2 = () => {
 
     db.transaction((tx) => {
-      tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectedReason=?  WHERE status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [DropDownValue,route.params.consignorCode, barcode,barcode,barcode], (tx1, results) => {
+      tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectedReason=?  WHERE  shipmentAction="Seller Delivery" AND  status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [DropDownValue,route.params.consignorCode, barcode,barcode,barcode], (tx1, results) => {
         let temp = [];
         console.log('Rejected Reason : ', DropDownValue);
         console.log('Results', results.rowsAffected);
@@ -329,10 +278,40 @@ const ScanShipment = ({route}) => {
         for (let i = 0; i < results.rows.length; ++i) {
           temp.push(results.rows.item(i));
         }
+      });
+    });
+    submitForm();
+  };
+  const taggedDetails = () => {
+
+    db.transaction((tx) => {
+      tx.executeSql('UPDATE SellerMainScreenDetails SET status="tagged" ,rejectedReason=?  WHERE status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [DropDownValue,route.params.consignorCode, barcode,barcode,barcode], (tx1, results) => {
+        let temp = [];
+        console.log('Rejected Reason : ', DropDownValue);
+        console.log('Results', results.rowsAffected);
+        console.log(results);
+        if (results.rowsAffected > 0) {
+          // ContinueHandle11();
+          console.log(barcode + 'tagged');
+          ToastAndroid.show(barcode + ' Tagged', ToastAndroid.SHORT);
+          setDropDownValue('');
+          console.log(acceptedArray);
+          const newArray = acceptedArray.filter(item => item !== barcode);
+          console.log(newArray);
+          setAcceptedArray(newArray);
+          displayDataSPScan();
+        } else {
+          console.log(barcode + 'failed to tagged item locally');
+        }
+        console.log(results.rows.length);
+        for (let i = 0; i < results.rows.length; ++i) {
+          temp.push(results.rows.item(i));
+        }
         // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
         // viewDetailsR2();
       });
     });
+    submitForm1();
   };
 
   
@@ -353,10 +332,6 @@ const ScanShipment = ({route}) => {
               console.log('ok3333',data);
 
               tx.executeSql('Select * FROM SellerMainScreenDetails WHERE status IS NOT NULL And consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?)', [route.params.consignorCode,data,data,data], (tx1, results) => {
-                console.log('Results121', results.rows.length);
-                console.log('ok4444',data);
-
-                console.log(data);
                 if (results.rows.length === 0) {
                   ToastAndroid.show('Scanning wrong product',ToastAndroid.SHORT);
                 } else {
@@ -401,12 +376,7 @@ const ScanShipment = ({route}) => {
     setBarcode(e.data);
     getCategories(e.data);
   };
-  const onSuccess11 = e => {
-    Vibration.vibrate(100);
-    RNBeep.beep();
-    console.log(e.data, 'sealID');
-    setBagSeal(e.data);
-  };
+  
 
   useEffect(() => {
     if (len) {
@@ -449,7 +419,6 @@ const ScanShipment = ({route}) => {
             var len = results.rows.length;
             if (len > 0) {
               let res = results.rows.item(0);
-              console.log(res, 'tanmay');
               axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
                 clientShipmentReferenceNumber: res.clientShipmentReferenceNumber,
                 feUserID: route.params.userId,
@@ -524,12 +493,13 @@ const ScanShipment = ({route}) => {
       isAccepted : 'false',
       rejectionReason : DropDownValue,
       consignorCode : route.params.consignorCode,
-      pickupTime : new Date().toJSON().slice(0,10).replace(/-/g,'/'),
+      DeliveryTime : new Date().toJSON().slice(0,10).replace(/-/g,'/'),
       latitude : latitude,
       longitude : longitude,
       packagingId : 'PL00000026',
       packageingStatus : 1,
       PRSNumber : route.params.PRSNumber,
+      files: imageUrls
     })
       .then(function (response) {
         console.log(response.data, 'Data has been pushed');
@@ -538,10 +508,30 @@ const ScanShipment = ({route}) => {
         console.log(error);
       });
   };
-
+  const submitForm1 = () => {
+    axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
+      clientShipmentReferenceNumber : route.params.barcode,
+      feUserID: route.params.userId,
+      isAccepted : 'true',
+      rejectionReason : DropDownValue,
+      consignorCode : route.params.consignorCode,
+      DeliveryTime : new Date().toJSON().slice(0,10).replace(/-/g,'/'),
+      latitude : latitude,
+      longitude : longitude,
+      packagingId : 'PL00000026',
+      packageingStatus : 1,
+      PRSNumber : route.params.PRSNumber,
+      files: imageUrls
+    })
+      .then(function (response) {
+        console.log(response.data, 'Data has been pushed');
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
   function handleButtonPress(item) {
     setDropDownValue(item);
-    submitForm();
   }
   return (
     <NativeBaseProvider>
@@ -556,57 +546,40 @@ const ScanShipment = ({route}) => {
             <Text style={{color:DropDownValue == d.shipmentExceptionReasonName ? 'white' : 'black'}}>{d.shipmentExceptionReasonName}</Text></Button>
             ))}
             <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} marginRight={1} onPress={()=>{setModalVisible(false);rejectDetails2();setImages([])}}>Reject Shipment</Button>
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={()=>{setModalVisible(false);setImages([])}} >Tag Shipment</Button>
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} marginRight={1} onPress={()=>{setModalVisible(false);rejectDetails2()}}>Reject Shipment</Button>
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={()=>{setModalVisible(false);taggedDetails()}} >Tag Shipment</Button>
             </View>
           </Modal.Body>
         </Modal.Content>
       </Modal>
-      <Modal isOpen={modalVisible1} onClose={() => {setModalVisible1(false); setImages([])}} size="lg">
+      <Modal isOpen={modalVisible1} onClose={() => {setModalVisible1(false); setImageUrls([])}} size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
           <Modal.Header>Return Handover Rejection Tag</Modal.Header>
           <Modal.Body>
-          <View style={{ flex: 1}}>
-          <RNCamera
-        ref={(ref) => {
-          camera = ref;
-        }}
-        style={{ flex: 1 ,width:300,height:300}}
-        type={RNCamera.Constants.Type.back}
-      >
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'transparent',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            padding: 20
-          }}
-        >
-          <TouchableOpacity onPress={takePicture} style={{ marginRight: 20 }}>
-            <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}>Take photo</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={recordVideo}>
-            <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}>Record video</Text>
-          </TouchableOpacity>
-        </View>
-      </RNCamera>
-      {images.length > 0 && (
+      <Button py={3} variant='outline' _text={{ color: 'white', fontSize: 20 }} onPress={takePicture}>
+              {uploadStatus === 'idle' && <MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons>}
+              {uploadStatus === 'uploading' && <ActivityIndicator size="small" color="gray" />}
+              {uploadStatus === 'done' && <MaterialIcons name="check" size={22} color="green" />}
+              {uploadStatus === 'error' && <MaterialIcons name="error" size={22} color="red" />}
+            </Button>
+      {imageUrls.length > 0 && (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' ,marginTop:50}}>
-          {images.map((image, index) => (
-            <Image key={index} style={{ width: 200, height: 200 }} source={{ uri: image }} />
-          ))}
+          {imageUrls.map((url, index) => (
+          <Image
+          key={index}
+          source={{ uri: url }}
+          style={{ width: 100, height: 100 }}
+        />
+        ))}
         </View>
         )}
-        </View>
             <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} marginRight={1} onPress={()=>setImages([])}>ReScan/Record</Button>
-            {images.length<5 ?
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} marginRight={1} onPress={()=>setImageUrls([])}>ReScan/Record</Button>
+            {imageUrls.length<5 ?
             <Button opacity={0.5}  disabled={true} flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} >Save</Button>
             :
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={()=>{ handleUpload(); setModalVisible(true); setModalVisible1(false)}} >Save</Button>
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={()=>{ setModalVisible(true); setModalVisible1(false)}} >Save</Button>
             }
             </View>
           </Modal.Body>
@@ -642,7 +615,7 @@ const ScanShipment = ({route}) => {
                 <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.Expected}</Text>
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>Accepted</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>Delivered</Text>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>{newaccepted}</Text>
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
@@ -651,7 +624,7 @@ const ScanShipment = ({route}) => {
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: 'lightgray', borderBottomLeftRadius: 5, borderBottomRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Not Handed Over</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>{0}</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{notDelivered}</Text>
               </View>
             </View>
           </View>
@@ -665,6 +638,7 @@ const ScanShipment = ({route}) => {
               userId : route.params.userId,
               consignorCode:route.params.consignorCode,
               contactPersonName:route.params.contactPersonName,
+              notDelivered:notDelivered
             })
             }} w="48%" size="lg" bg="#004aad">End Scan</Button>
             <Button w="48%" size="lg" bg="#004aad" >Resume</Button>
