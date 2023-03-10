@@ -43,7 +43,7 @@ const SellerHandover = ({route}) => {
                   //    console.log(results11,'1',results11.rows.length);
                   //    var expected=results11.rows.length;
                   tx.executeSql(
-                    'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status IS NOT NULL',
+                    'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND handoverStatus IS NOT NULL',
                     [results.rows.item(i).consignorCode],
                     (tx1, results22) => {
                       // console.log(results22,'2',results22.rows.length);

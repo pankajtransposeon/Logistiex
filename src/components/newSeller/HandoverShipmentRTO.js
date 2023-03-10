@@ -55,6 +55,15 @@ const HandoverShipmentRTO = ({route}) => {
     const [sellerNoOfShipment,setSellerNoOfShipment] = useState(0);
     const [scanprogressRD,setScanProgressRD] = useState(0);
     const [sellerBagOpen11,setSellerbagOpen11] = useState('Yes');
+    const currentDate = new Date().toISOString().slice(0, 10);
+
+    const [acceptedItemData, setAcceptedItemData] = useState({});
+
+
+    const buttonColor =
+     data && data.length  && data[0].consignorCode && acceptedItemData[data[0].consignorCode] ? (acceptedItemData[data[0].consignorCode].acceptedItems11.length === 0 ? 'gray.300' : '#004aad') :
+      'gray.300';
+    // let serialNo = 0;
 
     useEffect(() => {
       setBagId();
@@ -65,18 +74,93 @@ const HandoverShipmentRTO = ({route}) => {
     //       console.log("fdfdd "+barcode);
     // });
 
-    function CloseBag(){
-      console.log(bagId);
-      console.log(bagSeal);
-      setBagId('');
-      setBagIdNo(bagIdNo + 1);
-    }
+
+    useEffect(() => {
+      createTableBag1();
+    }, []);
+
+    const createTableBag1 = () => {
+
+      db.transaction(tx => {
+        // tx.executeSql('DROP TABLE IF EXISTS closeBag1', []);
+        tx.executeSql(
+          'CREATE TABLE IF NOT EXISTS closeHandoverBag1 (bagSeal TEXT , bagId TEXT PRIMARY KEY, bagDate TEXT, AcceptedList TEXT,status TEXT,consignorCode Text)',
+          [],
+          (tx, results) => {
+            console.log('Table created successfully');
+          },
+          error => {
+            console.log('Error occurred while creating the table:', error);
+          },
+        );
+      });
+    };
+
+
+
+   function CloseBag (consCode) {
+  console.log(bagSeal);
+  console.log(acceptedArray);
+  db.transaction(tx => {
+    tx.executeSql(
+      'SELECT * FROM closeHandoverBag1 Where consignorCode=? AND bagDate=? ',
+      [consCode, currentDate],
+      (tx, results) => {
+        console.log(results.rows.length);
+        console.log(results);
+        tx.executeSql(
+          'INSERT INTO closeHandoverBag1 (bagSeal, bagId, bagDate, AcceptedList,status,consignorCode) VALUES (?, ?, ?, ?,?,?)',
+          [
+            bagSeal,
+            consCode + '-' + currentDate + '-' + (results.rows.length + 1),
+            currentDate,
+            JSON.stringify(acceptedArray),
+            'pending',
+            consCode,
+          ],
+          (tx, results11) => {
+            console.log('Row inserted successfully');
+            setAcceptedArray([]);
+            setBagSeal('');
+            console.log(' Data Added to local db successfully Handover closeBag');
+            ToastAndroid.show('Bag closed successfully', ToastAndroid.SHORT);
+            console.log(results11);
+            viewDetailBag();
+          },
+          error => {
+            console.log('Error occurred while inserting a row:', error);
+          },
+        );
+      },
+      error => {
+        console.log('Error occurred while generating a unique bag ID:', error);
+      },
+    );
+  });
+}
+
+const viewDetailBag = () => {
+  db.transaction(tx => {
+    tx.executeSql('SELECT * FROM closeHandoverBag1', [], (tx1, results) => {
+      let temp = [];
+      console.log(results.rows.length);
+      for (let i = 0; i < results.rows.length; ++i) {
+        temp.push(results.rows.item(i));
+      }
+      console.log(
+        'Data from Local Database Handover Bag: \n ',
+        JSON.stringify(temp, null, 4),
+      );
+    });
+  });
+};
+
 
       const updateDetails2 = (data) => {
         console.log('scan 4545454');
 
         db.transaction((tx) => {
-            tx.executeSql('UPDATE SellerMainScreenDetails  SET status="accepted" WHERE shipmentAction="Seller Delivery" AND (awbNo = ? OR clientShipmentReferenceNumber = ? OR clientRefId = ? )', [ data,data,data], (tx1, results) => {
+            tx.executeSql('UPDATE SellerMainScreenDetails  SET handoverStatus="accepted" WHERE shipmentAction="Seller Delivery" AND (awbNo = ? OR clientShipmentReferenceNumber = ? OR clientRefId = ? )', [ data,data,data], (tx1, results) => {
                 let temp = [];
                 console.log('Results',results.rowsAffected);
                 console.log(results);
@@ -86,7 +170,7 @@ const HandoverShipmentRTO = ({route}) => {
                   ToastAndroid.show( data + ' Accepted',ToastAndroid.SHORT);
                   db.transaction(tx => {
                     tx.executeSql(
-                      'SELECT consignorCode FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND (awbNo = ? OR clientShipmentReferenceNumber = ? OR clientRefId = ? )  AND status="accepted"',
+                      'SELECT consignorCode FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND (awbNo = ? OR clientShipmentReferenceNumber = ? OR clientRefId = ? )  AND handoverStatus="accepted"',
                       [ data,data,data],
                       (tx2, results122) => {
                         console.log(results122.rows.item(0));
@@ -124,7 +208,7 @@ const HandoverShipmentRTO = ({route}) => {
 
             db.transaction(tx => {
               tx.executeSql(
-                'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=?  AND status="accepted"',
+                'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=?  AND handoverStatus="accepted"',
                 [data333],
                 (tx1, results) => {
                   setScanProgressRD(results.rows.length);
@@ -147,7 +231,7 @@ const HandoverShipmentRTO = ({route}) => {
     const getCategories = (data) => {
       db.transaction(txn => {
         txn.executeSql(
-          'SELECT * FROM SellerMainScreenDetails WHERE shipmentAction="Seller Delivery" AND (awbNo = ? OR clientShipmentReferenceNumber = ? OR clientRefId = ? )AND status IS NULL ',
+          'SELECT * FROM SellerMainScreenDetails WHERE shipmentAction="Seller Delivery" AND (awbNo = ? OR clientShipmentReferenceNumber = ? OR clientRefId = ? )AND handoverStatus IS NULL ',
           [data, data, data],
           (sqlTxn, res) => {
             console.log('categories retrieved successfully', res.rows.length);
@@ -156,7 +240,7 @@ const HandoverShipmentRTO = ({route}) => {
               db.transaction((tx) => {
                 console.log('ok3333',data);
 
-                tx.executeSql('Select * FROM SellerMainScreenDetails WHERE shipmentAction="Seller Delivery" AND status IS NOT NULL  AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?)', [data,data,data], (tx1, results) => {
+                tx.executeSql('Select * FROM SellerMainScreenDetails WHERE shipmentAction="Seller Delivery" AND handoverStatus IS NOT NULL  AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?)', [data,data,data], (tx1, results) => {
                   console.log('Results121', results.rows.length);
                   console.log('ok4444',data);
 
@@ -168,7 +252,7 @@ const HandoverShipmentRTO = ({route}) => {
                     setBarcode(() => data);
                     db.transaction(tx => {
                       tx.executeSql(
-                        'SELECT consignorCode FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND (awbNo = ? OR clientShipmentReferenceNumber = ? OR clientRefId = ? )  AND status="accepted"',
+                        'SELECT consignorCode FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND (awbNo = ? OR clientShipmentReferenceNumber = ? OR clientRefId = ? )  AND handoverStatus="accepted"',
                         [ data,data,data],
                         (tx2, results122) => {
                           console.log(results122.rows.item(0));
@@ -212,7 +296,7 @@ const HandoverShipmentRTO = ({route}) => {
       Vibration.vibrate(100);
       RNBeep.beep();
       console.log(e.data, 'sealID');
-      getCategories(e.data);
+      // getCategories(e.data);
       setBagSeal(e.data);
     };
 
@@ -230,7 +314,14 @@ const HandoverShipmentRTO = ({route}) => {
     });
     };
 
-    const bagopenCloseHandler = () => {
+    const bagopenCloseHandler = (consCode11) => {
+
+      const newData = {};
+      newData[consCode11] = {
+        acceptedItems11: [],
+      };
+      setAcceptedItemData(prevData => ({...prevData, ...newData}));
+
       db.transaction((tx) => {
         tx.executeSql('UPDATE SyncSellerPickUp SET BagOpenClose="open" WHERE consignorCode=?', [barcode], (tx1, results) => {
           setAcceptedArray(prevarr => [...prevarr, barcode.toString()]);
@@ -305,7 +396,7 @@ const HandoverShipmentRTO = ({route}) => {
       }} />
             {/* {'\n'}
             <Input placeholder="Enter Bag Seal" size="md" onChangeText={(text)=>setBagSeal(text)} /> */}
-            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(); setShowCloseBagModal(false); }}>Submit</Button>
+            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(data[0].consignorCode); setShowCloseBagModal(false); }}>Submit</Button>
             <View style={{alignItems: 'center', marginTop: 15}}>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 16, fontWeight: '500', color: 'black'}}>Seller Code</Text>
@@ -351,7 +442,7 @@ const HandoverShipmentRTO = ({route}) => {
                   ) : null
                 } shipments. Would you like to open a bag?</Text>
           <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 20 }}>
-            <Button onPress={() => bagopenCloseHandler()} w="48%" size="lg" bg="#004aad" >Yes</Button>
+            <Button onPress={() => bagopenCloseHandler(data[0].consignorCode)} w="48%" size="lg" bg="#004aad" >Yes</Button>
             <Button onPress={() => setModalVisible(false)} w="48%" size="lg" bg="#004aad">No</Button>
           </View>
           </Modal.Body>
@@ -422,7 +513,14 @@ const HandoverShipmentRTO = ({route}) => {
             </View>
 
           <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
-            <Button w="48%" size="lg" bg="#004aad" onPress={()=>setShowCloseBagModal(true)}>Close Bag</Button>
+      <Button w="48%"size="lg" bg={buttonColor} onPress={() => {
+    buttonColor === '#004aad'
+      ? setShowCloseBagModal(true)
+      : data && data.length > 0 && data[0].consignorCode && acceptedItemData[data[0].consignorCode] && acceptedItemData[data[0].consignorCode].acceptedItems11.length === 0 ? ToastAndroid.show('Bag is empty', ToastAndroid.SHORT) : ToastAndroid.show('Open bag to close', ToastAndroid.SHORT);
+  }}>
+  Close Bag
+</Button>
+
             <Button w="48%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('OpenBags')}>Close Handover</Button>
           </View>
           <Center>
