@@ -311,54 +311,7 @@ const OpenBags = ({route}) => {
                 </DataTable.Title>
               </DataTable.Header>
 
-              {data && data.length > 0
-                ? data.filter(searched(keyword)).map((single, i) => (
-                    // <DataTable.Row style={{height:'auto' ,backgroundColor:'#eeeeee', borderBottomWidth: 1}} key={single.consignorName} onPress={() =>{navigation.navigate('HandoverShipment',{
-                    //   paramKey : single.consignorCode,
-                    //   Forward : single.ForwardPickups,
-                    //   consignorAddress1 :single.consignorAddress1,
-                    //   consignorAddress2 :single.consignorAddress2,
-                    //   consignorCity :single.consignorCity,
-                    //   consignorPincode :single.consignorPincode,
-                    //   consignorName : single.consignorName,
-                    //   PRSNumber : single.PRSNumber,
-                    //   consignorCode : single.consignorCode,
-                    //   userId : single.userId,
-                    //   phone : single.consignorContact,
-                    // });}}>
-                    //   <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{single.consignorName}</Text></DataTable.Cell>
-                    //   <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{single.ReverseDeliveries}</Text></DataTable.Cell>
-                    //   <DataTable.Cell style={{flex: 1,marginRight:-55}}><Text style={styles.fontvalue} >doubt</Text></DataTable.Cell>
-                    //   <ArrowForwardIcon style={{color:'#004aad',marginTop:8}} />
-                    // </DataTable.Row>
-                    <DataTable.Row key={single.consignorName}>
-                      <DataTable.Cell style={{flex: 1.7}}>
-                        <Text style={styles.fontvalue}>
-                          {single.consignorName}
-                        </Text>
-                      </DataTable.Cell>
-                      <DataTable.Cell style={{flex: 1}}>
-                        <Text style={styles.fontvalue}>{data[0].ShipmentListArray.split().length}</Text>
-                      </DataTable.Cell>
-                      <DataTable.Cell style={{flex: 1}}>
-                        <Button
-                        disabled={single.BagOpenClose === 'close' ? true : false}
-                          style={{backgroundColor: single.BagOpenClose === 'close' ? 'grey' : '#004aad', color: '#fff'}}
-                          onPress={() =>
-                            CloseBagFunction(
-                              single.consignorCode,
-                              single.consignorName,
-                            )
-                          }>
-                          Close Bag
-                        </Button>
-                      </DataTable.Cell>
-                      {/* <DataTable.Cell style={{flex: 1}}><Button style={{backgroundColor:'#004aad', color:'#fff'}} onPress={
-                  () => {navigation.navigate('PendingHandover',{consignorName:single.consignorName,expected:single.ReverseDeliveries})}
-                  }>Close Bag</Button></DataTable.Cell> */}
-                    </DataTable.Row>
-                  ))
-                : null}
+             
             </DataTable>
           </Card>
         </ScrollView>
