@@ -22,12 +22,20 @@ const SellerHandover = ({route}) => {
   const [keyword, setKeyword] = useState('');
   const [numScanned, setNumScanned] = useState(0);
   const [displayData, setDisplayData] = useState({});
+  const [MM,setMM] = useState(0);
   const navigation = useNavigation();
-
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadDetails();
+    });
+    return unsubscribe;
+  }, [navigation]);
+  
   const loadDetails = () => {
     db.transaction(tx => {
       tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
         let temp = [];
+        var m = 0;
         for (let i = 0; i < results.rows.length; ++i) {
           const newData = {};
           temp.push(results.rows.item(i));
@@ -46,6 +54,7 @@ const SellerHandover = ({route}) => {
                     'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND handoverStatus IS NOT NULL',
                     [results.rows.item(i).consignorCode],
                     (tx1, results22) => {
+                      setMM(MM + results22.rows.length);
                       // console.log(results22,'2',results22.rows.length);
                       // var scanned=results.rows.length;
                       newData[results.rows.item(i).consignorCode] = {
@@ -66,7 +75,10 @@ const SellerHandover = ({route}) => {
               );
             });
           });
+
         }
+        if (MM === 0 && displayData != null){
+          tx.executeSql('DROP TABLE IF EXISTS closeHandoverBag1', []);}
         setData(temp);
       });
     });
@@ -74,12 +86,7 @@ const SellerHandover = ({route}) => {
 //   useEffect(() => {
 //     loadDetails()
 //   }, [])
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      loadDetails();
-    });
-    return unsubscribe;
-  }, [navigation]);
+  
 
   const displayData11 = Object.keys(displayData)
     .filter(sealID => sealID.toLowerCase().includes(keyword.toLowerCase()))
@@ -128,7 +135,7 @@ const SellerHandover = ({route}) => {
 
               {displayData && data.length > 0
                 ? Object.keys(displayData11).map((consignorCode, index) =>
-                    displayData11[consignorCode].expected > 0 ? displayData11[consignorCode].expected !== displayData11[consignorCode].scanned?(
+                    displayData11[consignorCode].expected > 0 ? displayData11[consignorCode].expected !== displayData11[consignorCode].scanned ? (
                       <DataTable.Row
                         style={{
                           height: 'auto',
@@ -154,7 +161,7 @@ const SellerHandover = ({route}) => {
                         </DataTable.Cell>
                         {/* <MaterialIcons name="check" style={{ fontSize: 30, color: 'green', marginTop: 8 }} /> */}
 
-                      </DataTable.Row>):(
+                      </DataTable.Row>) : (
                         <DataTable.Row
                         style={{
                           height: 'auto',
@@ -181,7 +188,7 @@ const SellerHandover = ({route}) => {
                         <MaterialIcons name="check" style={{ fontSize: 30, color: 'green', marginTop: 8 }} />
                       </DataTable.Row>
                         // null
-                        
+
                         )
                      : null,
                   )
