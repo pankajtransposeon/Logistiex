@@ -19,6 +19,8 @@ export default function EndTrip({ navigation, route }) {
   const [uploadStatus, setUploadStatus] = useState('idle');
   const [TripValue, setTripValue] = useState('Start Trip');
   const [modalVisible, setModalVisible] = useState(false);
+  const [pendingPickup, setPendingPickup] = useState(0);
+  const [pendingDelivery, setPendingDelivery] = useState(0);
 
   const getDataTrip = async () => {
     try {
@@ -54,6 +56,19 @@ export default function EndTrip({ navigation, route }) {
   };
   useEffect(() => {
     getUserId();
+  }, []);
+  useEffect(() => {
+    db.transaction((tx) => {
+      tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentAction="Seller Pickup" AND status IS NULL', [], (tx1, results) => {
+          setPendingPickup(results.rows.length);
+      });
+  });
+
+    db.transaction((tx) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND status IS NULL', [], (tx1, results) => {
+            setPendingDelivery(results.rows.length);
+        });
+    });
   }, []);
 
   const requestCameraPermission = async () => {
@@ -133,21 +148,6 @@ export default function EndTrip({ navigation, route }) {
     }
   }
 
-  // const getData = async () => {
-  //   try {
-  //     const value = await AsyncStorage.getItem('@VehicleStartkm')
-  //     if (value !== null) {
-  //       const data = JSON.parse(value);
-  //       setVehicle(data);
-  //       console.log(data, 'data')
-  //     }
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // }
-  // useEffect(() => {
-  //   getData();
-  // }, []);
   const getTripID = async () => {
     try {
       const value = await AsyncStorage.getItem('@TripID')
@@ -164,7 +164,6 @@ export default function EndTrip({ navigation, route }) {
   }, []);
   const storeDataTripValue = async () => {
     try {
-      // await AsyncStorage.setItem('@StartEndTrip', JSON.stringify('Start Trip'));
       navigation.navigate('StartEndDetails', { tripID: userId + "_" + date })
     } catch (e) {
       console.log(e);
@@ -263,12 +262,35 @@ export default function EndTrip({ navigation, route }) {
               )
             }
             {
-              endkm && ImageUrl && (endkm > startkm) ? (
-                <Button title="Login" backgroundColor='#004aad' _text={{ color: 'white', fontSize: 20 }} onPress={() => ImageHandle()}>End Trip</Button>
-              ) : (
-                <Button opacity={0.5} disabled={true} title="Login" backgroundColor='#004aad' _text={{ color: 'white', fontSize: 20 }}>End Trip</Button>
-              )
-            }
+          (!pendingPickup && !pendingDelivery) ? (
+          <Button 
+         backgroundColor='#004aad' 
+         _text={{ color: 'white', fontSize: 20 }} 
+         onPress={() => navigation.navigate('Pending Work')}
+        >
+        Pending Work
+      </Button>
+      ) : (
+     endkm && ImageUrl && (endkm > startkm) ? (
+      <Button 
+        backgroundColor='#004aad' 
+        _text={{ color: 'white', fontSize: 20 }} 
+        onPress={() => ImageHandle()}
+      >
+        End Trip
+      </Button>
+    ) : (
+      <Button 
+        opacity={0.5} 
+        disabled={true}  
+        backgroundColor='#004aad' 
+        _text={{ color: 'white', fontSize: 20 }}
+      >
+        End Trip
+      </Button>
+    )
+  )
+}
           </VStack>
         </Box>
         <Center>

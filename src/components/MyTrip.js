@@ -4,7 +4,8 @@ import { NativeBaseProvider, Box, Image, Center, VStack, Button, Input, Alert, T
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ActivityIndicator, PermissionsAndroid, TouchableOpacity, View, ScrollView } from 'react-native';
 import { launchCamera } from 'react-native-image-picker';
-
+import {openDatabase} from 'react-native-sqlite-storage';
+const db = openDatabase({name: 'rn_sqlite'});
 export default function MyTrip({ navigation, route }) {
 
   const [vehicle, setVehicle] = useState('');
@@ -20,6 +21,8 @@ export default function MyTrip({ navigation, route }) {
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [pendingPickup, setPendingPickup] = useState(0);
+  const [pendingDelivery, setPendingDelivery] = useState(0);
 
   let current = new Date();
   let tripid = current.toString();
@@ -70,7 +73,19 @@ export default function MyTrip({ navigation, route }) {
       setLoading(false);
     });
   }
+useEffect(() => {
+    db.transaction((tx) => {
+      tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentAction="Seller Pickup" AND status IS NULL', [], (tx1, results) => {
+          setPendingPickup(results.rows.length);
+      });
+  });
 
+    db.transaction((tx) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND status IS NULL', [], (tx1, results) => {
+            setPendingDelivery(results.rows.length);
+        });
+    });
+  }, []);
   const requestCameraPermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -354,12 +369,36 @@ export default function MyTrip({ navigation, route }) {
                       null
                     )
                   }
-                  {endkm && endImageUrl && (endkm > startkm) ? (
-                      <Button title="Login" backgroundColor='#004aad' _text={{ color: 'white', fontSize: 20 }} onPress={() => submitEndTrip()}>End Trip</Button>
-                    ) : (
-                      <Button opacity={0.5} disabled={true} title="Login" backgroundColor='#004aad' _text={{ color: 'white', fontSize: 20 }}>End Trip</Button>
-                    )
-                  }
+                  {
+          (pendingPickup && pendingDelivery) ? (
+          <Button 
+         backgroundColor='#004aad' 
+         _text={{ color: 'white', fontSize: 20 }} 
+         onPress={() => navigation.navigate('PendingWork')}
+        >
+        Pending Work
+      </Button>
+      ) : (
+     endkm && ImageUrl && (endkm > startkm) ? (
+      <Button 
+        backgroundColor='#004aad' 
+        _text={{ color: 'white', fontSize: 20 }} 
+        onPress={() => ImageHandle()}
+      >
+        End Trip
+      </Button>
+    ) : (
+      <Button 
+        opacity={0.5} 
+        disabled={true}  
+        backgroundColor='#004aad' 
+        _text={{ color: 'white', fontSize: 20 }}
+      >
+        End Trip
+      </Button>
+    )
+  )
+}
                 </VStack>
               </Box>
               <Center>

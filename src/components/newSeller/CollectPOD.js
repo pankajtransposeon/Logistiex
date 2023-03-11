@@ -231,8 +231,7 @@ const sendSmsOtp = async () => {
           <Center>
             <Input mx="3" mt={4} placeholder="Receiver Name" w="90%" bg="gray.200" size="lg" value={name} onChangeText={(e)=>setName(e)} />
             <Input mx="3" my={4} placeholder="Mobile Number" w="90%" bg="gray.200" size="lg" value={mobileNumber} onChangeText={(e)=>setMobileNumber(e)} />
-            <Button w="90%" size="lg" style={{backgroundColor:'#004aad', color:'#fff', marginBottom:10}}  title="Generate"  onPress={() => setShowModal11(true)} >Generate OTP</Button>
-            <Button w="90%" size="lg" style={{backgroundColor:'#004aad', color:'#fff'}}  title="Submit"  onPress={() => sendSmsOtp()} >Submit</Button>
+            <Button w="90%" size="lg" style={{backgroundColor:'#004aad', color:'#fff', marginBottom:10}}  title="Generate"  onPress={() => {setShowModal11(true);sendSmsOtp()}} >Generate OTP</Button>
           </Center>
           <Center>
             <Image style={{ width:150, height:150 }} source={require('../../assets/image.png')} alt={"Logo Image"} />

@@ -125,6 +125,7 @@ const ScanShipment = ({route}) => {
           setUploadStatus('done');  
           console.log('upload success', res);
           setImageUrls(prevImageUrls => [...prevImageUrls, res.publicURL]);
+          setUploadStatus('idle');
         })
         .catch((error) => {
           console.log('upload error', error);
@@ -563,6 +564,7 @@ console.log('length',imageUrls.length)
               {uploadStatus === 'done' && <MaterialIcons name="check" size={22} color="green" />}
               {uploadStatus === 'error' && <MaterialIcons name="error" size={22} color="red" />}
             </Button>
+            <Text>Upload Min 5 images</Text>
       {imageUrls.length > 0 && (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' ,marginTop:50}}>
           {imageUrls.map((url, index) => (

@@ -695,7 +695,7 @@ useEffect(() => {
                       phone: route.params.phone,
                       contactPersonName:route.params.contactPersonName,
                       packagingId: route.params.packagingId,
-                      Expected: pending,
+                      Expected: Forward,
                       // TotalpickUp : newdata[0].totalPickups
                     })
                   }>
