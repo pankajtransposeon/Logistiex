@@ -129,7 +129,7 @@ import {
               <DataTable.Title style={{flex: 1.2,marginRight:-35}}><Text style={{ textAlign: 'center', color:'white'}}>Reverse Deliveries</Text></DataTable.Title>
             </DataTable.Header>
             {route.params.Trip !== 'Start Trip' && data && data.length > 0 && (Math.abs(route.params.Forward) + Math.abs(route.params.Reverse)) !== 0 && data.filter(searched(keyword)).map((single, i) => (
-            ((value[i] != pending11[i]) ?
+            (( pending11[i]!=reverse[i]) ?
             <DataTable.Row style={{ height: 'auto', backgroundColor: '#eeeeee', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white',elevation: 8, }} key={single.consignorName} onPress={() => {
              navigation.navigate('SellerHandoverSelection', {
             paramKey: single.consignorCode,
@@ -161,7 +161,7 @@ import {
   )
   ))}
         {route.params.Trip === 'Start Trip' && data && data.length > 0 && (Math.abs(route.params.Forward) + Math.abs(route.params.Reverse)) !== 0 && data.filter(searched(keyword)).map((single, i) => (
-            ((value[i] != pending11[i]) ?
+            ((pending11[i]!= reverse[i]) ?
             <DataTable.Row style={{ height: 'auto', backgroundColor: '#eeeeee', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' ,elevation: 8,}} key={single.consignorName} onPress={() => {
              navigation.navigate('MyTrip', {userId: route.params.userId});
     }}>

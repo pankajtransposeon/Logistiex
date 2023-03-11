@@ -87,7 +87,7 @@ const NewSellerPickup = ({route}) => {
         data.forEach((single) => {
           db.transaction((tx) => {
             tx.executeSql(
-              'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status IS NULL',
+              'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=?',
               [single.consignorCode],
               (tx1, results) => {
                 counts.push(results.rows.length);
