@@ -67,37 +67,47 @@ const HandoverShipmentRTO = ({route}) => {
     }, [navigation]);
 
     const buttonColor =
-     data && data.length  && data[0].consignorCode && acceptedItemData[data[0].consignorCode] && acceptedItemData[data[0].consignorCode].acceptedItems11.length > 0  ?  '#004aad' :
-      'gray.300';
+     data && data.length  && data[0].consignorCode && acceptedItemData[data[0].consignorCode] && acceptedItemData[data[0].consignorCode].acceptedItems11.length > 0  ?  '#004aad' : 'gray.300';
     // let serialNo = 0;
 
 
       const loadAcceptedItemData12 = async () => {
-        try {
-          const data99 = await AsyncStorage.getItem('acceptedItemData11');
-          if (data99 !== null) {
-            setAcceptedItemData(JSON.parse(data));
-            console.log(acceptedItemData);
-          }
-        } catch (error) {
-          console.log(error);
-        }
+
+        AsyncStorage.getItem('acceptedItemData11')
+        .then(data99 => {
+          setAcceptedItemData(JSON.parse(data99));
+          console.log('ghghg',data99);
+          console.log('ghghg',acceptedItemData);
+        })
+        .catch(e => {
+        console.log(e);
+        });
+
+        // try {
+        //   const data99 = await AsyncStorage.getItem('acceptedItemData11');
+        //   if (data99 !== null) {
+        //     setAcceptedItemData(JSON.parse(data99));
+        //     console.log("ghghg",data99);
+        //     console.log("ghghg",acceptedItemData);
+        //   }
+        // } catch (error) {
+        //   console.log(error);
+        // }
       };
 
-    // useEffect(() => {
-    //   const saveAcceptedItemData = async () => {
-    //     try {
-    //       await AsyncStorage.setItem(
-    //         'acceptedItemData11',
-    //         JSON.stringify(acceptedItemData)
-    //       );
-    //     } catch (error) {
-    //       console.log(error);
-    //     }
-    //   };
+    useEffect(() => {
+      // const saveAcceptedItemData = async () => {
+        // try {
+           AsyncStorage.setItem('acceptedItemData11',JSON.stringify(acceptedItemData));
+        // } catch (error) {
+          console.log('aaaa',acceptedItemData);
+        // }
+      // };
 
-    //   saveAcceptedItemData();
-    // }, [acceptedItemData]);
+      // saveAcceptedItemData();
+    }, [
+      // data && data.length  && data[0].consignorCode && acceptedItemData[data[0].consignorCode] &&
+      scanprogressRD]);
 
     useEffect(() => {
       setBagId();
@@ -110,6 +120,9 @@ const HandoverShipmentRTO = ({route}) => {
     useEffect(() => {
       console.log('fdfdd ',acceptedItemData);
 });
+useEffect(() => {
+  loadAcceptedItemData12();
+},[]);
 
 
     useEffect(() => {
@@ -121,7 +134,7 @@ const HandoverShipmentRTO = ({route}) => {
       db.transaction(tx => {
         // tx.executeSql('DROP TABLE IF EXISTS closeHandoverBag1', []);
         tx.executeSql(
-          'CREATE TABLE IF NOT EXISTS closeHandoverBag1 (bagSeal TEXT , bagId TEXT PRIMARY KEY, bagDate TEXT, AcceptedList TEXT,status TEXT,consignorCode Text)',
+          'CREATE TABLE IF NOT EXISTS closeHandoverBag1 (bagSeal TEXT , bagId TEXT PRIMARY KEY, bagDate TEXT, AcceptedList TEXT,status TEXT,consignorCode Text,consignorName Text)',
           [],
           (tx, results) => {
             console.log('Table created successfully');
@@ -135,7 +148,7 @@ const HandoverShipmentRTO = ({route}) => {
 
 
 
-   function CloseBag (consCode) {
+   function CloseBag (consCode,consName) {
   console.log(bagSeal);
   console.log(acceptedArray);
   db.transaction(tx => {
@@ -146,7 +159,7 @@ const HandoverShipmentRTO = ({route}) => {
         console.log(results.rows.length);
         console.log(results);
         tx.executeSql(
-          'INSERT INTO closeHandoverBag1 (bagSeal, bagId, bagDate, AcceptedList,status,consignorCode) VALUES (?, ?, ?, ?,?,?)',
+          'INSERT INTO closeHandoverBag1 (bagSeal, bagId, bagDate, AcceptedList,status,consignorCode,consignorName) VALUES (?, ?, ?, ?,?,?,?)',
           [
             bagSeal,
             consCode + '-' + currentDate + '-' + (results.rows.length + 1),
@@ -154,6 +167,7 @@ const HandoverShipmentRTO = ({route}) => {
             JSON.stringify(acceptedItemData[data[0].consignorCode].acceptedItems11),
             'pending',
             consCode,
+            consName,
           ],
           (tx, results11) => {
             console.log('Row inserted successfully');
@@ -161,7 +175,7 @@ const HandoverShipmentRTO = ({route}) => {
             setBagSeal('');
             // acceptedItemData[consCode] = null;
             setAcceptedItemData(Object.fromEntries(Object.entries(acceptedItemData).filter(([k, v]) => k !== consCode)));
-            setTimeout(()=> AsyncStorage.setItem('acceptedItemData11',JSON.stringify(acceptedItemData)),1000);
+            // setTimeout(()=> AsyncStorage.setItem('acceptedItemData11',JSON.stringify(acceptedItemData)),1000);
             console.log(' Data Added to local db successfully Handover closeBag');
             ToastAndroid.show('Bag closed successfully', ToastAndroid.SHORT);
             console.log(results11);
@@ -249,7 +263,7 @@ const viewDetailBag = () => {
             }))
           : null : setModalVisible(true);
 
-          setTimeout(()=> AsyncStorage.setItem('acceptedItemData11',JSON.stringify(acceptedItemData)),1000);
+          // setTimeout(()=> AsyncStorage.setItem('acceptedItemData11',JSON.stringify(acceptedItemData)),1000);
 
         db.transaction((tx) => {
             tx.executeSql('SELECT * FROM SyncSellerPickUp WHERE consignorCode=?', [data333], (tx1, results) => {
@@ -358,12 +372,13 @@ const viewDetailBag = () => {
 
     const onSuccess = e => {
       console.log(e.data, 'barcode');
-      setBarcode(() => e.data);
+      setBarcode(e.data);
       // Vibration.vibrate(100);
       // RNBeep.beep();
-      // if (barcode === e.data){
+      // if (
+        (barcode === e.data) ? getCategories(e.data) : setBarcode(e.data); getCategories(e.data);
 
-        getCategories(e.data);
+        // getCategories(e.data);
 
       // }
       // displayConsignorDetails11();
@@ -392,14 +407,15 @@ const viewDetailBag = () => {
     });
     };
 
-    const bagopenCloseHandler = (consCode11) => {
+    const bagopenCloseHandler = (consCode11,consName11) => {
 
       const newData = {};
       newData[consCode11] = {
         acceptedItems11: [barcode],
+        consignorName: consName11,
       };
       setAcceptedItemData(prevData => ({...prevData, ...newData}));
-      setTimeout(()=> AsyncStorage.setItem('acceptedItemData11',JSON.stringify(acceptedItemData)),1000);
+      // setTimeout(()=> AsyncStorage.setItem('acceptedItemData11',JSON.stringify(acceptedItemData)),1000);
 
       // db.transaction((tx) => {
       //   tx.executeSql('UPDATE SyncSellerPickUp SET BagOpenClose="open" WHERE consignorCode=?', [barcode], (tx1, results) => {
@@ -475,7 +491,7 @@ const viewDetailBag = () => {
       }} />
             {/* {'\n'}
             <Input placeholder="Enter Bag Seal" size="md" onChangeText={(text)=>setBagSeal(text)} /> */}
-            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(data[0].consignorCode); setShowCloseBagModal(false); }}>Submit</Button>
+            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(data[0].consignorCode,data[0].consignorName); setShowCloseBagModal(false); }}>Submit</Button>
             <View style={{alignItems: 'center', marginTop: 15}}>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 16, fontWeight: '500', color: 'black'}}>Seller Code</Text>
@@ -521,7 +537,7 @@ const viewDetailBag = () => {
                   ) : null
                 } shipments. Would you like to open a bag?</Text>
           <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 20 }}>
-            <Button onPress={() => {bagopenCloseHandler(data[0].consignorCode); setModalVisible(false);}} w="48%" size="lg" bg="#004aad" >Yes</Button>
+            <Button onPress={() => {bagopenCloseHandler(data[0].consignorCode,data[0].consignorName); setModalVisible(false);}} w="48%" size="lg" bg="#004aad" >Yes</Button>
             <Button onPress={() => setModalVisible(false)} w="48%" size="lg" bg="#004aad">No</Button>
           </View>
           </Modal.Body>
@@ -603,7 +619,9 @@ const viewDetailBag = () => {
   Close Bag
 </Button>
 
-            <Button w="48%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('OpenBags')}>Close Handover</Button>
+            <Button w="48%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('OpenBags'
+            ,{allCloseBAgData :acceptedItemData}
+            )}>Close Handover</Button>
           </View>
           <Center>
             <Image

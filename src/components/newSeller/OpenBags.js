@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   NativeBaseProvider,
   Box,
@@ -7,14 +9,15 @@ import {
   Modal,
   Input,
 } from 'native-base';
-import {StyleSheet, ScrollView, View} from 'react-native';
+import {StyleSheet, ScrollView, View, ToastAndroid, Vibration} from 'react-native';
 import {DataTable, Searchbar, Text, Card} from 'react-native-paper';
 import {openDatabase} from 'react-native-sqlite-storage';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import RNBeep from 'react-native-a-beep';
 const db = openDatabase({name: 'rn_sqlite'});
 
 const OpenBags = ({route}) => {
@@ -26,7 +29,9 @@ const OpenBags = ({route}) => {
   const [consignorCode, setconsignorCode] = useState('');
   const [NoShipment, setNoShipment] = useState(45);
   const [bagSeal, setBagSeal] = useState('');
-
+  const [acceptedItemData, setAcceptedItemData] = useState(route.params.allCloseBAgData);
+  var check=acceptedItemData;
+  const currentDate = new Date().toISOString().slice(0, 10);
   const loadDetails = () => {
     db.transaction(tx => {
       tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
@@ -46,6 +51,11 @@ const OpenBags = ({route}) => {
       loadDetails();
     })();
   }, []);
+
+  useEffect(() => {
+         AsyncStorage.setItem('acceptedItemData11',JSON.stringify(acceptedItemData));
+  }, [ acceptedItemData && bagSeal]);
+
 
   const searched = keyword1 => c => {
     let f = c.consignorName;
@@ -124,15 +134,143 @@ const OpenBags = ({route}) => {
     Vibration.vibrate(100);
     RNBeep.beep();
     console.log(e.data, 'sealID');
-    getCategories(e.data);
+    // getCategories(e.data);
     setBagSeal(e.data);
   };
 
   
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    fetchTableData();
+  }, [acceptedItemData]);
+
+  const fetchTableData = () => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM closeHandoverBag1',
+        [],
+        (tx, results) => {
+          const len = results.rows.length;
+          const rows11 = [];
+
+          for (let i = 0; i < len; i++) {
+            // const row = results.rows.item(i);
+            // const shipmentsCount = JSON.parse(row.acceptedbarcode).length;
+            rows11.push({
+              consignorName: results.rows.item(i).consignorName,
+              shipmentsCount: JSON.parse(results.rows.item(i).AcceptedList).length,
+              bagId11:results.rows.item(i).bagId,
+            });
+          }
+          console.log( JSON.stringify(rows11, null, 4));
+          setTableData(rows11);
+        }
+      );
+    });
+  };
+  useEffect(() => {
+    fetchTableData();
+    console.log('fdfdd11 ',acceptedItemData);
+},[]);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadAcceptedItemData12();
+    });
+    return unsubscribe;
+  }, [navigation]);
+  useEffect(() => {
+      loadAcceptedItemData12();
+  },[]);
+  const loadAcceptedItemData12 = async () => {
+
+    AsyncStorage.getItem('acceptedItemData11')
+    .then(data99 => {
+      setAcceptedItemData(JSON.parse(data99));
+      console.log("ghghg11",data99);
+      console.log("ghghg11",acceptedItemData);
+    })
+    .catch(e => {
+    console.log(e);
+    });
+
+    // try {
+    //   const data99 = await AsyncStorage.getItem('acceptedItemData11');
+    //   if (data99 !== null) {
+    //     // setAcceptedItemData(JSON.parse(data99));
+    //     console.log(acceptedItemData);
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
+  };
+
+  function CloseBag (consCode) {
+    var consName = acceptedItemData[consignorCode].consignorName;
+    console.log(bagSeal);
+    // console.log(acceptedArray);
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM closeHandoverBag1 Where consignorCode=? AND bagDate=? ',
+        [consCode, currentDate],
+        (tx, results) => {
+          console.log(results.rows.length);
+          console.log(results);
+          tx.executeSql(
+            'INSERT INTO closeHandoverBag1 (bagSeal, bagId, bagDate, AcceptedList,status,consignorCode,consignorName) VALUES (?, ?, ?, ?,?,?,?)',
+            [
+              bagSeal,
+              consCode + '-' + currentDate + '-' + (results.rows.length + 1),
+              currentDate,
+              JSON.stringify(acceptedItemData[consCode].acceptedItems11),
+              'pending',
+              consCode,
+              consName,
+            ],
+            (tx, results11) => {
+              console.log('Row inserted successfully');
+              // setAcceptedArray([]);
+              // acceptedItemData[consCode] = null;
+              setAcceptedItemData(Object.fromEntries(Object.entries(acceptedItemData).filter(([k, v]) => k !== consCode)));
+              // setTimeout(()=> AsyncStorage.setItem('acceptedItemData11',JSON.stringify(acceptedItemData)),1000);
+              setBagSeal('');
+              console.log(' Data Added to local db successfully Handover closeBag');
+              ToastAndroid.show('Bag closed successfully', ToastAndroid.SHORT);
+              console.log(results11);
+              viewDetailBag();
+            },
+            error => {
+              console.log('Error occurred while inserting a row:', error);
+            },
+          );
+        },
+        error => {
+          console.log('Error occurred while generating a unique bag ID:', error);
+        },
+      );
+    });
+  }
+
+  const viewDetailBag = () => {
+    db.transaction(tx => {
+      tx.executeSql('SELECT * FROM closeHandoverBag1', [], (tx1, results) => {
+        let temp = [];
+        console.log(results.rows.length);
+        for (let i = 0; i < results.rows.length; ++i) {
+          temp.push(results.rows.item(i));
+        }
+        console.log(
+          'Data from Local Database Handover Bag: \n ',
+          JSON.stringify(temp, null, 4),
+        );
+      });
+    });
+  };
 
   return (
     <NativeBaseProvider>
-      <Modal isOpen={showCloseBagModal} onClose={() => setShowCloseBagModal(false)} size="lg">
+     
+     <Modal isOpen={showCloseBagModal} onClose={() => setShowCloseBagModal(false)} size="lg">
         <Modal.Content maxWidth="350" >
           <Modal.CloseButton />
           <Modal.Header>Close Bag</Modal.Header>
@@ -146,16 +284,6 @@ const OpenBags = ({route}) => {
           ref={(node) => { this.scanner = node; }}
           containerStyle={{ height:116,marginBottom:'55%' }}
           cameraStyle={{ height: 90, marginTop: 95,marginBottom:'15%', width: 289, alignSelf: 'center', justifyContent: 'center' }}
-          // cameraProps={{ ratio:'1:2' }}
-          // containerStyle={{width: '100%', alignSelf: 'center', backgroundColor: 'white'}}
-          // cameraStyle={{width: '10%',alignSelf: 'center'}}
-          // topContent={
-          //   <View><Text>Scan Bag Seal</Text></View>
-          // }
-          // style={{
-          //   // flex: 1,
-          //   // width: '100%',
-          // }}
         /> {'\n'}
         <Input placeholder="Enter Bag Seal" size="md" value={bagSeal} onChangeText={(text)=>setBagSeal(text)}  style={{
 
@@ -164,14 +292,14 @@ const OpenBags = ({route}) => {
       }} />
             {/* {'\n'}
             <Input placeholder="Enter Bag Seal" size="md" onChangeText={(text)=>setBagSeal(text)} /> */}
-            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(); setShowCloseBagModal(false); }}>Submit</Button>
+            <Button flex="1" mt={2} bg="#004aad" onPress={() => { CloseBag(consignorCode); setShowCloseBagModal(false); }}>Submit</Button>
             <View style={{alignItems: 'center', marginTop: 15}}>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 16, fontWeight: '500', color: 'black'}}>Seller Code</Text>
                 {
                     data && data.length ? (
-                        <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data[0].consignorCode}</Text>
-                    ):null
+                        <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{consignorCode}</Text>
+                    ) : null
                 }
                 {/* <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{sellerCode11}</Text> */}
 
@@ -180,22 +308,24 @@ const OpenBags = ({route}) => {
                 <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>Seller Name</Text>
                 {
                   data && data.length ? (
-                    <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data[0].consignorName}</Text>
-                  ):null
+                    <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data  && consignorCode && acceptedItemData[consignorCode] ? acceptedItemData[consignorCode].consignorName:null}</Text>
+                  ) : null
                 }
               </View>
               <View style={{width: '98%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 1, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>Number of Shipments</Text>
                 {
                   data && data.length ? (
-                    <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data[0].ForwardPickups}</Text>
-                  ):null
+                    <Text style={{fontSize: 16, fontWeight: '500', color : 'black'}}>{data  && consignorCode && acceptedItemData[consignorCode] && acceptedItemData[consignorCode].acceptedItems11.length > 0 ? acceptedItemData[consignorCode].acceptedItems11.length : null}</Text>
+                  ) : null
                 }
               </View>
             </View>
           </Modal.Body>
         </Modal.Content>
       </Modal>
+
+
       {/* <Modal
         isOpen={showCloseBagModal}
         onClose={() => setShowCloseBagModal(false)}
@@ -310,8 +440,65 @@ const OpenBags = ({route}) => {
                   </Text>
                 </DataTable.Title>
               </DataTable.Header>
+              {Object.entries(acceptedItemData).map(([key, value]) => (
+                   <DataTable.Row key={key}>
+                      <DataTable.Cell style={{flex: 1.7}}>
+                        <Text style={styles.fontvalue}>
+                          {value.consignorName}
+                        </Text>
+                      </DataTable.Cell>
+                      <DataTable.Cell style={{flex: 1}}>
+                        {/* <Text style={styles.fontvalue}>{data[0].ShipmentListArray.split().length}</Text> */}
+                        <Text style={styles.fontvalue}>{value.acceptedItems11.length}</Text>
 
-             
+                      </DataTable.Cell>
+                      <DataTable.Cell style={{flex: 1}}>
+                        <Button
+                        // disabled={single.BagOpenClose === 'close' ? true : false}
+                          // style={{backgroundColor: single.BagOpenClose === 'close' ? 'grey' : '#004aad', color: '#fff'}}
+                          style={{backgroundColor: '#004aad', color: '#fff'}}
+
+                          onPress={() =>{setShowCloseBagModal(true);setconsignorCode(key);}
+                          }>
+                          Close Bag
+                        </Button>
+                      </DataTable.Cell>
+                      {/* <DataTable.Cell style={{flex: 1}}><Button style={{backgroundColor:'#004aad', color:'#fff'}} onPress={
+                  () => {navigation.navigate('PendingHandover',{consignorName:single.consignorName,expected:single.ReverseDeliveries})}
+                  }>Close Bag</Button></DataTable.Cell> */}
+                    </DataTable.Row>
+                  ))}
+
+              {tableData && tableData.length > 0
+                ? tableData.filter(searched(keyword)).map((single, i) => (
+                    <DataTable.Row key={single.bagId11}>
+                      <DataTable.Cell style={{flex: 1.7}}>
+                        <Text style={styles.fontvalue}>
+                          {single.consignorName}
+                        </Text>
+                      </DataTable.Cell>
+                      <DataTable.Cell style={{flex: 1}}>
+                        {/* <Text style={styles.fontvalue}>{data[0].ShipmentListArray.split().length}</Text> */}
+                        <Text style={styles.fontvalue}>{single.shipmentsCount}</Text>
+
+                      </DataTable.Cell>
+                      <DataTable.Cell style={{flex: 1}}>
+                        <Button
+                        // disabled={single.BagOpenClose === 'close' ? true : false}
+                          // style={{backgroundColor: single.BagOpenClose === 'close' ? 'grey' : '#004aad', color: '#fff'}}
+                          style={{backgroundColor: 'gray', color: '#fff'}}
+
+                          onPress={() =>{navigation.navigate('PendingHandover',{consignorName:single.consignorName,expected:single.ReverseDeliveries});ToastAndroid.show("Bag already closed",ToastAndroid.SHORT);}
+                          }>
+                          Close Bag
+                        </Button>
+                      </DataTable.Cell>
+                      {/* <DataTable.Cell style={{flex: 1}}><Button style={{backgroundColor:'#004aad', color:'#fff'}} onPress={
+                  () => {navigation.navigate('PendingHandover',{consignorName:single.consignorName,expected:single.ReverseDeliveries})}
+                  }>Close Bag</Button></DataTable.Cell> */}
+                    </DataTable.Row>
+                  ))
+                : null}
             </DataTable>
           </Card>
         </ScrollView>
