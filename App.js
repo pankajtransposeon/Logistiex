@@ -191,6 +191,7 @@ function StackNavigators({navigation}) {
             loadAPI_Data4();
             loadAPI_Data5();
             loadAPI_Data6();
+            loadAPI_DataCD();
         } else {
           // setTimeout(()=>navigation.navigate('Login'),1000);
           navigation.navigate('Login');
@@ -209,6 +210,7 @@ function StackNavigators({navigation}) {
         loadAPI_Data4();
         loadAPI_Data5();
         loadAPI_Data6();
+        loadAPI_DataCD();
     };
 
     useEffect(() => {
@@ -846,6 +848,17 @@ const push_Data = () => {
             },);
         });
     };
+    const createTablesCD = () => {
+      db.transaction(txn => {
+          txn.executeSql('DROP TABLE IF EXISTS CloseDeliveryReasons', []);
+          txn.executeSql('CREATE TABLE IF NOT EXISTS CloseDeliveryReasons( _id ID VARCHAR(100) PRIMARY KEY,deliveryFailureReasonID VARCHAR(50),deliveryFailureReasonName VARCHAR(200),deliveryFailureReasonUserID VARCHAR(50),deliveryFailureReasonActiveStatus VARCHAR(20),deliveryFailureReasonGroupID VARCHAR(50),deliveryFailureReasonGeoFence VARCHAR(20),deliveryFailureReasonOTPenable VARCHAR(20),deliveryFailureReasonCallMandatory VARCHAR(20),deliveryFailureReasonDeliveryDateEnable VARCHAR(20),deliveryFailureReasonGroupName VARCHAR(200),disable VARCHAR(20),createdAt VARCHAR(200),updatedAt VARCHAR(200),__v INT(10))', [], (sqlTxn, res) => {
+              // console.log('table 4 created successfully');
+              // loadAPI_Data();
+          }, error => {
+              console.log('error on creating table ' + error.message);
+          },);
+      });
+  };
     const loadAPI_Data4 = () => {
         // setIsLoading(!isLoading);
         createTables4();
@@ -890,6 +903,50 @@ const push_Data = () => {
             },);
         })();
     };
+    const loadAPI_DataCD = () => {
+      // setIsLoading(!isLoading);
+      createTablesCD();
+      (async () => {
+          await axios.get('https://bkedtest.logistiex.com/ADupdatePrams/getUDFR').then(res => {
+              // console.log('Table4 API OK: ' + res.data.length);
+              // console.log(res.data);
+              for (let i = 0; i < res.data.length; i++) {
+                  db.transaction(txn => {
+                      txn.executeSql(`INSERT OR REPLACE INTO CloseDeliveryReasons( _id,deliveryFailureReasonID,deliveryFailureReasonName,deliveryFailureReasonUserID,deliveryFailureReasonActiveStatus,deliveryFailureReasonGroupID,deliveryFailureReasonGeoFence,deliveryFailureReasonOTPenable,deliveryFailureReasonCallMandatory,deliveryFailureReasonDeliveryDateEnable,deliveryFailureReasonGroupName,disable,createdAt,updatedAt,__v
+                  ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, [
+                          res.data[i]._id,
+                          res.data[i].deliveryFailureReasonID,
+                          res.data[i].deliveryFailureReasonName,
+                          res.data[i].deliveryFailureReasonUserID,
+                          res.data[i].deliveryFailureReasonActiveStatus,
+                          res.data[i].deliveryFailureReasonGroupID,
+                          res.data[i].deliveryFailureReasonGeoFence,
+                          res.data[i].deliveryFailureReasonOTPenable,
+                          res.data[i].deliveryFailureReasonCallMandatory,
+                          res.data[i].deliveryFailureReasonDeliveryDateEnable,
+                          res.data[i].deliveryFailureReasonGroupName,
+                          res.data[i].disable,
+                          res.data[i].createdAt,
+                          res.data[i].updatedAt,
+                          res.data[i].__v,
+                      ], (sqlTxn, _res) => {
+                          // console.log('\n Data Added to local db 4 ');
+                          // console.log(res);
+                      }, error => {
+                          console.log('error on adding data ' + error.message);
+                      },);
+                  });
+              }
+              m++;
+              // console.log('value of m4 '+m);
+
+              // viewDetails4();
+              // setIsLoading(false);
+          }, error => {
+              console.log(error);
+          },);
+      })();
+  };
     const viewDetails4 = () => {
         db.transaction(tx => {
             tx.executeSql('SELECT * FROM ClosePickupReasons', [], (tx1, results) => {

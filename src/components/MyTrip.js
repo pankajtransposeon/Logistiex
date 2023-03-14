@@ -206,14 +206,14 @@ useEffect(() => {
     (async () => {
       await axios.post('https://bkedtest.logistiex.com/UserTripInfo/updateUserTripEndDetails', {
         tripID: tripID,
-        endTime: time,
+        endTime: Date(). valueOf () ,
         endkilometer: endkm,
         endVehicleImageUrl: endImageUrl
       })
       .then(function (res) {
         getTripDetails(tripID);
         setMessage(1);
-        navigation.navigate('StartEndDetails', {tripID:tripId});
+        navigation.navigate('StartEndDetails', {tripID:tripID});
       })
       .catch(function (error) {
         console.log(error);
@@ -227,7 +227,7 @@ useEffect(() => {
         tripID : tripID, 
         userID : userId, 
         date : new Date(), 
-        startTime : time,
+        startTime : Date(). valueOf (),
         vehicleNumber : vehicle, 
         startKilometer : startkm, 
         startVehicleImageUrl : startImageUrl
@@ -379,11 +379,11 @@ useEffect(() => {
         Pending Work
       </Button>
       ) : (
-     endkm && ImageUrl && (endkm > startkm) ? (
+    ( endkm && endImageUrl && (endkm > startkm) )? (
       <Button 
         backgroundColor='#004aad' 
         _text={{ color: 'white', fontSize: 20 }} 
-        onPress={() => ImageHandle()}
+        onPress={() => submitEndTrip()}
       >
         End Trip
       </Button>
