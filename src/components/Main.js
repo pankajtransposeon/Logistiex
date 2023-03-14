@@ -109,6 +109,7 @@ useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
           loadSellerPickupDetails();
           loadSellerDeliveryDetails();
+          fetchData();
         });
         return unsubscribe;
       }, [navigation]);
@@ -120,6 +121,7 @@ useEffect(() => {
             if (value === 'refresh') {
                 loadSellerPickupDetails();
                 loadSellerDeliveryDetails();
+                fetchData();
             } 
         } catch (e) {
             console.log(e);
@@ -210,7 +212,7 @@ useEffect(() => {
   });
 
     db.transaction((tx) => {
-        tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND status="accepted"', [], (tx1, results) => {
+        tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND status="accepted" OR  status="tagged"', [], (tx1, results) => {
             let temp = [];
             setSpc1(results.rows.length);
         });

@@ -187,7 +187,7 @@ useEffect(() => {
         );
       });
       tx.executeSql(
-        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=?  AND status="accepted"',
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=?  AND status="accepted" OR status="tagged"',
         [route.params.consignorCode],
         (tx1, results) => {
           // let temp = [];

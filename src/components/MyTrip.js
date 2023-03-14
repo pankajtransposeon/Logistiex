@@ -206,7 +206,7 @@ useEffect(() => {
     (async () => {
       await axios.post('https://bkedtest.logistiex.com/UserTripInfo/updateUserTripEndDetails', {
         tripID: tripID,
-        endTime: Date(). valueOf () ,
+        endTime: new Date().valueOf() ,
         endkilometer: endkm,
         endVehicleImageUrl: endImageUrl
       })
@@ -220,14 +220,16 @@ useEffect(() => {
       });
     })();
   }
-
+  let currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+  currentDate = currentDate.valueOf();
   const submitStartTrip = () =>  {
     (async() => {
       await axios.post('https://bkedtest.logistiex.com/UserTripInfo/userTripDetails', {
         tripID : tripID, 
         userID : userId, 
-        date : new Date(), 
-        startTime : Date(). valueOf (),
+        date : currentDate, 
+        startTime : new Date().valueOf(),
         vehicleNumber : vehicle, 
         startKilometer : startkm, 
         startVehicleImageUrl : startImageUrl
