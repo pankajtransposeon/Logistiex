@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import {
@@ -13,6 +14,7 @@ import {DataTable, Searchbar, Text, Card} from 'react-native-paper';
 import {openDatabase} from 'react-native-sqlite-storage';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 const db = openDatabase({name: 'rn_sqlite'});
@@ -30,7 +32,7 @@ const SellerHandover = ({route}) => {
     });
     return unsubscribe;
   }, [navigation]);
-  
+
   const loadDetails = () => {
     db.transaction(tx => {
       tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
@@ -69,6 +71,9 @@ const SellerHandover = ({route}) => {
                           ...newData,
                         }));
                       }
+                      if (i === (results.rows.length - 1) && MM + results22.rows.length === 0){
+                        tx.executeSql('DROP TABLE IF EXISTS closeHandoverBag1', []);
+                        AsyncStorage.setItem('acceptedItemData11','');}
                     },
                   );
                 },
@@ -77,8 +82,9 @@ const SellerHandover = ({route}) => {
           });
 
         }
-        if (MM === 0 && displayData != null){
-          tx.executeSql('DROP TABLE IF EXISTS closeHandoverBag1', []);}
+        // if (MM === 0 && displayData != null){
+        //   tx.executeSql('DROP TABLE IF EXISTS closeHandoverBag1', []);
+        //   AsyncStorage.setItem('acceptedItemData11','');}
         setData(temp);
       });
     });
@@ -86,7 +92,7 @@ const SellerHandover = ({route}) => {
 //   useEffect(() => {
 //     loadDetails()
 //   }, [])
-  
+
 
   const displayData11 = Object.keys(displayData)
     .filter(sealID => sealID.toLowerCase().includes(keyword.toLowerCase()))
