@@ -621,6 +621,10 @@ console.log('length',imageUrls.length)
                 <Text style={{fontSize: 18, fontWeight: '500'}}>{newaccepted}</Text>
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>Rejected</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{newrejected}</Text>
+              </View>
+              <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Tagged</Text>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>{newtagged}</Text>
               </View>

@@ -206,28 +206,30 @@ useEffect(() => {
     (async () => {
       await axios.post('https://bkedtest.logistiex.com/UserTripInfo/updateUserTripEndDetails', {
         tripID: tripID,
-        endTime: time,
+        endTime: new Date().valueOf() ,
         endkilometer: endkm,
         endVehicleImageUrl: endImageUrl
       })
       .then(function (res) {
         getTripDetails(tripID);
         setMessage(1);
-        navigation.navigate('StartEndDetails', {tripID:tripId});
+        navigation.navigate('StartEndDetails', {tripID:tripID});
       })
       .catch(function (error) {
         console.log(error);
       });
     })();
   }
-
+  let currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+  currentDate = currentDate.valueOf();
   const submitStartTrip = () =>  {
     (async() => {
       await axios.post('https://bkedtest.logistiex.com/UserTripInfo/userTripDetails', {
         tripID : tripID, 
         userID : userId, 
-        date : new Date(), 
-        startTime : time,
+        date : currentDate, 
+        startTime : new Date().valueOf(),
         vehicleNumber : vehicle, 
         startKilometer : startkm, 
         startVehicleImageUrl : startImageUrl
@@ -379,11 +381,11 @@ useEffect(() => {
         Pending Work
       </Button>
       ) : (
-     endkm && ImageUrl && (endkm > startkm) ? (
+    ( endkm && endImageUrl && (endkm > startkm) )? (
       <Button 
         backgroundColor='#004aad' 
         _text={{ color: 'white', fontSize: 20 }} 
-        onPress={() => ImageHandle()}
+        onPress={() => submitEndTrip()}
       >
         End Trip
       </Button>

@@ -109,7 +109,7 @@ const SellerHandoverSelection = ({route}) => {
   };
   const closePickup11 = () => {
     db.transaction(tx => {
-      tx.executeSql('SELECT * FROM ClosePickupReasons', [], (tx1, results) => {
+      tx.executeSql('SELECT * FROM CloseDeliveryReasons', [], (tx1, results) => {
         let temp = [];
         console.log(results.rows.length);
         for (let i = 0; i < results.rows.length; ++i) {
@@ -187,7 +187,7 @@ useEffect(() => {
         );
       });
       tx.executeSql(
-        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=?  AND status="accepted"',
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=?  AND status="accepted" OR status="tagged"',
         [route.params.consignorCode],
         (tx1, results) => {
           // let temp = [];
@@ -378,29 +378,29 @@ useEffect(() => {
               <Modal.Body>
                 {CloseData.map((d, index) => (
                   <Button
-                    key={d.pickupFailureReasonID}
+                    key={d.deliveryFailureReasonID}
                     flex="1"
                     mt={2}
                     marginBottom={1.5}
                     marginTop={1.5}
                     style={{
                       backgroundColor:
-                        d.pickupFailureReasonName === DropDownValue
+                        d.deliveryFailureReasonName === DropDownValue
                           ? '#6666FF'
                           : '#C8C8C8',
                     }}
-                    title={d.pickupFailureReasonName}
+                    title={d.deliveryFailureReasonName}
                     onPress={() =>
-                      handleButtonPress(d.pickupFailureReasonName)
+                      handleButtonPress(d.deliveryFailureReasonName)
                     }>
                     <Text
                       style={{
                         color:
-                          DropDownValue == d.pickupFailureReasonName
+                          DropDownValue == d.deliveryFailureReasonName
                             ? 'white'
                             : 'black',
                       }}>
-                      {d.pickupFailureReasonName}
+                      {d.deliveryFailureReasonName}
                     </Text>
                   </Button>
                 ))}
