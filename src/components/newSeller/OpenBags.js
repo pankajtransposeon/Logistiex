@@ -29,7 +29,9 @@ const OpenBags = ({route}) => {
   const [consignorCode, setconsignorCode] = useState('');
   const [NoShipment, setNoShipment] = useState(45);
   const [bagSeal, setBagSeal] = useState('');
-  const [acceptedItemData, setAcceptedItemData] = useState(route.params.allCloseBAgData);
+  const [totalAccepted, setTotalAccepted] = useState(0);
+  const [totalShipment, setTotalShipment] = useState(0);
+  const [acceptedItemData, setAcceptedItemData] = useState(route.params.allCloseBAgData || {});
   var check=acceptedItemData;
   const currentDate = new Date().toISOString().slice(0, 10);
   const loadDetails = () => {
@@ -52,9 +54,9 @@ const OpenBags = ({route}) => {
     })();
   }, []);
 
-  useEffect(() => {
-         AsyncStorage.setItem('acceptedItemData11',JSON.stringify(acceptedItemData));
-  }, [ acceptedItemData && bagSeal]);
+  // useEffect(() => {
+  //        AsyncStorage.setItem('acceptedItemData11',JSON.stringify(acceptedItemData));
+  // }, [ acceptedItemData && bagSeal]);
 
 
   const searched = keyword1 => c => {
@@ -175,35 +177,52 @@ const OpenBags = ({route}) => {
 },[]);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
+      loadDetails112();
       loadAcceptedItemData12();
+
     });
     return unsubscribe;
   }, [navigation]);
   useEffect(() => {
+    loadDetails112();
       loadAcceptedItemData12();
   },[]);
   const loadAcceptedItemData12 = async () => {
 
     AsyncStorage.getItem('acceptedItemData11')
     .then(data99 => {
-      setAcceptedItemData(JSON.parse(data99));
+      // setAcceptedItemData(JSON.parse(data99));
       console.log("ghghg11",data99);
       console.log("ghghg11",acceptedItemData);
     })
     .catch(e => {
     console.log(e);
     });
-
-    // try {
-    //   const data99 = await AsyncStorage.getItem('acceptedItemData11');
-    //   if (data99 !== null) {
-    //     // setAcceptedItemData(JSON.parse(data99));
-    //     console.log(acceptedItemData);
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
   };
+
+  const loadDetails112 = () => {
+
+        db.transaction(tx => {
+          tx.executeSql(
+            'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery"  AND handoverStatus IS NOT NULL',
+            [],
+            (tx1, results) => {
+              setTotalAccepted(results.rows.length);
+            },
+          );
+        });
+
+        db.transaction(tx => {
+          tx.executeSql(
+            'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" ',
+            [],
+            (tx1, results) => {
+              setTotalShipment(results.rows.length);
+            },
+          );
+        });
+};
+
 
   function CloseBag (consCode) {
     var consName = acceptedItemData[consignorCode].consignorName;
@@ -231,7 +250,13 @@ const OpenBags = ({route}) => {
               console.log('Row inserted successfully');
               // setAcceptedArray([]);
               // acceptedItemData[consCode] = null;
-              setAcceptedItemData(Object.fromEntries(Object.entries(acceptedItemData).filter(([k, v]) => k !== consCode)));
+              setAcceptedItemData(Object.fromEntries(Object.entries(acceptedItemData).filter(([k, v]) => k !== consCode)))
+              // .then(
+              //   AsyncStorage.setItem('acceptedItemData11',JSON.stringify(acceptedItemData))
+              // )
+              // .catch(e => {
+              // console.log(e);
+              // });
               // setTimeout(()=> AsyncStorage.setItem('acceptedItemData11',JSON.stringify(acceptedItemData)),1000);
               setBagSeal('');
               console.log(' Data Added to local db successfully Handover closeBag');
@@ -440,7 +465,7 @@ const OpenBags = ({route}) => {
                   </Text>
                 </DataTable.Title>
               </DataTable.Header>
-              {Object.entries(acceptedItemData).map(([key, value]) => (
+              {acceptedItemData && Object.entries(acceptedItemData).map(([key, value]) => (
                    <DataTable.Row key={key}>
                       <DataTable.Cell style={{flex: 1.7}}>
                         <Text style={styles.fontvalue}>
@@ -488,8 +513,11 @@ const OpenBags = ({route}) => {
                           // style={{backgroundColor: single.BagOpenClose === 'close' ? 'grey' : '#004aad', color: '#fff'}}
                           style={{backgroundColor: 'gray', color: '#fff'}}
 
-                          onPress={() =>{navigation.navigate('PendingHandover',{consignorName:single.consignorName,expected:single.ReverseDeliveries});ToastAndroid.show("Bag already closed",ToastAndroid.SHORT);}
-                          }>
+                          onPress={() =>{
+                            // navigation.navigate('PendingHandover',{consignorName:single.consignorName,expected:single.ReverseDeliveries});
+                          ToastAndroid.show("Bag already closed",ToastAndroid.SHORT);}
+                          }
+                          >
                           Close Bag
                         </Button>
                       </DataTable.Cell>
@@ -500,8 +528,31 @@ const OpenBags = ({route}) => {
                   ))
                 : null}
             </DataTable>
+
           </Card>
+
+          {/* {acceptedItemData &&  <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
+            <Button w="48%" size="lg" bg="#004aad" >Start Scanning</Button>
+            <Button w="48%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('HandOverSummary')} >Close Handover</Button>
+          </View>} */}
         </ScrollView>
+        {totalAccepted === totalShipment && totalAccepted + totalShipment>0?
+         
+         <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
+            <Button w="48%" size="lg" bg="gray.300"  onPress={() => {
+              // navigation.navigate('PendingHandover',{consignorName:"single.consignorName",expected:"0"})
+              ToastAndroid.show("No Pending Shipments",ToastAndroid.SHORT);}} >Pending Handover</Button>
+            <Button w="48%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('HandOverSummary')} >Finish Handover</Button>
+          </View>
+          :
+          <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
+            <Button w="48%" size="lg" bg="#004aad"  onPress={() => {navigation.navigate('PendingHandover',{consignorName:"consignorName",expected:"0"})}} >Pending Handover</Button>
+            <Button w="48%" size="lg" bg="gray.300" onPress={()=>{
+              // navigation.navigate('HandOverSummary')
+              ToastAndroid.show("All Shipments Not Scanned",ToastAndroid.SHORT);}
+              } >Finish Handover</Button>
+          </View>
+          }
         <Center>
           <Image
             style={{width: 150, height: 150}}
