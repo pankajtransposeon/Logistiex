@@ -71,9 +71,9 @@ const SellerHandover = ({route}) => {
                           ...newData,
                         }));
                       }
-                      if (i === (results.rows.length - 1) && MM + results22.rows.length === 0){
-                        tx.executeSql('DROP TABLE IF EXISTS closeHandoverBag1', []);
-                        AsyncStorage.setItem('acceptedItemData11','');}
+                      // if (i === (results.rows.length - 1) && MM + results22.rows.length === 0){
+                      //   tx.executeSql('DROP TABLE IF EXISTS closeHandoverBag1', []);
+                      //   AsyncStorage.setItem('acceptedItemData11','');}
                     },
                   );
                 },
