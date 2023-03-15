@@ -26,7 +26,9 @@ const PendingWork = ({route}) => {
     const [modalVisible2, setModalVisible2] = useState(false);
     const [modalVisible3, setModalVisible3] = useState(false);
     const [modalVisible4, setModalVisible4] = useState(false);
-
+    const [displayData, setDisplayData] = useState({});
+    const [keyword, setKeyword] = useState('');
+    const [MM,setMM] = useState(0);
     const getUserId = async () => {
       try {
         const value = await AsyncStorage.getItem('@storage_Key');
@@ -148,69 +150,79 @@ const PendingWork = ({route}) => {
       useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
           loadDetails();
+          updateStatus();
+          updateStatusD();
         });
         return unsubscribe;
       }, [navigation]);
       
       
-      const loadDetails = () => { // setIsLoading(!isLoading);
-        db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => { // ToastAndroid.show("Loading...", ToastAndroid.SHORT);
-                let temp = [];
-                console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                    temp.push(results.rows.item(i));
-                }
-                setData(temp);
-            });
+      const loadDetails = () => {
+        db.transaction(tx => {
+          tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
+            let temp = [];
+            var m = 0;
+            for (let i = 0; i < results.rows.length; ++i) {
+              const newData = {};
+              temp.push(results.rows.item(i));
+              // var consignorcode=results.rows.item(i).consignorCode;
+              // var consignorName=results.rows.item(i).consignorName;
+    
+              db.transaction(tx => {
+                db.transaction(tx => {
+                  tx.executeSql(
+                    'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status IS NULL',
+                    [results.rows.item(i).consignorCode],
+                    (tx1, results11) => {
+                      //    console.log(results11,'1',results11.rows.length);
+                      //    var expected=results11.rows.length;
+                      tx.executeSql(
+                        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status IS NULL',
+                        [results.rows.item(i).consignorCode],
+                        (tx1, results22) => {
+                          setMM(MM + results22.rows.length);
+                          // console.log(results22,'2',results22.rows.length);
+                          // var scanned=results.rows.length;
+                          newData[results.rows.item(i).consignorCode] = {
+                            consignorName: results.rows.item(i).consignorName,
+                            // consignorLatitude: results.rows.item(i).consignorLatitude,
+                            // consignorLongitude: results.rows.item(i).consignorLongitude,
+                            forward: results11.rows.length,
+                            reverse: results22.rows.length,
+                          };
+                          console.log(newData);
+                          if (newData != null) {
+                            setDisplayData(prevData => ({
+                              ...prevData,
+                              ...newData,
+                            }));
+                          }
+                        },
+                      );
+                    },
+                  );
+                });
+              });
+    
+            }
+            setData(temp);
+          });
         });
-        
-    };
+      };
     useEffect(() => {
         (async () => {
             loadDetails();
+            updateStatus();
+            updateStatusD();
         })();
     }, []);
 
-    useEffect(() => {
-        if (data.length > 0) {
-          const counts = [];
-          data.forEach((single) => {
-            db.transaction((tx) => {
-              tx.executeSql(
-                'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status IS NULL',
-                [single.consignorCode],
-                (tx1, results) => {
-                  counts.push(results.rows.length);
-                  if (counts.length === data.length) {
-                    setPendingPickup(counts);
-                  }
-                },
-              );
-            });
-          });
-        }
-      }, [data, db]);
-
-      useEffect(() => {
-        if (data.length > 0) {
-          const counts = [];
-          data.forEach((single) => {
-            db.transaction((tx) => {
-              tx.executeSql(
-                'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status IS NULL',
-                [single.consignorCode],
-                (tx1, results) => {
-                  counts.push(results.rows.length);
-                  if (counts.length === data.length) {
-                    setPendingDelivery(counts);
-                  }
-                },
-              );
-            });
-          });
-        }
-      }, [data, db]);
+    const displayData11 = Object.keys(displayData)
+    .filter(sealID => sealID.toLowerCase().includes(keyword.toLowerCase()))
+    .reduce((obj, key) => {
+      obj[key] = displayData[key];
+      return obj;
+    }, {});
 
       function handleButtonPress(item) {
         if (item == 'Could Not Attempt') {
@@ -238,10 +250,13 @@ const PendingWork = ({route}) => {
         setDropDownValue1(item);
         setRejectStage("L2")
       }
-
 return (
   <NativeBaseProvider>
-    
+    {/* {data.length>0 && data.map((single, i=>{
+<View>
+
+</View>
+    }))} */}
     <Box flex={1} bg="#fff"  width="auto" maxWidth="100%">
       <ScrollView style={styles.homepage} showsVerticalScrollIndicator={true} showsHorizontalScrollIndicator={false}>
         <Card>
@@ -251,10 +266,9 @@ return (
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Pending Pickups</Text></DataTable.Title>
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Pending Deliveries</Text></DataTable.Title>
             </DataTable.Header>
-            {data && data.length > 0 && data.map((single, i) => (
-    (pendingPickup[i]>0 || pendingDelivery[i]>0) &&
-    
-    <View key={single.consignorName}>
+            {displayData && data.length > 0 && Object.keys(displayData11).map((consignorCode, index) => (
+    (displayData11[consignorCode].forward > 0 || displayData11[consignorCode].reverse > 0) &&
+    <View>
       <Modal
             isOpen={modalVisible}
             onClose={() => {setModalVisible(false); setDropDownValue('');}}
@@ -298,8 +312,8 @@ return (
                   marginBottom={1.5}
                   marginTop={1.5}
                   onPress={() => {
-                    updateStatus(DropDownValue, single.consignorCode);
-                    notAttempt(single.consignorCode, single.consignorLatitude, single.consignorLongitude);
+                    updateStatus(DropDownValue, consignorCode[0]);
+                    // notAttempt(consignorCode[0], displayData11[consignorCode].consignorLatitude, displayData11[consignorCode].consignorLongitude);
                     setModalVisible(false);
                   }}>
                   Submit
@@ -347,8 +361,8 @@ return (
                   marginBottom={1.5}
                   marginTop={1.5}
                   onPress={() => {
-                    updateStatus(DropDownValue1, single.consignorCode);
-                    notAttempt(single.consignorCode, single.consignorLatitude, single.consignorLongitude);
+                    updateStatus(DropDownValue1, consignorCode[0]);
+                    // notAttempt(consignorCode[0], displayData11[consignorCode].consignorLatitude, displayData11[consignorCode].consignorLongitude);
                     setModalVisible2(false);
                   }}>
                   Submit
@@ -410,8 +424,8 @@ return (
                   marginBottom={1.5}
                   marginTop={1.5}
                   onPress={() => {
-                    updateStatusD( DropDownValue, single.consignorCode);
-                    notAttempt(single.consignorCode, single.consignorLatitude, single.consignorLongitude);
+                    updateStatusD( DropDownValue, consignorCode[0]);
+                    // notAttempt(consignorCode[0], displayData11[consignorCode].consignorLatitude, displayData11[consignorCode].consignorLongitude);
                     setModalVisible3(false);
                   }}>
                   Submit
@@ -459,8 +473,8 @@ return (
                   marginBottom={1.5}
                   marginTop={1.5}
                   onPress={() => {
-                    updateStatusD(DropDownValue1, single.consignorCode);
-                    notAttempt(single.consignorCode, single.consignorLatitude, single.consignorLongitude);
+                    updateStatusD(DropDownValue1, consignorCode[0]);
+                    // notAttempt(consignorCode[0], displayData11[consignorCode].consignorLatitude, displayData11[consignorCode].consignorLongitude);
                     setModalVisible4(false);
                   }}>
                   Submit
@@ -480,11 +494,11 @@ return (
             </Modal.Content>
           </Modal>
       <DataTable.Row style={{ height: 'auto', backgroundColor: '#eeeeee', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white'}}>
-        <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
-        <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{pendingPickup[i]}</Text></DataTable.Cell>
-        <DataTable.Cell style={{ flex: 1, marginRight: -70 }}><Text style={styles.fontvalue}>{pendingDelivery[i]}</Text></DataTable.Cell>
+        <DataTable.Cell style={{ flex: 1.7 }} key={consignorCode}><Text style={styles.fontvalue}>{displayData11[consignorCode].consignorName}</Text></DataTable.Cell>
+        <DataTable.Cell style={{ flex: 1, marginRight: 50 }} key={consignorCode}><Text style={styles.fontvalue}>{displayData11[consignorCode].forward}</Text></DataTable.Cell>
+        <DataTable.Cell style={{ flex: 1, marginRight: -70 }} key={consignorCode}><Text style={styles.fontvalue}>{displayData11[consignorCode].reverse}</Text></DataTable.Cell>
       </DataTable.Row>
-      {pendingPickup[i] && !pendingDelivery[i] &&
+      {displayData11[consignorCode].forward>0  && 
         <Button
           leftIcon={
             <Icon
@@ -494,12 +508,12 @@ return (
             />
           }
           onPress={() => setModalVisible(true)}
-          style={{backgroundColor: '#004aad', width: '48%', marginTop: 10, marginLeft: 20}}
+          style={{backgroundColor: '#004aad', width: '90%', marginTop: 10, marginLeft: 20}}
         >
           Close Pickup
         </Button>
       }
-      { pendingDelivery[i]>0 && pendingPickup[i]==0 &&
+      { displayData11[consignorCode].reverse>0 &&
         <Button
           leftIcon={
             <Icon
@@ -511,12 +525,12 @@ return (
           onPress={() => {
             setModalVisible3(true); 
           }}
-          style={{backgroundColor: '#004aad', width: '48%', marginTop: 10, marginLeft: 20}}
+          style={{backgroundColor: '#004aad', width: '90%', marginTop: 10, marginLeft: 20}}
         >
           Close Delivery
         </Button>
       }
-      {pendingDelivery[i]>0 && pendingPickup[i]>0 &&
+      {/* {displayData11[consignorCode].forward >0 && displayData11[consignorCode].consignorName >0 &&
       <View style={{flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
         <Button
           leftIcon={
@@ -550,7 +564,7 @@ return (
         </Button>
       </View>
         
-      }
+      } */}
     </View>
   ))}
           </DataTable>

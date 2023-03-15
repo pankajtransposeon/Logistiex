@@ -644,7 +644,8 @@ console.log('length',imageUrls.length)
               userId : route.params.userId,
               consignorCode:route.params.consignorCode,
               contactPersonName:route.params.contactPersonName,
-              notDelivered:notDelivered
+              notDelivered:notDelivered,
+              runsheetno: route.params.PRSNumber,
             })
             }} w="48%" size="lg" bg="#004aad">End Scan</Button>
             <Button w="48%" size="lg" bg="#004aad" >Resume</Button>
