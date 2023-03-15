@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { ArrowForwardIcon, NativeBaseProvider, Box, Image, Center,Input, Modal, Heading} from 'native-base';
-import{StyleSheet ,Text ,TouchableOpacity ,View ,ScrollView ,TextInput ,getPick ,Alert} from 'react-native';
+import{StyleSheet ,Text ,TouchableOpacity ,View ,ScrollView ,TextInput ,getPick ,Alert, ToastAndroid} from 'react-native';
 import axios from 'axios';
 import { HStack ,Button } from 'native-base';
 import React, { useState, useEffect, useRef } from 'react';
@@ -109,18 +109,19 @@ useEffect(() => {
 const submitForm11 = () => {
   alert('Your Data has submitted');
   axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
+    runsheetNo: route.params.runsheetno, 
     excepted:route.params.Forward,
     accepted: route.params.accepted,
     rejected:route.params.rejected,
-    nothandedOver:0,
+    nothandedOver:route.params.notDelivered,
     feUserID: route.params.userId,
-    receivingDate : new Date().toJSON().slice(0,10).replace(/-/g,'/'),
-    receivingTime: new Date().toLocaleString(),
-    latitude11 : latitude11,
-    longitude11 : longitude11,
-    ReceiverMobileNo : route.params.phone,
-    ReceiverName: name
-    
+    receivingTime: new Date().valueOf(),
+    latitude : latitude11,
+    longitude : longitude11,
+    receiverMobileNo : route.params.phone,
+    receiverName: name,
+    consignorAction: "Seller Delivery",
+    consignorCode:route.params.consignorCode
 })
     .then(function (response) {
         console.log(response.data, "hello");
@@ -153,7 +154,7 @@ const sendSmsOtp = async () => {
     })
     .then(response => {
       if (response.data.return){
-        // submitForm11();
+        submitForm11();
         setInputOtp('');
         setShowModal11(false);
 
@@ -161,14 +162,22 @@ const sendSmsOtp = async () => {
         db.transaction((tx) => {
           tx.executeSql('UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectedReason=? WHERE shipmentAction="Seller Delivery" AND status IS Null And consignorCode=?', [DropDownValue11,route.params.consignorCode], (tx1, results) => {
             let temp = [];
+            // console.log("Not Picked Reason",DropDownValue);
+            // console.log('Results',results.rowsAffected);
+            // console.log(results);
             if (results.rowsAffected > 0) {
               ToastAndroid.show('Partial Closed Successfully',ToastAndroid.SHORT);
+              // setDropDownValue11('');
   
             }
+            //  else {
+            //   console.log('failed to add notPicked item locally');
+            // }
             console.log(results.rows.length);
             for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
             }
+            // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
           });
         });
 
@@ -187,7 +196,6 @@ const sendSmsOtp = async () => {
       console.log(error);
     });
   }
-
   return (
     <NativeBaseProvider>
       <Modal w="100%" isOpen={showModal11} onClose={() => setShowModal11(false)}>

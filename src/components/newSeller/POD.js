@@ -146,20 +146,20 @@ useEffect(() => {
 }, []);
 
 const submitForm11 = () => {
-  alert('Your Data has submitted');
   axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
+    runsheetNo: route.params.runsheetno, 
     excepted:route.params.Forward,
     accepted: route.params.accepted,
     rejected:route.params.rejected,
-    nothandedOver:0,
+    nothandedOver:newNotPicked,
     feUserID: route.params.userId,
-    receivingDate : new Date().toJSON().slice(0,10).replace(/-/g,'/'),
-    receivingTime: new Date().toLocaleString(),
-    latitude11 : latitude11,
-    longitude11 : longitude11,
-    ReceiverMobileNo : route.params.phone,
-    ReceiverName: name,
-
+    receivingTime: new Date().valueOf(),
+    latitude : latitude11,
+    longitude : longitude11,
+    receiverMobileNo : route.params.phone,
+    receiverName: name,
+    consignorAction: "Seller Pickup",
+    consignorCode:route.params.consignorCode
 })
     .then(function (response) {
         console.log(response.data, 'hello');
@@ -204,7 +204,7 @@ const sendSmsOtp = async () => {
     })
     .then(response => {
       if (response.data.return){
-        // submitForm11();
+        submitForm11();
         setInputOtp('');
         setShowModal11(false);
 

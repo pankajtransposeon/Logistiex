@@ -196,6 +196,7 @@ const ShipmentBarcode = ({
           DropDownValue:DropDownValue11,
           consignorCode:route.params.consignorCode,
           contactPersonName:route.params.contactPersonName,
+          runsheetno: route.params.PRSNumber,
         });
       } else {
         setDropDownValue11('');
