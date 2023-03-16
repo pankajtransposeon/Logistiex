@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { NativeBaseProvider, Box, Image, Center, Button, Modal, Input} from 'native-base';
-import {StyleSheet, ScrollView, View} from 'react-native';
+import {StyleSheet, ScrollView, View,ToastAndroid} from 'react-native';
 import {DataTable, Searchbar, Text, Card} from 'react-native-paper';
 import {openDatabase} from 'react-native-sqlite-storage';
 import React, {useEffect, useState} from 'react';
@@ -21,11 +21,16 @@ const PendingHandover = ({route}) => {
   
     const [keyword, setKeyword] = useState('');
 
+    const [modalVisible, setModalVisible] = useState(false);
+    const [DropDownValue, setDropDownValue] = useState('');
+    const [totalPending,setTotalPending] = useState(0);
+    const [consignorCode, setConsignorCode] = useState('');
     const [showCloseBagModal, setShowCloseBagModal] = useState(false);
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
           loadDetails();
+          loadDetails112();
         });
         return unsubscribe;
       }, [navigation]);
@@ -98,10 +103,58 @@ const PendingHandover = ({route}) => {
         }, {});
 
     let data11 = [
-        { value: 'Select Exception Reason', label: 'Select Exception Reason' },
         { value: 'Out of Capacity', label: 'Out of Capacity' },
         { value: 'Seller Holiday', label: 'Seller Holiday' },
+        { value: 'Shipment Not Traceable', label: 'Shipment Not Traceable' },
       ];
+      function handleButtonPress(item) {
+        setDropDownValue(item);
+      }
+      const pendingHandover11 = ()=>{
+        console.log("ok"+consignorCode,DropDownValue);
+        db.transaction(tx => {
+            tx.executeSql(
+              'UPDATE SellerMainScreenDetails SET handoverStatus="pendingHandover" , rejectedReason=? WHERE shipmentAction="Seller Delivery" AND handoverStatus IS Null And consignorCode=?',
+              [DropDownValue,consignorCode],
+              (tx1, results) => {
+                let temp = [];
+                // console.log("Not Picked Reason",DropDownValue);
+                console.log('Results',results.rowsAffected);
+                // console.log(results);
+                if (results.rowsAffected > 0) {
+                  console.log('notPicked done');
+                  loadDetails();
+                  loadDetails112();
+                } else {
+                  console.log('notPicked not done/already done');
+                }
+                setDropDownValue('');
+                // console.log(results.rows.length);
+                for (let i = 0; i < results.rows.length; ++i) {
+                  temp.push(results.rows.item(i));
+                }
+                // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+              },
+            );
+          });
+
+      }
+useEffect(() => {
+loadDetails112();
+}, []);
+      const loadDetails112 = () => {
+
+        db.transaction(tx => {
+          tx.executeSql(
+            'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery"  AND handoverStatus IS NULL',
+            [],
+            (tx1, results) => {
+              setTotalPending(results.rows.length);
+            },
+          );
+        });
+       
+};
     
 return (
   <NativeBaseProvider>
@@ -149,7 +202,23 @@ return (
                         </DataTable.Cell>
                         {/* <MaterialIcons name="check" style={{ fontSize: 30, color: 'green', marginTop: 8 }} /> */}
                       </DataTable.Row>
-                      <View>
+                      <Button title="Pending Handover" onPress={() =>{setConsignorCode(consignorCode); setModalVisible(true)}} w="100%" size="lg" bg="gray.300" mb={4} mt={4}>Select Exception Reason</Button>
+                      {/* <Modal isOpen={modalVisible} onClose={() => {setModalVisible(false); setDropDownValue('');}} size="lg">
+        <Modal.Content maxWidth="350">
+          <Modal.CloseButton />
+          <Modal.Header>Pending Handover Reason</Modal.Header>
+          <Modal.Body>
+          {data11.map((d) => (
+            <Button key={d.value} flex="1" mt={2}  marginBottom={1.5} marginTop={1.5} title={d.value} style={{backgroundColor: d.value === DropDownValue ? '#6666FF' : '#C8C8C8'}} onPress={() => handleButtonPress(d.value)} >
+            <Text style={{color:DropDownValue == d.value ? 'white' : 'black'}}>{d.value}</Text></Button>
+            ))}
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => {pendingHandover11(); setModalVisible(false);}} >
+            Submit</Button>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal> */}
+
+                      {/* <View>
                       <Picker
                       mode="dropdown"
                       selectedValue={selected}
@@ -159,7 +228,7 @@ return (
                         <Picker.Item color='black' key={item.value} label={item.label} value={item.value} />
                         ))}
                         </Picker>
-                      </View>
+                      </View> */}
                       </>
                         // null
 
@@ -183,9 +252,27 @@ return (
           </DataTable>
         </Card>
       </ScrollView>
+      <Modal isOpen={modalVisible} onClose={() => {setModalVisible(false); setDropDownValue('');}} size="lg">
+        <Modal.Content maxWidth="350">
+          <Modal.CloseButton />
+          <Modal.Header>Pending Handover Reason</Modal.Header>
+          <Modal.Body>
+          {data11.map((d) => (
+            <Button key={d.value} flex="1" mt={2}  marginBottom={1.5} marginTop={1.5} title={d.value} style={{backgroundColor: d.value === DropDownValue ? '#6666FF' : '#C8C8C8'}} onPress={() => handleButtonPress(d.value)} >
+            <Text style={{color:DropDownValue == d.value ? 'white' : 'black'}}>{d.value}</Text></Button>
+            ))}
+            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={() => {pendingHandover11(); setModalVisible(false);}} >
+            Submit</Button>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal>
       <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
             <Button w="48%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('HandoverShipmentRTO')}>Start Scanning</Button>
-            <Button w="48%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('HandOverSummary')} >Close Handover</Button>
+           {totalPending===0 ? 
+           <Button w="48%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('HandOverSummary')} >Close Handover</Button>
+        :    <Button w="48%" size="lg" bg="gray.300" onPress={()=>ToastAndroid.show("All Shipments Not Scanned",ToastAndroid.SHORT)
+    } >Close Handover</Button>
+        }
           </View>
       <Center>
           <Image style={{ width:150, height:150}} source={require('../../assets/image.png')} alt={'Logo Image'} />

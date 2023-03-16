@@ -63,7 +63,7 @@ useEffect(() => {
                 [results.rows.item(i).consignorCode],
                 (tx1, results11) => {
                   tx.executeSql(
-                    'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND handoverStatus IS NOT NULL',
+                    'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND handoverStatus ="accepted"',
                     [results.rows.item(i).consignorCode],
                     (tx1, results22) => {
 
