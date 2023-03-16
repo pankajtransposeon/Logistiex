@@ -146,7 +146,17 @@ const OpenBags = ({route}) => {
   useEffect(() => {
     fetchTableData();
   }, [acceptedItemData]);
+ useEffect(() => {
+      // const saveAcceptedItemData = async () => {
+        // try {
+           AsyncStorage.setItem('acceptedItemData11',JSON.stringify(acceptedItemData));
+        // } catch (error) {
+          console.log('aaaa',acceptedItemData);
+        // }
+      // };
 
+      // saveAcceptedItemData();
+    }, [acceptedItemData]);
   const fetchTableData = () => {
     db.transaction(tx => {
       tx.executeSql(
@@ -178,27 +188,27 @@ const OpenBags = ({route}) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       loadDetails112();
-      loadAcceptedItemData12();
+      // loadAcceptedItemData12();
 
     });
     return unsubscribe;
   }, [navigation]);
   useEffect(() => {
     loadDetails112();
-      loadAcceptedItemData12();
+      // loadAcceptedItemData12();
   },[]);
-  const loadAcceptedItemData12 = async () => {
+  // const loadAcceptedItemData12 = async () => {
 
-    AsyncStorage.getItem('acceptedItemData11')
-    .then(data99 => {
-      // setAcceptedItemData(JSON.parse(data99));
-      console.log("ghghg11",data99);
-      console.log("ghghg11",acceptedItemData);
-    })
-    .catch(e => {
-    console.log(e);
-    });
-  };
+  //   AsyncStorage.getItem('acceptedItemData11')
+  //   .then(data99 => {
+  //     // setAcceptedItemData(JSON.parse(data99));
+  //     console.log("ghghg11",data99);
+  //     console.log("ghghg11",acceptedItemData);
+  //   })
+  //   .catch(e => {
+  //   console.log(e);
+  //   });
+  // };
 
   const loadDetails112 = () => {
 
