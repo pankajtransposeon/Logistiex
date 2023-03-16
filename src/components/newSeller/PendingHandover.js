@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { NativeBaseProvider, Box, Image, Center, Button, Modal, Input} from 'native-base';
 import {StyleSheet, ScrollView, View} from 'react-native';
 import {DataTable, Searchbar, Text, Card} from 'react-native-paper';
@@ -12,8 +13,91 @@ const PendingHandover = ({route}) => {
     // const [data, setData] = useState([]);
     const [selected,setSelected]=useState('Select Exception Reason');
     const navigation = useNavigation();
+
+    const [data, setData] = useState([]);
+    
+    const [displayData, setDisplayData] = useState({});
+    // const navigation = useNavigation();
+  
+    const [keyword, setKeyword] = useState('');
+
     const [showCloseBagModal, setShowCloseBagModal] = useState(false);
-    let data = [
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+          loadDetails();
+        });
+        return unsubscribe;
+      }, [navigation]);
+    
+      const loadDetails = () => {
+        db.transaction(tx => {
+          tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
+            let temp = [];
+            var m = 0;
+            for (let i = 0; i < results.rows.length; ++i) {
+              const newData = {};
+              temp.push(results.rows.item(i));
+              // var consignorcode=results.rows.item(i).consignorCode;
+              // var consignorName=results.rows.item(i).consignorName;
+    
+              db.transaction(tx => {
+                db.transaction(tx => {
+                  tx.executeSql(
+                    'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? ',
+                    [results.rows.item(i).consignorCode],
+                    (tx1, results11) => {
+                      //    console.log(results11,'1',results11.rows.length);
+                      //    var expected=results11.rows.length;
+                      tx.executeSql(
+                        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND handoverStatus IS  NULL',
+                        [results.rows.item(i).consignorCode],
+                        (tx1, results22) => {
+                          // console.log(results22,'2',results22.rows.length);
+                          // var scanned=results.rows.length;
+                          newData[results.rows.item(i).consignorCode] = {
+                            consignorName: results.rows.item(i).consignorName,
+                            expected: results11.rows.length,
+                            pending: results22.rows.length,
+                          };
+                          console.log(newData);
+                          if (newData != null) {
+                            setDisplayData(prevData => ({
+                              ...prevData,
+                              ...newData,
+                            }));
+                          }
+                          // if (i === (results.rows.length - 1) && MM + results22.rows.length === 0){
+                          //   tx.executeSql('DROP TABLE IF EXISTS closeHandoverBag1', []);
+                          //   AsyncStorage.setItem('acceptedItemData11','');}
+                        },
+                      );
+                    },
+                  );
+                });
+              });
+    
+            }
+            // if (MM === 0 && displayData != null){
+            //   tx.executeSql('DROP TABLE IF EXISTS closeHandoverBag1', []);
+            //   AsyncStorage.setItem('acceptedItemData11','');}
+            setData(temp);
+          });
+        });
+      };
+    //   useEffect(() => {
+    //     loadDetails()
+    //   }, [])
+    
+    
+      const displayData11 = Object.keys(displayData)
+        .filter(sealID => sealID.toLowerCase().includes(keyword.toLowerCase()))
+        .reduce((obj, key) => {
+          obj[key] = displayData[key];
+          return obj;
+        }, {});
+
+    let data11 = [
         { value: 'Select Exception Reason', label: 'Select Exception Reason' },
         { value: 'Out of Capacity', label: 'Out of Capacity' },
         { value: 'Seller Holiday', label: 'Seller Holiday' },
@@ -30,28 +114,77 @@ return (
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Expected Deliveries</Text></DataTable.Title>
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Pending Shipments</Text></DataTable.Title>
             </DataTable.Header>
-              <DataTable.Row>
+              {/* <DataTable.Row>
                 <DataTable.Cell style={{flex: 1.7}}><Text style={styles.fontvalue} >{route.params.consignorName}</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{route.params.expected}</Text></DataTable.Cell>
                 <DataTable.Cell style={{flex: 1}}><Text style={styles.fontvalue} >{0}</Text></DataTable.Cell>
-              </DataTable.Row>
-              <View>
+              </DataTable.Row> */}
+
+
+{displayData && data.length > 0
+                ? Object.keys(displayData11).map((consignorCode, index) =>
+                    displayData11[consignorCode].pending > 0 ? (<>
+                        <DataTable.Row
+                        style={{
+                          height: 'auto',
+                          backgroundColor: '#eeeeee',
+                          borderBottomWidth: 1,
+                        }}
+                        key={consignorCode}>
+                        <DataTable.Cell style={{flex: 1.7}}>
+                          <Text style={styles.fontvalue}>
+                            {displayData11[consignorCode].consignorName}
+                          </Text>
+                        </DataTable.Cell>
+
+                        <DataTable.Cell style={{flex: 1, marginRight: 5 }}>
+                          <Text style={styles.fontvalue}>
+                            {displayData11[consignorCode].expected}
+                          </Text>
+                        </DataTable.Cell>
+                        <DataTable.Cell style={{flex: 1, marginRight: -45}}>
+                          <Text style={styles.fontvalue}>
+                            {displayData11[consignorCode].pending}
+                          </Text>
+                        </DataTable.Cell>
+                        {/* <MaterialIcons name="check" style={{ fontSize: 30, color: 'green', marginTop: 8 }} /> */}
+                      </DataTable.Row>
+                      <View>
+                      <Picker
+                      mode="dropdown"
+                      selectedValue={selected}
+                      onValueChange={value => setSelected(value)}
+                     >
+                        {data11.map(item => (
+                        <Picker.Item color='black' key={item.value} label={item.label} value={item.value} />
+                        ))}
+                        </Picker>
+                      </View>
+                      </>
+                        // null
+
+                        )
+                     : null,
+                  )
+                : null}
+              
+              {/* <View>
               <Picker
               mode="dropdown"
               selectedValue={selected}
               onValueChange={value => setSelected(value)}
              >
-                {data.map(item => (
+                {data11.map(item => (
                 <Picker.Item color='black' key={item.value} label={item.label} value={item.value} />
                 ))}
                 </Picker>
-              </View>
+              </View> */}
               
           </DataTable>
         </Card>
       </ScrollView>
       <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
-            <Button w="48%" size="lg" bg="#004aad" >Start Scanning</Button>
+            <Button w="48%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('HandoverShipmentRTO')}>Start Scanning</Button>
             <Button w="48%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('HandOverSummary')} >Close Handover</Button>
           </View>
       <Center>

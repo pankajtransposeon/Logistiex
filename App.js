@@ -194,6 +194,7 @@ function StackNavigators({navigation}) {
             loadAPI_Data5();
             loadAPI_Data6();
             loadAPI_DataCD();
+            createTableBag1();
         } else {
           // setTimeout(()=>navigation.navigate('Login'),1000);
           navigation.navigate('Login');
@@ -213,6 +214,7 @@ function StackNavigators({navigation}) {
         loadAPI_Data5();
         loadAPI_Data6();
         loadAPI_DataCD();
+        createTableBag1();
     };
 
     useEffect(() => {
@@ -257,6 +259,7 @@ function StackNavigators({navigation}) {
         console.log(e);
         });
     };
+
 const push_Data = () => {
     console.log('push data function',new Date().toJSON().slice(0, 10).replace(/-/g, '/'));
 
@@ -407,7 +410,7 @@ const push_Data = () => {
         db.transaction(txn => {
             txn.executeSql('DROP TABLE IF EXISTS SyncSellerPickUp', []);
             txn.executeSql(`CREATE TABLE IF NOT EXISTS SyncSellerPickUp( consignorCode ID VARCHAR(200) PRIMARY KEY ,userId VARCHAR(100), 
-            consignorName VARCHAR(200),consignorAddress1 VARCHAR(200),consignorAddress2 VARCHAR(200),consignorCity VARCHAR(200),consignorPincode,consignorLocation INT(20),consignorLongitude DECIMAL(20,10),consignorContact VARCHAR(200),ReverseDeliveries INT(20),PRSNumber VARCHAR(200),ForwardPickups INT(20), BagOpenClose VARCHAR(200), ShipmentListArray VARCHAR(800),contactPersonName VARCHAR(100))`, [], (sqlTxn, res) => {
+            consignorName VARCHAR(200),consignorAddress1 VARCHAR(200),consignorAddress2 VARCHAR(200),consignorCity VARCHAR(200),consignorPincode,consignorLocation INT(20),consignorLongitude DECIMAL(20,10),consignorContact VARCHAR(200),ReverseDeliveries INT(20),PRSNumber VARCHAR(200),ForwardPickups INT(20), BagOpenClose11 VARCHAR(200), ShipmentListArray VARCHAR(800),contactPersonName VARCHAR(100))`, [], (sqlTxn, res) => {
                 // console.log("table created successfully1212");
                 // loadAPI_Data();
             }, error => {
@@ -426,7 +429,7 @@ const push_Data = () => {
                 for (let i = 0; i < res.data.data.length; i++) {
                     // let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
                     db.transaction(txn => {
-                        txn.executeSql('INSERT OR REPLACE INTO SyncSellerPickUp( contactPersonName,consignorCode ,userId ,consignorName,consignorAddress1,consignorAddress2,consignorCity,consignorPincode,consignorLocation,consignorLongitude,consignorContact,ReverseDeliveries,PRSNumber,ForwardPickups,BagOpenClose, ShipmentListArray) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [
+                        txn.executeSql('INSERT OR REPLACE INTO SyncSellerPickUp( contactPersonName,consignorCode ,userId ,consignorName,consignorAddress1,consignorAddress2,consignorCity,consignorPincode,consignorLocation,consignorLongitude,consignorContact,ReverseDeliveries,PRSNumber,ForwardPickups,BagOpenClose11, ShipmentListArray) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [
                           res.data.data[i].contactPersonName,
                             res.data.data[i].consignorCode,
                             userId,
@@ -441,7 +444,7 @@ const push_Data = () => {
                             res.data.data[i].ReverseDeliveries,
                             res.data.data[i].PRSNumber,
                             res.data.data[i].ForwardPickups,
-                            'close',
+                            'true',
                             ' ',
                         ], (sqlTxn, _res) => {
                             // console.log(`\n Data Added to local db successfully1212`);
@@ -1044,6 +1047,22 @@ const push_Data = () => {
                 console.log('error on creating table ' + error.message);
             },);
         });
+    };
+    const createTableBag1 = () => {
+      AsyncStorage.setItem('acceptedItemData11','');
+      db.transaction(tx => {
+        tx.executeSql('DROP TABLE IF EXISTS closeHandoverBag1', []);
+        tx.executeSql(
+          'CREATE TABLE IF NOT EXISTS closeHandoverBag1 (bagSeal TEXT , bagId TEXT PRIMARY KEY, bagDate TEXT, AcceptedList TEXT,status TEXT,consignorCode Text,consignorName Text)',
+          [],
+          (tx, results) => {
+            console.log('Table created successfully');
+          },
+          error => {
+            console.log('Error occurred while creating the table:', error);
+          },
+        );
+      });
     };
     const loadAPI_Data6 = () => {
         // setIsLoading(!isLoading);
