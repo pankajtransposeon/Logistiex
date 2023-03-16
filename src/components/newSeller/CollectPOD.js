@@ -54,18 +54,6 @@ const CollectPOD = ({route}) => {
     DisplayData11();   
   }, []);
 
-  useEffect(() => {
-    partialClose112();
-  }, []);
-
-  const partialClose112 = () => {
-    if (route.params.accepted + route.params.rejected === route.params.Forward){
-      sendSmsOtp();
-    } else {
-      setModalVisible11(true);
-    }
-        }
-
   const clearText = () => {
     otpInput.current.clear();
   }
@@ -177,7 +165,6 @@ const sendSmsOtp = async () => {
             for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
             }
-            // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
           });
         });
 
@@ -228,8 +215,12 @@ const sendSmsOtp = async () => {
                 <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.accepted}</Text>
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>Tagged</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>Rejected</Text>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.rejected}</Text>
+              </View>
+              <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>Tagged</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.tagged}</Text>
               </View>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: 'lightgray', borderBottomLeftRadius: 5, borderBottomRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Not Handed Over</Text>

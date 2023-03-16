@@ -10,7 +10,7 @@ const db = openDatabase({name: 'rn_sqlite'});
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const PendingWork = ({route}) => {
+const NotDelivered = ({route}) => {
     const navigation = useNavigation();
     const [pendingPickup, setPendingPickup] = useState(0);
     const [pendingDelivery, setPendingDelivery] = useState(0);
@@ -22,96 +22,50 @@ const PendingWork = ({route}) => {
     const [CloseData, setCloseData] = useState([]);
     const [CloseDataD, setCloseDataD] = useState([]);
     const [NotAttemptData, setNotAttemptData] = useState([]);
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(true);
     const [modalVisible2, setModalVisible2] = useState(false);
     const [modalVisible3, setModalVisible3] = useState(false);
     const [modalVisible4, setModalVisible4] = useState(false);
     const [displayData, setDisplayData] = useState({});
     const [keyword, setKeyword] = useState('');
     const [MM,setMM] = useState(0);
-    const getUserId = async () => {
-      try {
-        const value = await AsyncStorage.getItem('@storage_Key');
-        if (value !== null) {
-          const data = JSON.parse(value);
-          setUserId(data.userId)
-        } else {
-          setUserId('')
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    }
-    useEffect(() => {
-      getUserId();
-    }, []);
 
     const DisplayData = async () => {
-      closePickup11();
       closeDelivery();
     };
-    const notAttempt = (consignorCode, latitude,longitude) => {
-      axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
-      consignorCode:consignorCode,
-      rejectionReasonL1: DropDownValue,
-      rejectionReasonL2:DropDownValue1,
-      feUserID: userId,
-      latitude : latitude,
-      longitude : longitude,
-      eventTime: new Date().toLocaleString(),
-      rejectionStage:rejectStage 
-  })
-      .then(function (response) {
-          console.log(response.data);
-      })
-      .catch(function (error) {
-          console.log(error);
-      });
-    };
-    function updateStatus(rejectedReason, consignorCode) {
-      AsyncStorage.setItem('refresh11', 'refresh');
-      db.transaction(tx => {
-        tx.executeSql(
-          'UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?',
-          [rejectedReason, consignorCode],
-          (tx1, results) => {
-            let temp = [];
-            console.log(results.rows.length);
-            for (let i = 0; i < results.rows.length; ++i) {
-              temp.push(results.rows.item(i));
-            }
-          },
-        );
-      });
-    }
-    function updateStatusD(rejectedReason, consignorCode) {
-      AsyncStorage.setItem('refresh11', 'refresh');
-      db.transaction(tx => {
-        tx.executeSql(
-          'UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectedReason=? WHERE shipmentAction="Seller Delivery" AND status IS Null And consignorCode=?',
-          [rejectedReason, consignorCode],
-          (tx1, results) => {
-            let temp = [];
-            console.log(results.rows.length);
-            for (let i = 0; i < results.rows.length; ++i) {
-              temp.push(results.rows.item(i));
-            }
-          },
-        );
-      });
-    }
-    const closePickup11 = () => {
-      db.transaction(tx => {
-        tx.executeSql('SELECT * FROM ClosePickupReasons', [], (tx1, results) => {
-          let temp = [];
-          console.log(results.rows.length);
-          for (let i = 0; i < results.rows.length; ++i) {
-            temp.push(results.rows.item(i));
-          }
-          setCloseData(temp);
+    console.log(route.params.consignorLatitude);
+    const NotDelivered = (rejectionReason) => {
+        AsyncStorage.setItem('refresh11', 'refresh');
+        db.transaction(tx => {
+          tx.executeSql(
+            'UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectedReason=? WHERE shipmentAction="Seller Delivery" AND status IS Null And consignorCode=?',
+            [DropDownValue,route.params.consignorCode],
+            (tx1, results) => {
+              let temp = [];
+              console.log(results.rows.length);
+              for (let i = 0; i < results.rows.length; ++i) {
+                temp.push(results.rows.item(i));
+              }
+            },
+          );
         });
-      });
-    };
+        axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
+        consignorCode:route.params.consignorCode,
+        rejectionReason: rejectionReason,
+        feUserID: route.params.userId,
+        latitude : route.params.consignorLatitude,
+        longitude : route.params.consignorLongitude,
+        eventTime: new Date().valueOf() ,
+        rejectionStage:rejectStage 
+    })
+        .then(function (response) {
+            console.log(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+            
+        });
+      };
     const closeDelivery = () => {
       db.transaction(tx => {
         tx.executeSql('SELECT * FROM CloseDeliveryReasons', [], (tx1, results) => {
@@ -147,91 +101,146 @@ const PendingWork = ({route}) => {
     useEffect(() => {
       DisplayData2();
     }, []);
-      useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-          loadDetails();
-        });
-        return unsubscribe;
-      }, [navigation]);
       
       
-      const loadDetails = () => {
-        db.transaction(tx => {
-          tx.executeSql('SELECT * FROM SyncSellerPickUp', [], (tx1, results) => {
-            let temp = [];
-            var m = 0;
-            for (let i = 0; i < results.rows.length; ++i) {
-              const newData = {};
-              temp.push(results.rows.item(i));
-              // var consignorcode=results.rows.item(i).consignorCode;
-              var consignorLatitude=results.rows.item(i).consignorLatitude;
-    console.log(consignorLatitude);
-              db.transaction(tx => {
-                db.transaction(tx => {
-                  tx.executeSql(
-                    'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status IS NULL',
-                    [results.rows.item(i).consignorCode],
-                    (tx1, results11) => {
-                      tx.executeSql(
-                        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status IS NULL',
-                        [results.rows.item(i).consignorCode],
-                        (tx1, results22) => {
-                          setMM(MM + results22.rows.length);
-                          newData[results.rows.item(i).consignorCode] = {
-                            consignorName: results.rows.item(i).consignorName,
-                            consignorLatitude: results.rows.item(i).consignorLatitude,
-                            consignorLongitude: results.rows.item(i).consignorLongitude,
-                            forward: results11.rows.length,
-                            reverse: results22.rows.length,
-                          };
-                          console.log(newData);
-                          if (newData != null) {
-                            setDisplayData(prevData => ({
-                              ...prevData,
-                              ...newData,
-                            }));
-                          }
-                        },
-                      );
-                    },
-                  );
-                });
-              });
-    
-            }
-            setData(temp);
-          });
-        });
-      };
-
-    useEffect(() => {
-        (async () => {
-            loadDetails();
-        })();
-    }, []);
-
-    const displayData11 = Object.keys(displayData)
-    .filter(sealID => sealID.toLowerCase().includes(keyword.toLowerCase()))
-    .reduce((obj, key) => {
-      obj[key] = displayData[key];
-      return obj;
-    }, {});
-          
+      function handleButtonPress(item) {
+        if (item == 'Could Not Attempt') {
+          setModalVisible2(true);
+          setModalVisible(false);
+        } else {
+          setDropDownValue(item);
+          setRejectStage("L1")
+        }
+      }
+      function handleButtonPress2(item) {
+        setDropDownValue1(item);
+        setRejectStage("L2")
+      }
+      
 return (
   <NativeBaseProvider>
+    <Modal
+            isOpen={modalVisible}
+            onClose={() => {{navigation.navigate('PendingWork')}; setDropDownValue('');}}
+            width="100%">
+            <Modal.Content maxWidth="100%">
+              <Modal.CloseButton />
+              <Modal.Header>Close Delivery Reason Code</Modal.Header>
+              <Modal.Body>
+              {CloseDataD.map((d, index) => (
+                  <Button
+                    key={d.deliveryFailureReasonID}
+                    flex="1"
+                    mt={2}
+                    marginBottom={1.5}
+                    marginTop={1.5}
+                    style={{
+                      backgroundColor:
+                        d.deliveryFailureReasonName === DropDownValue
+                          ? '#6666FF'
+                          : '#C8C8C8',
+                    }}
+                    title={d.deliveryFailureReasonName}
+                    onPress={() =>
+                      handleButtonPress(d.deliveryFailureReasonName)
+                    }>
+                    <Text
+                      style={{
+                        color:
+                          DropDownValue == d.deliveryFailureReasonName
+                            ? 'white'
+                            : 'black',
+                      }}>
+                      {d.deliveryFailureReasonName}
+                    </Text>
+                  </Button>
+                ))}
+                <Button
+                  flex="1"
+                  mt={2}
+                  bg="#004aad"
+                  marginBottom={1.5}
+                  marginTop={1.5}
+                  onPress={() => {
+                    NotDelivered(DropDownValue);
+                    navigation.navigate('PendingWork');
+                  }}>
+                  Submit
+                </Button>
+              </Modal.Body>
+            </Modal.Content>
+          </Modal>
+          <Modal
+            isOpen={modalVisible2}
+            onClose={() => {{navigation.navigate('PendingWork')}; setDropDownValue1('');}}
+            size="lg">
+            <Modal.Content maxWidth="350">
+              <Modal.CloseButton />
+              <Modal.Header>Could Not Attempt Reason</Modal.Header>
+              <Modal.Body>
+                {NotAttemptData &&
+                  NotAttemptData.map((d, index) => (
+                    <Button
+                      key={d._id}
+                      flex="1"
+                      mt={2}
+                      marginBottom={1.5}
+                      marginTop={1.5}
+                      style={{
+                        backgroundColor:
+                          d.reasonName === DropDownValue1
+                            ? '#6666FF'
+                            : '#C8C8C8',
+                      }}
+                      title={d.reasonName}
+                      onPress={() => handleButtonPress2(d.reasonName)}>
+                      <Text
+                        style={{
+                          color:
+                            d.reasonName == DropDownValue1 ? 'white' : 'black',
+                        }}>
+                        {d.reasonName}
+                      </Text>
+                    </Button>
+                  ))}
+                <Button
+                  flex="1"
+                  mt={2}
+                  bg="#004aad"
+                  marginBottom={1.5}
+                  marginTop={1.5}
+                  onPress={() => {
+                    NotDelivered(DropDownValue1);
+                    navigation.navigate('PendingWork');
+                  }}>
+                  Submit
+                </Button>
+                <Button
+                  flex="1"
+                  mt={2}
+                  bg="#004aad"
+                  marginBottom={1.5}
+                  marginTop={1.5}
+                  onPress={() => {
+                    setModalVisible(true), setModalVisible2(false);
+                  }}>
+                  Back
+                </Button>
+              </Modal.Body>
+            </Modal.Content>
+          </Modal>
     <Box flex={1} bg="#fff"  width="auto" maxWidth="100%">
       <ScrollView style={styles.homepage} showsVerticalScrollIndicator={true} showsHorizontalScrollIndicator={false}>
         <Card>
-          <DataTable>
+          {/* <DataTable>
             <DataTable.Header style={{height:'auto', backgroundColor: '#004aad', borderTopLeftRadius: 5, borderTopRightRadius: 5}} >
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Seller Name</Text></DataTable.Title>
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Pending Pickups</Text></DataTable.Title>
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Pending Deliveries</Text></DataTable.Title>
-            </DataTable.Header>
-            {displayData && data.length > 0 && Object.keys(displayData11).map((consignorCode, index) => (
+            </DataTable.Header> */}
+            {/* {displayData && data.length > 0 && Object.keys(displayData11).map((consignorCode, index) => (
     (displayData11[consignorCode].forward > 0 || displayData11[consignorCode].reverse > 0) &&
     <View>
-      
         <DataTable.Row style={{ height: 'auto', backgroundColor: '#eeeeee', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white'}}>
         <DataTable.Cell style={{ flex: 1.7 }} key={consignorCode}><Text style={styles.fontvalue}>{displayData11[consignorCode].consignorName}</Text></DataTable.Cell>
         <DataTable.Cell style={{ flex: 1, marginRight: 50 }} key={consignorCode}><Text style={styles.fontvalue}>{displayData11[consignorCode].forward}</Text></DataTable.Cell>
@@ -246,10 +255,7 @@ return (
               size="sm"
             />
           }
-          onPress={() => navigation.navigate('NotPicked',{consignorCode:consignorCode, 
-            consignorLatitude:displayData11[consignorCode].consignorLatitude,
-          consignorLongitude:displayData11[consignorCode].consignorLongitude,
-          userId:userId})}
+          onPress={() => navigation.navigate('NotPicked',{consignorCode:consignor[0]})}
           style={{backgroundColor: '#004aad', width: '90%', marginTop: 10, marginLeft: 20}}
         >
           Close Pickup
@@ -264,15 +270,14 @@ return (
               size="sm"
             />
           }
-          onPress={() => navigation.navigate('NotDelivered',{consignorCode:consignorCode, 
-            consignorLatitude:displayData11[consignorCode].consignorLatitude,
-          consignorLongitude:displayData11[consignorCode].consignorLongitude,
-          userId:userId})}
+          onPress={() => {
+            setModalVisible3(true); 
+          }}
           style={{backgroundColor: '#004aad', width: '90%', marginTop: 10, marginLeft: 20}}
         >
           Close Delivery
         </Button>
-      }
+      } */}
       {/* {displayData11[consignorCode].forward >0 && displayData11[consignorCode].consignorName >0 &&
       <View style={{flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
         <Button
@@ -308,23 +313,23 @@ return (
       </View>
         
       } */}
-    </View>
+    {/* </View>
   ))}
-          </DataTable>
+          </DataTable> */}
         </Card>
       </ScrollView>
-      <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
+      {/* <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
             <Button w="48%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('Main')}>Dashboard</Button>
             <Button w="48%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('MyTrip')} >Close Trip</Button>
           </View>
       <Center>
           <Image style={{ width:150, height:150}} source={require('../../assets/image.png')} alt={'Logo Image'} />
-      </Center>
+      </Center> */}
     </Box>
     </NativeBaseProvider>
   );
 };
-export default PendingWork;
+export default NotDelivered;
 export const styles = StyleSheet.create({
 
     container112: {

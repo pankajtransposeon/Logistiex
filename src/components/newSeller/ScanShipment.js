@@ -639,7 +639,8 @@ console.log('length',imageUrls.length)
             navigation.navigate('CollectPOD',{
               Forward : route.params.Forward,
               accepted : newaccepted,
-              rejected : newtagged,
+              rejected : newrejected,
+              tagged:newtagged,
               phone : route.params.phone,
               userId : route.params.userId,
               consignorCode:route.params.consignorCode,

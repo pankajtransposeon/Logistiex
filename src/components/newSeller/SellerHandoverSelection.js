@@ -70,12 +70,12 @@ const SellerHandoverSelection = ({route}) => {
   const DisplayData = async () => {
     closePickup11();
   };
-  const notPicked = () => {
+  const notPicked = (rejectionReason) => {
     AsyncStorage.setItem('refresh11', 'refresh');
     db.transaction(tx => {
       tx.executeSql(
         'UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectedReason=? WHERE shipmentAction="Seller Delivery" AND status IS Null And consignorCode=?',
-        [DropDownValue,route.params.consignorCode],
+        [rejectionReason,route.params.consignorCode],
         (tx1, results) => {
           let temp = [];
           console.log(results.rows.length);
@@ -87,12 +87,11 @@ const SellerHandoverSelection = ({route}) => {
     });
     axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
     consignorCode:route.params.consignorCode,
-    rejectionReasonL1: DropDownValue,
-    rejectionReasonL2:DropDownValue1,
+    rejectionReason: rejectionReason,
     feUserID: route.params.userId,
     latitude : route.params.consignorLatitude,
     longitude : route.params.consignorLongitude,
-    eventTime: new Date().toLocaleString(),
+    eventTime: new Date().valueOf(),
     rejectionStage:rejectStage 
 })
     .then(function (response) {
@@ -411,7 +410,7 @@ useEffect(() => {
                   marginBottom={1.5}
                   marginTop={1.5}
                   onPress={() => {
-                    notPicked();
+                    notPicked(DropDownValue);
                     setModalVisible(false);
                   }}>
                   Submit
@@ -459,7 +458,7 @@ useEffect(() => {
                   marginBottom={1.5}
                   marginTop={1.5}
                   onPress={() => {
-                    notPicked();
+                    notPicked(DropDownValue1);
                     setModalVisible2(false);
                   }}>
                   Submit

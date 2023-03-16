@@ -70,38 +70,28 @@ const NewSellerSelection = ({route}) => {
   const DisplayData = async () => {
     closePickup11();
   };
-  const notPicked = () => {
+  const notPicked = (rejectionReason) => {
     AsyncStorage.setItem('refresh11', 'refresh');
     db.transaction(tx => {
       tx.executeSql(
         'UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?',
-        [DropDownValue,route.params.consignorCode],
+        [rejectionReason,route.params.consignorCode],
         (tx1, results) => {
           let temp = [];
-          // console.log("Not Picked Reason",DropDownValue);
-          // console.log('Results',results.rowsAffected);
-          // console.log(results);
-          // if (results.rowsAffected > 0) {
-          //   console.log('notPicked done');
-          // } else {
-          //   console.log('failed to add notPicked item locally');
-          // }
           console.log(results.rows.length);
           for (let i = 0; i < results.rows.length; ++i) {
             temp.push(results.rows.item(i));
           }
-          // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
         },
       );
     });
     axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
     consignorCode:route.params.consignorCode,
-    rejectionReasonL1: DropDownValue,
-    rejectionReasonL2:DropDownValue1,
+    rejectionReason: rejectionReason,
     feUserID: route.params.userId,
     latitude : route.params.consignorLatitude,
     longitude : route.params.consignorLongitude,
-    eventTime: new Date().toLocaleString(),
+    eventTime: new Date().valueOf(),
     rejectionStage:rejectStage 
 })
     .then(function (response) {
@@ -459,7 +449,7 @@ useEffect(() => {
                   marginBottom={1.5}
                   marginTop={1.5}
                   onPress={() => {
-                    notPicked();
+                    notPicked(DropDownValue);
                     setModalVisible(false);
                   }}>
                   Submit
@@ -507,7 +497,7 @@ useEffect(() => {
                   marginBottom={1.5}
                   marginTop={1.5}
                   onPress={() => {
-                    notPicked();
+                    notPicked(DropDownValue1);
                     setModalVisible2(false);
                   }}>
                   Submit
