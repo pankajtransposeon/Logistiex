@@ -200,17 +200,13 @@ export default function Main({navigation, route}) {
       );
     });
 
-    db.transaction(tx => {
-      tx.executeSql(
-        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND status="rejected"',
-        [],
-        (tx1, results) => {
-          setSpr(results.rows.length);
-          setIsLoading(false);
-        },
-      );
-    });
-  };
+        db.transaction((tx) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND status="rejected"', [], (tx1, results) => {
+                setSpr(results.rows.length);
+                setIsLoading(false);
+            });
+        });
+    };
 
   const loadSellerDeliveryDetails = async () => {
     setIsLoading(!isLoading);
@@ -896,84 +892,54 @@ export default function Main({navigation, route}) {
               <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerDeliveries')}>New Pickup</Button>
               :<Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('NewSellerPickup')}>New Pickup</Button>
               } */}
-                  </Box>
-                  // <Text>No Data Available for {it.title}</Text>
-                );
-              }
-            })}
-            {dashboardData[1].completedOrder != 0 ||
-            dashboardData[1].pendingOrder != 0 ||
-            dashboardData[1].notPicked != 0 ||
-            dashboardData[1].rejectedOrder != 0 ? (
-              <Button
-                w="100%"
-                size="lg"
-                bg="#004aad"
-                onPress={() => navigation.navigate('SellerHandover')}>
-                Start Handover
-              </Button>
-            ) : null}
-            {/* <Button
+          </Box> 
+            // <Text>No Data Available for {it.title}</Text>
+          )
+        }
+        })}
+        {(dashboardData[1].completedOrder!=0 || dashboardData[1].pendingOrder!=0 || dashboardData[1].notPicked!=0 || dashboardData[1].rejectedOrder!=0) ?
+        <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>Start Handover</Button>
+        :
+        null}
+        <Button
           variant="outline"
-          onPress={() => {
-            tripValue === 'Start Trip'
-              ? navigation.navigate('StartTrip')
-              : tripValue === 'End Trip'
-              ? navigation.navigate('EndTrip')
-              : navigation.navigate('StartEndDetails');
-            navigation.closeDrawer();
-          }}
+          onPress={()=>{navigation.navigate('MyTrip', {userId: id})}}
           mt={4}
           style={{color: '#004aad', borderColor: '#004aad'}}>
           <Text style={{color: '#004aad'}}>{tripValue}</Text>
-        </Button> */}
-            <Fab
-              onPress={() => {
-                navigation.navigate('MyTrip', {userId: id});
-              }}
-              position="absolute"
-              size="sm"
-              style={{backgroundColor: '#004aad'}}
-              label={
-                <Text style={{color: 'white', fontSize: 16}}>{tripValue}</Text>
-              }
-            />
-            {/* <Button w="100%" size="lg" bg="#004aad" mt={-5} onPress={()=>navigation.navigate('SellerHandover')}>Seller Handover</Button> */}
-            {/* <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>Start Handover</Button> */}
-            <Center>
-              <Image
-                style={{width: 150, height: 100}}
-                source={require('../assets/image.png')}
-                alt={'Logo Image'}
-              />
-            </Center>
-          </Box>
-        </ScrollView>
-        {/* <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} /> */}
-        {isLoading ? (
-          <View
-            style={[
-              StyleSheet.absoluteFillObject,
-              {
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 1,
-                backgroundColor: 'rgba(0,0,0,0.65)',
-              },
-            ]}>
-            <Text style={{color: 'white'}}>Loading...</Text>
-            <Lottie
-              source={require('../assets/loading11.json')}
-              autoPlay
-              loop
-              speed={1}
-              //   progress={animationProgress.current}
-            />
-            <ProgressBar width={70} />
-          </View>
-        ) : null}
+        </Button>
+        {/* <Fab onPress={()=>{navigation.navigate('MyTrip', {userId: id})}} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} label={<Text style={{color: 'white', fontSize: 16}} >{tripValue}</Text>} /> */}
+        {/* <Button w="100%" size="lg" bg="#004aad" mt={-5} onPress={()=>navigation.navigate('SellerHandover')}>Seller Handover</Button> */}
+        {/* <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>Start Handover</Button> */}
+        <Center>
+          <Image style={{ width: 150, height: 100 }} source={require('../assets/image.png')} alt={'Logo Image'} />
+        </Center>
       </Box>
-    </NativeBaseProvider>
+      </ScrollView>
+      {/* <Fab onPress={()=>sync11()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} /> */}
+      {isLoading ? (
+        <View
+          style={[
+            StyleSheet.absoluteFillObject,
+            {
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 1,
+              backgroundColor: 'rgba(0,0,0,0.65)',
+            },
+          ]}>
+          <Text style={{color: 'white'}}>Loading...</Text>
+          <Lottie
+            source={require('../assets/loading11.json')}
+            autoPlay
+            loop
+            speed={1}
+            //   progress={animationProgress.current}
+          />
+          <ProgressBar width={70} />
+        </View>
+      ) : null}
+    </Box></NativeBaseProvider>
   );
 }

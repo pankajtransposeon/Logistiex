@@ -564,7 +564,6 @@ console.log('length',imageUrls.length)
               {uploadStatus === 'done' && <MaterialIcons name="check" size={22} color="green" />}
               {uploadStatus === 'error' && <MaterialIcons name="error" size={22} color="red" />}
             </Button>
-            <Text>Upload Min 5 images</Text>
       {imageUrls.length > 0 && (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' ,marginTop:50}}>
           {imageUrls.map((url, index) => (
@@ -578,7 +577,7 @@ console.log('length',imageUrls.length)
         )}
             <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
             <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} marginRight={1} onPress={()=>setImageUrls([])}>ReScan/Record</Button>
-            {imageUrls.length<5 ?
+            {imageUrls.length<1 ?
             <Button opacity={0.5}  disabled={true} flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} >Save</Button>
             :
             <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={()=>{ setModalVisible(true); setModalVisible1(false)}} >Save</Button>
@@ -632,10 +631,7 @@ console.log('length',imageUrls.length)
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Not Handed Over</Text>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>{notDelivered}</Text>
               </View>
-            </View>
-          </View>
-          <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
-            <Button onPress={()=>{
+              <Button onPress={()=>{
             navigation.navigate('CollectPOD',{
               Forward : route.params.Forward,
               accepted : newaccepted,
@@ -648,8 +644,8 @@ console.log('length',imageUrls.length)
               notDelivered:notDelivered,
               runsheetno: route.params.PRSNumber,
             })
-            }} w="48%" size="lg" bg="#004aad">End Scan</Button>
-            <Button w="48%" size="lg" bg="#004aad" >Resume</Button>
+            }} w="90%" size="lg" bg="#004aad" mb={4} mt={4}>End Scan</Button>
+            </View>
           </View>
           <Center>
             <Image

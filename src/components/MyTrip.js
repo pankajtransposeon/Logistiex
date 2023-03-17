@@ -6,6 +6,8 @@ import { ActivityIndicator, PermissionsAndroid, TouchableOpacity, View, ScrollVi
 import { launchCamera } from 'react-native-image-picker';
 import {openDatabase} from 'react-native-sqlite-storage';
 const db = openDatabase({name: 'rn_sqlite'});
+import { useIsFocused } from "@react-navigation/native"; 
+
 export default function MyTrip({ navigation, route }) {
 
   const [vehicle, setVehicle] = useState('');
@@ -23,6 +25,7 @@ export default function MyTrip({ navigation, route }) {
   const [loading, setLoading] = useState(true);
   const [pendingPickup, setPendingPickup] = useState(0);
   const [pendingDelivery, setPendingDelivery] = useState(0);
+  const focus = useIsFocused();
 
   let current = new Date();
   let tripid = current.toString();
@@ -73,6 +76,11 @@ export default function MyTrip({ navigation, route }) {
       setLoading(false);
     });
   }
+  useEffect(() => {   
+    if(focus == true){ 
+      getTripDetails();
+    }
+  }, [focus]);
 useEffect(() => {
     db.transaction((tx) => {
       tx.executeSql('SELECT * FROM SellerMainScreenDetails WHERE shipmentAction="Seller Pickup" AND status IS NULL', [], (tx1, results) => {
@@ -372,7 +380,7 @@ useEffect(() => {
                     )
                   }
                   {
-          (pendingPickup && pendingDelivery) ? (
+          (pendingPickup>0 || pendingDelivery>0) ? (
           <Button 
          backgroundColor='#004aad' 
          _text={{ color: 'white', fontSize: 20 }} 

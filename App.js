@@ -76,6 +76,7 @@ function StackNavigators({navigation}) {
     const [data, setData] = useState([]);
     const [isLogin,setIsLogin] = useState(false);
     const [lastSyncTime11,setLastSyncTime] = useState('');
+    const [scannedStatus, SetScannedStatus]=useState(0)
     let m = 0;
     useEffect(() => {
       requestPermissions();
@@ -301,7 +302,17 @@ const push_Data = () => {
                         console.log(results.rows.item(i).clientShipmentReferenceNumber, accepted11[0], results.rows.item(i).rejectedReason, results.rows.item(i).consignorCode);
                         // console.log(new Date().toJSON().slice(0,10).replace(/-/g,'/'));
                         console.log('value of temp is :' + temp11 + ' ' + results.rows.length);
-
+                        console.log(results.rows.item(i).rejectionStage)
+                        if(results.rows.item(i).status==="accepted"){
+                          SetScannedStatus(1)
+                        }
+                        else if(results.rows.item(i).status==="notPicked"){
+                          SetScannedStatus(0)
+                        }
+                        else{
+                          SetScannedStatus(2)
+                        }
+                        console.log('ScannedStatus',scannedStatus)
                         /*
                         clientShipmentReferenceNumber: {type: String,required: true,},
                         awbNo:{type: String,required: true,},
@@ -325,31 +336,50 @@ const push_Data = () => {
                         files:{type: String,required: false,},
                         tags:{type: String,required: false,}
                         */
-
-                        axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
-                            clientShipmentReferenceNumber: results.rows.item(i).clientShipmentReferenceNumber,
-                              awbNo: results.rows.item(i).awbNo,
+                        let reqdata={
+                          clientShipmentReferenceNumber: results.rows.item(i).clientShipmentReferenceNumber,
+                          awbNo: results.rows.item(i).awbNo,
                               clientRefId: results.rows.item(i).clientRefId,
-                              courierCode: 'courierCode',
+                              courierCode: results.rows.item(i).courierCode,
                               feUserID: userId,
-                              isAccepted: accepted11[0],
                               rejectionReasonL1: results.rows.item(i).rejectedReason,
-                              rejectionReasonL2: '',
-                              rejectionStage:'',
+                              rejectionReasonL2: results.rows.item(i).rejectedReason,
+                              rejectionStage:"",
                               consignorCode: results.rows.item(i).consignorCode,
-                              eventTime: time.toString(),
-                              latitude: results11.rows.item(0).consignorLocation,
-                              longitude: results11.rows.item(0).consignorLongitude,
-                              // packagingId: results.rows.item(i).packagingId,
-                              packagingId: '',
-                              packagingStatus: 1,
-                              // PRSNumber: 'results.rows.item(i).PRSNumber',
-                              runsheetNo: 'runSheetNo',
-                              bagId: '',
-                              scanStatus: 1,
-                              bagSealNo: '',
-                              files: '',
-                              tags: '',
+                              eventTime: new Date().valueOf() ,
+                              latitude: results11.rows.item(i).consignorLocation,
+                              longitude: results11.rows.item(i).consignorLongitude,
+                              packagingId: results.rows.item(i).expectedPackagingId,
+                              packagingAction: results.rows.item(i).packagingAction,
+                              runsheetNo: results.rows.item(i).runsheetNo,
+                              bagId: "",
+                              scanStatus: scannedStatus,
+                              packagingStatus: results.rows.item(i).packagingAction,
+                              expectedPackagingId:results.rows.item(i).expectedPackagingId,
+                              shipmentAction:results.rows.item(i).shipmentStatus,
+                        }
+                        console.log("reqdata",reqdata);
+                        axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
+                          clientShipmentReferenceNumber: results.rows.item(i).clientShipmentReferenceNumber,
+                          awbNo: results.rows.item(i).awbNo,
+                              clientRefId: results.rows.item(i).clientRefId,
+                              courierCode: results.rows.item(i).courierCode,
+                              feUserID: userId,
+                              rejectionReasonL1: results.rows.item(i).rejectedReason,
+                              rejectionReasonL2: results.rows.item(i).rejectedReason,
+                              rejectionStage:"",
+                              consignorCode: results.rows.item(i).consignorCode,
+                              eventTime: new Date().valueOf() ,
+                              latitude: results11.rows.item(i).consignorLocation,
+                              longitude: results11.rows.item(i).consignorLongitude,
+                              packagingId: results.rows.item(i).expectedPackagingId,
+                              packagingAction: results.rows.item(i).packagingAction,
+                              runsheetNo: results.rows.item(i).runsheetNo,
+                              bagId: "",
+                              scanStatus: scannedStatus,
+                              packagingStatus: results.rows.item(i).packagingAction,
+                              expectedPackagingId:results.rows.item(i).expectedPackagingId,
+                              shipmentAction:results.rows.item(i).shipmentStatus,
                         }).then(response => {
                             temp11++;
                             setIsLoading(false);
@@ -376,7 +406,7 @@ const push_Data = () => {
                             }
                         }).catch(error => {
                             setIsLoading(false);
-                            console.log(error);
+                            console.log('error',{error});
                         });
 
                     });

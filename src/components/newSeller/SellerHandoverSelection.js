@@ -612,12 +612,11 @@ useEffect(() => {
                       </Text>
                       <Text
                         style={{
-                          fontWeight: '500',
-                          fontSize: 14,
-                          color: 'gray',
-                          paddingHorizontal: 10,
-                          paddingRight: 50,
-                          paddingLeft: 55,
+                        fontWeight: '500',
+                        fontSize: 18,
+                        color: 'gray',
+                        paddingLeft: 25,
+                        width: 220,
                         }}>
                         {type}
                       </Text>
