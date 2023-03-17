@@ -181,7 +181,7 @@ useEffect(() => {
         });
 
         db.transaction((tx) => {
-            tx.executeSql('SELECT * FROM SellerMainScreenDetails where status="rejected"', [], (tx1, results) => {
+            tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND status="rejected"', [], (tx1, results) => {
                 setSpr(results.rows.length);
                 setIsLoading(false);
             });
@@ -543,21 +543,14 @@ useEffect(() => {
         <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>Start Handover</Button>
         :
         null}
-        {/* <Button
+        <Button
           variant="outline"
-          onPress={() => {
-            tripValue === 'Start Trip'
-              ? navigation.navigate('StartTrip')
-              : tripValue === 'End Trip'
-              ? navigation.navigate('EndTrip')
-              : navigation.navigate('StartEndDetails');
-            navigation.closeDrawer();
-          }}
+          onPress={()=>{navigation.navigate('MyTrip', {userId: id})}}
           mt={4}
           style={{color: '#004aad', borderColor: '#004aad'}}>
           <Text style={{color: '#004aad'}}>{tripValue}</Text>
-        </Button> */}
-        <Fab onPress={()=>{navigation.navigate('MyTrip', {userId: id})}} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} label={<Text style={{color: 'white', fontSize: 16}} >{tripValue}</Text>} />
+        </Button>
+        {/* <Fab onPress={()=>{navigation.navigate('MyTrip', {userId: id})}} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} label={<Text style={{color: 'white', fontSize: 16}} >{tripValue}</Text>} /> */}
         {/* <Button w="100%" size="lg" bg="#004aad" mt={-5} onPress={()=>navigation.navigate('SellerHandover')}>Seller Handover</Button> */}
         {/* <Button w="100%" size="lg" bg="#004aad" onPress={()=>navigation.navigate('SellerHandover')}>Start Handover</Button> */}
         <Center>

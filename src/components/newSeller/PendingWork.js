@@ -179,7 +179,7 @@ const PendingWork = ({route}) => {
                           setMM(MM + results22.rows.length);
                           newData[results.rows.item(i).consignorCode] = {
                             consignorName: results.rows.item(i).consignorName,
-                            consignorLatitude: results.rows.item(i).consignorLatitude,
+                            consignorLatitude: results.rows.item(i).consignorLocation,
                             consignorLongitude: results.rows.item(i).consignorLongitude,
                             forward: results11.rows.length,
                             reverse: results22.rows.length,

@@ -110,10 +110,22 @@ const submitForm11 = () => {
     receiverName: name,
     consignorAction: "Seller Delivery",
     consignorCode:route.params.consignorCode
+    // "receiverMobileNo":9910939792,
+    // "receiverName":"Tarun",
+    // "consignorCode":"Seller-1001",
+    // "longitude":67.4389,
+    // "latitude":77.4342,
+    // "receivingTime":1678975807605,
+    // "feUserID":"HEVEFE157",
+    // "nothandedOver":0,
+    // "rejected":3,
+    // "accepted":7,
+    // "expected":10,
+    // "runsheetNo":"PRNSHIVEHE1581678967803161",
+    // "consignorAction":"Seller Pickup"
 })
     .then(function (response) {
         console.log(response.data, "hello");
-        alert('Your Data has submitted');
     })
     .catch(function (error) {
         console.log(error);
@@ -142,6 +154,7 @@ const sendSmsOtp = async () => {
     })
     .then(response => {
       if (response.data.return){
+        alert("OTP Submitted Successfully")
         submitForm11();
         setInputOtp('');
         setShowModal11(false);
