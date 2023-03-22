@@ -12,7 +12,7 @@ import {
   Heading,
   Modal,
   VStack,
-  Alert
+  Alert,
 } from 'native-base';
 import {
   StyleSheet,
@@ -45,7 +45,7 @@ const SellerHandoverSelection = ({route}) => {
   const shipmentData = `https://bkedtest.logistiex.com/SellerMainScreen/getSellerDetails/${route.params.paramKey}`;
   const [acc, setAcc] = useState(0);
   const [pending, setPending] = useState(route.params.Forward);
-  const [Forward,setForward]=useState("");
+  const [Forward, setForward] = useState('');
   const [reject, setReject] = useState(0);
   const [data, setData] = useState([]);
   const [order, setOrder] = useState([]);
@@ -61,8 +61,8 @@ const SellerHandoverSelection = ({route}) => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
-  const [notPicked11,setNotPicked11] = useState(0);
-  const [rejectedOrder11,setRejectedOrder11] = useState(0);
+  const [notPicked11, setNotPicked11] = useState(0);
+  const [rejectedOrder11, setRejectedOrder11] = useState(0);
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -70,12 +70,12 @@ const SellerHandoverSelection = ({route}) => {
   const DisplayData = async () => {
     closePickup11();
   };
-  const notPicked = (rejectionReason) => {
+  const notPicked = rejectionReason => {
     AsyncStorage.setItem('refresh11', 'refresh');
     db.transaction(tx => {
       tx.executeSql(
         'UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectedReason=? WHERE shipmentAction="Seller Delivery" AND status IS Null And consignorCode=?',
-        [rejectionReason,route.params.consignorCode],
+        [rejectionReason, route.params.consignorCode],
         (tx1, results) => {
           let temp = [];
           console.log(results.rows.length);
@@ -85,37 +85,42 @@ const SellerHandoverSelection = ({route}) => {
         },
       );
     });
-    axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
-    consignorCode:route.params.consignorCode,
-    rejectionReason: rejectionReason,
-    feUserID: route.params.userId,
-    latitude : route.params.consignorLatitude,
-    longitude : route.params.consignorLongitude,
-    eventTime: new Date().valueOf(),
-    rejectionStage:rejectStage 
-})
-    .then(function (response) {
+    axios
+      .post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
+        consignorCode: route.params.consignorCode,
+        rejectionReason: rejectionReason,
+        feUserID: route.params.userId,
+        latitude: route.params.consignorLatitude,
+        longitude: route.params.consignorLongitude,
+        eventTime: new Date().valueOf(),
+        rejectionStage: rejectStage,
+      })
+      .then(function (response) {
         console.log(response.data);
         setMessage('Successfully submitted');
         setStatus('success');
-    })
-    .catch(function (error) {
+      })
+      .catch(function (error) {
         console.log(error);
         setMessage('Submission failed');
         setStatus('error');
-    });
+      });
     setShowModal(true);
   };
   const closePickup11 = () => {
     db.transaction(tx => {
-      tx.executeSql('SELECT * FROM CloseDeliveryReasons', [], (tx1, results) => {
-        let temp = [];
-        console.log(results.rows.length);
-        for (let i = 0; i < results.rows.length; ++i) {
-          temp.push(results.rows.item(i));
-        }
-        setCloseData(temp);
-      });
+      tx.executeSql(
+        'SELECT * FROM CloseDeliveryReasons',
+        [],
+        (tx1, results) => {
+          let temp = [];
+          console.log(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+          }
+          setCloseData(temp);
+        },
+      );
     });
   };
   const DisplayData2 = async () => {
@@ -152,28 +157,27 @@ const SellerHandoverSelection = ({route}) => {
 
   const getData = async () => {
     try {
-        const value = await AsyncStorage.getItem('refresh11');
-        if (value === 'refresh') {
-            loadSellerPickupDetails();
-        }
+      const value = await AsyncStorage.getItem('refresh11');
+      if (value === 'refresh') {
+        loadSellerPickupDetails();
+      }
     } catch (e) {
-        console.log(e);
+      console.log(e);
     }
+  };
 
-};
-
-useEffect(() => {
+  useEffect(() => {
     const StartValue = setInterval(() => {
-        getData();
+      getData();
     }, 100);
     return () => clearInterval(StartValue);
-}, []);
+  }, []);
 
   const sync11 = () => {
     loadSellerPickupDetails();
   };
 
-  const loadSellerPickupDetails = async() => {
+  const loadSellerPickupDetails = async () => {
     await AsyncStorage.setItem('refresh11', 'notrefresh');
     db.transaction(tx => {
       db.transaction(tx => {
@@ -181,7 +185,7 @@ useEffect(() => {
           'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? ',
           [route.params.consignorCode],
           (tx1, results) => {
-              setForward(results.rows.length);
+            setForward(results.rows.length);
           },
         );
       });
@@ -194,7 +198,6 @@ useEffect(() => {
           setAcc(results.rows.length);
           if (results.rows.length === 0) {
             tx.executeSql('DROP TABLE IF EXISTS closeBag1', []);
-
           }
         },
       );
@@ -205,7 +208,7 @@ useEffect(() => {
         'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status="notDelivered"',
         [route.params.consignorCode],
         (tx1, results) => {
-            setNotPicked11(results.rows.length);
+          setNotPicked11(results.rows.length);
         },
       );
     });
@@ -214,7 +217,7 @@ useEffect(() => {
         'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status="rejected"',
         [route.params.consignorCode],
         (tx1, results) => {
-            setRejectedOrder11(results.rows.length);
+          setRejectedOrder11(results.rows.length);
         },
       );
     });
@@ -223,7 +226,7 @@ useEffect(() => {
         'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status IS NULL',
         [route.params.consignorCode],
         (tx1, results) => {
-            setPending(results.rows.length);
+          setPending(results.rows.length);
         },
       );
     });
@@ -239,7 +242,6 @@ useEffect(() => {
           (tx, results) => {
             var len = results.rows.length;
             setPending(Forward - len);
-
           },
         );
       });
@@ -315,169 +317,171 @@ useEffect(() => {
       setModalVisible(false);
     } else {
       setDropDownValue(item);
-      setRejectStage("L1")
+      setRejectStage('L1');
     }
   }
   function handleButtonPress2(item) {
     setDropDownValue1(item);
-    setRejectStage("L2")
+    setRejectStage('L2');
   }
 
   function openMap() {
-    var url = null;
-    if (route.params.consignorLatitude && route.params.consignorLongitude){
-      url = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination=' + route.params.consignorLatitude + ',' + route.params.consignorLongitude;
-    }
-    else {
-      url = 'https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination=' + type;
-    }
-    Linking.canOpenURL(url)
-    .then(supported => {
-      if (!supported) {
-        console.log('Can\'t handle url: ' + url);
-      } else {
-        return Linking.openURL(url);
-      }
-    })
-    .catch(err => console.error('An error occurred', err));
+    const scheme = Platform.select({ios: 'maps:0,0?q=', android: 'geo:0,0?q='});
+    const latLng = `${route.params.consignorLatitude},${route.params.consignorLongitude}`;
+    const label = type;
+    const url = Platform.select({
+      ios: `${scheme}${label}@${latLng}`,
+      android: `${scheme}${latLng}(${label})`,
+    });
+
+    Linking.openURL(url);
   }
 
   return (
     <NativeBaseProvider>
-        <View>
+      <View>
         <Modal>
-        <Modal.Content backgroundColor={status === 'success' ? '#dcfce7' : '#fee2e2'}>
-        <Modal.CloseButton />
-        <Modal.Body>
-        {status === 'success' ? (
-        <Alert w="100%" status="success">
-          <VStack space={1} flexShrink={1} w="100%" alignItems="center">
-            <Alert.Icon size="4xl" />
-            <Text my={3} fontSize="md" fontWeight="medium">{message}</Text>
-          </VStack>
-        </Alert>
-        ) : (
-        <Alert w="100%" status="error">
-          <VStack space={1} flexShrink={1} w="100%" alignItems="center">
-            <Alert.Icon size="4xl" />
-            <Text my={3} fontSize="md" fontWeight="medium">{message}</Text>
-          </VStack>
-        </Alert>
-      )}
-    </Modal.Body>
-    </Modal.Content>
-    </Modal>
-          <Modal
-            isOpen={modalVisible}
-            onClose={() => {setModalVisible(false); setDropDownValue('');}}
-            size="lg">
-            <Modal.Content maxWidth="350">
-              <Modal.CloseButton />
-              <Modal.Header>Close Delivery Reason Code</Modal.Header>
-              <Modal.Body>
-                {CloseData.map((d, index) => (
+          <Modal.Content
+            backgroundColor={status === 'success' ? '#dcfce7' : '#fee2e2'}>
+            <Modal.CloseButton />
+            <Modal.Body>
+              {status === 'success' ? (
+                <Alert w="100%" status="success">
+                  <VStack space={1} flexShrink={1} w="100%" alignItems="center">
+                    <Alert.Icon size="4xl" />
+                    <Text my={3} fontSize="md" fontWeight="medium">
+                      {message}
+                    </Text>
+                  </VStack>
+                </Alert>
+              ) : (
+                <Alert w="100%" status="error">
+                  <VStack space={1} flexShrink={1} w="100%" alignItems="center">
+                    <Alert.Icon size="4xl" />
+                    <Text my={3} fontSize="md" fontWeight="medium">
+                      {message}
+                    </Text>
+                  </VStack>
+                </Alert>
+              )}
+            </Modal.Body>
+          </Modal.Content>
+        </Modal>
+        <Modal
+          isOpen={modalVisible}
+          onClose={() => {
+            setModalVisible(false);
+            setDropDownValue('');
+          }}
+          size="lg">
+          <Modal.Content maxWidth="350">
+            <Modal.CloseButton />
+            <Modal.Header>Close Delivery Reason Code</Modal.Header>
+            <Modal.Body>
+              {CloseData.map((d, index) => (
+                <Button
+                  key={d.deliveryFailureReasonID}
+                  flex="1"
+                  mt={2}
+                  marginBottom={1.5}
+                  marginTop={1.5}
+                  style={{
+                    backgroundColor:
+                      d.deliveryFailureReasonName === DropDownValue
+                        ? '#6666FF'
+                        : '#C8C8C8',
+                  }}
+                  title={d.deliveryFailureReasonName}
+                  onPress={() =>
+                    handleButtonPress(d.deliveryFailureReasonName)
+                  }>
+                  <Text
+                    style={{
+                      color:
+                        DropDownValue == d.deliveryFailureReasonName
+                          ? 'white'
+                          : 'black',
+                    }}>
+                    {d.deliveryFailureReasonName}
+                  </Text>
+                </Button>
+              ))}
+              <Button
+                flex="1"
+                mt={2}
+                bg="#004aad"
+                marginBottom={1.5}
+                marginTop={1.5}
+                onPress={() => {
+                  notPicked(DropDownValue);
+                  setModalVisible(false);
+                }}>
+                Submit
+              </Button>
+            </Modal.Body>
+          </Modal.Content>
+        </Modal>
+        <Modal
+          isOpen={modalVisible2}
+          onClose={() => {
+            setModalVisible2(false);
+            setDropDownValue1('');
+          }}
+          size="lg">
+          <Modal.Content maxWidth="350">
+            <Modal.CloseButton />
+            <Modal.Header>Could Not Attempt Reason</Modal.Header>
+            <Modal.Body>
+              {NotAttemptData &&
+                NotAttemptData.map((d, index) => (
                   <Button
-                    key={d.deliveryFailureReasonID}
+                    key={d._id}
                     flex="1"
                     mt={2}
                     marginBottom={1.5}
                     marginTop={1.5}
                     style={{
                       backgroundColor:
-                        d.deliveryFailureReasonName === DropDownValue
-                          ? '#6666FF'
-                          : '#C8C8C8',
+                        d.reasonName === DropDownValue1 ? '#6666FF' : '#C8C8C8',
                     }}
-                    title={d.deliveryFailureReasonName}
-                    onPress={() =>
-                      handleButtonPress(d.deliveryFailureReasonName)
-                    }>
+                    title={d.reasonName}
+                    onPress={() => handleButtonPress2(d.reasonName)}>
                     <Text
                       style={{
                         color:
-                          DropDownValue == d.deliveryFailureReasonName
-                            ? 'white'
-                            : 'black',
+                          d.reasonName == DropDownValue1 ? 'white' : 'black',
                       }}>
-                      {d.deliveryFailureReasonName}
+                      {d.reasonName}
                     </Text>
                   </Button>
                 ))}
-                <Button
-                  flex="1"
-                  mt={2}
-                  bg="#004aad"
-                  marginBottom={1.5}
-                  marginTop={1.5}
-                  onPress={() => {
-                    notPicked(DropDownValue);
-                    setModalVisible(false);
-                  }}>
-                  Submit
-                </Button>
-              </Modal.Body>
-            </Modal.Content>
-          </Modal>
-          <Modal
-            isOpen={modalVisible2}
-            onClose={() => {setModalVisible2(false); setDropDownValue1('');}}
-            size="lg">
-            <Modal.Content maxWidth="350">
-              <Modal.CloseButton />
-              <Modal.Header>Could Not Attempt Reason</Modal.Header>
-              <Modal.Body>
-                {NotAttemptData &&
-                  NotAttemptData.map((d, index) => (
-                    <Button
-                      key={d._id}
-                      flex="1"
-                      mt={2}
-                      marginBottom={1.5}
-                      marginTop={1.5}
-                      style={{
-                        backgroundColor:
-                          d.reasonName === DropDownValue1
-                            ? '#6666FF'
-                            : '#C8C8C8',
-                      }}
-                      title={d.reasonName}
-                      onPress={() => handleButtonPress2(d.reasonName)}>
-                      <Text
-                        style={{
-                          color:
-                            d.reasonName == DropDownValue1 ? 'white' : 'black',
-                        }}>
-                        {d.reasonName}
-                      </Text>
-                    </Button>
-                  ))}
-                <Button
-                  flex="1"
-                  mt={2}
-                  bg="#004aad"
-                  marginBottom={1.5}
-                  marginTop={1.5}
-                  onPress={() => {
-                    notPicked(DropDownValue1);
-                    setModalVisible2(false);
-                  }}>
-                  Submit
-                </Button>
-                <Button
-                  flex="1"
-                  mt={2}
-                  bg="#004aad"
-                  marginBottom={1.5}
-                  marginTop={1.5}
-                  onPress={() => {
-                    setModalVisible(true), setModalVisible2(false);
-                  }}>
-                  Back
-                </Button>
-              </Modal.Body>
-            </Modal.Content>
-          </Modal>
-          <ScrollView>
+              <Button
+                flex="1"
+                mt={2}
+                bg="#004aad"
+                marginBottom={1.5}
+                marginTop={1.5}
+                onPress={() => {
+                  notPicked(DropDownValue1);
+                  setModalVisible2(false);
+                }}>
+                Submit
+              </Button>
+              <Button
+                flex="1"
+                mt={2}
+                bg="#004aad"
+                marginBottom={1.5}
+                marginTop={1.5}
+                onPress={() => {
+                  setModalVisible(true), setModalVisible2(false);
+                }}>
+                Back
+              </Button>
+            </Modal.Body>
+          </Modal.Content>
+        </Modal>
+        <ScrollView>
           <View
             style={{
               width: '100%',
@@ -485,17 +489,27 @@ useEffect(() => {
               flexDirection: 'row',
               marginTop: 30,
             }}>
-              {(acc !== 0 || pending !== 0 || notPicked11 !== 0 || rejectedOrder11 !== 0) ?
-             <PieChart
+            {acc !== 0 ||
+            pending !== 0 ||
+            notPicked11 !== 0 ||
+            rejectedOrder11 !== 0 ? (
+              <PieChart
                 widthAndHeight={160}
                 series={[acc, pending, notPicked11, rejectedOrder11]}
-                sliceColor={['#4CAF50', '#2196F3','#FEBE00', '#F44336' ]}
+                sliceColor={['#4CAF50', '#2196F3', '#FEBE00', '#F44336']}
                 doughnut={true}
                 coverRadius={0.6}
                 coverFill={'#FFF'}
-              /> :  <Center>
-              <Image style={{ width: 140, height: 140 }} source={require('../../assets/noDataAvailable.jpg')} alt={'No data Image'} />
-          </Center>}
+              />
+            ) : (
+              <Center>
+                <Image
+                  style={{width: 140, height: 140}}
+                  source={require('../../assets/noDataAvailable.jpg')}
+                  alt={'No data Image'}
+                />
+              </Center>
+            )}
           </View>
           <View
             style={{
@@ -513,7 +527,9 @@ useEffect(() => {
                 padding: 10,
                 borderRadius: 10,
               }}>
-              <Text style={{color: 'white', alignSelf: 'center'}}>Accepted : {acc}</Text>
+              <Text style={{color: 'white', alignSelf: 'center'}}>
+                Accepted : {acc}
+              </Text>
             </View>
             <View
               style={{
@@ -523,9 +539,10 @@ useEffect(() => {
                 padding: 10,
                 borderRadius: 10,
               }}>
-              <Text style={{color: 'white', alignSelf: 'center'}}>Not Delivered : {notPicked11}</Text>
+              <Text style={{color: 'white', alignSelf: 'center'}}>
+                Not Delivered : {notPicked11}
+              </Text>
             </View>
-
           </View>
           <View
             style={{
@@ -536,7 +553,7 @@ useEffect(() => {
               alignSelf: 'center',
               justifyContent: 'space-between',
             }}>
-           <View
+            <View
               style={{
                 // backgroundColor: '#F44336',
                 backgroundColor: '#2196F3',
@@ -611,11 +628,11 @@ useEffect(() => {
                       </Text>
                       <Text
                         style={{
-                        fontWeight: '500',
-                        fontSize: 18,
-                        color: 'gray',
-                        paddingLeft: 25,
-                        width: 220,
+                          fontWeight: '500',
+                          fontSize: 18,
+                          color: 'gray',
+                          paddingLeft: 25,
+                          width: 220,
                         }}>
                         {type}
                       </Text>
@@ -637,9 +654,7 @@ useEffect(() => {
                           Call Seller
                         </Text>
                       </View>
-                      <TouchableOpacity
-                        onPress={()=>openMap()}
-                        >
+                      <TouchableOpacity onPress={() => openMap()}>
                         <View style={styles.outer1}>
                           <Text style={{color: '#6DB1E1', fontWeight: '700'}}>
                             Get Direction
@@ -690,7 +705,7 @@ useEffect(() => {
                       consignorCode: route.params.consignorCode,
                       userId: route.params.userId,
                       phone: route.params.phone,
-                      contactPersonName:route.params.contactPersonName,
+                      contactPersonName: route.params.contactPersonName,
                       packagingId: route.params.packagingId,
                       Expected: Forward,
                       // TotalpickUp : newdata[0].totalPickups
@@ -699,19 +714,19 @@ useEffect(() => {
                   Scan
                 </Button>
               </View>
-              <View style={{paddingTop:60}}>
-              <Center>
-                <Image
-                  style={{width: 150, height: 150}}
-                  source={require('../../assets/image.png')}
-                  alt={'Logo Image'}
-                />
-              </Center>
+              <View style={{paddingTop: 60}}>
+                <Center>
+                  <Image
+                    style={{width: 150, height: 150}}
+                    source={require('../../assets/image.png')}
+                    alt={'Logo Image'}
+                  />
+                </Center>
               </View>
             </ScrollView>
           </View>
-          </ScrollView>
-        </View>
+        </ScrollView>
+      </View>
     </NativeBaseProvider>
   );
 };
