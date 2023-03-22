@@ -139,7 +139,7 @@ return (
                        consignorAddress2: single.consignorAddress2,
                        consignorCity: single.consignorCity,
                        consignorPincode: single.consignorPincode,
-                       consignorLatitude: single.consignorLocation,
+                       consignorLatitude: single.consignorLatitude,
                        consignorLongitude: single.consignorLongitude,
                        contactPersonName: single.contactPersonName,
                        consignorName: single.consignorName,
@@ -149,15 +149,32 @@ return (
                        phone: single.consignorContact,
                        });
                }}>
-                 <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
-                 <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{pending11[i]}/{value[i]}</Text></DataTable.Cell>
-                 <DataTable.Cell style={{ flex: 1, marginRight: -70 }}><Text style={styles.fontvalue}>{reverse[i]}</Text></DataTable.Cell>
+                 <DataTable.Cell style={{ flex: 1.2 }}><Text style={styles.fontvalue} numberOfLines={2}>{single.consignorName}</Text></DataTable.Cell>
+                 <DataTable.Cell style={{ flex: 0.4, marginRight: 50 }}><Text style={styles.fontvalue} numberOfLines={2}>{pending11[i]}/{value[i]}</Text></DataTable.Cell>
+                 <DataTable.Cell style={{ flex: 0.4, marginRight: 5 }}><Text style={styles.fontvalue} numberOfLines={2}>{reverse[i]}</Text></DataTable.Cell>
                  {/* <MaterialIcons name="arrow-right-bold" style={{ fontSize: 30, color: '#004aad', marginTop: 8 }} /> */}
                </DataTable.Row> ): (
-                       <DataTable.Row style={{ height: 'auto', backgroundColor: '#90ee90', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' }} key={single.consignorName} >
-                       <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
-                       <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{pending11[i]}/{value[i]}</Text></DataTable.Cell>
-                       <DataTable.Cell style={{ flex: 1, marginRight: -60 }}><Text style={styles.fontvalue}>{reverse[i]}</Text></DataTable.Cell>
+                       <DataTable.Row style={{ height: 'auto', backgroundColor: '#90ee90', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' }} key={single.consignorName} onPress={() => {
+                        navigation.navigate('NewSellerSelection', {
+                       paramKey: single.consignorCode,
+                       Forward: value[i],
+                       consignorAddress1: single.consignorAddress1,
+                       consignorAddress2: single.consignorAddress2,
+                       consignorCity: single.consignorCity,
+                       consignorPincode: single.consignorPincode,
+                       consignorLatitude: single.consignorLatitude,
+                       consignorLongitude: single.consignorLongitude,
+                       contactPersonName: single.contactPersonName,
+                       consignorName: single.consignorName,
+                       PRSNumber: single.PRSNumber,
+                       consignorCode: single.consignorCode,
+                       userId: single.userId,
+                       phone: single.consignorContact,
+                       });
+               }} >
+                       <DataTable.Cell style={{ flex: 1.2 }}><Text style={styles.fontvalue} numberOfLines={2}>{single.consignorName}</Text></DataTable.Cell>
+                       <DataTable.Cell style={{ flex: 0.4, marginRight: 50 }}><Text style={styles.fontvalue} numberOfLines={2}>{pending11[i]}/{value[i]}</Text></DataTable.Cell>
+                       <DataTable.Cell style={{ flex: 0.4, marginRight: 5 }}><Text style={styles.fontvalue} numberOfLines={2}>{reverse[i]}</Text></DataTable.Cell>
                        {/* <MaterialIcons name="check" style={{ fontSize: 30, color: 'green', marginTop: 8 }} /> */}
                      </DataTable.Row>
                         )
@@ -171,15 +188,15 @@ return (
                       <DataTable.Row style={{ height: 'auto', backgroundColor: '#eeeeee', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' ,elevation: 8,}} key={single.consignorName} onPress={() => {
                         navigation.navigate('MyTrip', {userId: route.params.userId});
                }}>
-                 <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
-                 <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{pending11[i]}/{value[i]}</Text></DataTable.Cell>
-                 <DataTable.Cell style={{ flex: 1, marginRight: -70 }}><Text style={styles.fontvalue}>{reverse[i]}</Text></DataTable.Cell>
+                 <DataTable.Cell style={{ flex: 1.2 }}><Text style={styles.fontvalue} numberOfLines={2}>{single.consignorName}</Text></DataTable.Cell>
+                 <DataTable.Cell style={{ flex: 0.4, marginRight: 50 }}><Text style={styles.fontvalue} numberOfLines={2}>{pending11[i]}/{value[i]}</Text></DataTable.Cell>
+                 <DataTable.Cell style={{ flex: 0.4, marginRight: 5 }}><Text style={styles.fontvalue} numberOfLines={2}>{reverse[i]}</Text></DataTable.Cell>
                  {/* <MaterialIcons name="arrow-right-bold" style={{ fontSize: 30, color: '#004aad', marginTop: 8 }} /> */}
                </DataTable.Row>): (
                 <DataTable.Row style={{ height: 'auto', backgroundColor: '#90ee90', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' }} key={single.consignorName} >
-                <DataTable.Cell style={{ flex: 1.7 }}><Text style={styles.fontvalue}>{single.consignorName}</Text></DataTable.Cell>
-                <DataTable.Cell style={{ flex: 1, marginRight: 50 }}><Text style={styles.fontvalue}>{pending11[i]}/{value[i]}</Text></DataTable.Cell>
-                <DataTable.Cell style={{ flex: 1, marginRight: -60 }}><Text style={styles.fontvalue}>{reverse[i]}</Text></DataTable.Cell>
+                <DataTable.Cell style={{ flex: 1.2 }}><Text style={styles.fontvalue} numberOfLines={2}>{single.consignorName}</Text></DataTable.Cell>
+                <DataTable.Cell style={{ flex: 0.4, marginRight: 50 }}><Text style={styles.fontvalue} numberOfLines={2}>{pending11[i]}/{value[i]}</Text></DataTable.Cell>
+                <DataTable.Cell style={{ flex: 0.4, marginRight: 5 }}><Text style={styles.fontvalue} numberOfLines={2}>{reverse[i]}</Text></DataTable.Cell>
                 {/* <MaterialIcons name="check" style={{ fontSize: 30, color: 'green', marginTop: 8 }} /> */}
               </DataTable.Row>
                 )

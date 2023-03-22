@@ -26,6 +26,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  TextInput
 } from 'react-native';
 import {
   Center,
@@ -522,6 +523,8 @@ const barcodeCheck11 = ()=>{
             // ContinueHandle11();
             console.log(barcode + 'rejected');
             ToastAndroid.show(barcode + ' Rejected', ToastAndroid.SHORT);
+            Vibration.vibrate(100);
+            RNBeep.beep();
             setDropDownValue('');
             console.log(acceptedArray);
             const newArray = acceptedArray.filter(item => item !== barcode);
@@ -768,7 +771,7 @@ const barcodeCheck11 = ()=>{
 
     const submitForm = () => {
       axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
-        clientShipmentReferenceNumber : route.params.barcode,
+        clientShipmentReferenceNumber : barcode,
         feUserID: route.params.userId,
         isAccepted : 'false',
         rejectionReason : DropDownValue,
@@ -948,9 +951,24 @@ const barcodeCheck11 = ()=>{
         <View>
           <View style={{backgroundColor: 'white'}}>
             <View style={{alignItems: 'center', marginTop: 15}}>
-              <View style={{backgroundColor: 'lightgray', padding: 10, flexDirection: 'row', justifyContent: 'space-between', width: '90%', borderRadius: 5}}>
+              <View style={{backgroundColor: 'lightgray', padding: 10, flexDirection: 'row', justifyContent: 'space-between', width: '90%', borderRadius: 5, flex:1}}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>shipment ID: </Text>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>{barcode}</Text>
+                {/* <View style={{ flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',}}>
+                <TextInput
+                style={styles.textInput}
+                placeholder="Enter shipment ID"
+                value={barcode}
+                onChangeText={(text) => setBarcode(text)}
+                />
+              <View style={styles.infoContainer}>
+            <View style={styles.info}>
+            <Text style={styles.label}>shipment ID: </Text>
+            <Text style={styles.value}>{barcode}</Text>
+        </View> */}
+      {/* </View> */}
               </View>
               <Button title="Reject Shipment" onPress={() => setModalVisible(true)} w="90%" size="lg" bg="#004aad" mb={4} mt={4}>Reject Shipment</Button>
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
@@ -1008,6 +1026,32 @@ const barcodeCheck11 = ()=>{
 export default ShipmentBarcode;
 
 export const styles = StyleSheet.create({
+  textInput: {
+    height: 40,
+    width: '90%',
+    backgroundColor: 'white',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+  },
+  infoContainer: {
+    marginTop: 10,
+    width: '90%',
+  },
+  info: {
+    backgroundColor: 'lightgray',
+    padding: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderRadius: 5,
+  },
+  label: {
+    fontSize: 18,
+    fontWeight: '500',
+  },
+  value: {
+    fontSize: 18,
+    fontWeight: '500',
+  },
   normal:{
     fontFamily:'open sans',
     fontWeight:'normal',

@@ -477,7 +477,7 @@ useEffect(() => {
               </Modal.Body>
             </Modal.Content>
           </Modal>
-
+          <ScrollView>
           <View
             style={{
               width: '100%',
@@ -485,8 +485,7 @@ useEffect(() => {
               flexDirection: 'row',
               marginTop: 30,
             }}>
-
-            {(acc !== 0 || pending !== 0 || notPicked11 !== 0 || rejectedOrder11 !== 0) ?
+              {(acc !== 0 || pending !== 0 || notPicked11 !== 0 || rejectedOrder11 !== 0) ?
              <PieChart
                 widthAndHeight={160}
                 series={[acc, pending, notPicked11, rejectedOrder11]}
@@ -711,6 +710,7 @@ useEffect(() => {
               </View>
             </ScrollView>
           </View>
+          </ScrollView>
         </View>
     </NativeBaseProvider>
   );

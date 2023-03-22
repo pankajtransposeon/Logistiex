@@ -297,7 +297,7 @@ const push_Data = () => {
                         console.log('API push');
                         console.log(results.rows.item(i).PRSNumber);
                         setIsLoading(!isLoading);
-                        console.log(results11.rows.item(0).consignorLocation);
+                        console.log(results11.rows.item(0).consignorLatitude);
                         console.log(results.rows.item(i).status);
                         console.log(results.rows.item(i).clientShipmentReferenceNumber, accepted11[0], results.rows.item(i).rejectedReason, results.rows.item(i).consignorCode);
                         // console.log(new Date().toJSON().slice(0,10).replace(/-/g,'/'));
@@ -347,7 +347,7 @@ const push_Data = () => {
                               rejectionStage:"",
                               consignorCode: results.rows.item(i).consignorCode,
                               eventTime: new Date().valueOf() ,
-                              latitude: results11.rows.item(i).consignorLocation,
+                              latitude: results11.rows.item(i).consignorLatitude,
                               longitude: results11.rows.item(i).consignorLongitude,
                               packagingId: results.rows.item(i).expectedPackagingId,
                               packagingAction: results.rows.item(i).packagingAction,
@@ -370,7 +370,7 @@ const push_Data = () => {
                               rejectionStage:"",
                               consignorCode: results.rows.item(i).consignorCode,
                               eventTime: new Date().valueOf() ,
-                              latitude: results11.rows.item(i).consignorLocation,
+                              latitude: results11.rows.item(i).consignorLatitude,
                               longitude: results11.rows.item(i).consignorLongitude,
                               packagingId: results.rows.item(i).expectedPackagingId,
                               packagingAction: results.rows.item(i).packagingAction,
@@ -440,7 +440,7 @@ const push_Data = () => {
         db.transaction(txn => {
             txn.executeSql('DROP TABLE IF EXISTS SyncSellerPickUp', []);
             txn.executeSql(`CREATE TABLE IF NOT EXISTS SyncSellerPickUp( consignorCode ID VARCHAR(200) PRIMARY KEY ,userId VARCHAR(100), 
-            consignorName VARCHAR(200),consignorAddress1 VARCHAR(200),consignorAddress2 VARCHAR(200),consignorCity VARCHAR(200),consignorPincode,consignorLocation INT(20),consignorLongitude DECIMAL(20,10),consignorContact VARCHAR(200),ReverseDeliveries INT(20),PRSNumber VARCHAR(200),ForwardPickups INT(20), BagOpenClose11 VARCHAR(200), ShipmentListArray VARCHAR(800),contactPersonName VARCHAR(100))`, [], (sqlTxn, res) => {
+            consignorName VARCHAR(200),consignorAddress1 VARCHAR(200),consignorAddress2 VARCHAR(200),consignorCity VARCHAR(200),consignorPincode,consignorLatitude INT(20),consignorLongitude DECIMAL(20,10),consignorContact VARCHAR(200),ReverseDeliveries INT(20),PRSNumber VARCHAR(200),ForwardPickups INT(20), BagOpenClose11 VARCHAR(200), ShipmentListArray VARCHAR(800),contactPersonName VARCHAR(100))`, [], (sqlTxn, res) => {
                 // console.log("table created successfully1212");
                 // loadAPI_Data();
             }, error => {
@@ -459,7 +459,7 @@ const push_Data = () => {
                 for (let i = 0; i < res.data.data.length; i++) {
                     // let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
                     db.transaction(txn => {
-                        txn.executeSql('INSERT OR REPLACE INTO SyncSellerPickUp( contactPersonName,consignorCode ,userId ,consignorName,consignorAddress1,consignorAddress2,consignorCity,consignorPincode,consignorLocation,consignorLongitude,consignorContact,ReverseDeliveries,PRSNumber,ForwardPickups,BagOpenClose11, ShipmentListArray) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [
+                        txn.executeSql('INSERT OR REPLACE INTO SyncSellerPickUp( contactPersonName,consignorCode ,userId ,consignorName,consignorAddress1,consignorAddress2,consignorCity,consignorPincode,consignorLatitude,consignorLongitude,consignorContact,ReverseDeliveries,PRSNumber,ForwardPickups,BagOpenClose11, ShipmentListArray) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [
                           res.data.data[i].contactPersonName,
                             res.data.data[i].consignorCode,
                             userId,

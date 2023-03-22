@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { ArrowForwardIcon, NativeBaseProvider, Box, Image, Center,Input, Modal, Heading} from 'native-base';
-import{StyleSheet ,Text ,TouchableOpacity ,View ,ScrollView ,TextInput ,getPick ,Alert, ToastAndroid} from 'react-native';
+import { ArrowForwardIcon, NativeBaseProvider, Box, Image, Center,Input, Modal, Heading, VStack, Alert} from 'native-base';
+import{StyleSheet ,Text ,TouchableOpacity ,View ,ScrollView ,TextInput , ToastAndroid} from 'react-native';
 import axios from 'axios';
 import { HStack ,Button } from 'native-base';
 import React, { useState, useEffect, useRef } from 'react';
@@ -29,6 +29,8 @@ const CollectPOD = ({route}) => {
   const [modalVisible11, setModalVisible11] = useState(false);
   const [DropDownValue11, setDropDownValue11] = useState(null);
   const [PartialCloseData, setPartialCloseData] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState(0);
   const PartialClose = 'https://bkedtest.logistiex.com/ADupdatePrams/getPartialClosureReasons';
   const DisplayData11 = async() => {
     db.transaction(tx => {
@@ -154,7 +156,8 @@ const sendSmsOtp = async () => {
     })
     .then(response => {
       if (response.data.return){
-        alert("OTP Submitted Successfully")
+        // alert("OTP Submitted Successfully")
+        setMessage(1)
         submitForm11();
         setInputOtp('');
         setShowModal11(false);
@@ -188,13 +191,16 @@ const sendSmsOtp = async () => {
         });
       }
       else {
-        alert('Invalid OTP, please try again !!');
+        // alert('Invalid OTP, please try again !!');
+        setMessage(2);
       }
     })
     .catch(error => {
-      alert('Invalid OTP, please try again !!');
+      // alert('Invalid OTP, please try again !!');
+      setMessage(2)
       console.log(error);
     });
+    setShowModal(true);
   }
   return (
     <NativeBaseProvider>
@@ -215,6 +221,19 @@ const sendSmsOtp = async () => {
           </Modal.Body>
         </Modal.Content>
       </Modal>
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+          <Modal.Content backgroundColor={message === 1 ? '#dcfce7' : '#fee2e2'}>
+            <Modal.CloseButton />
+            <Modal.Body>
+              <Alert w="100%" status={message === 1 ? 'success' : 'error'}>
+                <VStack space={1} flexShrink={1} w="100%" alignItems="center">
+                  <Alert.Icon size="4xl" />
+                  <Text my={3} fontSize="md" fontWeight="medium">{message === 1 ? 'OTP Submitted Successfully' : 'Invalid OTP, please try again !!'}</Text>
+                </VStack>
+              </Alert>
+            </Modal.Body>
+          </Modal.Content>
+        </Modal>
       
       <View style={{backgroundColor: 'white', flex: 1, paddingTop: 30}}>
         <ScrollView showsVerticalScrollIndicator={false}>
