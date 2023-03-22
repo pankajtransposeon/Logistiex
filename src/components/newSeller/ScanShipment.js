@@ -266,6 +266,8 @@ console.log('length',imageUrls.length)
           // ContinueHandle11();
           console.log(barcode + 'rejected');
           ToastAndroid.show(barcode + ' Rejected', ToastAndroid.SHORT);
+          Vibration.vibrate(100);
+          RNBeep.beep();
           setDropDownValue('');
           console.log(acceptedArray);
           const newArray = acceptedArray.filter(item => item !== barcode);
@@ -286,7 +288,8 @@ console.log('length',imageUrls.length)
   const taggedDetails = () => {
 
     db.transaction((tx) => {
-      tx.executeSql('UPDATE SellerMainScreenDetails SET status="tagged" ,rejectedReason=?  WHERE status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [DropDownValue,route.params.consignorCode, barcode,barcode,barcode], (tx1, results) => {
+      tx.executeSql('UPDATE SellerMainScreenDetails SET status="tagged" ,rejectedReason=?  WHERE status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ',
+       [DropDownValue,route.params.consignorCode, barcode,barcode,barcode], (tx1, results) => {
         let temp = [];
         console.log('Rejected Reason : ', DropDownValue);
         console.log('Results', results.rowsAffected);
@@ -295,6 +298,8 @@ console.log('length',imageUrls.length)
           // ContinueHandle11();
           console.log(barcode + 'tagged');
           ToastAndroid.show(barcode + ' Tagged', ToastAndroid.SHORT);
+          Vibration.vibrate(100);
+          RNBeep.beep();
           setDropDownValue('');
           console.log(acceptedArray);
           const newArray = acceptedArray.filter(item => item !== barcode);
@@ -323,6 +328,7 @@ console.log('length',imageUrls.length)
         [route.params.consignorCode,data,data,data],
         (sqlTxn, res) => {
           console.log('ok1111',data);
+          console.log(res);
           setLen(res.rows.length);
           setBarcode(data);
           if (!res.rows.length) {

@@ -11,8 +11,8 @@ import { useIsFocused } from "@react-navigation/native";
 export default function MyTrip({ navigation, route }) {
 
   const [vehicle, setVehicle] = useState('');
-  const [startkm, setStartKm] = useState('');
-  const [endkm, setEndkm] = useState('');
+  const [startkm, setStartKm] = useState(0);
+  const [endkm, setEndkm] = useState(0);
   const [startImageUrl, setStartImageUrl] = useState('');
   const [endImageUrl, setEndImageUrl] = useState('');
   const [tripID, setTripID] = useState("");
@@ -25,6 +25,7 @@ export default function MyTrip({ navigation, route }) {
   const [loading, setLoading] = useState(true);
   const [pendingPickup, setPendingPickup] = useState(0);
   const [pendingDelivery, setPendingDelivery] = useState(0);
+  const [label, setLabel] = useState('Input vehicle KMs');
   const focus = useIsFocused();
 
   let current = new Date();
@@ -260,6 +261,15 @@ useEffect(() => {
     })();
   }
 
+  const handleInputChange = (value) => {
+    setStartKm(value);
+    if (value) {
+      setLabel('Vehicle KMs');
+    } else {
+      setLabel('Input vehicle KMs');
+    }
+  };
+
   return (
     <NativeBaseProvider>
       {loading ? 
@@ -301,7 +311,7 @@ useEffect(() => {
                   <ScrollView>
                   <VStack space={6}>
                       <Input disabled selectTextOnFocus={false} editable={false} backgroundColor='gray.300' value={vehicle} size="lg" type={"number"} placeholder="Vehicle Number" />
-                      <Input keyboardType="numeric" value={startkm} onChangeText={setStartKm} size="lg" type={"number"} placeholder="Input vehicle KMs" />
+                      <Input keyboardType="numeric" value={startkm} onChangeText={(e)=>handleInputChange(e)} size="lg" type={"number"} placeholder={label}/>                      
                       <Button py={3} variant='outline' _text={{ color: 'white', fontSize: 20 }} onPress={takeStartPhoto}>
                       {uploadStatus === 'idle' && <MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons>}
                       {uploadStatus === 'uploading' && <ActivityIndicator size="small" color="gray" />}

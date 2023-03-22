@@ -516,6 +516,7 @@ useEffect(() => {
               </Modal.Body>
             </Modal.Content>
           </Modal>
+          <ScrollView>
 
           <View
             style={{
@@ -524,16 +525,8 @@ useEffect(() => {
               flexDirection: 'row',
               marginTop: 30,
             }}>
-            {/* <PieChart
-              widthAndHeight={160}
-              series={[pending, acc]}
-              sliceColor={['#F44336', '#4CAF50']}
-              doughnut={true}
-              coverRadius={0.6}
-              coverFill={'#FFF'}
-            /> */}
-
-            {(acc !== 0 || pending !== 0 || notPicked11 !== 0 || rejectedOrder11 !== 0) ?
+          
+          {(acc !== 0 || pending !== 0 || notPicked11 !== 0 || rejectedOrder11 !== 0) ?
              <PieChart
                 widthAndHeight={160}
                 series={[acc, pending, notPicked11, rejectedOrder11]}
@@ -704,54 +697,59 @@ useEffect(() => {
                   </View>
                 </View>
               </ScrollView>
+              {notPicked11!= route.params.Forward?
               <View
+              style={{
+                flexDirection: 'row',
+                width: '92%',
+                justifyContent: 'space-between',
+                marginTop: 10,
+                alignSelf: 'center',
+              }}>
+              <Button
+                leftIcon={
+                  <Icon
+                    color="white"
+                    as={<MaterialIcons name="close-circle-outline" />}
+                    size="sm"
+                  />
+                }
+                onPress={() => setModalVisible(true)}
+                style={{backgroundColor: '#004aad', width: '48%'}}>
+                Close Pickup
+              </Button>
+              <Button
                 style={{
-                  flexDirection: 'row',
-                  width: '92%',
-                  justifyContent: 'space-between',
-                  marginTop: 10,
+                  backgroundColor: '#004aad',
+                  width: '50%',
                   alignSelf: 'center',
-                }}>
-                <Button
-                  leftIcon={
-                    <Icon
-                      color="white"
-                      as={<MaterialIcons name="close-circle-outline" />}
-                      size="sm"
-                    />
-                  }
-                  onPress={() => setModalVisible(true)}
-                  style={{backgroundColor: '#004aad', width: '48%'}}>
-                  Close Pickup
-                </Button>
-                <Button
-                  style={{
-                    backgroundColor: '#004aad',
-                    width: '50%',
-                    alignSelf: 'center',
-                  }}
-                  leftIcon={
-                    <Icon
-                      color="white"
-                      as={<MaterialIcons name="barcode-scan" />}
-                      size="sm"
-                    />
-                  }
-                  onPress={() =>
-                    navigation.navigate('ShipmentBarcode', {
-                      Forward: Forward,
-                      PRSNumber: route.params.PRSNumber,
-                      consignorCode: route.params.consignorCode,
-                      userId: route.params.userId,
-                      phone: route.params.phone,
-                      contactPersonName:route.params.contactPersonName,
-                      packagingId: route.params.packagingId,
-                      // TotalpickUp : newdata[0].totalPickups
-                    })
-                  }>
-                  Scan
-                </Button>
-              </View>
+                }}
+                leftIcon={
+                  <Icon
+                    color="white"
+                    as={<MaterialIcons name="barcode-scan" />}
+                    size="sm"
+                  />
+                }
+                onPress={() =>
+                  navigation.navigate('ShipmentBarcode', {
+                    Forward: Forward,
+                    PRSNumber: route.params.PRSNumber,
+                    consignorCode: route.params.consignorCode,
+                    userId: route.params.userId,
+                    phone: route.params.phone,
+                    contactPersonName:route.params.contactPersonName,
+                    packagingId: route.params.packagingId,
+                    // TotalpickUp : newdata[0].totalPickups
+                  })
+                }>
+                Scan
+              </Button>
+            </View>
+            :
+            <Button w="90%" size="lg" bg="#004aad" mb={4} mt={4} onPress={()=>navigation.navigate('NewSellerPickup')}>Go Back</Button>
+              }
+              
               <View style={{paddingTop:60}}>
               <Center>
                 <Image
@@ -762,7 +760,8 @@ useEffect(() => {
               </Center>
               </View>
             </ScrollView>
-          </View>
+          </View>  
+          </ScrollView>
         </View>
     </NativeBaseProvider>
   );
