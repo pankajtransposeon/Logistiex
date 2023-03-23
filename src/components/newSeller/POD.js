@@ -36,6 +36,7 @@ const POD = ({route}) => {
   const [newaccepted, setnewAccepted] = useState(route.params.accepted);
   const [newrejected, setnewRejected] = useState(route.params.rejected);
   const [newNotPicked, setNewNotPicked] = useState(route.params.notPicked);
+  const [pending,setPending]=useState(0)
   const [timer, setTimer] = useState(60); 
 
   useEffect(() => {
@@ -256,6 +257,24 @@ const sendSmsOtp = async () => {
     setShowModal(true);
   }
 
+  const displayData = async () => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=?  AND status IS NULL',
+        [route.params.consignorCode],
+        (tx1, results) => {
+          setPending(results.rows.length);
+        },
+      );
+    }); 
+  };
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      displayData();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   return (
     <NativeBaseProvider>
        <Modal w="100%" isOpen={showModal11} onClose={() => {setShowModal11(false), setTimer(60)}}>
@@ -327,7 +346,12 @@ const sendSmsOtp = async () => {
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: 'lightgray', borderBottomLeftRadius: 5, borderBottomRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Not Picked</Text>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>{newNotPicked}</Text>
-              </View></Center>
+              </View>
+              <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: 'lightgray', borderBottomLeftRadius: 5, borderBottomRightRadius: 5, padding: 10}}>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>Pending</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{pending}</Text>
+              </View>
+              </Center>
           <Center>
             <Input mx="3" mt={4} placeholder="Receiver Name" w="90%" bg="gray.200" size="lg" value={name} onChangeText={(e)=>setName(e)} />
             <Input mx="3" my={4} placeholder="Mobile Number" w="90%" bg="gray.200" size="lg" value={mobileNumber} onChangeText={(e)=>setMobileNumber(e)} />

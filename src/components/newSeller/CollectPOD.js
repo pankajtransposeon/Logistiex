@@ -30,6 +30,7 @@ const CollectPOD = ({route}) => {
   const [DropDownValue11, setDropDownValue11] = useState(null);
   const [PartialCloseData, setPartialCloseData] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [pending,setPending]=useState(0)
   const [message, setMessage] = useState(0);
   const PartialClose = 'https://bkedtest.logistiex.com/ADupdatePrams/getPartialClosureReasons';
   const [timer, setTimer] = useState(60); 
@@ -214,6 +215,24 @@ const sendSmsOtp = async () => {
     });
     setShowModal(true);
   }
+  const displayData = async () => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=?  AND status IS NULL',
+        [route.params.consignorCode],
+        (tx1, results) => {
+          setPending(results.rows.length);
+        },
+      );
+    }); 
+  };
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      displayData();
+    });
+    return unsubscribe;
+  }, [navigation]);
+  
   return (
     <NativeBaseProvider>
       <Modal w="100%" isOpen={showModal11} onClose={() => {setShowModal11(false); setTimer(60)}}>
@@ -274,6 +293,10 @@ const sendSmsOtp = async () => {
               <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: 'lightgray', borderBottomLeftRadius: 5, borderBottomRightRadius: 5, padding: 10}}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Not Handed Over</Text>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.notDelivered}</Text>
+              </View>
+              <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: 'lightgray', borderBottomLeftRadius: 5, borderBottomRightRadius: 5, padding: 10}}>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>Pending</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>{pending}</Text>
               </View>
             </View>
           <Center>
