@@ -284,6 +284,7 @@ console.log('length',imageUrls.length)
       });
     });
     submitForm();
+    setImageUrls([]);
   };
   const taggedDetails = () => {
 
@@ -318,6 +319,7 @@ console.log('length',imageUrls.length)
       });
     });
     submitForm1();
+    setImageUrls([]);
   };
 
   
