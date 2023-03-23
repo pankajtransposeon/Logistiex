@@ -706,7 +706,7 @@ const SellerHandoverSelection = ({route}) => {
                       />
                     }
                     onPress={() =>
-                      navigation.navigate('ShipmentBarcode', {
+                      navigation.navigate('ScanShipment', {
                         Forward: Forward,
                         PRSNumber: route.params.PRSNumber,
                         consignorCode: route.params.consignorCode,
@@ -727,7 +727,7 @@ const SellerHandoverSelection = ({route}) => {
                   bg="#004aad"
                   mb={4}
                   mt={4}
-                  onPress={() => navigation.navigate('NewSellerPickup')}>
+                  onPress={() => navigation.navigate('SellerDeliveries')}>
                   Go Back
                 </Button>
               )}

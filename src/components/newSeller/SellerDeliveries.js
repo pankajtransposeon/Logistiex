@@ -13,7 +13,7 @@ import {
   import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
   const db = openDatabase({name: 'rn_sqlite'});
   
-  const NewSellerPickup = ({route}) => {
+  const SellerDeliveries = ({route}) => {
   
     const [data, setData] = useState([]);
     const [data1, setData1] = useState([]);
@@ -218,7 +218,7 @@ import {
         </NativeBaseProvider>
   );
   };
-  export default NewSellerPickup;
+  export default SellerDeliveries;
   export const styles = StyleSheet.create({
   
     container112: {
