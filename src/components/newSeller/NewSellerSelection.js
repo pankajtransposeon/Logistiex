@@ -619,7 +619,6 @@ const NewSellerSelection = ({route}) => {
               <ScrollView>
                 <View style={styles.containter}>
                   <View style={styles.mainbox}>
-<<<<<<< HEAD
                   <View
                   style={{
                   flexDirection: 'column',
@@ -676,61 +675,7 @@ const NewSellerSelection = ({route}) => {
       {type}
     </Text>
   </View>
-</View>
-
-=======
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingHorizontal: 10,
-                        paddingTop: 15,
-                      }}>
-                      <Text
-                        style={{
-                          fontWeight: '500',
-                          fontSize: 18,
-                          color: 'black',
-                        }}>
-                        Seller Name
-                      </Text>
-                      <Text
-                        style={{
-                          fontWeight: '500',
-                          fontSize: 18,
-                          color: 'gray',
-                        }}>
-                        {route.params.consignorName}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingHorizontal: 10,
-                        paddingTop: 15,
-                        paddingBottom: 15,
-                      }}>
-                      <Text
-                        style={{
-                          fontWeight: '500',
-                          fontSize: 18,
-                          color: 'black',
-                        }}>
-                        Address
-                      </Text>
-                      <Text
-                        style={{
-                          fontWeight: '500',
-                          fontSize: 18,
-                          color: 'gray',
-                          paddingLeft: 55,
-                          width: 220,
-                        }}>
-                        {type}
-                      </Text>
-                    </View>
->>>>>>> upstream/main
+</View>           
                     <View
                       style={{
                         flexDirection: 'row',
