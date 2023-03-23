@@ -2549,7 +2549,7 @@ function CustomDrawerContent({navigation}) {
   const [email, SetEmail] = useState('');
   const [name, setName] = useState('');
   const [id, setId] = useState('');
-  const [tripValue, setTripValue] = useState('Start Trip');
+  const [tripValue, setTripValue] = useState('My Trip');
   const [tripData, setTripData]=useState([])
   const getData = async () => {
     try {
@@ -2601,16 +2601,15 @@ function CustomDrawerContent({navigation}) {
   };
   
   useEffect(() => {
-    const timeoutId = setTimeout(fetchData, 1000);
-    return () => clearTimeout(timeoutId);
-  }, []);
+    fetchData();
+  }, [id]);
   
   useEffect(() => {
-    if (tripData && tripData.startTime && !tripData.endTime) {
-      setTripValue("End Trip");
+    if (tripData && tripData.startTime) {
+      setTripValue("Trip Started");
     }
-    else{
-      setTripValue("Start Trip");
+    if(tripData && tripData.startTime && tripData.endTime){
+      setTripValue("Trip Ended");
     }
   }, [tripData]);
   useEffect(() => {
@@ -2687,7 +2686,7 @@ function CustomDrawerContent({navigation}) {
               }}
               mt={4}
               style={{color: '#004aad', borderColor: '#004aad'}}>
-              <Text style={{color: '#004aad'}}>My Trip</Text>
+              <Text style={{color: '#004aad'}}>{tripValue}</Text>
             </Button>
 
 

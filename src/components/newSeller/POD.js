@@ -36,6 +36,19 @@ const POD = ({route}) => {
   const [newaccepted, setnewAccepted] = useState(route.params.accepted);
   const [newrejected, setnewRejected] = useState(route.params.rejected);
   const [newNotPicked, setNewNotPicked] = useState(route.params.notPicked);
+  const [timer, setTimer] = useState(60); 
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (timer > 0) {
+        setTimer(timer - 1);
+      }
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [timer]);
+
   const DisplayData11 = async() => {
     db.transaction(tx => {
       tx.executeSql('SELECT * FROM PartialCloseReasons', [], (tx1, results) => {
@@ -245,7 +258,7 @@ const sendSmsOtp = async () => {
 
   return (
     <NativeBaseProvider>
-       <Modal w="100%" isOpen={showModal11} onClose={() => setShowModal11(false)}>
+       <Modal w="100%" isOpen={showModal11} onClose={() => {setShowModal11(false), setTimer(60)}}>
         <Modal.Content w="100%" bg={'#eee'}>
           <Modal.CloseButton />
           <Modal.Body w="100%">
@@ -256,7 +269,11 @@ const sendSmsOtp = async () => {
               handleTextChange={(e)=>setInputOtp(e)}
             />
             <Box flexDir="row" justifyContent="space-between" mt={3}>
-              <Button w="40%" bg="gray.500" onPress={()=>sendSmsOtp()}>Resend</Button>
+            {timer?
+              <Button w="40%" bg="gray.500"><Text style={{color:'white'}}>{timer}s</Text></Button>
+              :
+               <Button w="40%" bg="gray.500" onPress={()=>{sendSmsOtp(); setTimer(60)}}>Resend</Button>
+              }             
               <Button w="40%" bg="#004aad" onPress={()=>validateOTP()}>Submit</Button>
             </Box>
           </Modal.Body>

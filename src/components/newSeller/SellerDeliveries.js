@@ -5,7 +5,7 @@ import {
     Image,
     Center,
   } from 'native-base';
-  import {StyleSheet, ScrollView} from 'react-native';
+  import {StyleSheet, ScrollView, View, ActivityIndicator} from 'react-native';
   import {DataTable, Searchbar, Text, Card} from 'react-native-paper';
   import {openDatabase} from 'react-native-sqlite-storage';
   import React, {useEffect, useState} from 'react';
@@ -21,6 +21,8 @@ import {
     const [pending11,setPending] =useState([]);
     const [value,setValue] =useState([]);
     const [reverse,setReverse] =useState([]);
+    const [loading, setLoading] = useState(true);
+
     const navigation = useNavigation();
   
     useEffect(() => {
@@ -39,6 +41,7 @@ import {
                     temp.push(results.rows.item(i));
                 }
                 setData(temp);
+                setLoading(false);
             });
         });
         
@@ -112,7 +115,10 @@ import {
     };
   return (
   <NativeBaseProvider>
-    <Box flex={1} bg="#fff"  width="auto" maxWidth="100%">
+    {loading ? 
+        <ActivityIndicator size="large" color="blue" style={{marginTop: 44}} />
+      :
+      <Box flex={1} bg="#fff"  width="auto" maxWidth="100%">
       <Searchbar
         placeholder="Search Seller Name"
         onChangeText={(e) => setKeyword(e)}
@@ -125,7 +131,7 @@ import {
             <DataTable.Header style={{height:'auto', backgroundColor: '#004aad', borderTopLeftRadius: 5, borderTopRightRadius: 5, borderWidth:2, borderColor:'white'}}  >
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Seller Name</Text></DataTable.Title>
               <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Forward Pickups</Text></DataTable.Title>
-              <DataTable.Title style={{flex: 1.2,marginRight:-35}}><Text style={{ textAlign: 'center', color:'white'}}>Reverse Deliveries</Text></DataTable.Title>
+              <DataTable.Title style={{flex: 1.3,marginRight:-35}}><Text style={{ textAlign: 'center', color:'white'}}>Reverse Deliveries</Text></DataTable.Title>
             </DataTable.Header>
            {route.params.Trip !== 'Start Trip' && data && data.length > 0
                 ? data.filter(searched(keyword)).map((single, i) =>
@@ -146,13 +152,32 @@ import {
                        consignorCode: single.consignorCode,
                        userId: single.userId,
                        phone: single.consignorContact,
+                       Reverse: reverse[i],
                        });
                }}>
                  <DataTable.Cell style={{ flex: 1.2 }}><Text style={styles.fontvalue} numberOfLines={2}>{single.consignorName}</Text></DataTable.Cell>
                  <DataTable.Cell style={{ flex: 0.4, marginRight: 50 }}><Text style={styles.fontvalue} numberOfLines={2}>{value[i]}</Text></DataTable.Cell>
                  <DataTable.Cell style={{ flex: 0.4, marginRight: 5 }}><Text style={styles.fontvalue} numberOfLines={2}>{pending11[i]}/{reverse[i]}</Text></DataTable.Cell>
                </DataTable.Row> ): (
-                        <DataTable.Row style={{ height: 'auto', backgroundColor: '#90ee90', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' }} key={single.consignorName} >
+                        <DataTable.Row style={{ height: 'auto', backgroundColor: '#90ee90', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' }} key={single.consignorName} onPress={() => {
+                          navigation.navigate('SellerHandoverSelection', {
+                         paramKey: single.consignorCode,
+                         Forward: value[i],
+                         consignorAddress1: single.consignorAddress1,
+                         consignorAddress2: single.consignorAddress2,
+                         consignorCity: single.consignorCity,
+                         consignorPincode: single.consignorPincode,
+                         consignorLatitude: single.consignorLatitude,
+                         consignorLongitude: single.consignorLongitude,
+                         contactPersonName: single.contactPersonName,
+                         consignorName: single.consignorName,
+                         PRSNumber: single.PRSNumber,
+                         consignorCode: single.consignorCode,
+                         userId: single.userId,
+                         phone: single.consignorContact,
+                         Reverse: reverse[i],
+                         });
+                 }}>
                         <DataTable.Cell style={{ flex: 1.2 }}><Text style={styles.fontvalue} numberOfLines={2}>{single.consignorName}</Text></DataTable.Cell>
                         <DataTable.Cell style={{ flex: 0.4, marginRight: 50 }}><Text style={styles.fontvalue} numberOfLines={2}>{value[i]}</Text></DataTable.Cell>
                         <DataTable.Cell style={{ flex: 0.4, marginRight: 5 }}><Text style={styles.fontvalue} numberOfLines={2}>{pending11[i]}/{reverse[i]}</Text></DataTable.Cell>
@@ -166,7 +191,7 @@ import {
                 ? data.filter(searched(keyword)).map((single, i) =>
                     reverse[i] > 0 ? (pending11[i]!==reverse[i])? (
                       <DataTable.Row style={{ height: 'auto', backgroundColor: '#eeeeee', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white',elevation: 8, }} key={single.consignorName} onPress={() => {
-                        navigation.navigate('MyTrip', {userId: route.params.userId});
+                        navigation.navigate('MyTrip', {userId: single.userId});
                }}>
                  <DataTable.Cell style={{ flex: 1.2 }}><Text style={styles.fontvalue} numberOfLines={2}>{single.consignorName}</Text></DataTable.Cell>
                  <DataTable.Cell style={{ flex: 0.4, marginRight: 50 }}><Text style={styles.fontvalue} numberOfLines={2}>{value[i]}</Text></DataTable.Cell>
@@ -184,10 +209,12 @@ import {
           </DataTable>
         </Card>
       </ScrollView>
-      <Center>
-          <Image style={{ width:150, height:150}} source={require('../../assets/image.png')} alt={'Logo Image'} />
-      </Center>
+      <View style={{ position: 'absolute', bottom: 0 , left:0 ,right:0, alignItems:'center'}}>
+        <Image style={{ width:150, height:150}} source={require('../../assets/image.png')} alt={'Logo Image'} />
+      </View>
     </Box>
+    }
+    
         </NativeBaseProvider>
   );
   };

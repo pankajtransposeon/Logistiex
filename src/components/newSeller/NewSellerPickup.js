@@ -5,12 +5,13 @@ import {
   Image,
   Center,
 } from 'native-base';
-import {StyleSheet, ScrollView} from 'react-native';
+import {StyleSheet, ScrollView, View, KeyboardAvoidingView,ActivityIndicator} from 'react-native';
 import {DataTable, Searchbar, Text, Card} from 'react-native-paper';
 import {openDatabase} from 'react-native-sqlite-storage';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+// import { Header } from 'react-navigation';
 const db = openDatabase({name: 'rn_sqlite'});
 
 const NewSellerPickup = ({route}) => {
@@ -21,6 +22,8 @@ const NewSellerPickup = ({route}) => {
   const [pending11,setPending] =useState([]);
   const [value,setValue] =useState([]);
   const [reverse,setReverse] =useState([]);
+  const [loading, setLoading] = useState(true);
+
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -39,6 +42,7 @@ const NewSellerPickup = ({route}) => {
                   temp.push(results.rows.item(i));
               }
               setData(temp);
+              setLoading(false);
           });
       });
       
@@ -110,10 +114,13 @@ const NewSellerPickup = ({route}) => {
       let f = c.consignorName;
       return (f.includes(keyword1));
   };
-   
+  
 return (
 <NativeBaseProvider>
-  <Box flex={1} bg="#fff"  width="auto" maxWidth="100%">
+{loading ? 
+        <ActivityIndicator size="large" color="blue" style={{marginTop: 44}} />
+      :
+      <Box flex={1} bg="#fff"  width="auto" maxWidth="100%">
     <Searchbar
       placeholder="Search Seller Name"
       onChangeText={(e) => setKeyword(e)}
@@ -123,11 +130,11 @@ return (
     <ScrollView style={styles.homepage} showsVerticalScrollIndicator={true} showsHorizontalScrollIndicator={false}>
       <Card>
         <DataTable>
-          <DataTable.Header style={{height:'auto', backgroundColor: '#004aad', borderTopLeftRadius: 5, borderTopRightRadius: 5, borderWidth:2, borderColor:'white'}}  >
-            <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Seller Name</Text></DataTable.Title>
-            <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Forward Pickups</Text></DataTable.Title>
-            <DataTable.Title style={{flex: 1.2,marginRight:-35}}><Text style={{ textAlign: 'center', color:'white'}}>Reverse Deliveries</Text></DataTable.Title>
-          </DataTable.Header>
+        <DataTable.Header style={{height:'auto', backgroundColor: '#004aad', borderTopLeftRadius: 5, borderTopRightRadius: 5, borderWidth:2, borderColor:'white'}}  >
+              <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Seller Name</Text></DataTable.Title>
+              <DataTable.Title style={{flex: 1.2}}><Text style={{ textAlign: 'center', color:'white'}}>Forward Pickups</Text></DataTable.Title>
+              <DataTable.Title style={{flex: 1.3,marginRight:-35}}><Text style={{ textAlign: 'center', color:'white'}}>Reverse Deliveries</Text></DataTable.Title>
+            </DataTable.Header>
           {route.params.Trip !== 'Start Trip' && data && data.length > 0
                 ? data.filter(searched(keyword)).map((single, i) =>
                     value[i] > 0 ? (value[i] != pending11[i])? (
@@ -186,7 +193,7 @@ return (
                 ? data.filter(searched(keyword)).map((single, i) =>
                     value[i] > 0 ? (value[i] != pending11[i])? (
                       <DataTable.Row style={{ height: 'auto', backgroundColor: '#eeeeee', borderBottomWidth: 1, borderWidth: 2, borderColor: 'white' ,elevation: 8,}} key={single.consignorName} onPress={() => {
-                        navigation.navigate('MyTrip', {userId: route.params.userId});
+                        navigation.navigate('MyTrip', {userId: single.userId});
                }}>
                  <DataTable.Cell style={{ flex: 1.2 }}><Text style={styles.fontvalue} numberOfLines={2}>{single.consignorName}</Text></DataTable.Cell>
                  <DataTable.Cell style={{ flex: 0.4, marginRight: 50 }}><Text style={styles.fontvalue} numberOfLines={2}>{pending11[i]}/{value[i]}</Text></DataTable.Cell>
@@ -206,11 +213,13 @@ return (
         </DataTable>
       </Card>
     </ScrollView>
-    <Center>
+    <View style={{ position: 'absolute', bottom: 0 , left:0 ,right:0, alignItems:'center'}}>
         <Image style={{ width:150, height:150}} source={require('../../assets/image.png')} alt={'Logo Image'} />
-    </Center>
+    </View>
   </Box>
-      </NativeBaseProvider>
+}
+  
+  </NativeBaseProvider>
 );
 };
 export default NewSellerPickup;

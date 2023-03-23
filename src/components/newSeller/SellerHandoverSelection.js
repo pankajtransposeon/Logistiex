@@ -586,57 +586,63 @@ const SellerHandoverSelection = ({route}) => {
               <ScrollView>
                 <View style={styles.containter}>
                   <View style={styles.mainbox}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingHorizontal: 10,
-                        paddingTop: 15,
-                      }}>
-                      <Text
-                        style={{
-                          fontWeight: '500',
-                          fontSize: 18,
-                          color: 'black',
-                        }}>
-                        Seller Name
-                      </Text>
-                      <Text
-                        style={{
-                          fontWeight: '500',
-                          fontSize: 18,
-                          color: 'gray',
-                        }}>
-                        {route.params.consignorName}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingHorizontal: 10,
-                        paddingTop: 15,
-                        paddingBottom: 15,
-                      }}>
-                      <Text
-                        style={{
-                          fontWeight: '500',
-                          fontSize: 18,
-                          color: 'black',
-                        }}>
-                        Address
-                      </Text>
-                      <Text
-                        style={{
-                          fontWeight: '500',
-                          fontSize: 18,
-                          color: 'gray',
-                          paddingLeft: 25,
-                          width: 220,
-                        }}>
-                        {type}
-                      </Text>
-                    </View>
+                  <View
+                  style={{
+                  flexDirection: 'column',
+                  paddingHorizontal: 10,
+                  paddingTop: 15,
+                  paddingBottom: 10,
+                  }}>
+                <View
+                style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                paddingBottom: 10,
+                }}>
+                <Text
+                style={{
+                fontWeight: '500',
+                fontSize: 18,
+                color: 'black',
+                }}>
+                Seller Name
+                </Text>
+                <Text
+                 style={{
+                fontWeight: '500',
+                fontSize: 18,
+                color: 'gray',
+                }}>
+                {route.params.consignorName}
+                 </Text>
+                </View>
+                <View
+                style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                }}>
+              <Text
+              style={{
+              fontWeight: '500',
+              fontSize: 18,
+              color: 'black',
+              }}>
+            Address
+          </Text>
+          <Text
+          style={{
+        fontWeight: '500',
+        fontSize: 18,
+        color: 'gray',
+        paddingLeft: 10,
+        flex: 1,
+        textAlign: 'right',
+         }}>
+         {type}
+        </Text>
+          </View>
+        </View>      
                     <View
                       style={{
                         flexDirection: 'row',
@@ -665,63 +671,74 @@ const SellerHandoverSelection = ({route}) => {
                   </View>
                 </View>
               </ScrollView>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  width: '92%',
-                  justifyContent: 'space-between',
-                  marginTop: 10,
-                  alignSelf: 'center',
-                }}>
-                <Button
-                  leftIcon={
-                    <Icon
-                      color="white"
-                      as={<MaterialIcons name="close-circle-outline" />}
-                      size="sm"
-                    />
-                  }
-                  onPress={() => setModalVisible(true)}
-                  style={{backgroundColor: '#004aad', width: '48%'}}>
-                  Close Delivery
-                </Button>
-                <Button
+              {notPicked11 != route.params.Reverse ? (
+                <View
                   style={{
-                    backgroundColor: '#004aad',
-                    width: '50%',
+                    flexDirection: 'row',
+                    width: '92%',
+                    justifyContent: 'space-between',
+                    marginTop: 10,
                     alignSelf: 'center',
-                  }}
-                  leftIcon={
-                    <Icon
-                      color="white"
-                      as={<MaterialIcons name="barcode-scan" />}
-                      size="sm"
-                    />
-                  }
-                  onPress={() =>
-                    navigation.navigate('ScanShipment', {
-                      Forward: Forward,
-                      PRSNumber: route.params.PRSNumber,
-                      consignorCode: route.params.consignorCode,
-                      userId: route.params.userId,
-                      phone: route.params.phone,
-                      contactPersonName: route.params.contactPersonName,
-                      packagingId: route.params.packagingId,
-                      Expected: Forward,
-                      // TotalpickUp : newdata[0].totalPickups
-                    })
-                  }>
-                  Scan
+                  }}>
+                  <Button
+                    leftIcon={
+                      <Icon
+                        color="white"
+                        as={<MaterialIcons name="close-circle-outline" />}
+                        size="sm"
+                      />
+                    }
+                    onPress={() => setModalVisible(true)}
+                    style={{backgroundColor: '#004aad', width: '48%'}}>
+                    Close Delivery
+                  </Button>
+                  <Button
+                    style={{
+                      backgroundColor: '#004aad',
+                      width: '50%',
+                      alignSelf: 'center',
+                    }}
+                    leftIcon={
+                      <Icon
+                        color="white"
+                        as={<MaterialIcons name="barcode-scan" />}
+                        size="sm"
+                      />
+                    }
+                    onPress={() =>
+                      navigation.navigate('ShipmentBarcode', {
+                        Forward: Forward,
+                        PRSNumber: route.params.PRSNumber,
+                        consignorCode: route.params.consignorCode,
+                        userId: route.params.userId,
+                        phone: route.params.phone,
+                        contactPersonName: route.params.contactPersonName,
+                        packagingId: route.params.packagingId,
+                        // TotalpickUp : newdata[0].totalPickups
+                      })
+                    }>
+                    Scan
+                  </Button>
+                </View>
+              ) : (
+                <Button
+                  w="90%"
+                  size="lg"
+                  bg="#004aad"
+                  mb={4}
+                  mt={4}
+                  onPress={() => navigation.navigate('NewSellerPickup')}>
+                  Go Back
                 </Button>
-              </View>
-              <View style={{paddingTop: 60}}>
-                <Center>
-                  <Image
-                    style={{width: 150, height: 150}}
-                    source={require('../../assets/image.png')}
-                    alt={'Logo Image'}
-                  />
-                </Center>
+              )}
+              <View style={{paddingTop:60}}>
+              <Center>
+                <Image
+                  style={{width: 150, height: 150}}
+                  source={require('../../assets/image.png')}
+                  alt={'Logo Image'}
+                />
+              </Center>
               </View>
             </ScrollView>
           </View>

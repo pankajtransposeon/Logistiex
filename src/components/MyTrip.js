@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { NativeBaseProvider, Box, Image, Center, VStack, Button, Input, Alert, Text, Modal } from 'native-base';
+import { NativeBaseProvider, Box, Image, Center, VStack, Button, Input, Alert, Text, Modal, FloatingLabel, Label, Item } from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { ActivityIndicator, PermissionsAndroid, TouchableOpacity, View, ScrollView } from 'react-native';
+import { ActivityIndicator, PermissionsAndroid, TouchableOpacity, View, ScrollView,TextInput } from 'react-native';
 import { launchCamera } from 'react-native-image-picker';
 import {openDatabase} from 'react-native-sqlite-storage';
 const db = openDatabase({name: 'rn_sqlite'});
@@ -25,7 +25,8 @@ export default function MyTrip({ navigation, route }) {
   const [loading, setLoading] = useState(true);
   const [pendingPickup, setPendingPickup] = useState(0);
   const [pendingDelivery, setPendingDelivery] = useState(0);
-  const [label, setLabel] = useState('Input vehicle KMs');
+  const [isFocused, setIsFocused] = useState(false);
+  // const [label, setLabel] = useState('Input vehicle KMs');
   const focus = useIsFocused();
 
   let current = new Date();
@@ -263,11 +264,11 @@ useEffect(() => {
 
   const handleInputChange = (value) => {
     setStartKm(value);
-    if (value) {
-      setLabel('Vehicle KMs');
-    } else {
-      setLabel('Input vehicle KMs');
-    }
+    // if (value) {
+    //   setLabel('Vehicle KMs');
+    // } else {
+    //   setLabel('Input vehicle KMs');
+    // }
   };
 
   return (
@@ -296,7 +297,6 @@ useEffect(() => {
                 <Modal.CloseButton />
                 <Modal.Header />
                 <Modal.Body>
-                
                 <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center'}}>
                 <Image 
                   source={{ uri: startImageUrl }} 
@@ -311,7 +311,28 @@ useEffect(() => {
                   <ScrollView>
                   <VStack space={6}>
                       <Input disabled selectTextOnFocus={false} editable={false} backgroundColor='gray.300' value={vehicle} size="lg" type={"number"} placeholder="Vehicle Number" />
-                      <Input keyboardType="numeric" value={startkm} onChangeText={(e)=>handleInputChange(e)} size="lg" type={"number"} placeholder={label}/>                      
+                      {/* <TextInput keyboardType="numeric" value={startkm} onChangeText={(e)=>handleInputChange(e)} size="lg" type={"number"} placeholder="Start km"/>                       */}
+                      <View style={ {
+                      paddingTop: 18,
+                      paddingBottom: 10,
+                      }}>
+                    <Text style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 18,
+                    fontSize: 12,
+                    color: '#aaa',
+                  }}>
+                  {startkm ? 'Start Km' : ' '}
+                  </Text>
+                  <Input keyboardType="numeric" value={startkm} onChangeText={setStartKm} size="lg" type={"number"} placeholder="Start km" style={{fontSize: 18,
+                  color: '#000',
+                  paddingVertical: 6,
+                  paddingHorizontal: 12,
+                  borderWidth: 1,
+                  borderColor: '#ccc',
+                  borderRadius: 4,}} />
+                  </View>
                       <Button py={3} variant='outline' _text={{ color: 'white', fontSize: 20 }} onPress={takeStartPhoto}>
                       {uploadStatus === 'idle' && <MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons>}
                       {uploadStatus === 'uploading' && <ActivityIndicator size="small" color="gray" />}
@@ -343,8 +364,6 @@ useEffect(() => {
                 <Image style={{ width: 150, height: 100 }} source={require('../assets/image.png')} alt={'Logo Image'} />
               </Center>
               </Box>
-                  
-              
             </Box>
           :
             <Box flex={1} bg="#004aad" alignItems="center" pt={'4%'}>
@@ -366,10 +385,28 @@ useEffect(() => {
               <Box justifyContent="space-between" py={10} px={6} bg="#fff" rounded="xl" width={"90%"} maxWidth="100%" _text={{ fontWeight: "medium", }}>
                 <VStack space={6}>
                   <Input disabled selectTextOnFocus={false} editable={false} backgroundColor='gray.300' value={vehicle} size="lg" type={"number"} placeholder="Vehicle Number" />
-
                   <Input selectTextOnFocus={false} editable={false} disabled backgroundColor='gray.300' value={startkm} size="lg" type={"number"} placeholder="Start Km" />
-
-                  <Input value={endkm} keyboardType="numeric" onChangeText={setEndkm} size="lg" type={"number"} placeholder="Input End KMs" />
+                  <View style={ {
+                  paddingTop: 18,
+                paddingBottom: 10,
+                }}>
+              <Text style={{
+              position: 'absolute',
+              left: 0,
+              top: 18,
+              fontSize: 12,
+              color: '#aaa',
+            }}>
+            {endkm ? 'End KMs' : ' '}
+            </Text>
+            <Input value={endkm} keyboardType="numeric" onChangeText={setEndkm} size="lg" type={"number"} placeholder="Input End KMs" style={{fontSize: 18,
+            color: '#000',
+            paddingVertical: 6,
+            paddingHorizontal: 12,
+            borderWidth: 1,
+            borderColor: '#ccc',
+            borderRadius: 4,}} />
+              </View>
                   <Button py={3} variant='outline' _text={{ color: 'white', fontSize: 20 }} onPress={takeEndPhoto}>
                     {uploadStatus === 'idle' && <MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons>}
                     {uploadStatus === 'uploading' && <ActivityIndicator size="small" color="gray" />}
