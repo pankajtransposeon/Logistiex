@@ -247,38 +247,38 @@ const POD = ({route}) => {
     // setModalVisible11(false);
   }
 
-  function validateOTP() {
-    axios
-      .post('https://bkedtest.logistiex.com/SMS/OTPValidate', {
-        mobileNumber: mobileNumber,
-        otp: inputOtp,
-      })
-      .then(response => {
-        if (response.data.return) {
-          setMessage(1);
-          submitForm11();
-          setInputOtp('');
-          setShowModal11(false);
+  function validateOTP(){
+    axios.post('https://bkedtest.logistiex.com/SMS/OTPValidate', {
+      mobileNumber: mobileNumber,
+      otp: inputOtp,
+    })
+    .then(response => {
+      if (response.data.return){
+        // alert("OTP Submitted Successfully")
+        setMessage(1)
+        submitForm11();
+        setInputOtp('');
+        setShowModal11(false);
+
 
         db.transaction((tx) => {
-          tx.executeSql('UPDATE SellerMainScreenDetails SET status="notPicked" , rejectionReasonL1=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?', [DropDownValue11,route.params.consignorCode], (tx1, results) => {
+          tx.executeSql('UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?', [DropDownValue11,route.params.consignorCode], (tx1, results) => {
             let temp = [];
             // console.log("Not Picked Reason",DropDownValue);
             // console.log('Results',results.rowsAffected);
             // console.log(results);
             if (results.rowsAffected > 0) {
-              console.log('notPicked done');
               ToastAndroid.show('Partial Closed Successfully',ToastAndroid.SHORT);
               // setDropDownValue11('');
               axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
-              consignorCode:route.params.consignorCode,
-              rejectionReason: '',
-              feUserID: route.params.userId,
-              latitude : route.params.latitude,
-              longitude : route.params.longitude,
-              eventTime: new Date().valueOf() ,
-              rejectionStage:3
-              })
+                consignorCode:route.params.consignorCode,
+                rejectionReason: '',
+                feUserID: route.params.userId,
+                latitude : route.params.latitude,
+                longitude : route.params.longitude,
+                eventTime: new Date().valueOf() ,
+                rejectionStage:3
+                })
             }
             //  else {
             //   console.log('failed to add notPicked item locally');
@@ -287,23 +287,25 @@ const POD = ({route}) => {
             for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
             }
-            // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
           });
+        });
 
-          ToastAndroid.show('Submit Successful', ToastAndroid.SHORT);
-          navigation.navigate('Main', {
-            userId: route.params.userId,
-          });
-        } else {
-          // alert('Invalid OTP, please try again !!');
-          setMessage(2);
-        }
-      })
-      .catch(error => {
+
+        ToastAndroid.show('Submit Successful',ToastAndroid.SHORT);
+        navigation.navigate('Main',{
+          userId:route.params.userId,
+        });
+      }
+      else {
         // alert('Invalid OTP, please try again !!');
         setMessage(2);
-        console.log(error);
-      });
+      }
+    })
+    .catch(error => {
+      // alert('Invalid OTP, please try again !!');
+      setMessage(2)
+      console.log(error);
+    });
   }
   console.log(route.params);
   const displayData = async () => {
