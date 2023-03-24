@@ -272,7 +272,7 @@ function StackNavigators({navigation}) {
         feUserID: userId,
         rejectionReasonL1: row.rejectedReason,
         rejectionReasonL2: row.rejectedReason,
-        rejectionStage: '',
+        rejectionStage: row.rejectionStage,
         consignorCode: row.consignorCode,
         eventTime: row.eventTime,
         latitude: row.consignorLatitude,
@@ -366,7 +366,7 @@ function StackNavigators({navigation}) {
       txn.executeSql('DROP TABLE IF EXISTS SyncSellerPickUp', []);
       txn.executeSql(
         `CREATE TABLE IF NOT EXISTS SyncSellerPickUp( consignorCode ID VARCHAR(200) PRIMARY KEY ,userId VARCHAR(100), 
-            consignorName VARCHAR(200),consignorAddress1 VARCHAR(200),consignorAddress2 VARCHAR(200),consignorCity VARCHAR(200),consignorPincode,consignorLatitude INT(20),consignorLongitude DECIMAL(20,10),consignorContact VARCHAR(200),ReverseDeliveries INT(20),PRSNumber VARCHAR(200),ForwardPickups INT(20), BagOpenClose11 VARCHAR(200), ShipmentListArray VARCHAR(800),contactPersonName VARCHAR(100))`,
+            consignorName VARCHAR(200),consignorAddress1 VARCHAR(200),consignorAddress2 VARCHAR(200),consignorCity VARCHAR(200),consignorPincode,consignorLatitude INT(20),consignorLongitude DECIMAL(20,10),consignorContact VARCHAR(200),ReverseDeliveries INT(20),runSheetNumber VARCHAR(200),ForwardPickups INT(20), BagOpenClose11 VARCHAR(200), ShipmentListArray VARCHAR(800),contactPersonName VARCHAR(100))`,
         [],
         (sqlTxn, res) => {
           // console.log("table created successfully1212");
@@ -394,7 +394,7 @@ function StackNavigators({navigation}) {
               // let m21 = JSON.stringify(res.data[i].consignorAddress, null, 4);
               db.transaction(txn => {
                 txn.executeSql(
-                  'INSERT OR REPLACE INTO SyncSellerPickUp( contactPersonName,consignorCode ,userId ,consignorName,consignorAddress1,consignorAddress2,consignorCity,consignorPincode,consignorLatitude,consignorLongitude,consignorContact,ReverseDeliveries,PRSNumber,ForwardPickups,BagOpenClose11, ShipmentListArray) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                  'INSERT OR REPLACE INTO SyncSellerPickUp( contactPersonName,consignorCode ,userId ,consignorName,consignorAddress1,consignorAddress2,consignorCity,consignorPincode,consignorLatitude,consignorLongitude,consignorContact,ReverseDeliveries,runSheetNumber,ForwardPickups,BagOpenClose11, ShipmentListArray) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
                   [
                     res.data.data[i].contactPersonName,
                     res.data.data[i].consignorCode,
@@ -408,7 +408,7 @@ function StackNavigators({navigation}) {
                     res.data.data[i].consignorLongitude,
                     res.data.data[i].consignorContact,
                     res.data.data[i].ReverseDeliveries,
-                    res.data.data[i].PRSNumber,
+                    res.data.data[i].runsheetNo,
                     res.data.data[i].ForwardPickups,
                     'true',
                     ' ',
@@ -494,8 +494,8 @@ function StackNavigators({navigation}) {
           runSheetNumber VARCHAR(200),
           shipmentStatus VARCHAR(200),
           shipmentAction VARCHAR(200),
-          rejectioReasonL1 VARCHAR(200),
-          rejectioReasonL2 VARCHAR(200),
+          rejectionReasonL1 VARCHAR(200),
+          rejectionReasonL2 VARCHAR(200),
           rejectionStage VARCHAR(200),
           eventTime VARCHAR(200),
           status VARCHAR(200),
@@ -536,31 +536,43 @@ function StackNavigators({navigation}) {
                   clientShipmentReferenceNumber,
                   clientRefId,
                   awbNo,
+                  courierCode,
                   consignorCode,
                   packagingStatus,
                   packagingId,
                   runSheetNumber,
                   shipmentStatus,
                   shipmentAction,
-                  rejectedReason,
-                  actionTime,
+                  rejectionReasonL1,
+                  rejectionReasonL2,
+                  rejectionStage,
+                  eventTime,
                   status,
-                  handoverStatus
-                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+                  handoverStatus,
+                  syncStatus,
+                  syncHandoverStatus,
+                  bagId
+                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
                   [
                     res.data.data[i].clientShipmentReferenceNumber,
                     res.data.data[i].clientRefId,
                     res.data.data[i].awbNo,
+                    res.data.data[i].courierCode,
                     res.data.data[i].consignorCode,
                     res.data.data[i].packagingStatus,
-                    res.data.data[i].packagingAction,
+                    res.data.data[i].expectedPackagingId,
                     res.data.data[i].runSheetNumber,
                     res.data.data[i].shipmentStatus,
                     res.data.data[i].shipmentAction,
                     res.data.data[i].rejectedReason,
+                    res.data.data[i].rejectedReason,
+                    res.data.data[i].rejectionStage,
                     res.data.data[i].actionTime,
                     res.data.data[i].status,
                     res.data.data[i].handoverStatus,
+                    res.data.data[i].syncStatus,
+                    res.data.data[i].syncHandoverStatus,
+                    res.data.data[i].bagId,
                   ],
                   (sqlTxn, _res) => {
                     // console.log(`\n Data Added to local db successfully 213`);

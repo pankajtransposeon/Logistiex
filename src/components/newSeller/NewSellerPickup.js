@@ -114,7 +114,6 @@ const NewSellerPickup = ({route}) => {
       let f = c.consignorName;
       return (f.includes(keyword1));
   };
-  
 return (
 <NativeBaseProvider>
 {loading ? 
