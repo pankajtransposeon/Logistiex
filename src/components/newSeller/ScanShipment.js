@@ -1,139 +1,166 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { NativeBaseProvider, Image, Box, Fab, Icon, Button ,Alert, Modal, Input} from 'native-base';
-import React, { useEffect, useState , useRef } from 'react';
+import {
+  NativeBaseProvider,
+  Image,
+  Box,
+  Fab,
+  Icon,
+  Button,
+  Alert,
+  Modal,
+  Input,
+} from 'native-base';
+import React, {useEffect, useState, useRef} from 'react';
 import axios from 'axios';
-import {ActivityIndicator, PermissionsAndroid, Text,View, ScrollView, Vibration, ToastAndroid,TouchableOpacity,StyleSheet} from 'react-native';
-import { Center } from 'native-base';
-import { useNavigation } from '@react-navigation/native';
+import {
+  ActivityIndicator,
+  PermissionsAndroid,
+  Text,
+  View,
+  ScrollView,
+  Vibration,
+  ToastAndroid,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
+import {Center} from 'native-base';
+import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import { openDatabase } from 'react-native-sqlite-storage';
+import {openDatabase} from 'react-native-sqlite-storage';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import NetInfo from '@react-native-community/netinfo';
 import RNBeep from 'react-native-a-beep';
-import { Picker } from '@react-native-picker/picker';
+import {Picker} from '@react-native-picker/picker';
 import GetLocation from 'react-native-get-location';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-import { backgroundColor, borderColor, height, marginTop, style } from 'styled-system';
-import { Console } from 'console';
+import {
+  backgroundColor,
+  borderColor,
+  height,
+  marginTop,
+  style,
+} from 'styled-system';
+import {Console} from 'console';
 // import GetLocation from 'react-native-get-location';
 // import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import OTPTextInput from 'react-native-otp-textinput';
-import { RNCamera } from 'react-native-camera';
+import {RNCamera} from 'react-native-camera';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import { panGestureHandlerCustomNativeProps } from 'react-native-gesture-handler/lib/typescript/handlers/PanGestureHandler';
+import {panGestureHandlerCustomNativeProps} from 'react-native-gesture-handler/lib/typescript/handlers/PanGestureHandler';
 const db = openDatabase({
   name: 'rn_sqlite',
 });
 
 const ScanShipment = ({route}) => {
-    const [expected, setExpected] = useState(0);
-    const [newaccepted, setnewAccepted] = useState(0);
-    const [newrejected, setnewRejected] = useState(0);
-    const [newtagged, setnewTagged] = useState(0);
-    const [notDelivered, setnotDelivered] = useState(0);
-    const [barcode, setBarcode] = useState('');
-    const [len, setLen] = useState(0);
-    const [DropDownValue, setDropDownValue] = useState(null);
-    const [rejectedData, setRejectedData] = useState([]);
-    const [acceptedArray,setAcceptedArray]=useState([]);
-    const [uploadStatus, setUploadStatus] = useState('idle');
-    const [latitude, setLatitude] = useState(0);
-    const [longitude , setLongitude] = useState(0);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [modalVisible1, setModalVisible1] = useState(false);
-    const [bagId, setBagId] = useState('');
-    const [bagIdNo, setBagIdNo] = useState(1);
-    const [showCloseBagModal, setShowCloseBagModal] = useState(false);
-    const [bagSeal, setBagSeal] = useState('');
+  const [expected, setExpected] = useState(0);
+  const [newaccepted, setnewAccepted] = useState(0);
+  const [newrejected, setnewRejected] = useState(0);
+  const [newtagged, setnewTagged] = useState(0);
+  const [notDelivered, setnotDelivered] = useState(0);
+  const [barcode, setBarcode] = useState('');
+  const [len, setLen] = useState(0);
+  const [DropDownValue, setDropDownValue] = useState(null);
+  const [rejectedData, setRejectedData] = useState([]);
+  const [acceptedArray, setAcceptedArray] = useState([]);
+  const [uploadStatus, setUploadStatus] = useState('idle');
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible1, setModalVisible1] = useState(false);
+  const [bagId, setBagId] = useState('');
+  const [bagIdNo, setBagIdNo] = useState(1);
+  const [showCloseBagModal, setShowCloseBagModal] = useState(false);
+  const [bagSeal, setBagSeal] = useState('');
 
-
-    var otpInput = useRef(null)
-    const [ImageUrl, setImageUrl] = useState('');
-    const [imageUrls, setImageUrls] = useState([]);
-    const [images, setImages] = useState([]);
-    const requestCameraPermission = async () => {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'Camera Permission',
-            message: 'App needs camera permission',
-          },
-        );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn(err);
-        return false;
-      }
-    };
-  
-    const createFormData = (photo, body) => {
-      const data = new FormData();
-  
-      data.append("file", {
-        name: photo.fileName,
-        type: photo.type,
-        uri:
-          Platform.OS === "android" ? photo.uri : photo.uri.replace("file://", "")
-      });
-  
-      Object.keys(body).forEach(key => {
-        data.append(key, body[key]);
-      });
-      return data;
-    };
-    // var imageUrls = [];
-    const takePicture = async () => {
-      setUploadStatus('uploading');
-      setImageUrl("");
-      let options = {
-        mediaType: 'photo',
-        quality: 1,
-        cameraType: 'back',
-        maxWidth: 480,
-        maxHeight: 480,
-        storageOptions: {
-          skipBackup: true,
-          path: 'images',
+  var otpInput = useRef(null);
+  const [ImageUrl, setImageUrl] = useState('');
+  const [imageUrls, setImageUrls] = useState([]);
+  const [images, setImages] = useState([]);
+  const requestCameraPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Camera Permission',
+          message: 'App needs camera permission',
         },
-      }
-      let isGranted = await requestCameraPermission();
-      let result = null;
-      if (isGranted) {
-        result = await launchCamera(options);
-        console.log(result)
-      }
-      if (result.assets !== undefined) {
-        const newImage = result.assets[0];
-        const formData = createFormData(newImage, {
-          useCase: "DSQC",
-          type: "front",
-          contextId: "SI002",
-          contextType: "shipment",
-          hubCode: "HC001"
-        });
-        
-        fetch('https://bkedtest.logistiex.com/DSQCPicture/uploadPicture', {
-          method: 'POST',
-          body: formData,
-        })
-        .then((data) => data.json())
-        .then((res) => {
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } catch (err) {
+      console.warn(err);
+      return false;
+    }
+  };
+
+  const createFormData = (photo, body) => {
+    const data = new FormData();
+
+    data.append('file', {
+      name: photo.fileName,
+      type: photo.type,
+      uri:
+        Platform.OS === 'android'
+          ? photo.uri
+          : photo.uri.replace('file://', ''),
+    });
+
+    Object.keys(body).forEach(key => {
+      data.append(key, body[key]);
+    });
+    return data;
+  };
+  // var imageUrls = [];
+  const takePicture = async () => {
+    setUploadStatus('uploading');
+    setImageUrl('');
+    let options = {
+      mediaType: 'photo',
+      quality: 1,
+      cameraType: 'back',
+      maxWidth: 480,
+      maxHeight: 480,
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+    let isGranted = await requestCameraPermission();
+    let result = null;
+    if (isGranted) {
+      result = await launchCamera(options);
+      console.log(result);
+    }
+    if (result.assets !== undefined) {
+      const newImage = result.assets[0];
+      const formData = createFormData(newImage, {
+        useCase: 'DSQC',
+        type: 'front',
+        contextId: 'SI002',
+        contextType: 'shipment',
+        hubCode: 'HC001',
+      });
+
+      fetch('https://bkedtest.logistiex.com/DSQCPicture/uploadPicture', {
+        method: 'POST',
+        body: formData,
+      })
+        .then(data => data.json())
+        .then(res => {
           setImageUrl(res.publicURL);
-          setUploadStatus('done');  
+          setUploadStatus('done');
           console.log('upload success', res);
           setImageUrls(prevImageUrls => [...prevImageUrls, res.publicURL]);
           setUploadStatus('idle');
         })
-        .catch((error) => {
+        .catch(error => {
           console.log('upload error', error);
           setUploadStatus('error');
         });
-      }
-  }
-console.log('length',imageUrls.length)
+    }
+  };
+  console.log('length', imageUrls.length);
   const scannerRef = useRef(null);
 
   const reloadScanner = () => {
@@ -142,16 +169,15 @@ console.log('length',imageUrls.length)
     }
   };
   useEffect(() => {
-  reloadScanner();
+    reloadScanner();
   }, []);
-  
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       displayDataSPScan();
     });
     return unsubscribe;
   }, [navigation]);
-  
 
   const displayDataSPScan = async () => {
     db.transaction(tx => {
@@ -194,15 +220,15 @@ console.log('length',imageUrls.length)
 
   useEffect(() => {
     const current_location = () => {
-
       return GetLocation.getCurrentPosition({
-          enableHighAccuracy: true,
-          timeout: 10000,
-        })
+        enableHighAccuracy: true,
+        timeout: 10000,
+      })
         .then(latestLocation => {
           console.log('latest location ' + JSON.stringify(latestLocation));
           return latestLocation;
-        }).then(location => {
+        })
+        .then(location => {
           const currentLoc = {
             latitude11: location.latitude11,
             longitude11: location.longitude11,
@@ -210,16 +236,18 @@ console.log('length',imageUrls.length)
           setLatitude11(location.latitude11);
           setLongitude11(location.longitude11);
           return currentLoc;
-        }).catch(error => {
+        })
+        .catch(error => {
           RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-              interval: 10000,
-              fastInterval: 5000,
-            })
+            interval: 10000,
+            fastInterval: 5000,
+          })
             .then(status => {
               if (status) {
                 console.log('Location enabled');
               }
-            }).catch(err => {});
+            })
+            .catch(err => {});
           return false;
         });
     };
@@ -227,126 +255,141 @@ console.log('length',imageUrls.length)
     current_location();
   }, []);
 
-
   const updateDetails2 = () => {
     console.log('scan ' + barcode.toString());
     setAcceptedArray([...acceptedArray, barcode.toString()]);
     console.log(acceptedArray);
-    db.transaction((tx) => {
-      tx.executeSql('UPDATE SellerMainScreenDetails SET status="accepted" WHERE  shipmentAction="Seller Delivery" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [route.params.consignorCode,barcode,barcode,barcode], (tx1, results) => {
-        let temp = [];
-        console.log('Results', results.rowsAffected);
-        console.log(results);
+    db.transaction(tx => {
+      tx.executeSql(
+        'UPDATE SellerMainScreenDetails SET status="accepted" WHERE  shipmentAction="Seller Delivery" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ',
+        [route.params.consignorCode, barcode, barcode, barcode],
+        (tx1, results) => {
+          let temp = [];
+          console.log('Results', results.rowsAffected);
+          console.log(results);
 
-        if (results.rowsAffected > 0) {
-          console.log(barcode + 'accepted');
-          displayDataSPScan();
-
-        } else {
-          console.log(barcode + 'not accepted');
-        }
-        console.log(results.rows.length);
-        for (let i = 0; i < results.rows.length; ++i) {
-          temp.push(results.rows.item(i));
-        }
-        
-      });
+          if (results.rowsAffected > 0) {
+            console.log(barcode + 'accepted');
+            displayDataSPScan();
+          } else {
+            console.log(barcode + 'not accepted');
+          }
+          console.log(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+          }
+        },
+      );
     });
   };
 
   const rejectDetails2 = () => {
-
-    db.transaction((tx) => {
-      tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectionReasonL1=?  WHERE  shipmentAction="Seller Delivery" AND  status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [DropDownValue,route.params.consignorCode, barcode,barcode,barcode], (tx1, results) => {
-        let temp = [];
-        console.log('Rejected Reason : ', DropDownValue);
-        console.log('Results', results.rowsAffected);
-        console.log(results);
-        if (results.rowsAffected > 0) {
-          // ContinueHandle11();
-          console.log(barcode + 'rejected');
-          ToastAndroid.show(barcode + ' Rejected', ToastAndroid.SHORT);
-          Vibration.vibrate(100);
-          RNBeep.beep();
-          setDropDownValue('');
-          console.log(acceptedArray);
-          const newArray = acceptedArray.filter(item => item !== barcode);
-          console.log(newArray);
-          setAcceptedArray(newArray);
-          displayDataSPScan();
-        } else {
-          console.log(barcode + 'failed to reject item locally');
-        }
-        console.log(results.rows.length);
-        for (let i = 0; i < results.rows.length; ++i) {
-          temp.push(results.rows.item(i));
-        }
-      });
+    db.transaction(tx => {
+      tx.executeSql(
+        'UPDATE SellerMainScreenDetails SET status="rejected" ,rejectionReasonL1=?  WHERE  shipmentAction="Seller Delivery" AND  status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ',
+        [DropDownValue, route.params.consignorCode, barcode, barcode, barcode],
+        (tx1, results) => {
+          let temp = [];
+          console.log('Rejected Reason : ', DropDownValue);
+          console.log('Results', results.rowsAffected);
+          console.log(results);
+          if (results.rowsAffected > 0) {
+            // ContinueHandle11();
+            console.log(barcode + 'rejected');
+            ToastAndroid.show(barcode + ' Rejected', ToastAndroid.SHORT);
+            Vibration.vibrate(100);
+            RNBeep.beep();
+            setDropDownValue('');
+            console.log(acceptedArray);
+            const newArray = acceptedArray.filter(item => item !== barcode);
+            console.log(newArray);
+            setAcceptedArray(newArray);
+            displayDataSPScan();
+          } else {
+            console.log(barcode + 'failed to reject item locally');
+          }
+          console.log(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+          }
+        },
+      );
     });
     submitForm();
     setImageUrls([]);
   };
   const taggedDetails = () => {
-
-    db.transaction((tx) => {
-      tx.executeSql('UPDATE SellerMainScreenDetails SET status="tagged" ,rejectionReasonL1=?  WHERE status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ',
-       [DropDownValue,route.params.consignorCode, barcode,barcode,barcode], (tx1, results) => {
-        let temp = [];
-        console.log('Rejected Reason : ', DropDownValue);
-        console.log('Results', results.rowsAffected);
-        console.log(results);
-        if (results.rowsAffected > 0) {
-          // ContinueHandle11();
-          console.log(barcode + 'tagged');
-          ToastAndroid.show(barcode + ' Tagged', ToastAndroid.SHORT);
-          Vibration.vibrate(100);
-          RNBeep.beep();
-          setDropDownValue('');
-          console.log(acceptedArray);
-          const newArray = acceptedArray.filter(item => item !== barcode);
-          console.log(newArray);
-          setAcceptedArray(newArray);
-          displayDataSPScan();
-        } else {
-          console.log(barcode + 'failed to tagged item locally');
-        }
-        console.log(results.rows.length);
-        for (let i = 0; i < results.rows.length; ++i) {
-          temp.push(results.rows.item(i));
-        }
-        // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
-        // viewDetailsR2();
-      });
+    db.transaction(tx => {
+      tx.executeSql(
+        'UPDATE SellerMainScreenDetails SET status="tagged" ,rejectionReasonL1=?  WHERE status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ',
+        [DropDownValue, route.params.consignorCode, barcode, barcode, barcode],
+        (tx1, results) => {
+          let temp = [];
+          console.log('Rejected Reason : ', DropDownValue);
+          console.log('Results', results.rowsAffected);
+          console.log(results);
+          if (results.rowsAffected > 0) {
+            // ContinueHandle11();
+            console.log(barcode + 'tagged');
+            ToastAndroid.show(barcode + ' Tagged', ToastAndroid.SHORT);
+            Vibration.vibrate(100);
+            RNBeep.beep();
+            setDropDownValue('');
+            console.log(acceptedArray);
+            const newArray = acceptedArray.filter(item => item !== barcode);
+            console.log(newArray);
+            setAcceptedArray(newArray);
+            displayDataSPScan();
+          } else {
+            console.log(barcode + 'failed to tagged item locally');
+          }
+          console.log(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+          }
+          // console.log("Data updated: \n ", JSON.stringify(temp, null, 4));
+          // viewDetailsR2();
+        },
+      );
     });
     submitForm1();
     setImageUrls([]);
   };
 
-  
-  const getCategories = (data) => {
+  const getCategories = data => {
     db.transaction(txn => {
       txn.executeSql(
         'SELECT * FROM SellerMainScreenDetails WHERE status IS NULL AND  consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber = ?) ',
-        [route.params.consignorCode,data,data,data],
+        [route.params.consignorCode, data, data, data],
         (sqlTxn, res) => {
-          console.log('ok1111',data);
+          console.log('ok1111', data);
           console.log(res);
           setLen(res.rows.length);
           setBarcode(data);
           if (!res.rows.length) {
             console.log(data);
-            console.log('ok2222',data);
+            console.log('ok2222', data);
 
-            db.transaction((tx) => {
-              console.log('ok3333',data);
+            db.transaction(tx => {
+              console.log('ok3333', data);
 
-              tx.executeSql('Select * FROM SellerMainScreenDetails WHERE status IS NOT NULL And consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?)', [route.params.consignorCode,data,data,data], (tx1, results) => {
-                if (results.rows.length === 0) {
-                  ToastAndroid.show('Scanning wrong product',ToastAndroid.SHORT);
-                } else {
-                  ToastAndroid.show(data + ' already scanned',ToastAndroid.SHORT);
-                }
-              });
+              tx.executeSql(
+                'Select * FROM SellerMainScreenDetails WHERE status IS NOT NULL And consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?)',
+                [route.params.consignorCode, data, data, data],
+                (tx1, results) => {
+                  if (results.rows.length === 0) {
+                    ToastAndroid.show(
+                      'Scanning wrong product',
+                      ToastAndroid.SHORT,
+                    );
+                  } else {
+                    ToastAndroid.show(
+                      data + ' already scanned',
+                      ToastAndroid.SHORT,
+                    );
+                  }
+                },
+              );
             });
           }
         },
@@ -357,26 +400,26 @@ console.log('length',imageUrls.length)
     });
   };
 
-  const updateCategories = (data) => {
-    db.transaction((tx) => {
+  const updateCategories = data => {
+    db.transaction(tx => {
       tx.executeSql(
         'UPDATE SellerMainScreenDetails set status=? where clientShipmentReferenceNumber=?',
         ['accepted', data],
         (tx, results) => {
           console.log('Results', results.rowsAffected);
-        }
+        },
       );
     });
   };
 
-  const updateCategories1 = (data) => {
-    db.transaction((tx) => {
+  const updateCategories1 = data => {
+    db.transaction(tx => {
       tx.executeSql(
         'UPDATE categories set ScanStatus=?, UploadStatus=? where clientShipmentReferenceNumber=?',
         [1, 1, data],
         (tx, results) => {
           console.log('Results', results.rowsAffected);
-        }
+        },
       );
     });
   };
@@ -385,7 +428,6 @@ console.log('length',imageUrls.length)
     setBarcode(e.data);
     getCategories(e.data);
   };
-  
 
   useEffect(() => {
     if (len) {
@@ -401,14 +443,18 @@ console.log('length',imageUrls.length)
 
   const displaydata = async () => {
     db.transaction(tx => {
-      tx.executeSql('SELECT * FROM ShipmentRejectReasons', [], (tx1, results) => {
-        let temp = [];
-        // console.log(results.rows.length);
-        for (let i = 0; i < results.rows.length; ++i) {
-          temp.push(results.rows.item(i));
-        }
-        setRejectedData(temp);
-      }, );
+      tx.executeSql(
+        'SELECT * FROM ShipmentRejectReasons',
+        [],
+        (tx1, results) => {
+          let temp = [];
+          // console.log(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+          }
+          setRejectedData(temp);
+        },
+      );
     });
   };
   const navigation = useNavigation();
@@ -420,7 +466,7 @@ console.log('length',imageUrls.length)
         alert('check net connection');
         return;
       }
-      db.transaction((tx) => {
+      db.transaction(tx => {
         tx.executeSql(
           'SELECT * FROM categories where ScanStatus = ? AND UploadStatus = ?',
           [1, 0],
@@ -428,19 +474,24 @@ console.log('length',imageUrls.length)
             var len = results.rows.length;
             if (len > 0) {
               let res = results.rows.item(0);
-              axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
-                clientShipmentReferenceNumber: res.clientShipmentReferenceNumber,
-                feUserID: route.params.userId,
-                isAccepted: 'false',
-                rejectionReason: 'null',
-                consignorCode: res.consignorCode,
-                pickupTime: new Date().toJSON().slice(0, 10).replace(/-/g, '/'),
-                latitude: 0,
-                longitude: 0,
-                packagingId: 'ss',
-                packageingStatus: 1,
-                PRSNumber: res.PRSNumber,
-              })
+              axios
+                .post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
+                  clientShipmentReferenceNumber:
+                    res.clientShipmentReferenceNumber,
+                  feUserID: route.params.userId,
+                  isAccepted: 'false',
+                  rejectionReason: 'null',
+                  consignorCode: res.consignorCode,
+                  pickupTime: new Date()
+                    .toJSON()
+                    .slice(0, 10)
+                    .replace(/-/g, '/'),
+                  latitude: 0,
+                  longitude: 0,
+                  packagingId: 'ss',
+                  packageingStatus: 1,
+                  PRSNumber: res.PRSNumber,
+                })
                 .then(function (response) {
                   console.log(response.data, 'hello');
                   updateCategories1(res.clientShipmentReferenceNumber);
@@ -452,7 +503,7 @@ console.log('length',imageUrls.length)
             } else {
               alert('No data found');
             }
-          }
+          },
         );
       });
     });
@@ -465,13 +516,14 @@ console.log('length',imageUrls.length)
   useEffect(() => {
     const current_location = () => {
       return GetLocation.getCurrentPosition({
-          enableHighAccuracy: true,
-          timeout: 10000,
-        })
+        enableHighAccuracy: true,
+        timeout: 10000,
+      })
         .then(latestLocation => {
           // console.log('latest location ' + JSON.stringify(latestLocation));
           return latestLocation;
-        }).then(location => {
+        })
+        .then(location => {
           const currentLoc = {
             latitude: location.latitude,
             longitude: location.longitude,
@@ -479,16 +531,18 @@ console.log('length',imageUrls.length)
           setLatitude(location.latitude);
           setLongitude(location.longitude);
           return currentLoc;
-        }).catch(error => {
+        })
+        .catch(error => {
           RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-              interval: 10000,
-              fastInterval: 5000,
-            })
+            interval: 10000,
+            fastInterval: 5000,
+          })
             .then(status => {
               if (status) {
                 console.log('Location enabled');
               }
-            }).catch(err => {});
+            })
+            .catch(err => {});
           return false;
         });
     };
@@ -496,20 +550,21 @@ console.log('length',imageUrls.length)
   }, []);
 
   const submitForm = () => {
-    axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
-      clientShipmentReferenceNumber : route.params.barcode,
-      feUserID: route.params.userId,
-      isAccepted : 'false',
-      rejectionReason : DropDownValue,
-      consignorCode : route.params.consignorCode,
-      DeliveryTime : new Date().toJSON().slice(0,10).replace(/-/g,'/'),
-      latitude : latitude,
-      longitude : longitude,
-      packagingId : 'PL00000026',
-      packageingStatus : 1,
-      PRSNumber : route.params.PRSNumber,
-      files: imageUrls
-    })
+    axios
+      .post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
+        clientShipmentReferenceNumber: route.params.barcode,
+        feUserID: route.params.userId,
+        isAccepted: 'false',
+        rejectionReason: DropDownValue,
+        consignorCode: route.params.consignorCode,
+        DeliveryTime: new Date().toJSON().slice(0, 10).replace(/-/g, '/'),
+        latitude: latitude,
+        longitude: longitude,
+        packagingId: 'PL00000026',
+        packageingStatus: 1,
+        PRSNumber: route.params.PRSNumber,
+        files: imageUrls,
+      })
       .then(function (response) {
         console.log(response.data, 'Data has been pushed');
       })
@@ -518,20 +573,21 @@ console.log('length',imageUrls.length)
       });
   };
   const submitForm1 = () => {
-    axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
-      clientShipmentReferenceNumber : route.params.barcode,
-      feUserID: route.params.userId,
-      isAccepted : 'true',
-      rejectionReason : DropDownValue,
-      consignorCode : route.params.consignorCode,
-      DeliveryTime : new Date().toJSON().slice(0,10).replace(/-/g,'/'),
-      latitude : latitude,
-      longitude : longitude,
-      packagingId : 'PL00000026',
-      packageingStatus : 1,
-      PRSNumber : route.params.PRSNumber,
-      files: imageUrls
-    })
+    axios
+      .post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
+        clientShipmentReferenceNumber: route.params.barcode,
+        feUserID: route.params.userId,
+        isAccepted: 'true',
+        rejectionReason: DropDownValue,
+        consignorCode: route.params.consignorCode,
+        DeliveryTime: new Date().toJSON().slice(0, 10).replace(/-/g, '/'),
+        latitude: latitude,
+        longitude: longitude,
+        packagingId: 'PL00000026',
+        packageingStatus: 1,
+        PRSNumber: route.params.PRSNumber,
+        files: imageUrls,
+      })
       .then(function (response) {
         console.log(response.data, 'Data has been pushed');
       })
@@ -544,130 +600,342 @@ console.log('length',imageUrls.length)
   }
   return (
     <NativeBaseProvider>
-
-      <Modal isOpen={modalVisible} onClose={() => {setModalVisible(false)}} size="lg">
+      <Modal
+        isOpen={modalVisible}
+        onClose={() => {
+          setModalVisible(false);
+        }}
+        size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
           <Modal.Header>Return Handover Rejection Tag</Modal.Header>
           <Modal.Body>
-          {rejectedData.map((d) => (
-            <Button key={d.shipmentExceptionReasonID} flex="1" mt={2}  marginBottom={1.5} marginTop={1.5} title={d.shipmentExceptionReasonName} style={{backgroundColor: d.shipmentExceptionReasonName === DropDownValue ? '#6666FF' : '#C8C8C8'}} onPress={() => handleButtonPress(d.shipmentExceptionReasonName)} >
-            <Text style={{color:DropDownValue == d.shipmentExceptionReasonName ? 'white' : 'black'}}>{d.shipmentExceptionReasonName}</Text></Button>
+            {rejectedData.map(d => (
+              <Button
+                key={d.shipmentExceptionReasonID}
+                flex="1"
+                mt={2}
+                marginBottom={1.5}
+                marginTop={1.5}
+                title={d.shipmentExceptionReasonName}
+                style={{
+                  backgroundColor:
+                    d.shipmentExceptionReasonID === DropDownValue
+                      ? '#6666FF'
+                      : '#C8C8C8',
+                }}
+                onPress={() => handleButtonPress(d.shipmentExceptionReasonID)}>
+                <Text
+                  style={{
+                    color:
+                      DropDownValue == d.shipmentExceptionReasonID
+                        ? 'white'
+                        : 'black',
+                  }}>
+                  {d.shipmentExceptionReasonName}
+                </Text>
+              </Button>
             ))}
-            <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} marginRight={1} onPress={()=>{setModalVisible(false);rejectDetails2()}}>Reject Shipment</Button>
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={()=>{setModalVisible(false);taggedDetails()}} >Tag Shipment</Button>
+            <View
+              style={{
+                width: '90%',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignSelf: 'center',
+                marginTop: 10,
+              }}>
+              <Button
+                flex="1"
+                mt={2}
+                bg="#004aad"
+                marginBottom={1.5}
+                marginTop={1.5}
+                marginRight={1}
+                onPress={() => {
+                  setModalVisible(false);
+                  rejectDetails2();
+                }}>
+                Reject Shipment
+              </Button>
+              <Button
+                flex="1"
+                mt={2}
+                bg="#004aad"
+                marginBottom={1.5}
+                marginTop={1.5}
+                onPress={() => {
+                  setModalVisible(false);
+                  taggedDetails();
+                }}>
+                Tag Shipment
+              </Button>
             </View>
           </Modal.Body>
         </Modal.Content>
       </Modal>
-      <Modal isOpen={modalVisible1} onClose={() => {setModalVisible1(false); setImageUrls([])}} size="lg">
+      <Modal
+        isOpen={modalVisible1}
+        onClose={() => {
+          setModalVisible1(false);
+          setImageUrls([]);
+        }}
+        size="lg">
         <Modal.Content maxWidth="350">
           <Modal.CloseButton />
           <Modal.Header>Return Handover Rejection Tag</Modal.Header>
           <Modal.Body>
-      <Button py={3} variant='outline' _text={{ color: 'white', fontSize: 20 }} onPress={takePicture}>
-              {uploadStatus === 'idle' && <MaterialIcons name="cloud-upload" size={22} color="gray">  Image</MaterialIcons>}
-              {uploadStatus === 'uploading' && <ActivityIndicator size="small" color="gray" />}
-              {uploadStatus === 'done' && <MaterialIcons name="check" size={22} color="green" />}
-              {uploadStatus === 'error' && <MaterialIcons name="error" size={22} color="red" />}
+            <Button
+              py={3}
+              variant="outline"
+              _text={{color: 'white', fontSize: 20}}
+              onPress={takePicture}>
+              {uploadStatus === 'idle' && (
+                <MaterialIcons name="cloud-upload" size={22} color="gray">
+                  {' '}
+                  Image
+                </MaterialIcons>
+              )}
+              {uploadStatus === 'uploading' && (
+                <ActivityIndicator size="small" color="gray" />
+              )}
+              {uploadStatus === 'done' && (
+                <MaterialIcons name="check" size={22} color="green" />
+              )}
+              {uploadStatus === 'error' && (
+                <MaterialIcons name="error" size={22} color="red" />
+              )}
             </Button>
-      {imageUrls.length > 0 && (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' ,marginTop:50}}>
-          {imageUrls.map((url, index) => (
-          <Image
-          key={index}
-          source={{ uri: url }}
-          style={{ width: 100, height: 100 }}
-        />
-        ))}
-        </View>
-        )}
-            <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', alignSelf: 'center', marginTop: 10 }}>
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} marginRight={1} onPress={()=>setImageUrls([])}>ReScan/Record</Button>
-            {imageUrls.length<1 ?
-            <Button opacity={0.5}  disabled={true} flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} >Save</Button>
-            :
-            <Button flex="1" mt={2} bg="#004aad" marginBottom={1.5} marginTop={1.5} onPress={()=>{ setModalVisible(true); setModalVisible1(false)}} >Save</Button>
-            }
+            {imageUrls.length > 0 && (
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginTop: 50,
+                }}>
+                {imageUrls.map((url, index) => (
+                  <Image
+                    key={index}
+                    source={{uri: url}}
+                    style={{width: 100, height: 100}}
+                  />
+                ))}
+              </View>
+            )}
+            <View
+              style={{
+                width: '90%',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignSelf: 'center',
+                marginTop: 10,
+              }}>
+              <Button
+                flex="1"
+                mt={2}
+                bg="#004aad"
+                marginBottom={1.5}
+                marginTop={1.5}
+                marginRight={1}
+                onPress={() => setImageUrls([])}>
+                ReScan/Record
+              </Button>
+              {imageUrls.length < 1 ? (
+                <Button
+                  opacity={0.5}
+                  disabled={true}
+                  flex="1"
+                  mt={2}
+                  bg="#004aad"
+                  marginBottom={1.5}
+                  marginTop={1.5}>
+                  Save
+                </Button>
+              ) : (
+                <Button
+                  flex="1"
+                  mt={2}
+                  bg="#004aad"
+                  marginBottom={1.5}
+                  marginTop={1.5}
+                  onPress={() => {
+                    setModalVisible(true);
+                    setModalVisible1(false);
+                  }}>
+                  Save
+                </Button>
+              )}
             </View>
           </Modal.Body>
         </Modal.Content>
       </Modal>
 
-      <ScrollView style={{paddingTop: 20, paddingBottom: 50}} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={{paddingTop: 20, paddingBottom: 50}}
+        showsVerticalScrollIndicator={false}>
         <QRCodeScanner
           onRead={onSuccess}
           reactivate={true}
           reactivateTimeout={3000}
           flashMode={RNCamera.Constants.FlashMode.off}
-          containerStyle={{width: '100%', alignSelf: 'center', backgroundColor: 'white'}}
+          containerStyle={{
+            width: '100%',
+            alignSelf: 'center',
+            backgroundColor: 'white',
+          }}
           cameraStyle={{width: '90%', alignSelf: 'center'}}
           topContent={
-            <View><Text>Scanner</Text></View>
+            <View>
+              <Text>Scanner</Text>
+            </View>
           }
         />
         <View>
-        <Center>
-      </Center>
-    </View>
+          <Center></Center>
+        </View>
         <View>
           <View style={{backgroundColor: 'white'}}>
             <View style={{alignItems: 'center', marginTop: 15}}>
-              <View style={{backgroundColor: 'lightgray', padding: 10, flexDirection: 'row', justifyContent: 'space-between', width: '90%', borderRadius: 5}}>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>shipment ID: </Text>
+              <View
+                style={{
+                  backgroundColor: 'lightgray',
+                  padding: 10,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  width: '90%',
+                  borderRadius: 5,
+                }}>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>
+                  shipment ID:{' '}
+                </Text>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>{barcode}</Text>
               </View>
-              <Button title="Reject Shipment" onPress={() => setModalVisible1(true)} w="90%" size="lg" bg="#004aad" mb={4} mt={4}>Reject/Tag Shipment</Button>
-              <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', borderTopLeftRadius: 5, borderTopRightRadius: 5, padding: 10}}>
+              <Button
+                title="Reject Shipment"
+                onPress={() => setModalVisible1(true)}
+                w="90%"
+                size="lg"
+                bg="#004aad"
+                mb={4}
+                mt={4}>
+                Reject/Tag Shipment
+              </Button>
+              <View
+                style={{
+                  width: '90%',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  borderWidth: 1,
+                  borderBottomWidth: 0,
+                  borderColor: 'lightgray',
+                  borderTopLeftRadius: 5,
+                  borderTopRightRadius: 5,
+                  padding: 10,
+                }}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Expected</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>{route.params.Expected}</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>
+                  {route.params.Expected}
+                </Text>
               </View>
-              <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
+              <View
+                style={{
+                  width: '90%',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  borderWidth: 1,
+                  borderBottomWidth: 0,
+                  borderColor: 'lightgray',
+                  padding: 10,
+                }}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Delivered</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>{newaccepted}</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>
+                  {newaccepted}
+                </Text>
               </View>
-              <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
+              <View
+                style={{
+                  width: '90%',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  borderWidth: 1,
+                  borderBottomWidth: 0,
+                  borderColor: 'lightgray',
+                  padding: 10,
+                }}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Rejected</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>{newrejected}</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>
+                  {newrejected}
+                </Text>
               </View>
-              <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderBottomWidth: 0, borderColor: 'lightgray', padding: 10}}>
+              <View
+                style={{
+                  width: '90%',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  borderWidth: 1,
+                  borderBottomWidth: 0,
+                  borderColor: 'lightgray',
+                  padding: 10,
+                }}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Tagged</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>{newtagged}</Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>
+                  {newtagged}
+                </Text>
               </View>
-              <View style={{width: '90%', flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: 'lightgray', borderBottomLeftRadius: 5, borderBottomRightRadius: 5, padding: 10}}>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>Not Handed Over</Text>
-                <Text style={{fontSize: 18, fontWeight: '500'}}>{notDelivered}</Text>
+              <View
+                style={{
+                  width: '90%',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  borderWidth: 1,
+                  borderColor: 'lightgray',
+                  borderBottomLeftRadius: 5,
+                  borderBottomRightRadius: 5,
+                  padding: 10,
+                }}>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>
+                  Not Handed Over
+                </Text>
+                <Text style={{fontSize: 18, fontWeight: '500'}}>
+                  {notDelivered}
+                </Text>
               </View>
-              <Button onPress={()=>{
-            navigation.navigate('CollectPOD',{
-              Forward : route.params.Forward,
-              accepted : newaccepted,
-              rejected : newrejected,
-              tagged:newtagged,
-              phone : route.params.phone,
-              userId : route.params.userId,
-              consignorCode:route.params.consignorCode,
-              contactPersonName:route.params.contactPersonName,
-              notDelivered:notDelivered,
-              runsheetno: route.params.PRSNumber,
-              latitude:route.params.latitude,
-              longitude:route.params.longitude
-            })
-            }} w="90%" size="lg" bg="#004aad" mb={4} mt={4}>End Scan</Button>
+              <Button
+                onPress={() => {
+                  navigation.navigate('CollectPOD', {
+                    Forward: route.params.Forward,
+                    accepted: newaccepted,
+                    rejected: newrejected,
+                    tagged: newtagged,
+                    phone: route.params.phone,
+                    userId: route.params.userId,
+                    consignorCode: route.params.consignorCode,
+                    contactPersonName: route.params.contactPersonName,
+                    notDelivered: notDelivered,
+                    runsheetno: route.params.PRSNumber,
+                    latitude: route.params.latitude,
+                    longitude: route.params.longitude,
+                  });
+                }}
+                w="90%"
+                size="lg"
+                bg="#004aad"
+                mb={4}
+                mt={4}>
+                End Scan
+              </Button>
             </View>
           </View>
           <Center>
             <Image
               style={{
-              width:150,
-              height:100,
+                width: 150,
+                height: 100,
               }}
-              source={require('../../assets/image.png')} alt={'Logo Image'}
+              source={require('../../assets/image.png')}
+              alt={'Logo Image'}
             />
-            
           </Center>
-          
         </View>
         {/* <Fab onPress={() => handleSync()} position="absolute" size="sm" style={{backgroundColor: '#004aad'}} icon={<Icon color="white" as={<MaterialIcons name="sync" />} size="sm" />} /> */}
       </ScrollView>
@@ -678,73 +946,73 @@ console.log('length',imageUrls.length)
 export default ScanShipment;
 
 export const styles = StyleSheet.create({
-  normal:{
-    fontFamily:'open sans',
-    fontWeight:'normal',
-    fontSize:20,
-    color:'#eee',
-    marginTop:27,
-    paddingTop:15,
-    marginLeft:10,
-    marginRight:10,
-    paddingBottom:15,
-    backgroundColor:'#eee',
+  normal: {
+    fontFamily: 'open sans',
+    fontWeight: 'normal',
+    fontSize: 20,
+    color: '#eee',
+    marginTop: 27,
+    paddingTop: 15,
+    marginLeft: 10,
+    marginRight: 10,
+    paddingBottom: 15,
+    backgroundColor: '#eee',
     width: 'auto',
-    borderRadius:0,
+    borderRadius: 0,
   },
-  container:{
-   flexDirection:'row',
+  container: {
+    flexDirection: 'row',
   },
-  text:{
-    color:'#000',
-    fontWeight:'bold',
-    fontSize:18,
-    textAlign:'center',
+  text: {
+    color: '#000',
+    fontWeight: 'bold',
+    fontSize: 18,
+    textAlign: 'center',
   },
-  main1:{
-    backgroundColor:'#004aad',
-    fontFamily:'open sans',
-    fontWeight:'normal',
-    fontSize:20,
-    marginTop:27,
-    paddingTop:15,
-    marginLeft:10,
-    marginRight:10,
-    paddingBottom:15,
+  main1: {
+    backgroundColor: '#004aad',
+    fontFamily: 'open sans',
+    fontWeight: 'normal',
+    fontSize: 20,
+    marginTop: 27,
+    paddingTop: 15,
+    marginLeft: 10,
+    marginRight: 10,
+    paddingBottom: 15,
     width: 'auto',
-    borderRadius:20,
+    borderRadius: 20,
   },
-  textbox1:{
-    color:'#fff',
-    fontWeight:'bold',
-    fontSize:18,
-    width:'auto',
+  textbox1: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18,
+    width: 'auto',
     flexDirection: 'column',
-    textAlign:'center',
+    textAlign: 'center',
   },
 
-  textbtn:{
+  textbtn: {
     alignSelf: 'center',
-    color:'#fff',
-    fontWeight:'bold',
-    fontSize:18,
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18,
   },
-  btn:{
-    fontFamily:'open sans',
-    fontSize:15,
-    lineHeight:10,
-    marginTop:80,
-    paddingTop:10,
-    paddingBottom:10,
-    backgroundColor:'#004aad',
-    width:100,
-    borderRadius:10,
-    paddingLeft:0,
-    marginLeft:60,
+  btn: {
+    fontFamily: 'open sans',
+    fontSize: 15,
+    lineHeight: 10,
+    marginTop: 80,
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: '#004aad',
+    width: 100,
+    borderRadius: 10,
+    paddingLeft: 0,
+    marginLeft: 60,
   },
   bt3: {
     fontFamily: 'open sans',
-    color:'#fff',
+    color: '#fff',
     fontWeight: 'bold',
     fontSize: 15,
     lineHeight: 10,
@@ -754,12 +1022,12 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     paddingLeft: 0,
     marginLeft: 10,
-    marginRight:15,
+    marginRight: 15,
     // width:'95%',
     // marginTop:60,
   },
-  picker:{
-    color:'white',
+  picker: {
+    color: 'white',
   },
   pickerItem: {
     fontSize: 20,
@@ -771,64 +1039,58 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
   },
   modalContent: {
-    flex:0.57,
-    justifyContent:'center',
-    width:'85%',
-    backgroundColor:'white',
-    borderRadius:20,
+    flex: 0.57,
+    justifyContent: 'center',
+    width: '85%',
+    backgroundColor: 'white',
+    borderRadius: 20,
     shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 5,
-    marginLeft:28,
-    marginTop:175,
+    marginLeft: 28,
+    marginTop: 175,
   },
   closeButton: {
     position: 'absolute',
     top: 0,
     right: 0,
-    backgroundColor:'rgba(0,0,0,0.3)',
-    borderRadius:100,
-    margin:5.5,
-    color:'rgba(0,0,0,1)',
-    alignContent:'center',
-
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    borderRadius: 100,
+    margin: 5.5,
+    color: 'rgba(0,0,0,1)',
+    alignContent: 'center',
   },
 
-// text:{
-//   paddingLeft:20,
-//   color:'#000',
-//   fontWeight:'normal',
-//   fontSize:18
-// },
-// container:{
-//     flex:1,
-//     fontFamily:'open sans',
-//     fontWeight:'normal',
-//     color:'#eee',
-//     paddingTop:10,
-//     paddingBottom:10,
-//     flexDirection:'row',
-//     justifyContent:'space-between',
-//     width: 'auto',
-//     borderWidth:1,
-//     borderColor:'#eee'
+  // text:{
+  //   paddingLeft:20,
+  //   color:'#000',
+  //   fontWeight:'normal',
+  //   fontSize:18
+  // },
+  // container:{
+  //     flex:1,
+  //     fontFamily:'open sans',
+  //     fontWeight:'normal',
+  //     color:'#eee',
+  //     paddingTop:10,
+  //     paddingBottom:10,
+  //     flexDirection:'row',
+  //     justifyContent:'space-between',
+  //     width: 'auto',
+  //     borderWidth:1,
+  //     borderColor:'#eee'
 
-// },
+  // },
 
-containerText:{
-
-    paddingLeft:30,
-    color:'#000',
-    fontSize:15
-
-
-},
-otp:{
-    backgroundColor:'#004aad', 
-    color:'#000',
-    marginTop:5,
-    borderRadius:10
-   
-}
-
-  });
+  containerText: {
+    paddingLeft: 30,
+    color: '#000',
+    fontSize: 15,
+  },
+  otp: {
+    backgroundColor: '#004aad',
+    color: '#000',
+    marginTop: 5,
+    borderRadius: 10,
+  },
+});
