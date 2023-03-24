@@ -265,8 +265,7 @@ function StackNavigators({navigation}) {
   async function postSPSCalling(row) {
     await axios
       .post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
-        clientShipmentReferenceNumber:
-          row.clientShipmentReferenceNumber,
+        clientShipmentReferenceNumber: row.clientShipmentReferenceNumber,
         awbNo: row.awbNo,
         clientRefId: row.clientRefId,
         courierCode: row.courierCode,
