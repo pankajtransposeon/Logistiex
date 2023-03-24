@@ -31,7 +31,7 @@ const POD = ({route}) => {
   const [PartialCloseData, setPartialCloseData] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState(0);
-
+  const [runsheetNo,setRunsheetNo]=useState([]);
   const [expected, setExpected] = useState(route.params.Forward);
   const [newaccepted, setnewAccepted] = useState(route.params.accepted);
   const [newrejected, setnewRejected] = useState(route.params.rejected);
@@ -163,7 +163,7 @@ useEffect(() => {
 
 const submitForm11 = () => {
   axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
-    runsheetNo: route.params.runsheetno, 
+    runsheetNo: runsheetNo, 
     excepted:route.params.Forward,
     accepted: route.params.accepted,
     rejected:route.params.rejected,
@@ -267,7 +267,29 @@ const sendSmsOtp = async () => {
         },
       );
     }); 
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? ',
+        [route.params.consignorCode],
+        (tx1, results) => {
+          setRunsheetNo(results)
+        },
+      );
+    });
+    db.transaction((tx) => {
+      tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? ',
+      [route.params.consignorCode],
+      (tx1, results) =>  { // ToastAndroid.show("Loading...", ToastAndroid.SHORT);
+          let temp = [];
+          console.log(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++i) {
+              temp.push(results.rows.item(i));
+          }
+          setRunsheetNo(temp);
+      });
+  });
   };
+  console.log('280',runsheetNo);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       displayData();

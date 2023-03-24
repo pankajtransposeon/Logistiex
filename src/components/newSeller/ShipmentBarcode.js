@@ -512,7 +512,7 @@ const barcodeCheck11 = ()=>{
       console.log('scan 45456');
 
       db.transaction((tx) => {
-        tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectedReason=?  WHERE status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [DropDownValue,route.params.consignorCode, barcode,barcode,barcode], (tx1, results) => {
+        tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectionReasonL1=?  WHERE status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [DropDownValue,route.params.consignorCode, barcode,barcode,barcode], (tx1, results) => {
           let temp = [];
           // ContinueHandle11();
           // console.log("ddsds4545",tx1);
@@ -585,6 +585,7 @@ const barcodeCheck11 = ()=>{
           (sqlTxn, res) => {
             // console.log('categories retrieved successfully', res.rows.length);
             console.log('ok1111',data);
+            console.log(data,data,data)
             setLen(res.rows.length);
             setBarcode(data);
             if (!res.rows.length) {
@@ -596,7 +597,8 @@ const barcodeCheck11 = ()=>{
               db.transaction((tx) => {
                 console.log('ok3333',data);
 
-                tx.executeSql('Select * FROM SellerMainScreenDetails WHERE status IS NOT NULL And consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?)', [route.params.consignorCode,data,data,data], (tx1, results) => {
+                tx.executeSql('Select * FROM SellerMainScreenDetails WHERE status IS NOT NULL And consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?)', 
+                [route.params.consignorCode,data,data,data], (tx1, results) => {
                   console.log('Results121', results.rows.length);
                   console.log('ok4444',data);
 
@@ -770,6 +772,20 @@ const barcodeCheck11 = ()=>{
     }, []);
 
     const submitForm = () => {
+      const data=[ {
+        clientShipmentReferenceNumber : barcode,
+        feUserID: route.params.userId,
+        isAccepted : 'false',
+        rejectionReason : DropDownValue,
+        consignorCode : route.params.consignorCode,
+        pickupTime : new Date().toJSON().slice(0,10).replace(/-/g,'/'),
+        latitude : latitude,
+        longitude : longitude,
+        packagingId : 'PL00000026',
+        packagingStatus : 1,
+        PRSNumber : route.params.PRSNumber,
+      }]
+      console.log(data);
       axios.post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
         clientShipmentReferenceNumber : barcode,
         feUserID: route.params.userId,
@@ -780,7 +796,7 @@ const barcodeCheck11 = ()=>{
         latitude : latitude,
         longitude : longitude,
         packagingId : 'PL00000026',
-        packageingStatus : 1,
+        packagingStatus : 1,
         PRSNumber : route.params.PRSNumber,
       })
         .then(function (response) {
