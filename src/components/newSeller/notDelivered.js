@@ -29,6 +29,7 @@ const NotDelivered = ({route}) => {
     const [displayData, setDisplayData] = useState({});
     const [keyword, setKeyword] = useState('');
     const [MM,setMM] = useState(0);
+    const [rejectionCode, setRejectionCode]=useState("")
 
     const DisplayData = async () => {
       closeDelivery();

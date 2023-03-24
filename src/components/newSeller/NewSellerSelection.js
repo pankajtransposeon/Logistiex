@@ -54,6 +54,7 @@ const NewSellerSelection = ({route}) => {
   const [phone, setPhone] = useState(route.params.phone);
   const [type, setType] = useState('');
   const [DropDownValue, setDropDownValue] = useState(null);
+  const [rejectionCode, setRejectionCode]=useState("")
   const [DropDownValue1, setDropDownValue1] = useState(null);
   const [rejectStage, setRejectStage] = useState(null);
   const [CloseData, setCloseData] = useState([]);
@@ -70,7 +71,7 @@ const NewSellerSelection = ({route}) => {
   const DisplayData = async () => {
     closePickup11();
   };
-  const notPicked = rejectionReason => {
+  const notPicked = () => {
     AsyncStorage.setItem('refresh11', 'refresh');
     db.transaction(tx => {
       tx.executeSql(
@@ -88,7 +89,7 @@ const NewSellerSelection = ({route}) => {
     axios
       .post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
         consignorCode: route.params.consignorCode,
-        rejectionReason: "PFR1",
+        rejectionReason: rejectionCode,
         feUserID: route.params.userId,
         latitude: route.params.consignorLatitude,
         longitude: route.params.consignorLongitude,
@@ -345,18 +346,20 @@ const NewSellerSelection = ({route}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function handleButtonPress(item) {
+  function handleButtonPress(item,item2) {
     if (item == 'Could Not Attempt') {
       setModalVisible2(true);
       setModalVisible(false);
     } else {
       setDropDownValue(item);
+      setRejectionCode(item2)
       setRejectStage('L1');
     }
     // setModalVisible(false);
   }
-  function handleButtonPress2(item) {
+  function handleButtonPress2(item,item2) {
     setDropDownValue1(item);
+    setRejectionCode(item2)
     setRejectStage('L2');
   }
 
@@ -427,7 +430,7 @@ const NewSellerSelection = ({route}) => {
                         : '#C8C8C8',
                   }}
                   title={d.pickupFailureReasonName}
-                  onPress={() => handleButtonPress(d.pickupFailureReasonName)}>
+                  onPress={() => handleButtonPress(d.pickupFailureReasonName,d.pickupFailureReasonID)}>
                   <Text
                     style={{
                       color:
@@ -446,7 +449,7 @@ const NewSellerSelection = ({route}) => {
                 marginBottom={1.5}
                 marginTop={1.5}
                 onPress={() => {
-                  notPicked(DropDownValue);
+                  notPicked();
                   setModalVisible(false);
                 }}>
                 Submit
@@ -478,7 +481,7 @@ const NewSellerSelection = ({route}) => {
                         d.reasonName === DropDownValue1 ? '#6666FF' : '#C8C8C8',
                     }}
                     title={d.reasonName}
-                    onPress={() => handleButtonPress2(d.reasonName)}>
+                    onPress={() => handleButtonPress2(d.reasonName, d.reasonID)}>
                     <Text
                       style={{
                         color:
@@ -495,7 +498,7 @@ const NewSellerSelection = ({route}) => {
                 marginBottom={1.5}
                 marginTop={1.5}
                 onPress={() => {
-                  notPicked(DropDownValue1);
+                  notPicked();
                   setModalVisible2(false);
                 }}>
                 Submit
