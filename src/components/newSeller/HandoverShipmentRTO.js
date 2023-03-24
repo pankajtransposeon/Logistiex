@@ -83,7 +83,27 @@ const HandoverShipmentRTO = ({route}) => {
   const [alreadyBag, setAlreadyBag] = useState(false);
   const [acceptedItemData, setAcceptedItemData] = useState({});
   const [bagStatus, setBagStatus] = useState(true);
-  // const navigation = useNavigation();
+
+  const [userId, setUserID] = useState('');
+
+  const getUserId = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@storage_Key');
+      if (value !== null) {
+        const data = JSON.parse(value);
+        setUserID(data.userId);
+      } else {
+        setId('');
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    getUserId();
+  }, []);
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       loadAcceptedItemData12();
@@ -384,31 +404,35 @@ const HandoverShipmentRTO = ({route}) => {
   function uploadDataToServer(data) {
     console.log('===========BarCode===========', data.item(0));
     const row = data.item(0);
-    axios
-      .post(
-        'https://bkedtest.logistiex.com/SellerMainScreen/returnShipmentScan',
-        {
-          clientShipmentReferenceNumber: row.clientShipmentReferenceNumber,
-          awbNo: row.awbNo,
-          clientRefId: row.clientRefId,
-          courierCode: 'NA',
-          feUserID: userId,
-          isAccepted: true,
-          consignorCode: row.consignorCode,
-          eventTime: row.actionTime,
-          latitude: 'NA',
-          longitude: 'NA',
-          runsheetNo: row.runSheetNumber,
-          scanStatus: 1,
-          bagSealNo: 'NA',
-        },
-      )
-      .then(response => {
-        console.log('===========Result===========', response.data);
-      })
-      .catch(error => {
-        console.log('===========Error===========', error);
-      });
+    try {
+      axios
+        .post(
+          'https://bkedtest.logistiex.com/SellerMainScreen/returnShipmentScan',
+          {
+            clientShipmentReferenceNumber: row.clientShipmentReferenceNumber,
+            awbNo: row.awbNo,
+            clientRefId: row.clientRefId,
+            courierCode: 'NA',
+            feUserID: userId,
+            isAccepted: true,
+            consignorCode: row.consignorCode,
+            eventTime: row.actionTime,
+            latitude: 66.7876,
+            longitude: 43.3454,
+            runsheetNo: 'NA',
+            scanStatus: 1,
+            bagSealNo: 'NA',
+          },
+        )
+        .then(response => {
+          console.log('===========Result===========', response.data);
+        })
+        .catch(error => {
+          console.log('===========Error===========', error);
+        });
+    } catch (e) {
+      console.log('++++++++++++++++Catch Error++++++++++++++++', e);
+    }
   }
 
   const getCategories = data => {
