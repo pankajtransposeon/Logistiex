@@ -263,31 +263,33 @@ function StackNavigators({navigation}) {
   };
 
   async function postSPSCalling(row) {
+    // console.log('===========row=========', row);
     await axios
       .post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
         clientShipmentReferenceNumber: row.clientShipmentReferenceNumber,
         awbNo: row.awbNo,
         clientRefId: row.clientRefId,
+        expectedPackagingId: row.packagingId,
+        packagingId: row.packagingId,
         courierCode: row.courierCode,
-        feUserID: userId,
-        rejectionReasonL1: row.rejectedReason,
-        rejectionReasonL2: row.rejectedReason,
-        rejectionStage: row.rejectionStage,
         consignorCode: row.consignorCode,
-        eventTime: row.eventTime,
-        latitude: row.consignorLatitude,
-        longitude: row.consignorLongitude,
-        packagingId: row.expectedPackagingId,
-        packagingAction: row.packagingAction,
-        runsheetNo: row.runsheetNo,
-        bagId: '',
-        scanStatus: scannedStatus,
-        packagingStatus: row.packagingAction,
-        expectedPackagingId: row.expectedPackagingId,
-        shipmentAction: row.shipmentStatus,
+        packagingAction: 1,
+        runsheetNo: row.runSheetNumber,
+        shipmentAction: row.shipmentAction,
+        feUserID: userId,
+        rejectionReasonL1: row.rejectionReasonL1,
+        rejectionReasonL2: row.rejectionReasonL2,
+        rejectionStage: 1,
+        bagId: row.bagId,
+        eventTime: 98898,
+        latitude: 97987,
+        longitude: 98979,
+        packagingStatus: 1,
+        scanStatus:
+          row.status == 'accepted' ? 1 : row.status == 'rejected' ? 2 : 0,
       })
       .then(response => {
-        console.log('sync response', response);
+        console.log('sync Successfully pushed');
       })
       .catch(error => {
         setIsLoading(false);
@@ -297,7 +299,6 @@ function StackNavigators({navigation}) {
 
   async function postSPS(data) {
     await data.map(row => {
-      console.log(row);
       postSPSCalling(row);
     });
   }
@@ -517,6 +518,7 @@ function StackNavigators({navigation}) {
       );
     });
   };
+
   const loadAPI_Data2 = () => {
     // setIsLoading(!isLoading);
     (async () => {
@@ -564,18 +566,18 @@ function StackNavigators({navigation}) {
                     res.data.data[i].runsheetNo,
                     res.data.data[i].shipmentStatus,
                     res.data.data[i].shipmentAction,
-                    res.data.data[i].rejectedReason,
-                    res.data.data[i].rejectedReason,
-                    res.data.data[i].rejectionStage,
+                    '',
+                    '',
+                    0,
                     res.data.data[i].actionTime,
-                    res.data.data[i].status,
-                    res.data.data[i].handoverStatus,
-                    res.data.data[i].syncStatus,
-                    res.data.data[i].syncHandoverStatus,
-                    res.data.data[i].bagId,
+                    null,
+                    null,
+                    null,
+                    null,
+                    '',
                   ],
                   (sqlTxn, _res) => {
-                    // console.log(`\n Data Added to local db successfully 213`);
+                    // console.log(`\n Data Added to local db successfully`);
                     // console.log(res);
                   },
                   error => {
