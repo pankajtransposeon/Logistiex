@@ -47,6 +47,7 @@ const NewSellerPickup = ({route}) => {
       });
       
   };
+  
   useEffect(() => {
       if (data.length > 0) {
         const counts = [];

@@ -32,6 +32,7 @@ const CollectPOD = ({route}) => {
   const [showModal, setShowModal] = useState(false);
   const [pending,setPending]=useState(0)
   const [message, setMessage] = useState(0);
+  const [runsheetNo,setRunsheetNo]=useState('');
   const PartialClose = 'https://bkedtest.logistiex.com/ADupdatePrams/getPartialClosureReasons';
   const [timer, setTimer] = useState(60); 
 
@@ -108,11 +109,12 @@ useEffect(() => {
 
   current_location();
 }, []);
-
+console.log(latitude11)
+console.log(longitude11)
 const submitForm11 = () => {
   alert('Your Data has submitted');
   axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
-    runsheetNo: route.params.runsheetno, 
+    runsheetNo: runsheetNo, 
     excepted:route.params.Forward,
     accepted: route.params.accepted,
     rejected:route.params.rejected,
@@ -185,7 +187,15 @@ const sendSmsOtp = async () => {
             if (results.rowsAffected > 0) {
               ToastAndroid.show('Partial Closed Successfully',ToastAndroid.SHORT);
               // setDropDownValue11('');
-  
+              axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
+                consignorCode:route.params.consignorCode,
+                rejectionReason: '',
+                feUserID: route.params.userId,
+                latitude : route.params.latitude,
+                longitude : route.params.longitude,
+                eventTime: new Date().valueOf() ,
+                rejectionStage:3
+                })
             }
             //  else {
             //   console.log('failed to add notPicked item locally');
@@ -213,7 +223,6 @@ const sendSmsOtp = async () => {
       setMessage(2)
       console.log(error);
     });
-    setShowModal(true);
   }
   const displayData = async () => {
     db.transaction(tx => {
@@ -225,6 +234,18 @@ const sendSmsOtp = async () => {
         },
       );
     }); 
+    db.transaction((tx) => {
+      tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? ',
+      [route.params.consignorCode],
+      (tx1, results) =>  { // ToastAndroid.show("Loading...", ToastAndroid.SHORT);
+          let temp = [];
+          console.log(results.rows.length);
+          for (let i = 0; i < results.rows.length; ++i) {
+              temp.push(results.rows.item(i));
+          }
+          setRunsheetNo(temp[0].runSheetNumber);
+      });
+  });
   };
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -232,7 +253,7 @@ const sendSmsOtp = async () => {
     });
     return unsubscribe;
   }, [navigation]);
-  
+
   return (
     <NativeBaseProvider>
       <Modal w="100%" isOpen={showModal11} onClose={() => {setShowModal11(false); setTimer(60)}}>
