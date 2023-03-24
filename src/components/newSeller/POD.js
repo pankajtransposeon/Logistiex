@@ -31,7 +31,7 @@ const POD = ({route}) => {
   const [PartialCloseData, setPartialCloseData] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState(0);
-  const [runsheetNo,setRunsheetNo]=useState([]);
+  const [runsheetNo,setRunsheetNo]=useState('');
   const [expected, setExpected] = useState(route.params.Forward);
   const [newaccepted, setnewAccepted] = useState(route.params.accepted);
   const [newrejected, setnewRejected] = useState(route.params.rejected);
@@ -162,7 +162,7 @@ useEffect(() => {
 }, []);
 
 const submitForm11 = () => {
-  axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
+  const data=[{
     runsheetNo: runsheetNo, 
     excepted:route.params.Forward,
     accepted: route.params.accepted,
@@ -172,6 +172,22 @@ const submitForm11 = () => {
     receivingTime: new Date().valueOf(),
     latitude : latitude11,
     longitude : longitude11,
+    receiverMobileNo : route.params.phone,
+    receiverName: name,
+    consignorAction: "Seller Pickup",
+    consignorCode:route.params.consignorCode
+}]
+console.log(data);
+  axios.post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
+    runsheetNo: runsheetNo, 
+    excepted:route.params.Forward,
+    accepted: route.params.accepted,
+    rejected:route.params.rejected,
+    nothandedOver:newNotPicked,
+    feUserID: route.params.userId,
+    receivingTime: new Date().valueOf(),
+    latitude : route.params.latitude,
+    longitude : route.params.longitude,
     receiverMobileNo : route.params.phone,
     receiverName: name,
     consignorAction: "Seller Pickup",
@@ -214,9 +230,8 @@ const sendSmsOtp = async () => {
         setInputOtp('');
         setShowModal11(false);
 
-
         db.transaction((tx) => {
-          tx.executeSql('UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?', [DropDownValue11,route.params.consignorCode], (tx1, results) => {
+          tx.executeSql('UPDATE SellerMainScreenDetails SET status="notPicked" , rejectionReasonL1=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?', [DropDownValue11,route.params.consignorCode], (tx1, results) => {
             let temp = [];
             // console.log("Not Picked Reason",DropDownValue);
             // console.log('Results',results.rowsAffected);
@@ -225,7 +240,15 @@ const sendSmsOtp = async () => {
               console.log('notPicked done');
               ToastAndroid.show('Partial Closed Successfully',ToastAndroid.SHORT);
               // setDropDownValue11('');
-  
+              axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
+              consignorCode:route.params.consignorCode,
+              rejectionReason: '',
+              feUserID: route.params.userId,
+              latitude : route.params.latitude,
+              longitude : route.params.longitude,
+              eventTime: new Date().valueOf() ,
+              rejectionStage:3
+              })
             }
             //  else {
             //   console.log('failed to add notPicked item locally');
@@ -254,9 +277,8 @@ const sendSmsOtp = async () => {
       setMessage(2);
       console.log(error);
     });
-    setShowModal(true);
   }
-
+console.log(route.params)
   const displayData = async () => {
     db.transaction(tx => {
       tx.executeSql(
@@ -267,15 +289,7 @@ const sendSmsOtp = async () => {
         },
       );
     }); 
-    db.transaction(tx => {
-      tx.executeSql(
-        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? ',
-        [route.params.consignorCode],
-        (tx1, results) => {
-          setRunsheetNo(results)
-        },
-      );
-    });
+    
     db.transaction((tx) => {
       tx.executeSql('SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? ',
       [route.params.consignorCode],
@@ -285,11 +299,10 @@ const sendSmsOtp = async () => {
           for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
           }
-          setRunsheetNo(temp);
+          setRunsheetNo(temp[0].runSheetNumber);
       });
   });
   };
-  console.log('280',runsheetNo);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       displayData();
@@ -315,7 +328,7 @@ const sendSmsOtp = async () => {
               :
                <Button w="40%" bg="gray.500" onPress={()=>{sendSmsOtp(); setTimer(60)}}>Resend</Button>
               }             
-              <Button w="40%" bg="#004aad" onPress={()=>validateOTP()}>Submit</Button>
+              <Button w="40%" bg="#004aad" onPress={()=>{validateOTP()}}>Submit</Button>
             </Box>
           </Modal.Body>
         </Modal.Content>
