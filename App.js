@@ -561,7 +561,7 @@ function StackNavigators({navigation}) {
                     res.data.data[i].consignorCode,
                     res.data.data[i].packagingStatus,
                     res.data.data[i].expectedPackagingId,
-                    res.data.data[i].runSheetNumber,
+                    res.data.data[i].runsheetNo,
                     res.data.data[i].shipmentStatus,
                     res.data.data[i].shipmentAction,
                     res.data.data[i].rejectedReason,

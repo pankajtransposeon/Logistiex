@@ -38,7 +38,7 @@ const NotDelivered = ({route}) => {
         AsyncStorage.setItem('refresh11', 'refresh');
         db.transaction(tx => {
           tx.executeSql(
-            'UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectedReason=? WHERE shipmentAction="Seller Delivery" AND status IS Null And consignorCode=?',
+            'UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectionReasonL1=? WHERE shipmentAction="Seller Delivery" AND status IS Null And consignorCode=?',
             [DropDownValue,route.params.consignorCode],
             (tx1, results) => {
               let temp = [];
@@ -56,7 +56,7 @@ const NotDelivered = ({route}) => {
         latitude : route.params.consignorLatitude,
         longitude : route.params.consignorLongitude,
         eventTime: new Date().valueOf() ,
-        rejectionStage:rejectStage 
+        rejectionStage:1
     })
         .then(function (response) {
             console.log(response.data);

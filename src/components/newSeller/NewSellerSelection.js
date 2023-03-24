@@ -755,6 +755,8 @@ const NewSellerSelection = ({route}) => {
                         phone: route.params.phone,
                         contactPersonName: route.params.contactPersonName,
                         packagingId: route.params.packagingId,
+                        latitude:route.params.consignorLatitude,
+                        longitude:route.params.consignorLongitude
                         // TotalpickUp : newdata[0].totalPickups
                       })
                     }>

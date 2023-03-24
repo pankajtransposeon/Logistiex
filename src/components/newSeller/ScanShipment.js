@@ -257,7 +257,7 @@ console.log('length',imageUrls.length)
   const rejectDetails2 = () => {
 
     db.transaction((tx) => {
-      tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectedReason=?  WHERE  shipmentAction="Seller Delivery" AND  status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [DropDownValue,route.params.consignorCode, barcode,barcode,barcode], (tx1, results) => {
+      tx.executeSql('UPDATE SellerMainScreenDetails SET status="rejected" ,rejectionReasonL1=?  WHERE  shipmentAction="Seller Delivery" AND  status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ', [DropDownValue,route.params.consignorCode, barcode,barcode,barcode], (tx1, results) => {
         let temp = [];
         console.log('Rejected Reason : ', DropDownValue);
         console.log('Results', results.rowsAffected);
@@ -289,7 +289,7 @@ console.log('length',imageUrls.length)
   const taggedDetails = () => {
 
     db.transaction((tx) => {
-      tx.executeSql('UPDATE SellerMainScreenDetails SET status="tagged" ,rejectedReason=?  WHERE status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ',
+      tx.executeSql('UPDATE SellerMainScreenDetails SET status="tagged" ,rejectionReasonL1=?  WHERE status="accepted" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ',
        [DropDownValue,route.params.consignorCode, barcode,barcode,barcode], (tx1, results) => {
         let temp = [];
         console.log('Rejected Reason : ', DropDownValue);
@@ -651,6 +651,8 @@ console.log('length',imageUrls.length)
               contactPersonName:route.params.contactPersonName,
               notDelivered:notDelivered,
               runsheetno: route.params.PRSNumber,
+              latitude:route.params.latitude,
+              longitude:route.params.longitude
             })
             }} w="90%" size="lg" bg="#004aad" mb={4} mt={4}>End Scan</Button>
             </View>

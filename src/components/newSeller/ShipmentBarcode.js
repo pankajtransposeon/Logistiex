@@ -860,6 +860,8 @@ const barcodeCheck11 = ()=>{
               consignorCode:route.params.consignorCode,
               DropDownValue:DropDownValue11,
               contactPersonName:route.params.contactPersonName,
+              latitude:route.params.latitude,
+              longitude:route.params.longitude
             });}} >
             Submit</Button>
           </Modal.Body>
