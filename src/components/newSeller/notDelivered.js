@@ -51,7 +51,7 @@ const NotDelivered = ({route}) => {
         });
         axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
         consignorCode:route.params.consignorCode,
-        rejectionReason: rejectionReason,
+        rejectionReason: "PFR1",
         feUserID: route.params.userId,
         latitude : route.params.consignorLatitude,
         longitude : route.params.consignorLongitude,

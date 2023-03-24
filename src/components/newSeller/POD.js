@@ -242,7 +242,7 @@ const sendSmsOtp = async () => {
               // setDropDownValue11('');
               axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
               consignorCode:route.params.consignorCode,
-              rejectionReason: '',
+              rejectionReason: "PFR1",
               feUserID: route.params.userId,
               latitude : route.params.latitude,
               longitude : route.params.longitude,
