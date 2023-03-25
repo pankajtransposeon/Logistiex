@@ -2694,7 +2694,6 @@ function CustomDrawerContent({navigation}) {
           },
         })
         .then(response => {
-          console.log('data', response.data);
           setTripData(response.data.res_data);
         })
         .catch(error => {

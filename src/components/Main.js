@@ -88,7 +88,6 @@ export default function Main({navigation, route}) {
           },
         })
         .then(response => {
-          console.log('data', response.data);
           setTripData(response.data.res_data);
         })
         .catch(error => {

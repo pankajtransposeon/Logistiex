@@ -36,13 +36,10 @@ const db = openDatabase({
   name: 'rn_sqlite',
 });
 const POD = ({route}) => {
-  var otpInput = useRef(null);
   const navigation = useNavigation();
   const [name, setName] = useState(route.params.contactPersonName);
   const [inputOtp, setInputOtp] = useState('');
   const [mobileNumber, setMobileNumber] = useState(route.params.phone);
-  const [latitude11, setLatitude11] = useState(0);
-  const [longitude11, setLongitude11] = useState(0);
   const [showModal11, setShowModal11] = useState(false);
   const [modalVisible11, setModalVisible11] = useState(false);
   const [DropDownValue11, setDropDownValue11] = useState(null);
@@ -50,11 +47,12 @@ const POD = ({route}) => {
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState(0);
   const [runsheetNo, setRunsheetNo] = useState('');
-  const [expected, setExpected] = useState(route.params.Forward);
   const [newaccepted, setnewAccepted] = useState(route.params.accepted);
   const [newrejected, setnewRejected] = useState(route.params.rejected);
   const [newNotPicked, setNewNotPicked] = useState(route.params.notPicked);
-  const [pending, setPending] = useState(0);
+  const [acceptedArray, setAcceptedArray] = useState([]);
+  const [rejectedArray, setRejectedArray] = useState([]);
+  const [notPickedArray, setNotPickedArray] = useState([]);
   const [timer, setTimer] = useState(60);
 
   useEffect(() => {
@@ -81,26 +79,18 @@ const POD = ({route}) => {
         // console.log('Table6 DB OK:', temp.length);
       });
     });
-    // await fetch(PartialClose)
-    // .then((response) => response.json())
-    // .then((json) => {
-    //   setPartialCloseData(json);
-    // })
-    // .catch((error) => alert(error))
   };
   useEffect(() => {
     DisplayData11();
   }, []);
 
-  // useEffect(() => {
-  //   partialClose112();
-  // }, []);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       displayDataSPScan();
     });
     return unsubscribe;
   }, [navigation]);
+  
   const displayDataSPScan = async () => {
     db.transaction(tx => {
       tx.executeSql(
@@ -108,84 +98,45 @@ const POD = ({route}) => {
         [route.params.consignorCode],
         (tx1, results) => {
           setnewAccepted(results.rows.length);
+          let temp = [];
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i).clientShipmentReferenceNumber);
+          }
+          setAcceptedArray(temp);
         },
       );
     });
+
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status="notPicked"',
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status is NULL',
         [route.params.consignorCode],
         (tx1, results) => {
           setNewNotPicked(results.rows.length);
+          let temp = [];
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i).clientShipmentReferenceNumber);
+          }
+          setNotPickedArray(temp);
         },
       );
     });
+
     db.transaction(tx => {
       tx.executeSql(
         'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status="rejected"',
         [route.params.consignorCode],
         (tx1, results) => {
           setnewRejected(results.rows.length);
+          let temp = [];
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i).ArrowForwardIconclientShipmentReferenceNumber);
+          }
+          setRejectedArray(temp);
         },
       );
     });
   };
-
-  const partialClose112 = () => {
-    if (
-      route.params.accepted + route.params.rejected ===
-      route.params.Forward
-    ) {
-      sendSmsOtp();
-    } else {
-      setModalVisible11(true);
-    }
-  };
-
-  const clearText = () => {
-    otpInput.current.clear();
-  };
-
-  const setText = () => {
-    otpInput.current.setValue('1234');
-  };
-
-  useEffect(() => {
-    const current_location = () => {
-      return GetLocation.getCurrentPosition({
-        enableHighAccuracy: true,
-        timeout: 10000,
-      })
-        .then(latestLocation => {
-          console.log('latest location ' + JSON.stringify(latestLocation));
-          return latestLocation;
-        })
-        .then(location => {
-          const currentLoc = {
-            latitude11: location.latitude11,
-            longitude11: location.longitude11,
-          };
-          setLatitude11(location.latitude11);
-          setLongitude11(location.longitude11);
-          return currentLoc;
-        })
-        .catch(error => {
-          RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-            interval: 10000,
-            fastInterval: 5000,
-          })
-            .then(status => {
-              if (status) {
-                console.log('Location enabled');
-              }
-            })
-            .catch(err => {});
-          return false;
-        });
-    };
-
-    current_location();
-  }, []);
 
   const submitForm11 = () => {
     console.log('========postRD Data==========', {
@@ -202,35 +153,37 @@ const POD = ({route}) => {
       receiverName: name,
       consignorAction: 'Seller Pickup',
       consignorCode: route.params.consignorCode,
+      acceptedArray: acceptedArray,
+      rejectedArray: rejectedArray,
+      notPickedArray: notPickedArray,
     });
 
-    axios
-      .post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
-        runsheetNo: runsheetNo,
-        expected: route.params.Forward,
-        accepted: route.params.accepted,
-        rejected: route.params.rejected,
-        nothandedOver: newNotPicked,
-        feUserID: route.params.userId,
-        receivingTime: new Date().valueOf(),
-        latitude: route.params.latitude,
-        longitude: route.params.longitude,
-        receiverMobileNo: mobileNumber,
-        receiverName: name,
-        consignorAction: 'Seller Pickup',
-        consignorCode: route.params.consignorCode,
-      })
-      .then(function (response) {
-        console.log('============responsePostRD===========', response.data);
-        alert('Your Data has submitted');
-      })
-      .catch(function (error) {
-        console.log('============postRDError==========', error.response.data);
-      });
+    // axios
+    //   .post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
+    //     runsheetNo: runsheetNo,
+    //     expected: route.params.Forward,
+    //     accepted: route.params.accepted,
+    //     rejected: route.params.rejected,
+    //     nothandedOver: newNotPicked,
+    //     feUserID: route.params.userId,
+    //     receivingTime: new Date().valueOf(),
+    //     latitude: route.params.latitude,
+    //     longitude: route.params.longitude,
+    //     receiverMobileNo: mobileNumber,
+    //     receiverName: name,
+    //     consignorAction: 'Seller Pickup',
+    //     consignorCode: route.params.consignorCode,
+    //   })
+    //   .then(function (response) {
+    //     console.log('============responsePostRD===========', response.data);
+    //     alert('Your Data has submitted');
+    //   })
+    //   .catch(function (error) {
+    //     console.log('============postRDError==========', error.response.data);
+    //   });
   };
 
   const sendSmsOtp = async () => {
-    console.log(mobileNumber);
     const response = await axios
       .post('https://bkedtest.logistiex.com/SMS/msg', {
         mobileNumber: mobileNumber,
@@ -247,78 +200,63 @@ const POD = ({route}) => {
     // setModalVisible11(false);
   }
 
-  function validateOTP(){
-    axios.post('https://bkedtest.logistiex.com/SMS/OTPValidate', {
-      mobileNumber: mobileNumber,
-      otp: inputOtp,
-    })
-    .then(response => {
-      if (response.data.return){
-        // alert("OTP Submitted Successfully")
-        setMessage(1)
-        submitForm11();
-        setInputOtp('');
-        setShowModal11(false);
+  function validateOTP() {
+    axios
+      .post('https://bkedtest.logistiex.com/SMS/OTPValidate', {
+        mobileNumber: mobileNumber,
+        otp: inputOtp,
+      })
+      .then(response => {
+        if (response.data.return) {
+          // alert("OTP Submitted Successfully")
+          setMessage(1);
+          submitForm11();
+          setInputOtp('');
+          setShowModal11(false);
 
+          console.log('OTP Validate', response.data.return, [
+            route.params.DropDownValue,
+            new Date().valueOf().toString(),
+            route.params.latitude.toString(),
+            route.params.longitude.toString(),
+            route.params.consignorCode,
+          ]);
 
-        db.transaction((tx) => {
-          tx.executeSql('UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?', [DropDownValue11,route.params.consignorCode], (tx1, results) => {
-            let temp = [];
-            // console.log("Not Picked Reason",DropDownValue);
-            // console.log('Results',results.rowsAffected);
-            // console.log(results);
-            if (results.rowsAffected > 0) {
-              ToastAndroid.show('Partial Closed Successfully',ToastAndroid.SHORT);
-              // setDropDownValue11('');
-              axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
-                consignorCode:route.params.consignorCode,
-                rejectionReason: '',
-                feUserID: route.params.userId,
-                latitude : route.params.latitude,
-                longitude : route.params.longitude,
-                eventTime: new Date().valueOf() ,
-                rejectionStage:3
-                })
-            }
-            //  else {
-            //   console.log('failed to add notPicked item locally');
-            // }
-            console.log(results.rows.length);
-            for (let i = 0; i < results.rows.length; ++i) {
-              temp.push(results.rows.item(i));
-            }
+          db.transaction(tx => {
+            tx.executeSql(
+              'UPDATE SellerMainScreenDetails SET status="notPicked", rejectionReasonL1=?, eventTime=?, latitude=?, longitude=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?',
+              [
+                route.params.DropDownValue,
+                new Date().valueOf(),
+                route.params.latitude,
+                route.params.longitude,
+                route.params.consignorCode,
+              ],
+              (tx1, results) => {
+                if (results.rowsAffected > 0) {
+                  ToastAndroid.show(
+                    'Partial Closed Successfully',
+                    ToastAndroid.SHORT,
+                  );
+                } else {
+                  console.log('failed to add notPicked item locally');
+                }
+              },
+            );
           });
-        });
-
-
-        ToastAndroid.show('Submit Successful',ToastAndroid.SHORT);
-        navigation.navigate('Main',{
-          userId:route.params.userId,
-        });
-      }
-      else {
+        } else {
+          // alert('Invalid OTP, please try again !!');
+          setMessage(2);
+        }
+      })
+      .catch(error => {
         // alert('Invalid OTP, please try again !!');
         setMessage(2);
-      }
-    })
-    .catch(error => {
-      // alert('Invalid OTP, please try again !!');
-      setMessage(2)
-      console.log(error);
-    });
+        console.log(error);
+      });
   }
-  console.log(route.params);
-  const displayData = async () => {
-    db.transaction(tx => {
-      tx.executeSql(
-        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=?  AND status IS NULL',
-        [route.params.consignorCode],
-        (tx1, results) => {
-          setPending(results.rows.length);
-        },
-      );
-    });
 
+  const displayData = async () => {
     db.transaction(tx => {
       tx.executeSql(
         'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? ',
@@ -335,6 +273,7 @@ const POD = ({route}) => {
       );
     });
   };
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       displayData();
@@ -512,20 +451,6 @@ const POD = ({route}) => {
               <Text style={{fontSize: 18, fontWeight: '500'}}>
                 {newNotPicked}
               </Text>
-            </View>
-            <View
-              style={{
-                width: '90%',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                borderWidth: 1,
-                borderColor: 'lightgray',
-                borderBottomLeftRadius: 5,
-                borderBottomRightRadius: 5,
-                padding: 10,
-              }}>
-              <Text style={{fontSize: 18, fontWeight: '500'}}>Pending</Text>
-              <Text style={{fontSize: 18, fontWeight: '500'}}>{pending}</Text>
             </View>
           </Center>
           <Center>
