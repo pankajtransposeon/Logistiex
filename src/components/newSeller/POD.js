@@ -90,7 +90,7 @@ const POD = ({route}) => {
     });
     return unsubscribe;
   }, [navigation]);
-  
+
   const displayDataSPScan = async () => {
     db.transaction(tx => {
       tx.executeSql(
@@ -130,7 +130,7 @@ const POD = ({route}) => {
           setnewRejected(results.rows.length);
           let temp = [];
           for (let i = 0; i < results.rows.length; ++i) {
-            temp.push(results.rows.item(i).ArrowForwardIconclientShipmentReferenceNumber);
+            temp.push(results.rows.item(i).clientShipmentReferenceNumber);
           }
           setRejectedArray(temp);
         },
@@ -139,52 +139,38 @@ const POD = ({route}) => {
   };
 
   const submitForm11 = () => {
-    console.log('========postRD Data==========', {
-      runsheetNo: runsheetNo,
-      expected: route.params.Forward,
-      accepted: route.params.accepted,
-      rejected: route.params.rejected,
-      nothandedOver: newNotPicked,
-      feUserID: route.params.userId,
-      receivingTime: new Date().valueOf(),
-      latitude: route.params.latitude,
-      longitude: route.params.longitude,
-      receiverMobileNo: mobileNumber,
-      receiverName: name,
-      consignorAction: 'Seller Pickup',
-      consignorCode: route.params.consignorCode,
-      acceptedArray: acceptedArray,
-      rejectedArray: rejectedArray,
-      notPickedArray: notPickedArray,
-    });
+    co 
 
-    // axios
-    //   .post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
-    //     runsheetNo: runsheetNo,
-    //     expected: route.params.Forward,
-    //     accepted: route.params.accepted,
-    //     rejected: route.params.rejected,
-    //     nothandedOver: newNotPicked,
-    //     feUserID: route.params.userId,
-    //     receivingTime: new Date().valueOf(),
-    //     latitude: route.params.latitude,
-    //     longitude: route.params.longitude,
-    //     receiverMobileNo: mobileNumber,
-    //     receiverName: name,
-    //     consignorAction: 'Seller Pickup',
-    //     consignorCode: route.params.consignorCode,
-    //   })
-    //   .then(function (response) {
-    //     console.log('============responsePostRD===========', response.data);
-    //     alert('Your Data has submitted');
-    //   })
-    //   .catch(function (error) {
-    //     console.log('============postRDError==========', error.response.data);
-    //   });
+    axios
+      .post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
+        runsheetNo: runsheetNo,
+        expected: route.params.Forward,
+        accepted: route.params.accepted,
+        rejected: route.params.rejected,
+        nothandedOver: newNotPicked,
+        feUserID: route.params.userId,
+        receivingTime: new Date().valueOf(),
+        latitude: route.params.latitude,
+        longitude: route.params.longitude,
+        receiverMobileNo: mobileNumber,
+        receiverName: name,
+        consignorAction: 'Seller Pickup',
+        consignorCode: route.params.consignorCode,
+        acceptedShipments: acceptedArray,
+        rejectedShipments: rejectedArray,
+        nothandedOverShipments: notPickedArray,
+      })
+      .then(function (response) {
+        console.log("POST RD Data Submitted", response.data);
+        alert('Your Data has submitted');
+      })
+      .catch(function (error) {
+        console.log(error.response.data);
+      });
   };
 
   const sendSmsOtp = async () => {
-    const response = await axios
+    await axios
       .post('https://bkedtest.logistiex.com/SMS/msg', {
         mobileNumber: mobileNumber,
       })
@@ -214,14 +200,6 @@ const POD = ({route}) => {
           setInputOtp('');
           setShowModal11(false);
 
-          console.log('OTP Validate', response.data.return, [
-            route.params.DropDownValue,
-            new Date().valueOf().toString(),
-            route.params.latitude.toString(),
-            route.params.longitude.toString(),
-            route.params.consignorCode,
-          ]);
-
           db.transaction(tx => {
             tx.executeSql(
               'UPDATE SellerMainScreenDetails SET status="notPicked", rejectionReasonL1=?, eventTime=?, latitude=?, longitude=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?',
@@ -245,7 +223,7 @@ const POD = ({route}) => {
             );
           });
         } else {
-          // alert('Invalid OTP, please try again !!');
+          alert('Invalid OTP, please try again !!');
           setMessage(2);
         }
       })
