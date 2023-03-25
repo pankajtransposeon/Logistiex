@@ -26,7 +26,39 @@ const NotPicked = ({route}) => {
     const [keyword, setKeyword] = useState('');
     const [MM,setMM] = useState(0);
     const [rejectionCode, setRejectionCode]=useState("")
-
+    const [latitude, setLatitude] = useState(0);
+    const [longitude, setLongitude] = useState(0);
+  
+    useEffect(() => {
+      current_location();
+    }, []);
+  
+    const current_location = () => {
+      GetLocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 10000,
+      })
+        .then(location => {
+          setLatitude(location.latitude);
+          setLongitude(location.longitude);
+        })
+        .catch(error => {
+          RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+            interval: 10000,
+            fastInterval: 5000,
+          })
+            .then(status => {
+              if (status) {
+                console.log('Location enabled');
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
+          console.log('Location Lat long error', error);
+        });
+    };
+  
     const DisplayData = async () => {
       closePickup11();
     };
@@ -45,41 +77,50 @@ const NotPicked = ({route}) => {
     const DisplayData2 = async () => {
       NotAttemptReasons11();
     };
-    console.log(route.params.consignorLongitude);
+    
     const notPicked = () => {
-        AsyncStorage.setItem('refresh11', 'refresh');
-        db.transaction(tx => {
-          tx.executeSql(
-            'UPDATE SellerMainScreenDetails SET status="notPicked" , rejectionReasonL1=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?',
-            [rejectionCode,route.params.consignorCode],
-            (tx1, results) => {
-              let temp = [];
-             
-              console.log(results.rows.length);
-              for (let i = 0; i < results.rows.length; ++i) {
-                temp.push(results.rows.item(i));
-              }
-            },
-          );
-        });
-        axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
-        consignorCode:route.params.consignorCode,
-        rejectionReason: rejectionCode,
-        feUserID: route.params.userId,
-        latitude : route.params.consignorLatitude,
-        longitude : route.params.consignorLongitude,
-        eventTime: new Date().valueOf() ,
-        rejectionStage: 1 
-    })
+      AsyncStorage.setItem('refresh11', 'refresh');
+      db.transaction(tx => {
+        tx.executeSql(
+          'UPDATE SellerMainScreenDetails SET status="notPicked", rejectionReasonL1=?, eventTime=?, latitude=?, longitude=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?',
+          [
+            rejectionCode,
+            new Date().valueOf(),
+            latitude,
+            longitude,
+            route.params.consignorCode,
+          ],
+          (tx1, results) => {
+            let temp = [];
+            console.log(results.rows.length);
+            for (let i = 0; i < results.rows.length; ++i) {
+              temp.push(results.rows.item(i));
+            }
+          },
+        );
+      });
+      axios
+        .post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
+          consignorCode: route.params.consignorCode,
+          rejectionReason: rejectionCode,
+          feUserID: route.params.userId,
+          latitude: parseFloat(latitude),
+          longitude: parseFloat(longitude),
+          eventTime: new Date().valueOf(),
+          rejectionStage: rejectStage,
+        })
         .then(function (response) {
-            console.log(response.data);
-            
+          console.log(response.data);
+          setMessage('Successfully submitted');
+          setStatus('success');
         })
         .catch(function (error) {
-            console.log(error);
-            
+          console.log(error);
+          setMessage('Submission failed');
+          setStatus('error');
         });
-      };
+      setShowModal(true);
+    };
     const NotAttemptReasons11 = () => {
       db.transaction(tx => {
         tx.executeSql('SELECT * FROM NotAttemptReasons', [], (tx1, results) => {

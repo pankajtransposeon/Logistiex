@@ -30,35 +30,70 @@ const NotDelivered = ({route}) => {
     const [keyword, setKeyword] = useState('');
     const [MM,setMM] = useState(0);
     const [rejectionCode, setRejectionCode]=useState("")
-
+    const [latitude, setLatitude] = useState(0);
+    const [longitude, setLongitude] = useState(0);
+  
+    useEffect(() => {
+      current_location();
+    }, []);
+  
+    const current_location = () => {
+      GetLocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 10000,
+      })
+        .then(location => {
+          setLatitude(location.latitude);
+          setLongitude(location.longitude);
+        })
+        .catch(error => {
+          RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+            interval: 10000,
+            fastInterval: 5000,
+          })
+            .then(status => {
+              if (status) {
+                console.log('Location enabled');
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
+          console.log('Location Lat long error', error);
+        });
+    };
     const DisplayData = async () => {
       closeDelivery();
     };
-    console.log(route.params.consignorLatitude);
     const NotDelivered = () => {
-        AsyncStorage.setItem('refresh11', 'refresh');
-        db.transaction(tx => {
-          tx.executeSql(
-            'UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectionReasonL1=? WHERE shipmentAction="Seller Delivery" AND status IS Null And consignorCode=?',
-            [rejectionCode,route.params.consignorCode],
-            (tx1, results) => {
-              let temp = [];
-              console.log(results.rows.length);
-              for (let i = 0; i < results.rows.length; ++i) {
-                temp.push(results.rows.item(i));
-              }
-            },
-          );
-        });
-        axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
-        consignorCode:route.params.consignorCode,
-        rejectionReason: rejectionCode,
-        feUserID: route.params.userId,
-        latitude : route.params.consignorLatitude,
-        longitude : route.params.consignorLongitude,
-        eventTime: new Date().valueOf() ,
-        rejectionStage:1
-    })
+      AsyncStorage.setItem('refresh11', 'refresh');
+      db.transaction(tx => {
+        tx.executeSql(
+          'UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectionReasonL1=? WHERE shipmentAction="Seller Delivery" AND status IS Null And consignorCode=?',
+          [rejectionCode, 
+            new Date().valueOf(),
+            latitude,
+            longitude,
+            route.params.consignorCode],
+          (tx1, results) => {
+            let temp = [];
+            console.log(results.rows.length);
+            for (let i = 0; i < results.rows.length; ++i) {
+              temp.push(results.rows.item(i));
+            }
+          },
+        );
+      });
+      axios
+        .post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
+          consignorCode: route.params.consignorCode,
+          rejectionReason: rejectionCode,
+          feUserID: route.params.userId,
+          latitude: parseFloat(latitude),
+          longitude: parseFloat(longitude),
+          eventTime: new Date().valueOf(),
+          rejectionStage: 1,
+        })
         .then(function (response) {
             console.log(response.data);
         })

@@ -218,51 +218,21 @@ const ScanShipment = ({route}) => {
     });
   };
 
-  useEffect(() => {
-    const current_location = () => {
-      return GetLocation.getCurrentPosition({
-        enableHighAccuracy: true,
-        timeout: 10000,
-      })
-        .then(latestLocation => {
-          console.log('latest location ' + JSON.stringify(latestLocation));
-          return latestLocation;
-        })
-        .then(location => {
-          const currentLoc = {
-            latitude11: location.latitude11,
-            longitude11: location.longitude11,
-          };
-          setLatitude11(location.latitude11);
-          setLongitude11(location.longitude11);
-          return currentLoc;
-        })
-        .catch(error => {
-          RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-            interval: 10000,
-            fastInterval: 5000,
-          })
-            .then(status => {
-              if (status) {
-                console.log('Location enabled');
-              }
-            })
-            .catch(err => {});
-          return false;
-        });
-    };
-
-    current_location();
-  }, []);
-
+  
   const updateDetails2 = () => {
     console.log('scan ' + barcode.toString());
     setAcceptedArray([...acceptedArray, barcode.toString()]);
     console.log(acceptedArray);
     db.transaction(tx => {
       tx.executeSql(
-        'UPDATE SellerMainScreenDetails SET status="accepted" WHERE  shipmentAction="Seller Delivery" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ',
-        [route.params.consignorCode, barcode, barcode, barcode],
+        'UPDATE SellerMainScreenDetails SET status="accepted", eventTime=?, latitude=?, longitude=? WHERE  shipmentAction="Seller Delivery" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ',
+        [new Date().valueOf(),
+          latitude,
+          longitude,
+          route.params.consignorCode,
+          barcode,
+          barcode,
+          barcode,],
         (tx1, results) => {
           let temp = [];
           console.log('Results', results.rowsAffected);
@@ -514,40 +484,35 @@ const ScanShipment = ({route}) => {
     displaydata();
   }, []);
   useEffect(() => {
-    const current_location = () => {
-      return GetLocation.getCurrentPosition({
-        enableHighAccuracy: true,
-        timeout: 10000,
-      })
-        .then(latestLocation => {
-          // console.log('latest location ' + JSON.stringify(latestLocation));
-          return latestLocation;
-        })
-        .then(location => {
-          const currentLoc = {
-            latitude: location.latitude,
-            longitude: location.longitude,
-          };
-          setLatitude(location.latitude);
-          setLongitude(location.longitude);
-          return currentLoc;
-        })
-        .catch(error => {
-          RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-            interval: 10000,
-            fastInterval: 5000,
-          })
-            .then(status => {
-              if (status) {
-                console.log('Location enabled');
-              }
-            })
-            .catch(err => {});
-          return false;
-        });
-    };
     current_location();
   }, []);
+
+  const current_location = () => {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 10000,
+    })
+      .then(location => {
+        setLatitude(location.latitude);
+        setLongitude(location.longitude);
+      })
+      .catch(error => {
+        RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+          interval: 10000,
+          fastInterval: 5000,
+        })
+          .then(status => {
+            if (status) {
+              console.log('Location enabled');
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        console.log('Location Lat long error', error);
+      });
+  };
+
 
   const submitForm = () => {
     axios
