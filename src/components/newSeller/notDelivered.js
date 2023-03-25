@@ -35,12 +35,12 @@ const NotDelivered = ({route}) => {
       closeDelivery();
     };
     console.log(route.params.consignorLatitude);
-    const NotDelivered = (rejectionReason) => {
+    const NotDelivered = () => {
         AsyncStorage.setItem('refresh11', 'refresh');
         db.transaction(tx => {
           tx.executeSql(
             'UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectionReasonL1=? WHERE shipmentAction="Seller Delivery" AND status IS Null And consignorCode=?',
-            [DropDownValue,route.params.consignorCode],
+            [rejectionCode,route.params.consignorCode],
             (tx1, results) => {
               let temp = [];
               console.log(results.rows.length);
@@ -52,7 +52,7 @@ const NotDelivered = ({route}) => {
         });
         axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
         consignorCode:route.params.consignorCode,
-        rejectionReason: "PFR1",
+        rejectionReason: rejectionCode,
         feUserID: route.params.userId,
         latitude : route.params.consignorLatitude,
         longitude : route.params.consignorLongitude,
@@ -104,17 +104,19 @@ const NotDelivered = ({route}) => {
     }, []);
       
       
-      function handleButtonPress(item) {
+      function handleButtonPress(item,item2) {
         if (item == 'Could Not Attempt') {
           setModalVisible2(true);
           setModalVisible(false);
         } else {
           setDropDownValue(item);
+          setRejectionCode(item2);
           setRejectStage("L1")
         }
       }
-      function handleButtonPress2(item) {
+      function handleButtonPress2(item,item2) {
         setDropDownValue1(item);
+        setRejectionCode(item2)
         setRejectStage("L2")
       }
       
@@ -143,7 +145,7 @@ return (
                     }}
                     title={d.deliveryFailureReasonName}
                     onPress={() =>
-                      handleButtonPress(d.deliveryFailureReasonName)
+                      handleButtonPress(d.deliveryFailureReasonName,d.deliveryFailureReasonID)
                     }>
                     <Text
                       style={{
@@ -163,7 +165,7 @@ return (
                   marginBottom={1.5}
                   marginTop={1.5}
                   onPress={() => {
-                    NotDelivered(DropDownValue);
+                    NotDelivered();
                     navigation.navigate('PendingWork');
                   }}>
                   Submit
@@ -194,7 +196,7 @@ return (
                             : '#C8C8C8',
                       }}
                       title={d.reasonName}
-                      onPress={() => handleButtonPress2(d.reasonName)}>
+                      onPress={() => handleButtonPress2(d.reasonName, d.reasonID)}>
                       <Text
                         style={{
                           color:
@@ -211,7 +213,7 @@ return (
                   marginBottom={1.5}
                   marginTop={1.5}
                   onPress={() => {
-                    NotDelivered(DropDownValue1);
+                    NotDelivered();
                     navigation.navigate('PendingWork');
                   }}>
                   Submit

@@ -76,7 +76,7 @@ const NewSellerSelection = ({route}) => {
     db.transaction(tx => {
       tx.executeSql(
         'UPDATE SellerMainScreenDetails SET status="notPicked" , rejectionReasonL1=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?',
-        [rejectionReason, route.params.consignorCode],
+        [rejectionCode, route.params.consignorCode],
         (tx1, results) => {
           let temp = [];
           console.log(results.rows.length);

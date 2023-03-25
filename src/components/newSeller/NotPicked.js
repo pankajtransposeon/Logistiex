@@ -46,12 +46,12 @@ const NotPicked = ({route}) => {
       NotAttemptReasons11();
     };
     console.log(route.params.consignorLongitude);
-    const notPicked = (rejectionReason) => {
+    const notPicked = () => {
         AsyncStorage.setItem('refresh11', 'refresh');
         db.transaction(tx => {
           tx.executeSql(
             'UPDATE SellerMainScreenDetails SET status="notPicked" , rejectionReasonL1=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?',
-            [DropDownValue,route.params.consignorCode],
+            [rejectionCode,route.params.consignorCode],
             (tx1, results) => {
               let temp = [];
              
@@ -64,7 +64,7 @@ const NotPicked = ({route}) => {
         });
         axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
         consignorCode:route.params.consignorCode,
-        rejectionReason: "PFR1",
+        rejectionReason: rejectionCode,
         feUserID: route.params.userId,
         latitude : route.params.consignorLatitude,
         longitude : route.params.consignorLongitude,
@@ -100,17 +100,19 @@ const NotPicked = ({route}) => {
       DisplayData2();
     }, []);
 
-      function handleButtonPress(item) {
+      function handleButtonPress(item,item2) {
         if (item == 'Could Not Attempt') {
           setModalVisible2(true);
           setModalVisible(false);
         } else {
           setDropDownValue(item);
+          setRejectionCode(item2)
           setRejectStage("L1")
         }
       }
-      function handleButtonPress2(item) {
+      function handleButtonPress2(item,item2) {
         setDropDownValue1(item);
+        setRejectionCode(item2)
         setRejectStage("L2")
       }
      
@@ -139,7 +141,7 @@ return (
                     }}
                     title={d.pickupFailureReasonName}
                     onPress={() =>
-                      handleButtonPress(d.pickupFailureReasonName)
+                      handleButtonPress(d.pickupFailureReasonName,d.pickupFailureReasonID)
                     }>
                     <Text
                       style={{
@@ -159,7 +161,7 @@ return (
                   marginBottom={1.5}
                   marginTop={1.5}
                   onPress={() => {
-                    notPicked(DropDownValue);
+                    notPicked();
                     navigation.navigate('PendingWork');
                   }}>
                   Submit
@@ -190,7 +192,7 @@ return (
                             : '#C8C8C8',
                       }}
                       title={d.reasonName}
-                      onPress={() => handleButtonPress2(d.reasonName)}>
+                      onPress={() => handleButtonPress2(d.reasonName, d.reasonID)}>
                       <Text
                         style={{
                           color:
@@ -207,7 +209,7 @@ return (
                   marginBottom={1.5}
                   marginTop={1.5}
                   onPress={() => {
-                    notPicked(DropDownValue1);
+                    notPicked();
                     navigation.navigate('PendingWork');
                   }}>
                   Submit
