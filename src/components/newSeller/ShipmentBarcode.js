@@ -36,16 +36,6 @@ import RNBeep from 'react-native-a-beep';
 import {Picker} from '@react-native-picker/picker';
 import GetLocation from 'react-native-get-location';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-import {
-  backgroundColor,
-  borderColor,
-  height,
-  marginTop,
-  style,
-} from 'styled-system';
-import {Console} from 'console';
-// import GetLocation from 'react-native-get-location';
-// import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import OTPTextInput from 'react-native-otp-textinput';
 
 const db = openDatabase({
@@ -76,8 +66,6 @@ const ShipmentBarcode = ({route}) => {
   const [name, setName] = useState('');
   const [inputOtp, setInputOtp] = useState('');
   const [mobileNumber, setMobileNumber] = useState(route.params.phone);
-  const [latitude11, setLatitude11] = useState(0);
-  const [longitude11, setLongitude11] = useState(0);
   const [showModal11, setShowModal11] = useState(false);
   const [modalVisible11, setModalVisible11] = useState(false);
   const [DropDownValue11, setDropDownValue11] = useState('');
@@ -155,14 +143,7 @@ const ShipmentBarcode = ({route}) => {
       );
     });
   };
-  //     useEffect(() => {
-  //   console.log('accepted array length' + acceptedArray.length);
-  // if (acceptedArray.length === 0){
-  //   setCloseBagColor('gray.300');
-  // } else {
-  //   setCloseBagColor('#004aad');
-  // }
-  // }, [acceptedArray]);
+
   const partialClose112 = () => {
     console.log('partialClose popup shown11');
     if (newaccepted + newrejected === route.params.Forward) {
@@ -195,64 +176,32 @@ const ShipmentBarcode = ({route}) => {
   // }
 
   useEffect(() => {
-    const current_location = () => {
-      return GetLocation.getCurrentPosition({
-        enableHighAccuracy: true,
-        timeout: 10000,
-      })
-        .then(latestLocation => {
-          console.log('latest location ' + JSON.stringify(latestLocation));
-          return latestLocation;
-        })
-        .then(location => {
-          const currentLoc = {
-            latitude11: location.latitude11,
-            longitude11: location.longitude11,
-          };
-          setLatitude11(location.latitude11);
-          setLongitude11(location.longitude11);
-          return currentLoc;
-        })
-        .catch(error => {
-          RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-            interval: 10000,
-            fastInterval: 5000,
-          })
-            .then(status => {
-              if (status) {
-                console.log('Location enabled');
-              }
-            })
-            .catch(err => {});
-          return false;
-        });
-    };
-
     current_location();
   }, []);
 
-  const submitForm11 = () => {
-    alert('Your Data has submitted');
-    axios
-      .post('https://bked.logistiex.com/SellerMainScreen/postRD', {
-        excepted: route.params.Forward,
-        accepted: route.params.accepted,
-        rejected: route.params.rejected,
-        nothandedOver: 0,
-        feUserID: route.params.userId,
-        receivingDate: new Date().toJSON().slice(0, 10).replace(/-/g, '/'),
-        receivingTime: new Date().toLocaleString(),
-        latitude11: latitude11,
-        longitude11: longitude11,
-        ReceiverMobileNo: route.params.phone,
-        ReceiverName: name,
+  const current_location = () => {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 10000,
+    })
+      .then(location => {
+        setLatitude(location.latitude);
+        setLongitude(location.longitude);
       })
-      .then(function (response) {
-        console.log(response.data, 'hello');
-        alert('Your Data has submitted');
-      })
-      .catch(function (error) {
-        console.log(error);
+      .catch(error => {
+        RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+          interval: 10000,
+          fastInterval: 5000,
+        })
+          .then(status => {
+            if (status) {
+              console.log('Location enabled');
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        console.log('Location Lat long error', error);
       });
   };
 
@@ -485,12 +434,19 @@ const ShipmentBarcode = ({route}) => {
     console.log(acceptedArray);
     db.transaction(tx => {
       tx.executeSql(
-        'UPDATE SellerMainScreenDetails SET status="accepted" WHERE  consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ',
-        [route.params.consignorCode, barcode, barcode, barcode],
+        'UPDATE SellerMainScreenDetails SET status="accepted", eventTime=?, latitude=?, longitude=? WHERE  consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ',
+        [
+          new Date().valueOf(),
+          latitude,
+          longitude,
+          route.params.consignorCode,
+          barcode,
+          barcode,
+          barcode,
+        ],
         (tx1, results) => {
           let temp = [];
           console.log('Results', results.rowsAffected);
-          console.log(results);
 
           if (results.rowsAffected > 0) {
             console.log(barcode + 'accepted');
@@ -740,94 +696,8 @@ const ShipmentBarcode = ({route}) => {
   const navigation = useNavigation();
   const [count, setcount] = useState(0);
 
-  const handleSync = () => {
-    const unsubscribe = NetInfo.addEventListener(state => {
-      if (!state.isConnected) {
-        alert('check net connection');
-        return;
-      }
-      db.transaction(tx => {
-        tx.executeSql(
-          'SELECT * FROM categories where ScanStatus = ? AND UploadStatus = ?',
-          [1, 0],
-          (tx, results) => {
-            var len = results.rows.length;
-            if (len > 0) {
-              let res = results.rows.item(0);
-              console.log(res, 'tanmay');
-              axios
-                .post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
-                  clientShipmentReferenceNumber:
-                    res.clientShipmentReferenceNumber,
-                  feUserID: route.params.userId,
-                  isAccepted: 'false',
-                  rejectionReason: 'null',
-                  consignorCode: res.consignorCode,
-                  pickupTime: new Date()
-                    .toJSON()
-                    .slice(0, 10)
-                    .replace(/-/g, '/'),
-                  latitude: 0,
-                  longitude: 0,
-                  packagingId: 'ss',
-                  packageingStatus: 1,
-                  PRSNumber: res.PRSNumber,
-                })
-                .then(function (response) {
-                  console.log(response.data, 'hello');
-                  updateCategories1(res.clientShipmentReferenceNumber);
-                  alert('Data send on Server');
-                })
-                .catch(function (error) {
-                  console.log(error);
-                });
-            } else {
-              alert('No data found');
-            }
-          },
-        );
-      });
-    });
-    // Unsubscribe
-    unsubscribe();
-  };
   useEffect(() => {
     displaydata();
-  }, []);
-  useEffect(() => {
-    const current_location = () => {
-      return GetLocation.getCurrentPosition({
-        enableHighAccuracy: true,
-        timeout: 10000,
-      })
-        .then(latestLocation => {
-          // console.log('latest location ' + JSON.stringify(latestLocation));
-          return latestLocation;
-        })
-        .then(location => {
-          const currentLoc = {
-            latitude: location.latitude,
-            longitude: location.longitude,
-          };
-          setLatitude(location.latitude);
-          setLongitude(location.longitude);
-          return currentLoc;
-        })
-        .catch(error => {
-          RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-            interval: 10000,
-            fastInterval: 5000,
-          })
-            .then(status => {
-              if (status) {
-                console.log('Location enabled');
-              }
-            })
-            .catch(err => {});
-          return false;
-        });
-    };
-    current_location();
   }, []);
 
   const submitForm = () => {

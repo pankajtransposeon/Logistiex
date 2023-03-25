@@ -281,9 +281,9 @@ function StackNavigators({navigation}) {
         : row.rejectionReasonL1,
       rejectionStage: 1,
       bagId: row.bagId,
-      eventTime: new Date().valueOf(),
-      latitude: 97987,
-      longitude: 98979,
+      eventTime: row.eventTime,
+      latitude: parseFloat(row.latitude),
+      longitude: parseFloat(row.longitude),
       packagingStatus: 1,
       scanStatus:
         row.status == 'accepted' ? 1 : row.status == 'rejected' ? 2 : 0,
@@ -307,9 +307,9 @@ function StackNavigators({navigation}) {
           : row.rejectionReasonL1,
         rejectionStage: 1,
         bagId: row.bagId,
-        eventTime: new Date().valueOf(),
-        latitude: 97987,
-        longitude: 98979,
+        eventTime: row.eventTime,
+        latitude: parseFloat(row.latitude),
+        longitude: parseFloat(row.longitude),
         packagingStatus: 1,
         scanStatus:
           row.status == 'accepted' ? 1 : row.status == 'rejected' ? 2 : 0,
@@ -366,6 +366,7 @@ function StackNavigators({navigation}) {
               'Synchronizing data finished',
               ToastAndroid.SHORT,
             );
+            // pull_API_Data();
           } else {
             console.log('Only Pulling Data.No data to push...');
             pull_API_Data();
@@ -530,7 +531,7 @@ function StackNavigators({navigation}) {
           syncStatus VARCHAR(200),
           syncHandoverStatus VARCHAR(200),
           latitude VARCHAR(200),
-          logitude VARCHAR(200),
+          longitude VARCHAR(200),
           bagId VARCHAR(200)
           )`,
         [],

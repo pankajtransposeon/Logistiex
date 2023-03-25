@@ -198,7 +198,7 @@ const POD = ({route}) => {
       receivingTime: new Date().valueOf(),
       latitude: route.params.latitude,
       longitude: route.params.longitude,
-      receiverMobileNo: route.params.phone,
+      receiverMobileNo: mobileNumber,
       receiverName: name,
       consignorAction: 'Seller Pickup',
       consignorCode: route.params.consignorCode,
