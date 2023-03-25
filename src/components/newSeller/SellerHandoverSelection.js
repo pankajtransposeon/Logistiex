@@ -67,7 +67,38 @@ const SellerHandoverSelection = ({route}) => {
   const [status, setStatus] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [rejectionCode, setRejectionCode]=useState("")
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
 
+  useEffect(() => {
+    current_location();
+  }, []);
+
+  const current_location = () => {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 10000,
+    })
+      .then(location => {
+        setLatitude(location.latitude);
+        setLongitude(location.longitude);
+      })
+      .catch(error => {
+        RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+          interval: 10000,
+          fastInterval: 5000,
+        })
+          .then(status => {
+            if (status) {
+              console.log('Location enabled');
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        console.log('Location Lat long error', error);
+      });
+  };
   const DisplayData = async () => {
     closePickup11();
   };
@@ -76,7 +107,11 @@ const SellerHandoverSelection = ({route}) => {
     db.transaction(tx => {
       tx.executeSql(
         'UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectionReasonL1=? WHERE shipmentAction="Seller Delivery" AND status IS Null And consignorCode=?',
-        [rejectionCode, route.params.consignorCode],
+        [rejectionCode, 
+          new Date().valueOf(),
+          latitude,
+          longitude,
+          route.params.consignorCode],
         (tx1, results) => {
           let temp = [];
           console.log(results.rows.length);
@@ -91,8 +126,8 @@ const SellerHandoverSelection = ({route}) => {
         consignorCode: route.params.consignorCode,
         rejectionReason: rejectionCode,
         feUserID: route.params.userId,
-        latitude: route.params.consignorLatitude,
-        longitude: route.params.consignorLongitude,
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
         eventTime: new Date().valueOf(),
         rejectionStage: 1,
       })
