@@ -50,56 +50,8 @@ const PendingWork = ({route}) => {
       closePickup11();
       closeDelivery();
     };
-    const notAttempt = (consignorCode, latitude,longitude) => {
-      axios.post('https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed', {
-      consignorCode:consignorCode,
-      rejectionReasonL1: DropDownValue,
-      rejectionReasonL2:DropDownValue1,
-      feUserID: userId,
-      latitude : latitude,
-      longitude : longitude,
-      eventTime: new Date().toLocaleString(),
-      rejectionStage:rejectStage 
-  })
-      .then(function (response) {
-          console.log(response.data);
-      })
-      .catch(function (error) {
-          console.log(error);
-      });
-    };
-    function updateStatus(rejectedReason, consignorCode) {
-      AsyncStorage.setItem('refresh11', 'refresh');
-      db.transaction(tx => {
-        tx.executeSql(
-          'UPDATE SellerMainScreenDetails SET status="notPicked" , rejectedReason=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?',
-          [rejectedReason, consignorCode],
-          (tx1, results) => {
-            let temp = [];
-            console.log(results.rows.length);
-            for (let i = 0; i < results.rows.length; ++i) {
-              temp.push(results.rows.item(i));
-            }
-          },
-        );
-      });
-    }
-    function updateStatusD(rejectedReason, consignorCode) {
-      AsyncStorage.setItem('refresh11', 'refresh');
-      db.transaction(tx => {
-        tx.executeSql(
-          'UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectedReason=? WHERE shipmentAction="Seller Delivery" AND status IS Null And consignorCode=?',
-          [rejectedReason, consignorCode],
-          (tx1, results) => {
-            let temp = [];
-            console.log(results.rows.length);
-            for (let i = 0; i < results.rows.length; ++i) {
-              temp.push(results.rows.item(i));
-            }
-          },
-        );
-      });
-    }
+    
+    
     const closePickup11 = () => {
       db.transaction(tx => {
         tx.executeSql('SELECT * FROM ClosePickupReasons', [], (tx1, results) => {
