@@ -208,10 +208,11 @@ import {
                 : null}
           </DataTable>
         </Card>
+        <Center>
+      <Image style={{ width:150, height:150}} source={require('../../assets/image.png')} alt={'Logo Image'} />
+      </Center>
       </ScrollView>
-      <View style={{ position: 'absolute', bottom: 0 , left:0 ,right:0, alignItems:'center'}}>
-        <Image style={{ width:150, height:150}} source={require('../../assets/image.png')} alt={'Logo Image'} />
-      </View>
+      
     </Box>
     }
     

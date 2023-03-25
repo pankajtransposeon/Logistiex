@@ -54,6 +54,10 @@ const CollectPOD = ({route}) => {
   const PartialClose =
     'https://bkedtest.logistiex.com/ADupdatePrams/getPartialClosureReasons';
   const [timer, setTimer] = useState(60);
+  const [newNotDelivered, setNewNotDelivered] = useState(route.params.notDelivered);
+  const [acceptedArray, setAcceptedArray] = useState([]);
+  const [rejectedArray, setRejectedArray] = useState([]);
+  const [notDeliveredArray, setNotDeliveredArray] = useState([]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -133,42 +137,86 @@ const CollectPOD = ({route}) => {
   }, []);
   console.log(latitude11);
   console.log(longitude11);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      displayDataSPScan();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  const displayDataSPScan = async () => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=?  AND status="accepted" OR status="tagged', 
+        [route.params.consignorCode],
+        (tx1, results) => {
+          setnewAccepted(results.rows.length);
+          let temp = [];
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i).clientShipmentReferenceNumber);
+          }
+          setAcceptedArray(temp);
+        },
+      );
+    });
+
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status is NULL',
+        [route.params.consignorCode],
+        (tx1, results) => {
+          setNewNotDelivered(results.rows.length);
+          let temp = [];
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i).clientShipmentReferenceNumber);
+          }
+          setNotDeliveredArray(temp);
+        },
+      );
+    });
+
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status="rejected"',
+        [route.params.consignorCode],
+        (tx1, results) => {
+          setnewRejected(results.rows.length);
+          let temp = [];
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i).clientShipmentReferenceNumber);
+          }
+          setRejectedArray(temp);
+        },
+      );
+    });
+  };
+
   const submitForm11 = () => {
-    alert('Your Data has submitted');
     axios
       .post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
         runsheetNo: runsheetNo,
-        excepted: route.params.Forward,
-        accepted: route.params.accepted,
+        expected: route.params.Forward,
+        accepted: route.params.accepted + route.params.tagged,
         rejected: route.params.rejected,
-        nothandedOver: route.params.notDelivered,
+        nothandedOver: newNotDelivered,
         feUserID: route.params.userId,
         receivingTime: new Date().valueOf(),
-        latitude: latitude11,
-        longitude: longitude11,
-        receiverMobileNo: route.params.phone,
+        latitude: route.params.latitude,
+        longitude: route.params.longitude,
+        receiverMobileNo: mobileNumber,
         receiverName: name,
         consignorAction: 'Seller Delivery',
         consignorCode: route.params.consignorCode,
-        // "receiverMobileNo":9910939792,
-        // "receiverName":"Tarun",
-        // "consignorCode":"Seller-1001",
-        // "longitude":67.4389,
-        // "latitude":77.4342,
-        // "receivingTime":1678975807605,
-        // "feUserID":"HEVEFE157",
-        // "nothandedOver":0,
-        // "rejected":3,
-        // "accepted":7,
-        // "expected":10,
-        // "runsheetNo":"PRNSHIVEHE1581678967803161",
-        // "consignorAction":"Seller Pickup"
+        acceptedShipments: acceptedArray,
+        rejectedShipments: rejectedArray,
+        nothandedOverShipments: notDeliveredArray,
       })
       .then(function (response) {
-        console.log(response.data, 'hello');
+        console.log("POST RD Data Submitted", response.data);
+        alert('Your Data has submitted');
       })
       .catch(function (error) {
-        console.log(error);
+        console.log(error.response.data);
       });
   };
 
@@ -207,48 +255,26 @@ const CollectPOD = ({route}) => {
           db.transaction(tx => {
             tx.executeSql(
               'UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectionReasonL1=? WHERE shipmentAction="Seller Delivery" AND status IS Null And consignorCode=?',
-              [DropDownValue11, route.params.consignorCode],
+            [route.params.DropDownValue,
+                new Date().valueOf(),
+                route.params.latitude,
+                route.params.longitude,
+                route.params.consignorCode,
+              ],
               (tx1, results) => {
-                let temp = [];
-                // console.log("Not Picked Reason",DropDownValue);
-                // console.log('Results',results.rowsAffected);
-                // console.log(results);
                 if (results.rowsAffected > 0) {
                   ToastAndroid.show(
                     'Partial Closed Successfully',
                     ToastAndroid.SHORT,
                   );
-                  // setDropDownValue11('');
-                  axios.post(
-                    'https://bkedtest.logistiex.com/SellerMainScreen/attemptFailed',
-                    {
-                      consignorCode: route.params.consignorCode,
-                      rejectionReason: '',
-                      feUserID: route.params.userId,
-                      latitude: route.params.latitude,
-                      longitude: route.params.longitude,
-                      eventTime: new Date().valueOf(),
-                      rejectionStage: 3,
-                    },
-                  );
-                }
-                //  else {
-                //   console.log('failed to add notPicked item locally');
-                // }
-                console.log(results.rows.length);
-                for (let i = 0; i < results.rows.length; ++i) {
-                  temp.push(results.rows.item(i));
+                } else {
+                  console.log('failed to add notPicked item locally');
                 }
               },
             );
           });
-
-          ToastAndroid.show('Submit Successful', ToastAndroid.SHORT);
-          navigation.navigate('Main', {
-            userId: route.params.userId,
-          });
         } else {
-          // alert('Invalid OTP, please try again !!');
+          alert('Invalid OTP, please try again !!');
           setMessage(2);
         }
       })
@@ -259,15 +285,6 @@ const CollectPOD = ({route}) => {
       });
   }
   const displayData = async () => {
-    db.transaction(tx => {
-      tx.executeSql(
-        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=?  AND status IS NULL',
-        [route.params.consignorCode],
-        (tx1, results) => {
-          setPending(results.rows.length);
-        },
-      );
-    });
     db.transaction(tx => {
       tx.executeSql(
         'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? ',
@@ -431,22 +448,8 @@ const CollectPOD = ({route}) => {
                 Not Handed Over
               </Text>
               <Text style={{fontSize: 18, fontWeight: '500'}}>
-                {route.params.notDelivered}
+                {newNotDelivered}
               </Text>
-            </View>
-            <View
-              style={{
-                width: '90%',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                borderWidth: 1,
-                borderColor: 'lightgray',
-                borderBottomLeftRadius: 5,
-                borderBottomRightRadius: 5,
-                padding: 10,
-              }}>
-              <Text style={{fontSize: 18, fontWeight: '500'}}>Pending</Text>
-              <Text style={{fontSize: 18, fontWeight: '500'}}>{pending}</Text>
             </View>
           </View>
           <Center>
