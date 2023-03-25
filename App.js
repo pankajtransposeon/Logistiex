@@ -263,31 +263,31 @@ function StackNavigators({navigation}) {
   };
 
   async function postSPSCalling(row) {
-    console.log('===========row=========', {
-      clientShipmentReferenceNumber: row.clientShipmentReferenceNumber,
-      awbNo: row.awbNo,
-      clientRefId: row.clientRefId,
-      expectedPackagingId: row.packagingId,
-      packagingId: row.packagingId,
-      courierCode: row.courierCode,
-      consignorCode: row.consignorCode,
-      packagingAction: 1,
-      runsheetNo: row.runSheetNumber,
-      shipmentAction: row.shipmentAction,
-      feUserID: userId,
-      rejectionReasonL1: row.rejectionReasonL1,
-      rejectionReasonL2: row.rejectionReasonL2
-        ? row.rejectionReasonL2
-        : row.rejectionReasonL1,
-      rejectionStage: 1,
-      bagId: row.bagId,
-      eventTime: row.eventTime,
-      latitude: parseFloat(row.latitude),
-      longitude: parseFloat(row.longitude),
-      packagingStatus: 1,
-      scanStatus:
-        row.status == 'accepted' ? 1 : row.status == 'rejected' ? 2 : 0,
-    });
+    // console.log('===========row=========', {
+    //   clientShipmentReferenceNumber: row.clientShipmentReferenceNumber,
+    //   awbNo: row.awbNo,
+    //   clientRefId: row.clientRefId,
+    //   expectedPackagingId: row.packagingId,
+    //   packagingId: row.packagingId,
+    //   courierCode: row.courierCode,
+    //   consignorCode: row.consignorCode,
+    //   packagingAction: 1,
+    //   runsheetNo: row.runSheetNumber,
+    //   shipmentAction: row.shipmentAction,
+    //   feUserID: userId,
+    //   rejectionReasonL1: row.rejectionReasonL1,
+    //   rejectionReasonL2: row.rejectionReasonL2
+    //     ? row.rejectionReasonL2
+    //     : row.rejectionReasonL1,
+    //   rejectionStage: 1,
+    //   bagId: row.bagId,
+    //   eventTime: row.eventTime,
+    //   latitude: parseFloat(row.latitude),
+    //   longitude: parseFloat(row.longitude),
+    //   packagingStatus: 1,
+    //   scanStatus:
+    //     row.status == 'accepted' ? 1 : row.status == 'rejected' ? 2 : 0,
+    // });
     await axios
       .post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
         clientShipmentReferenceNumber: row.clientShipmentReferenceNumber,

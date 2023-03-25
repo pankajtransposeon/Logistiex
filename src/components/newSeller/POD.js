@@ -35,7 +35,8 @@ import {openDatabase} from 'react-native-sqlite-storage';
 const db = openDatabase({
   name: 'rn_sqlite',
 });
-const POD = ({route}) => {
+const POD = ({ route }) => {
+  // console.log("========post rd params=======", route.params);
   const navigation = useNavigation();
   const [name, setName] = useState(route.params.contactPersonName);
   const [inputOtp, setInputOtp] = useState('');
