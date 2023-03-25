@@ -26,6 +26,38 @@ const PendingHandover = ({route}) => {
     const [totalPending,setTotalPending] = useState(0);
     const [consignorCode, setConsignorCode] = useState('');
     const [showCloseBagModal, setShowCloseBagModal] = useState(false);
+    const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
+
+  useEffect(() => {
+    current_location();
+  }, []);
+
+  const current_location = () => {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 10000,
+    })
+      .then(location => {
+        setLatitude(location.latitude);
+        setLongitude(location.longitude);
+      })
+      .catch(error => {
+        RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+          interval: 10000,
+          fastInterval: 5000,
+        })
+          .then(status => {
+            if (status) {
+              console.log('Location enabled');
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        console.log('Location Lat long error', error);
+      });
+  };
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -114,8 +146,12 @@ const PendingHandover = ({route}) => {
         console.log("ok"+consignorCode,DropDownValue);
         db.transaction(tx => {
             tx.executeSql(
-              'UPDATE SellerMainScreenDetails SET handoverStatus="pendingHandover" , rejectedReason=? WHERE shipmentAction="Seller Delivery" AND handoverStatus IS Null And consignorCode=?',
-              [DropDownValue,consignorCode],
+              'UPDATE SellerMainScreenDetails SET handoverStatus="pendingHandover" , rejectedReasonL1=?, eventTime=?, latitude=?, longitude=? WHERE shipmentAction="Seller Delivery" AND handoverStatus IS Null And consignorCode=?',
+              [DropDownValue,
+                new Date().valueOf(),
+                latitude,
+                longitude,
+                consignorCode],
               (tx1, results) => {
                 let temp = [];
                 // console.log("Not Picked Reason",DropDownValue);
