@@ -139,7 +139,24 @@ const POD = ({route}) => {
   };
 
   const submitForm11 = () => {
-    co 
+    console.log('========postRD Data==========', {
+      runsheetNo: runsheetNo,
+      expected: route.params.Forward,
+      accepted: route.params.accepted,
+      rejected: route.params.rejected,
+      nothandedOver: newNotPicked,
+      feUserID: route.params.userId,
+      receivingTime: new Date().valueOf(),
+      latitude: route.params.latitude,
+      longitude: route.params.longitude,
+      receiverMobileNo: mobileNumber,
+      receiverName: name,
+      consignorAction: 'Seller Pickup',
+      consignorCode: route.params.consignorCode,
+      acceptedShipments: acceptedArray,
+      rejectedShipments: rejectedArray,
+      nothandedOverShipments: notPickedArray,
+    });
 
     axios
       .post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
