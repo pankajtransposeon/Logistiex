@@ -676,12 +676,12 @@ const NewSellerSelection = ({route}) => {
                         paddingTop: 15,
                         paddingBottom: 10,
                       }}>
-                      <View
+                      {/* <View
                         style={{
                           flexDirection: 'row',
                           justifyContent: 'space-between',
                           paddingBottom: 10,
-                        }}>
+                        }}> */}
                         <Text
                           style={{
                             fontWeight: '500',
@@ -698,13 +698,13 @@ const NewSellerSelection = ({route}) => {
                           }}>
                           {route.params.consignorName}
                         </Text>
-                      </View>
-                      <View
+                      {/* </View> */}
+                      {/* <View
                         style={{
                           flexDirection: 'row',
                           alignItems: 'center',
                           justifyContent: 'space-between',
-                        }}>
+                        }}> */}
                         <Text
                           style={{
                             fontWeight: '500',
@@ -718,13 +718,13 @@ const NewSellerSelection = ({route}) => {
                             fontWeight: '500',
                             fontSize: 18,
                             color: 'gray',
-                            paddingLeft: 10,
-                            flex: 1,
-                            textAlign: 'right',
+                            // paddingLeft: 10,
+                            // flex: 1,
+                            // textAlign: 'right',
                           }}>
                           {type}
                         </Text>
-                      </View>
+                      {/* </View> */}
                     </View>
                     <View
                       style={{
