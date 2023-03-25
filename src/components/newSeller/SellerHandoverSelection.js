@@ -76,7 +76,7 @@ const SellerHandoverSelection = ({route}) => {
     db.transaction(tx => {
       tx.executeSql(
         'UPDATE SellerMainScreenDetails SET status="notDelivered" , rejectionReasonL1=? WHERE shipmentAction="Seller Delivery" AND status IS Null And consignorCode=?',
-        [rejectionReason, route.params.consignorCode],
+        [rejectionCode, route.params.consignorCode],
         (tx1, results) => {
           let temp = [];
           console.log(results.rows.length);
