@@ -178,7 +178,7 @@ const POD = ({route}) => {
         nothandedOverShipments: notPickedArray,
       })
       .then(function (response) {
-        console.log("POST RD Data Submitted", response.data);
+        console.log('POST RD Data Submitted', response.data);
         alert('Your Data has submitted');
       })
       .catch(function (error) {
