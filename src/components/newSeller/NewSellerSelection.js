@@ -39,6 +39,7 @@ const db = openDatabase({
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import PieChart from 'react-native-pie-chart';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import GetLocation from 'react-native-get-location';
 
 const NewSellerSelection = ({route}) => {
   const [barcodeValue, setBarcodeValue] = useState('');
@@ -54,7 +55,7 @@ const NewSellerSelection = ({route}) => {
   const [phone, setPhone] = useState(route.params.phone);
   const [type, setType] = useState('');
   const [DropDownValue, setDropDownValue] = useState(null);
-  const [rejectionCode, setRejectionCode]=useState("")
+  const [rejectionCode, setRejectionCode] = useState('');
   const [DropDownValue1, setDropDownValue1] = useState(null);
   const [rejectStage, setRejectStage] = useState(null);
   const [CloseData, setCloseData] = useState([]);
@@ -67,16 +68,55 @@ const NewSellerSelection = ({route}) => {
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
+
+  useEffect(() => {
+    current_location();
+  }, []);
+
+  const current_location = () => {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 10000,
+    })
+      .then(location => {
+        setLatitude(location.latitude);
+        setLongitude(location.longitude);
+      })
+      .catch(error => {
+        RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+          interval: 10000,
+          fastInterval: 5000,
+        })
+          .then(status => {
+            if (status) {
+              console.log('Location enabled');
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        console.log('Location Lat long error', error);
+      });
+  };
 
   const DisplayData = async () => {
     closePickup11();
   };
+
   const notPicked = () => {
     AsyncStorage.setItem('refresh11', 'refresh');
     db.transaction(tx => {
       tx.executeSql(
-        'UPDATE SellerMainScreenDetails SET status="notPicked" , rejectionReasonL1=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?',
-        [rejectionCode, route.params.consignorCode],
+        'UPDATE SellerMainScreenDetails SET status="notPicked", rejectionReasonL1=?, eventTime=?, latitude=?, longitude=? WHERE shipmentAction="Seller Pickup" AND status IS Null And consignorCode=?',
+        [
+          rejectionCode,
+          new Date().valueOf(),
+          latitude,
+          longitude,
+          route.params.consignorCode,
+        ],
         (tx1, results) => {
           let temp = [];
           console.log(results.rows.length);
@@ -91,8 +131,8 @@ const NewSellerSelection = ({route}) => {
         consignorCode: route.params.consignorCode,
         rejectionReason: rejectionCode,
         feUserID: route.params.userId,
-        latitude: route.params.consignorLatitude,
-        longitude: route.params.consignorLongitude,
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
         eventTime: new Date().valueOf(),
         rejectionStage: rejectStage,
       })
@@ -346,20 +386,20 @@ const NewSellerSelection = ({route}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function handleButtonPress(item,item2) {
+  function handleButtonPress(item, item2) {
     if (item == 'Could Not Attempt') {
       setModalVisible2(true);
       setModalVisible(false);
     } else {
       setDropDownValue(item);
-      setRejectionCode(item2)
+      setRejectionCode(item2);
       setRejectStage('L1');
     }
     // setModalVisible(false);
   }
-  function handleButtonPress2(item,item2) {
+  function handleButtonPress2(item, item2) {
     setDropDownValue1(item);
-    setRejectionCode(item2)
+    setRejectionCode(item2);
     setRejectStage('L2');
   }
 
@@ -430,7 +470,12 @@ const NewSellerSelection = ({route}) => {
                         : '#C8C8C8',
                   }}
                   title={d.pickupFailureReasonName}
-                  onPress={() => handleButtonPress(d.pickupFailureReasonName,d.pickupFailureReasonID)}>
+                  onPress={() =>
+                    handleButtonPress(
+                      d.pickupFailureReasonName,
+                      d.pickupFailureReasonID,
+                    )
+                  }>
                   <Text
                     style={{
                       color:
@@ -481,7 +526,9 @@ const NewSellerSelection = ({route}) => {
                         d.reasonName === DropDownValue1 ? '#6666FF' : '#C8C8C8',
                     }}
                     title={d.reasonName}
-                    onPress={() => handleButtonPress2(d.reasonName, d.reasonID)}>
+                    onPress={() =>
+                      handleButtonPress2(d.reasonName, d.reasonID)
+                    }>
                     <Text
                       style={{
                         color:
@@ -622,63 +669,63 @@ const NewSellerSelection = ({route}) => {
               <ScrollView>
                 <View style={styles.containter}>
                   <View style={styles.mainbox}>
-                  <View
-                  style={{
-                  flexDirection: 'column',
-                  paddingHorizontal: 10,
-                  paddingTop: 15,
-                  paddingBottom: 10,
-                  }}>
-                <View
-                style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                paddingBottom: 10,
-                }}>
-                <Text
-                style={{
-                fontWeight: '500',
-                fontSize: 18,
-                color: 'black',
-                }}>
-                Seller Name
-                </Text>
-                <Text
-                 style={{
-                fontWeight: '500',
-                fontSize: 18,
-                color: 'gray',
-                }}>
-                {route.params.consignorName}
-                 </Text>
-                </View>
-                <View
-                style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                }}>
-              <Text
-              style={{
-              fontWeight: '500',
-              fontSize: 18,
-              color: 'black',
-              }}>
-            Address
-          </Text>
-          <Text
-          style={{
-        fontWeight: '500',
-        fontSize: 18,
-        color: 'gray',
-        paddingLeft: 10,
-        flex: 1,
-        textAlign: 'right',
-      }}>
-      {type}
-    </Text>
-  </View>
-</View>           
+                    <View
+                      style={{
+                        flexDirection: 'column',
+                        paddingHorizontal: 10,
+                        paddingTop: 15,
+                        paddingBottom: 10,
+                      }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          paddingBottom: 10,
+                        }}>
+                        <Text
+                          style={{
+                            fontWeight: '500',
+                            fontSize: 18,
+                            color: 'black',
+                          }}>
+                          Seller Name
+                        </Text>
+                        <Text
+                          style={{
+                            fontWeight: '500',
+                            fontSize: 18,
+                            color: 'gray',
+                          }}>
+                          {route.params.consignorName}
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}>
+                        <Text
+                          style={{
+                            fontWeight: '500',
+                            fontSize: 18,
+                            color: 'black',
+                          }}>
+                          Address
+                        </Text>
+                        <Text
+                          style={{
+                            fontWeight: '500',
+                            fontSize: 18,
+                            color: 'gray',
+                            paddingLeft: 10,
+                            flex: 1,
+                            textAlign: 'right',
+                          }}>
+                          {type}
+                        </Text>
+                      </View>
+                    </View>
                     <View
                       style={{
                         flexDirection: 'row',
@@ -758,8 +805,8 @@ const NewSellerSelection = ({route}) => {
                         phone: route.params.phone,
                         contactPersonName: route.params.contactPersonName,
                         packagingId: route.params.packagingId,
-                        latitude:route.params.consignorLatitude,
-                        longitude:route.params.consignorLongitude
+                        latitude: route.params.consignorLatitude,
+                        longitude: route.params.consignorLongitude,
                         // TotalpickUp : newdata[0].totalPickups
                       })
                     }>
