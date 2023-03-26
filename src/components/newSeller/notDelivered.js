@@ -9,6 +9,7 @@ import { Picker } from '@react-native-picker/picker';
 const db = openDatabase({name: 'rn_sqlite'});
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import GetLocation from 'react-native-get-location';
 
 const NotDelivered = ({route}) => {
     const navigation = useNavigation();

@@ -316,6 +316,26 @@ function StackNavigators({navigation}) {
       })
       .then(response => {
         console.log('sync Successfully pushed');
+        db.transaction(tx => {
+          tx.executeSql(
+            'UPDATE SellerMainScreenDetails SET syncStatus="done" WHERE clientShipmentReferenceNumber = ?',
+            [row.clientShipmentReferenceNumber],
+            (tx1, results) => {
+              let temp = [];
+              console.log(
+                '===========Local Sync Status Results==========',
+                results.rowsAffected,
+              );
+              if (results.rowsAffected > 0) {
+                console.log('Sync status done in localDB');
+              } else {
+                console.log(
+                  'Sync Status not changed in localDB or already synced',
+                );
+              }
+            },
+          );
+        });
       })
       .catch(error => {
         setIsLoading(false);
@@ -351,7 +371,7 @@ function StackNavigators({navigation}) {
 
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM SellerMainScreenDetails WHERE status IS NOT Null',
+        'SELECT * FROM SellerMainScreenDetails WHERE status IS NOT Null AND syncStatus IS Null',
         [],
         (tx1, results) => {
           if (results.rows.length > 0) {
@@ -597,7 +617,17 @@ function StackNavigators({navigation}) {
                     '',
                     0,
                     res.data.data[i].actionTime,
-                    null,
+                    res.data.data[i].shipmentStatus == 'PUS' ||
+                    res.data.data[i].shipmentStatus == 'PUC' ||
+                    res.data.data[i].shipmentStatus == 'DLR' ||
+                    res.data.data[i].shipmentStatus == 'RDS'
+                      ? 'accepted'
+                      : res.data.data[i].shipmentStatus == 'PUR' ||
+                        res.data.data[i].shipmentStatus == 'RDR' ||
+                        res.data.data[i].shipmentStatus == 'UDU' ||
+                        res.data.data[i].shipmentStatus == 'PUF'
+                      ? 'rejected'
+                      : null,
                     null,
                     null,
                     null,

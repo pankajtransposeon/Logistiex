@@ -50,23 +50,8 @@ const db = openDatabase({
 });
 
 const HandoverShipmentRTO = ({route}) => {
-  // const [barcodeValue,setBarcodeValue] = useState('');
-  // const [packageValue,setpackageValue] = useState('');
-  // const [otp,setOtp] = useState('');
-  // const [flag, setflag] = useState(false);
-  // const [showModal, setShowModal] = useState(false);
-  // const [refresh, setRefresh] = useState(false);
-  // const [pending, setPending] = useState(0);
-  // const [expected, setExpected] = useState(0);
-  // const [newaccepted, setnewAccepted] = useState(0);
-  // const [newrejected, setnewRejected] = useState(0);
   const [barcode, setBarcode] = useState('');
   const [len, setLen] = useState(0);
-  // const [DropDownValue, setDropDownValue] = useState(null);
-  // const [rejectedData, setRejectedData] = useState([]);
-  // const RejectReason = 'https://bkedtest.logistiex.com/ADupdatePrams/getUSER';
-  // const [latitude, setLatitude] = useState(0);
-  // const [longitude , setLongitude] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [bagId, setBagId] = useState('');
   const [bagIdNo, setBagIdNo] = useState(1);
@@ -83,6 +68,8 @@ const HandoverShipmentRTO = ({route}) => {
   const [alreadyBag, setAlreadyBag] = useState(false);
   const [acceptedItemData, setAcceptedItemData] = useState({});
   const [bagStatus, setBagStatus] = useState(true);
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
 
   const [userId, setUserID] = useState('');
 
@@ -103,6 +90,36 @@ const HandoverShipmentRTO = ({route}) => {
   useEffect(() => {
     getUserId();
   }, []);
+
+  useEffect(() => {
+    current_location();
+  }, []);
+
+  const current_location = () => {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 10000,
+    })
+      .then(location => {
+        setLatitude(location.latitude);
+        setLongitude(location.longitude);
+      })
+      .catch(error => {
+        RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+          interval: 10000,
+          fastInterval: 5000,
+        })
+          .then(status => {
+            if (status) {
+              console.log('Location enabled');
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        console.log('Location Lat long error', error);
+      });
+  };
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -146,8 +163,8 @@ const HandoverShipmentRTO = ({route}) => {
       .then(data99 => {
         if (data99 != null) {
           setAcceptedItemData(JSON.parse(data99));
-          console.log('ghghg', data99);
-          console.log('ghghg', acceptedItemData);
+          // console.log('ghghg', data99);
+          // console.log('ghghg', acceptedItemData);
         }
       })
       .catch(e => {
@@ -178,7 +195,7 @@ const HandoverShipmentRTO = ({route}) => {
   //       console.log("fdfdd "+barcode);
   // });
   useEffect(() => {
-    console.log('fdfdd ', acceptedItemData);
+    // console.log('fdfdd ', acceptedItemData);
   });
   // useEffect(() => {
   //   loadAcceptedItemData12();
@@ -412,23 +429,29 @@ const HandoverShipmentRTO = ({route}) => {
             clientShipmentReferenceNumber: row.clientShipmentReferenceNumber,
             awbNo: row.awbNo,
             clientRefId: row.clientRefId,
-            courierCode: 'NA',
+            courierCode: row.courierCode,
             feUserID: userId,
             isAccepted: true,
             consignorCode: row.consignorCode,
-            eventTime: row.actionTime,
-            latitude: 66.7876,
-            longitude: 43.3454,
-            runsheetNo: 'NA',
+            eventTime: parseInt(new Date().valueOf()),
+            latitude: latitude,
+            longitude: longitude,
+            runsheetNo: row.runSheetNumber,
             scanStatus: 1,
-            bagSealNo: 'NA',
+            bagSealNo: bagId,
           },
         )
         .then(response => {
-          console.log('===========Result===========', response.data);
+          console.log(
+            '===========Return Handover Result===========',
+            response.data,
+          );
         })
         .catch(error => {
-          console.log('===========Error===========', error);
+          console.log(
+            '===========Return Handover Error===========',
+            error.response.data,
+          );
         });
     } catch (e) {
       console.log('++++++++++++++++Catch Error++++++++++++++++', e);

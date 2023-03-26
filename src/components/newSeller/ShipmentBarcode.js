@@ -160,6 +160,8 @@ const ShipmentBarcode = ({route}) => {
         consignorCode: route.params.consignorCode,
         contactPersonName: route.params.contactPersonName,
         runsheetno: route.params.PRSNumber,
+        latitude: latitude,
+        longitude: longitude,
       });
     } else {
       setDropDownValue11('');
@@ -700,50 +702,8 @@ const ShipmentBarcode = ({route}) => {
     displaydata();
   }, []);
 
-  const submitForm = () => {
-    const data = [
-      {
-        clientShipmentReferenceNumber: barcode,
-        feUserID: route.params.userId,
-        isAccepted: 'false',
-        rejectionReason: DropDownValue,
-        consignorCode: route.params.consignorCode,
-        pickupTime: new Date().toJSON().slice(0, 10).replace(/-/g, '/'),
-        latitude: latitude,
-        longitude: longitude,
-        packagingId: 'PL00000026',
-        packagingStatus: 1,
-        PRSNumber: route.params.PRSNumber,
-      },
-    ];
-    console.log(data);
-    axios
-      .post('https://bked.logistiex.com/SellerMainScreen/postSPS', {
-        clientShipmentReferenceNumber: barcode,
-        feUserID: route.params.userId,
-        isAccepted: 'false',
-        rejectionReason: DropDownValue,
-        consignorCode: route.params.consignorCode,
-        pickupTime: new Date().toJSON().slice(0, 10).replace(/-/g, '/'),
-        latitude: latitude,
-        longitude: longitude,
-        packagingId: 'PL00000026',
-        packagingStatus: 1,
-        PRSNumber: route.params.PRSNumber,
-      })
-      .then(function (response) {
-        console.log(response.data, 'Data has been pushed');
-        // ContinueHandle();
-        // navigation.navigate('ShipmentBarcode');
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  };
-
   function handleButtonPress(item) {
     setDropDownValue(item);
-    submitForm();
   }
 
   return (
@@ -796,9 +756,7 @@ const ShipmentBarcode = ({route}) => {
                     marginTop={1.4}
                     style={{
                       backgroundColor:
-                        d.reasonName === DropDownValue11
-                          ? '#6666FF'
-                          : '#C8C8C8',
+                        d.reasonID === DropDownValue11 ? '#6666FF' : '#C8C8C8',
                       opacity: 0.4,
                     }}
                     title={d.reasonName}>
@@ -806,7 +764,7 @@ const ShipmentBarcode = ({route}) => {
                     <Text
                       style={{
                         color:
-                          d.reasonName === DropDownValue11 ? 'white' : 'black',
+                          d.reasonID === DropDownValue11 ? 'white' : 'black',
                         alignContent: 'center',
                         paddingTop: -5,
                       }}>
@@ -825,17 +783,15 @@ const ShipmentBarcode = ({route}) => {
                     marginTop={1.4}
                     style={{
                       backgroundColor:
-                        d.reasonName === DropDownValue11
-                          ? '#6666FF'
-                          : '#C8C8C8',
+                        d.reasonID === DropDownValue11 ? '#6666FF' : '#C8C8C8',
                     }}
                     title={d.reasonName}
-                    onPress={() => handleButtonPress11(d.reasonName)}>
+                    onPress={() => handleButtonPress11(d.reasonID)}>
                     {' '}
                     <Text
                       style={{
                         color:
-                          d.reasonName === DropDownValue11 ? 'white' : 'black',
+                          d.reasonID === DropDownValue11 ? 'white' : 'black',
                         alignContent: 'center',
                         paddingTop: -5,
                       }}>
@@ -855,6 +811,7 @@ const ShipmentBarcode = ({route}) => {
               onPress={() => {
                 partialClose();
                 setModalVisible11(false);
+                console.log(latitude, longitude);
                 navigation.navigate('POD', {
                   Forward: route.params.Forward,
                   accepted: newaccepted,
@@ -865,8 +822,9 @@ const ShipmentBarcode = ({route}) => {
                   consignorCode: route.params.consignorCode,
                   DropDownValue: DropDownValue11,
                   contactPersonName: route.params.contactPersonName,
-                  latitude: route.params.latitude,
-                  longitude: route.params.longitude,
+                  runsheetno: route.params.PRSNumber,
+                  latitude: latitude,
+                  longitude: longitude,
                 });
               }}>
               Submit

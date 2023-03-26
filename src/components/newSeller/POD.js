@@ -35,7 +35,7 @@ import {openDatabase} from 'react-native-sqlite-storage';
 const db = openDatabase({
   name: 'rn_sqlite',
 });
-const POD = ({ route }) => {
+const POD = ({route}) => {
   // console.log("========post rd params=======", route.params);
   const navigation = useNavigation();
   const [name, setName] = useState(route.params.contactPersonName);
@@ -140,51 +140,57 @@ const POD = ({ route }) => {
   };
 
   const submitForm11 = () => {
-    console.log('========postRD Data==========', {
-      runsheetNo: runsheetNo,
-      expected: route.params.Forward,
-      accepted: route.params.accepted,
-      rejected: route.params.rejected,
-      nothandedOver: newNotPicked,
-      feUserID: route.params.userId,
-      receivingTime: new Date().valueOf(),
-      latitude: route.params.latitude,
-      longitude: route.params.longitude,
-      receiverMobileNo: mobileNumber,
-      receiverName: name,
-      consignorAction: 'Seller Pickup',
-      consignorCode: route.params.consignorCode,
-      acceptedShipments: acceptedArray,
-      rejectedShipments: rejectedArray,
-      nothandedOverShipments: notPickedArray,
-    });
+    // console.log('========postRD Data==========', {
+    //   runsheetNo: runsheetNo,
+    //   expected: route.params.Forward,
+    //   accepted: route.params.accepted,
+    //   rejected: route.params.rejected,
+    //   nothandedOver: newNotPicked,
+    //   feUserID: route.params.userId,
+    //   receivingTime: new Date().valueOf(),
+    //   latitude: route.params.latitude,
+    //   longitude: route.params.longitude,
+    //   receiverMobileNo: mobileNumber,
+    //   receiverName: name,
+    //   consignorAction: 'Seller Pickup',
+    //   consignorCode: route.params.consignorCode,
+    //   acceptedShipments: acceptedArray,
+    //   rejectedShipments: rejectedArray,
+    //   nothandedOverShipments: notPickedArray,
+    // });
 
-    axios
-      .post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
-        runsheetNo: runsheetNo,
-        expected: route.params.Forward,
-        accepted: route.params.accepted,
-        rejected: route.params.rejected,
-        nothandedOver: newNotPicked,
-        feUserID: route.params.userId,
-        receivingTime: new Date().valueOf(),
-        latitude: route.params.latitude,
-        longitude: route.params.longitude,
-        receiverMobileNo: mobileNumber,
-        receiverName: name,
-        consignorAction: 'Seller Pickup',
-        consignorCode: route.params.consignorCode,
-        acceptedShipments: acceptedArray,
-        rejectedShipments: rejectedArray,
-        nothandedOverShipments: notPickedArray,
-      })
-      .then(function (response) {
-        console.log('POST RD Data Submitted', response.data);
-        alert('Your Data has submitted');
-      })
-      .catch(function (error) {
-        console.log(error.response.data);
-      });
+    try {
+      axios
+        .post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
+          runsheetNo: runsheetNo,
+          expected: route.params.Forward,
+          accepted: route.params.accepted,
+          rejected: route.params.rejected,
+          nothandedOver: newNotPicked,
+          feUserID: route.params.userId,
+          receivingTime: new Date().valueOf(),
+          latitude: route.params.latitude,
+          longitude: route.params.longitude,
+          receiverMobileNo: mobileNumber,
+          receiverName: name,
+          consignorAction: 'Seller Pickup',
+          consignorCode: route.params.consignorCode,
+          acceptedShipments: acceptedArray,
+          rejectedShipments: rejectedArray,
+          nothandedOverShipments: notPickedArray,
+        })
+        .then(function (response) {
+          console.log('POST RD Data Submitted', response.data);
+          alert('Your Data has submitted');
+        })
+        .catch(function (error) {
+          console.log(error.response.data);
+          alert(error.response.data.msg);
+        });
+    }
+    catch (error) {
+      console.log("===try catch post rd error====", error);
+    }
   };
 
   const sendSmsOtp = async () => {

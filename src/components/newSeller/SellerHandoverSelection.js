@@ -39,6 +39,7 @@ const db = openDatabase({
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import PieChart from 'react-native-pie-chart';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import GetLocation from 'react-native-get-location';
 
 const SellerHandoverSelection = ({route}) => {
   const [barcodeValue, setBarcodeValue] = useState('');

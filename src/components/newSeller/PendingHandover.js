@@ -6,7 +6,8 @@ import {openDatabase} from 'react-native-sqlite-storage';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
-const db = openDatabase({name: 'rn_sqlite'});
+const db = openDatabase({ name: 'rn_sqlite' });
+import GetLocation from 'react-native-get-location';
 
 const PendingHandover = ({route}) => {
 
