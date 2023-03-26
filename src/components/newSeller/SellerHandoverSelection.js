@@ -337,13 +337,21 @@ const SellerHandoverSelection = ({route}) => {
   useEffect(() => {
     let addresss = '';
     if (route && route.params) {
-      addresss += route.params.consignorAddress1;
-      addresss += ' ';
-      addresss += route.params.consignorAddress2;
-      addresss += ', ';
-      addresss += route.params.consignorCity;
-      addresss += ' ';
-      addresss += route.params.consignorPincode;
+      if (route.params.consignorAddress1) {
+        addresss += route.params.consignorAddress1;
+        addresss += ' ';
+      }
+      if (route.params.consignorAddress2) {
+        addresss += route.params.consignorAddress2;
+        addresss += ', ';
+      }
+      if (route.params.consignorCity) {
+        addresss += route.params.consignorCity;
+        addresss += ' ';
+      }
+      if (route.params.consignorPincode) {
+        addresss += route.params.consignorPincode;
+      }
     }
     setType(addresss);
   }, []);
