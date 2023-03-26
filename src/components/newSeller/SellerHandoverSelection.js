@@ -39,6 +39,7 @@ const db = openDatabase({
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import PieChart from 'react-native-pie-chart';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import GetLocation from 'react-native-get-location';
 
 const SellerHandoverSelection = ({route}) => {
   const [barcodeValue, setBarcodeValue] = useState('');
@@ -336,13 +337,21 @@ const SellerHandoverSelection = ({route}) => {
   useEffect(() => {
     let addresss = '';
     if (route && route.params) {
-      addresss += route.params.consignorAddress1;
-      addresss += ' ';
-      addresss += route.params.consignorAddress2;
-      addresss += ', ';
-      addresss += route.params.consignorCity;
-      addresss += ' ';
-      addresss += route.params.consignorPincode;
+      if (route.params.consignorAddress1) {
+        addresss += route.params.consignorAddress1;
+        addresss += ' ';
+      }
+      if (route.params.consignorAddress2) {
+        addresss += route.params.consignorAddress2;
+        addresss += ', ';
+      }
+      if (route.params.consignorCity) {
+        addresss += route.params.consignorCity;
+        addresss += ' ';
+      }
+      if (route.params.consignorPincode) {
+        addresss += route.params.consignorPincode;
+      }
     }
     setType(addresss);
   }, []);
