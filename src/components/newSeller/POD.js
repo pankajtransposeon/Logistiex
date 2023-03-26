@@ -107,7 +107,6 @@ const POD = ({route}) => {
         },
       );
     });
-
     db.transaction(tx => {
       tx.executeSql(
         'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Pickup" AND consignorCode=? AND status is NULL',

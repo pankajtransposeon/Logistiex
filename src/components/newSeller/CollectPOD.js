@@ -135,8 +135,7 @@ const CollectPOD = ({route}) => {
 
     current_location();
   }, []);
-  console.log(latitude11);
-  console.log(longitude11);
+  console.log(notDeliveredArray)
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       displayDataSPScan();
