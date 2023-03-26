@@ -878,8 +878,8 @@ const ScanShipment = ({route}) => {
                     contactPersonName: route.params.contactPersonName,
                     notDelivered: notDelivered,
                     runsheetno: route.params.PRSNumber,
-                    latitude: route.params.latitude,
-                    longitude: route.params.longitude,
+                    latitude: latitude,
+                    longitude: longitude,
                   });
                 }}
                 w="90%"
