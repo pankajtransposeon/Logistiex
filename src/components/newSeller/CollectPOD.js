@@ -35,14 +35,12 @@ import {openDatabase} from 'react-native-sqlite-storage';
 const db = openDatabase({
   name: 'rn_sqlite',
 });
-const CollectPOD = ({route}) => {
+const CollectPOD = ({ route }) => {
   var otpInput = useRef(null);
   const navigation = useNavigation();
   const [name, setName] = useState(route.params.contactPersonName);
   const [inputOtp, setInputOtp] = useState('');
   const [mobileNumber, setMobileNumber] = useState(route.params.phone);
-  const [latitude11, setLatitude11] = useState(0);
-  const [longitude11, setLongitude11] = useState(0);
   const [showModal11, setShowModal11] = useState(false);
   const [modalVisible11, setModalVisible11] = useState(false);
   const [DropDownValue11, setDropDownValue11] = useState(null);
@@ -102,41 +100,6 @@ const CollectPOD = ({route}) => {
   };
 
   useEffect(() => {
-    const current_location = () => {
-      return GetLocation.getCurrentPosition({
-        enableHighAccuracy: true,
-        timeout: 10000,
-      })
-        .then(latestLocation => {
-          console.log('latest location ' + JSON.stringify(latestLocation));
-          return latestLocation;
-        })
-        .then(location => {
-          const currentLoc = {
-            latitude11: location.latitude11,
-            longitude11: location.longitude11,
-          };
-          setLatitude11(location.latitude11);
-          setLongitude11(location.longitude11);
-          return currentLoc;
-        })
-        .catch(error => {
-          RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-            interval: 10000,
-            fastInterval: 5000,
-          })
-            .then(status => {
-              if (status) console.log('Location enabled');
-            })
-            .catch(err => {});
-          return false;
-        });
-    };
-
-    current_location();
-  }, []);
-  console.log(notDeliveredArray)
-  useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       displayDataSPScan();
     });
@@ -154,6 +117,7 @@ const CollectPOD = ({route}) => {
           for (let i = 0; i < results.rows.length; ++i) {
             temp.push(results.rows.item(i).clientShipmentReferenceNumber);
           }
+          console.log(temp);
           setAcceptedArray(temp);
         },
       );
@@ -191,32 +155,50 @@ const CollectPOD = ({route}) => {
   };
 
   const submitForm11 = () => {
-    axios
-      .post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
-        runsheetNo: runsheetNo,
-        expected: route.params.Forward,
-        accepted: route.params.accepted + route.params.tagged,
-        rejected: route.params.rejected,
-        nothandedOver: newNotDelivered,
-        feUserID: route.params.userId,
-        receivingTime: new Date().valueOf(),
-        latitude: route.params.latitude,
-        longitude: route.params.longitude,
-        receiverMobileNo: mobileNumber,
-        receiverName: name,
-        consignorAction: 'Seller Delivery',
-        consignorCode: route.params.consignorCode,
-        acceptedShipments: acceptedArray,
-        rejectedShipments: rejectedArray,
-        nothandedOverShipments: notDeliveredArray,
-      })
-      .then(function (response) {
-        console.log("POST RD Data Submitted", response.data);
-        alert('Your Data has submitted');
-      })
-      .catch(function (error) {
-        console.log(error.response.data);
-      });
+    console.log('=======post rd delivery====', {
+      runsheetNo: runsheetNo,
+      expected: route.params.Forward,
+      accepted: route.params.accepted + route.params.tagged,
+      rejected: route.params.rejected,
+      nothandedOver: newNotDelivered,
+      feUserID: route.params.userId,
+      receivingTime: new Date().valueOf(),
+      latitude: route.params.latitude,
+      longitude: route.params.longitude,
+      receiverMobileNo: mobileNumber,
+      receiverName: name,
+      consignorAction: 'Seller Delivery',
+      consignorCode: route.params.consignorCode,
+      acceptedShipments: acceptedArray,
+      rejectedShipments: rejectedArray,
+      nothandedOverShipments: notDeliveredArray,
+    });
+    // axios
+    //   .post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
+    //     runsheetNo: runsheetNo,
+    //     expected: route.params.Forward,
+    //     accepted: route.params.accepted + route.params.tagged,
+    //     rejected: route.params.rejected,
+    //     nothandedOver: newNotDelivered,
+    //     feUserID: route.params.userId,
+    //     receivingTime: new Date().valueOf(),
+    //     latitude: route.params.latitude,
+    //     longitude: route.params.longitude,
+    //     receiverMobileNo: mobileNumber,
+    //     receiverName: name,
+    //     consignorAction: 'Seller Delivery',
+    //     consignorCode: route.params.consignorCode,
+    //     acceptedShipments: acceptedArray,
+    //     rejectedShipments: rejectedArray,
+    //     nothandedOverShipments: notDeliveredArray,
+    //   })
+    //   .then(function (response) {
+    //     console.log("POST RD Data Submitted", response.data);
+    //     alert('Your Data has submitted');
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error.response.data);
+    //   });
   };
 
   const sendSmsOtp = async () => {

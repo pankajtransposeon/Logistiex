@@ -218,7 +218,6 @@ const ScanShipment = ({route}) => {
     });
   };
 
-  
   const updateDetails2 = () => {
     console.log('scan ' + barcode.toString());
     setAcceptedArray([...acceptedArray, barcode.toString()]);
@@ -226,13 +225,15 @@ const ScanShipment = ({route}) => {
     db.transaction(tx => {
       tx.executeSql(
         'UPDATE SellerMainScreenDetails SET status="accepted", eventTime=?, latitude=?, longitude=? WHERE  shipmentAction="Seller Delivery" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?) ',
-        [new Date().valueOf(),
+        [
+          new Date().valueOf(),
           latitude,
           longitude,
           route.params.consignorCode,
           barcode,
           barcode,
-          barcode,],
+          barcode,
+        ],
         (tx1, results) => {
           let temp = [];
           console.log('Results', results.rowsAffected);
@@ -512,7 +513,6 @@ const ScanShipment = ({route}) => {
         console.log('Location Lat long error', error);
       });
   };
-
 
   const submitForm = () => {
     axios
@@ -799,7 +799,7 @@ const ScanShipment = ({route}) => {
                 }}>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>Expected</Text>
                 <Text style={{fontSize: 18, fontWeight: '500'}}>
-                  {route.params.Expected}
+                  {route.params.Forward}
                 </Text>
               </View>
               <View
