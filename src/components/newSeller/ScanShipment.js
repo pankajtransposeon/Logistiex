@@ -62,6 +62,7 @@ const ScanShipment = ({route}) => {
   const [barcode, setBarcode] = useState('');
   const [len, setLen] = useState(0);
   const [DropDownValue, setDropDownValue] = useState(null);
+  const [DropDownValue11, setDropDownValue11] = useState(null);
   const [rejectedData, setRejectedData] = useState([]);
   const [acceptedArray, setAcceptedArray] = useState([]);
   const [uploadStatus, setUploadStatus] = useState('idle');
@@ -69,6 +70,8 @@ const ScanShipment = ({route}) => {
   const [longitude, setLongitude] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible1, setModalVisible1] = useState(false);
+  const [modalVisible2, setModalVisible2] = useState(false);
+  const [NotAttemptData, setNotAttemptData] = useState([]);
   const [bagId, setBagId] = useState('');
   const [bagIdNo, setBagIdNo] = useState(1);
   const [showCloseBagModal, setShowCloseBagModal] = useState(false);
@@ -178,6 +181,25 @@ const ScanShipment = ({route}) => {
     });
     return unsubscribe;
   }, [navigation]);
+
+  const NotAttemptReasons11 = () => {
+    db.transaction(tx => {
+      tx.executeSql('SELECT * FROM NotAttemptReasons', [], (tx1, results) => {
+        let temp = [];
+        for (let i = 0; i < results.rows.length; ++i) {
+          temp.push(results.rows.item(i));
+        }
+        setNotAttemptData(temp);
+      });
+    });
+  };
+  const DisplayData2 = async () => {
+    NotAttemptReasons11();
+  };
+
+  useEffect(() => {
+    DisplayData2();
+  }, []);
 
   const displayDataSPScan = async () => {
     db.transaction(tx => {
@@ -330,7 +352,7 @@ const ScanShipment = ({route}) => {
   const getCategories = data => {
     db.transaction(txn => {
       txn.executeSql(
-        'SELECT * FROM SellerMainScreenDetails WHERE status IS NULL AND  consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber = ?) ',
+        'SELECT * FROM SellerMainScreenDetails WHERE status IS NULL AND shipmentAction="Seller Delivery" AND consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber = ?) ',
         [route.params.consignorCode, data, data, data],
         (sqlTxn, res) => {
           console.log('ok1111', data);
@@ -345,7 +367,7 @@ const ScanShipment = ({route}) => {
               console.log('ok3333', data);
 
               tx.executeSql(
-                'Select * FROM SellerMainScreenDetails WHERE status IS NOT NULL And consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?)',
+                'Select * FROM SellerMainScreenDetails WHERE status IS NOT NULL And shipmentAction="Seller Delivery" And consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?)',
                 [route.params.consignorCode, data, data, data],
                 (tx1, results) => {
                   if (results.rows.length === 0) {
@@ -560,11 +582,100 @@ const ScanShipment = ({route}) => {
         console.log(error);
       });
   };
+  const partialClose112 = () => {
+    if (newaccepted + newrejected +newtagged === route.params.Forward) {
+      navigation.navigate('CollectPOD', {
+        Forward: route.params.Forward,
+        accepted: newaccepted,
+        rejected: newrejected,
+        tagged: newtagged,
+        phone: route.params.phone,
+        userId: route.params.userId,
+        consignorCode: route.params.consignorCode,
+        contactPersonName: route.params.contactPersonName,
+        notDelivered: notDelivered,
+        runsheetno: route.params.PRSNumber,
+        latitude: latitude,
+        longitude: longitude,
+      });
+    } else {
+      setDropDownValue11('');
+      setModalVisible2(true);
+    }
+  };
   function handleButtonPress(item) {
     setDropDownValue(item);
   }
+  function handleButtonPress2(item) {
+    setDropDownValue11(item);
+  }
   return (
     <NativeBaseProvider>
+      <Modal
+          isOpen={modalVisible2}
+          onClose={() => {
+            setModalVisible2(false);
+            setDropDownValue11('');
+          }}
+          size="lg">
+          <Modal.Content maxWidth="350">
+            <Modal.CloseButton />
+            <Modal.Header>Partial Close Reason</Modal.Header>
+            <Modal.Body>
+              {NotAttemptData &&
+                NotAttemptData.map((d, index) => (
+                  <Button
+                    key={d._id}
+                    flex="1"
+                    mt={2}
+                    marginBottom={1.5}
+                    marginTop={1.5}
+                    style={{
+                      backgroundColor:
+                        d.reasonID === DropDownValue11 ? '#6666FF' : '#C8C8C8',
+                    }}
+                    title={d.reasonName}
+                    onPress={() =>
+                      handleButtonPress2(d.reasonID)
+                    }>
+                    <Text
+                      style={{
+                        color:
+                          d.reasonID == DropDownValue11 ? 'white' : 'black',
+                      }}>
+                      {d.reasonName}
+                    </Text>
+                  </Button>
+                ))}
+              <Button
+                flex="1"
+                mt={2}
+                bg="#004aad"
+                marginBottom={1.5}
+                marginTop={1.5}
+                onPress={() => {
+                  setModalVisible2(false);
+                  navigation.navigate('CollectPOD', {
+                    Forward: route.params.Forward,
+                    accepted: newaccepted,
+                    rejected: newrejected,
+                    tagged: newtagged,
+                    phone: route.params.phone,
+                    userId: route.params.userId,
+                    consignorCode: route.params.consignorCode,
+                    contactPersonName: route.params.contactPersonName,
+                    notDelivered: notDelivered,
+                    runsheetno: route.params.PRSNumber,
+                    latitude: latitude,
+                    longitude: longitude,
+                    DropDownValue: DropDownValue11,
+                  });
+                }}>
+                Submit
+              </Button>
+            </Modal.Body>
+          </Modal.Content>
+        </Modal>
       <Modal
         isOpen={modalVisible}
         onClose={() => {
@@ -867,20 +978,7 @@ const ScanShipment = ({route}) => {
               </View>
               <Button
                 onPress={() => {
-                  navigation.navigate('CollectPOD', {
-                    Forward: route.params.Forward,
-                    accepted: newaccepted,
-                    rejected: newrejected,
-                    tagged: newtagged,
-                    phone: route.params.phone,
-                    userId: route.params.userId,
-                    consignorCode: route.params.consignorCode,
-                    contactPersonName: route.params.contactPersonName,
-                    notDelivered: notDelivered,
-                    runsheetno: route.params.PRSNumber,
-                    latitude: latitude,
-                    longitude: longitude,
-                  });
+                  partialClose112()
                 }}
                 w="90%"
                 size="lg"

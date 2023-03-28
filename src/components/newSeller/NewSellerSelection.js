@@ -169,12 +169,10 @@ const NewSellerSelection = ({route}) => {
     db.transaction(tx => {
       tx.executeSql('SELECT * FROM NotAttemptReasons', [], (tx1, results) => {
         let temp = [];
-        // console.log(results.rows.length);
         for (let i = 0; i < results.rows.length; ++i) {
           temp.push(results.rows.item(i));
         }
         setNotAttemptData(temp);
-        // console.log('Data from Local Database  NAR: \n ', JSON.stringify(temp,null,4));
       });
     });
   };

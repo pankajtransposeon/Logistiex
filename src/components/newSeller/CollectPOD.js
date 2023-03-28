@@ -52,6 +52,8 @@ const CollectPOD = ({ route }) => {
   const PartialClose =
     'https://bkedtest.logistiex.com/ADupdatePrams/getPartialClosureReasons';
   const [timer, setTimer] = useState(60);
+  const [newaccepted, setnewAccepted] = useState(route.params.accepted +route.params.tagged);
+  const [newrejected, setnewRejected] = useState(route.params.rejected);
   const [newNotDelivered, setNewNotDelivered] = useState(route.params.notDelivered);
   const [acceptedArray, setAcceptedArray] = useState([]);
   const [rejectedArray, setRejectedArray] = useState([]);
@@ -109,7 +111,7 @@ const CollectPOD = ({ route }) => {
   const displayDataSPScan = async () => {
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=?  AND status="accepted" OR status="tagged', 
+        'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=?  AND status="accepted OR status="tagged"',
         [route.params.consignorCode],
         (tx1, results) => {
           setnewAccepted(results.rows.length);
@@ -117,12 +119,10 @@ const CollectPOD = ({ route }) => {
           for (let i = 0; i < results.rows.length; ++i) {
             temp.push(results.rows.item(i).clientShipmentReferenceNumber);
           }
-          console.log(temp);
           setAcceptedArray(temp);
         },
       );
     });
-
     db.transaction(tx => {
       tx.executeSql(
         'SELECT * FROM SellerMainScreenDetails where shipmentAction="Seller Delivery" AND consignorCode=? AND status is NULL',
@@ -153,13 +153,13 @@ const CollectPOD = ({ route }) => {
       );
     });
   };
-
+console.log(acceptedArray);
   const submitForm11 = () => {
     console.log('=======post rd delivery====', {
       runsheetNo: runsheetNo,
       expected: route.params.Forward,
-      accepted: route.params.accepted + route.params.tagged,
-      rejected: route.params.rejected,
+      accepted: newaccepted,
+      rejected: newrejected,
       nothandedOver: newNotDelivered,
       feUserID: route.params.userId,
       receivingTime: new Date().valueOf(),
@@ -173,32 +173,32 @@ const CollectPOD = ({ route }) => {
       rejectedShipments: rejectedArray,
       nothandedOverShipments: notDeliveredArray,
     });
-    // axios
-    //   .post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
-    //     runsheetNo: runsheetNo,
-    //     expected: route.params.Forward,
-    //     accepted: route.params.accepted + route.params.tagged,
-    //     rejected: route.params.rejected,
-    //     nothandedOver: newNotDelivered,
-    //     feUserID: route.params.userId,
-    //     receivingTime: new Date().valueOf(),
-    //     latitude: route.params.latitude,
-    //     longitude: route.params.longitude,
-    //     receiverMobileNo: mobileNumber,
-    //     receiverName: name,
-    //     consignorAction: 'Seller Delivery',
-    //     consignorCode: route.params.consignorCode,
-    //     acceptedShipments: acceptedArray,
-    //     rejectedShipments: rejectedArray,
-    //     nothandedOverShipments: notDeliveredArray,
-    //   })
-    //   .then(function (response) {
-    //     console.log("POST RD Data Submitted", response.data);
-    //     alert('Your Data has submitted');
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error.response.data);
-    //   });
+    axios
+      .post('https://bkedtest.logistiex.com/SellerMainScreen/postRD', {
+        runsheetNo: runsheetNo,
+        expected: route.params.Forward,
+        accepted: route.params.accepted + route.params.tagged,
+        rejected: route.params.rejected,
+        nothandedOver: newNotDelivered,
+        feUserID: route.params.userId,
+        receivingTime: new Date().valueOf(),
+        latitude: route.params.latitude,
+        longitude: route.params.longitude,
+        receiverMobileNo: mobileNumber,
+        receiverName: name,
+        consignorAction: 'Seller Delivery',
+        consignorCode: route.params.consignorCode,
+        acceptedShipments: acceptedArray,
+        rejectedShipments: rejectedArray,
+        nothandedOverShipments: notDeliveredArray,
+      })
+      .then(function (response) {
+        console.log("POST RD Data Submitted", response.data);
+        alert('Your Data has submitted');
+      })
+      .catch(function (error) {
+        console.log(error.response.data);
+      });
   };
 
   const sendSmsOtp = async () => {
