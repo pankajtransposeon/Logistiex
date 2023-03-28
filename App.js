@@ -261,7 +261,7 @@ function StackNavigators({navigation}) {
         console.log(e);
       });
   };
-
+console.log(userId)
   async function postSPSCalling(row) {
     console.log('===========row=========', {
       clientShipmentReferenceNumber: row.clientShipmentReferenceNumber,
@@ -288,59 +288,60 @@ function StackNavigators({navigation}) {
       scanStatus:
         row.status == 'accepted' ? 1 : row.status == 'rejected' ? 2 : 0,
     });
-    // await axios
-    //   .post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
-    //     clientShipmentReferenceNumber: row.clientShipmentReferenceNumber,
-    //     awbNo: row.awbNo,
-    //     clientRefId: row.clientRefId,
-    //     expectedPackagingId: row.packagingId,
-    //     packagingId: row.packagingId,
-    //     courierCode: row.courierCode,
-    //     consignorCode: row.consignorCode,
-    //     packagingAction: 1,
-    //     runsheetNo: row.runSheetNumber,
-    //     shipmentAction: row.shipmentAction,
-    //     feUserID: userId,
-    //     rejectionReasonL1: row.rejectionReasonL1,
-    //     rejectionReasonL2: row.rejectionReasonL2
-    //       ? row.rejectionReasonL2
-    //       : row.rejectionReasonL1,
-    //     rejectionStage: 1,
-    //     bagId: row.bagId,
-    //     eventTime: parseInt(row.eventTime),
-    //     latitude: parseFloat(row.latitude),
-    //     longitude: parseFloat(row.longitude),
-    //     packagingStatus: 1,
-    //     scanStatus:
-    //       row.status == 'accepted' ? 1 : row.status == 'rejected' ? 2 : 0,
-    //   })
-    //   .then(response => {
-    //     console.log('sync Successfully pushed');
-    //     db.transaction(tx => {
-    //       tx.executeSql(
-    //         'UPDATE SellerMainScreenDetails SET syncStatus="done" WHERE clientShipmentReferenceNumber = ?',
-    //         [row.clientShipmentReferenceNumber],
-    //         (tx1, results) => {
-    //           let temp = [];
-    //           console.log(
-    //             '===========Local Sync Status Results==========',
-    //             results.rowsAffected,
-    //           );
-    //           if (results.rowsAffected > 0) {
-    //             console.log('Sync status done in localDB');
-    //           } else {
-    //             console.log(
-    //               'Sync Status not changed in localDB or already synced',
-    //             );
-    //           }
-    //         },
-    //       );
-    //     });
-    //   })
-    //   .catch(error => {
-    //     setIsLoading(false);
-    //     console.log('sync error', {error});
-    //   });
+    await axios
+      .post('https://bkedtest.logistiex.com/SellerMainScreen/postSPS', {
+        clientShipmentReferenceNumber: row.clientShipmentReferenceNumber,
+        awbNo: row.awbNo,
+        clientRefId: row.clientRefId,
+        expectedPackagingId: row.packagingId,
+        packagingId: row.packagingId,
+        courierCode: row.courierCode,
+        consignorCode: row.consignorCode,
+        packagingAction: 1,
+        runsheetNo: row.runSheetNumber,
+        shipmentAction: row.shipmentAction,
+        feUserID: userId,
+        rejectionReasonL1: row.rejectionReasonL1,
+        rejectionReasonL2: row.rejectionReasonL2
+          ? row.rejectionReasonL2
+          : row.rejectionReasonL1,
+        rejectionStage: 1,
+        bagId: row.bagId,
+        eventTime: parseInt(row.eventTime),
+        latitude: parseFloat(row.latitude),
+        longitude: parseFloat(row.longitude),
+        packagingStatus: 1,
+        scanStatus:
+          row.status == 'accepted' ? 1 : row.status == 'rejected' ? 2 : 0,
+      })
+      .then(response => {
+        console.log('sync Successfully pushed');
+        console.log(response)
+        db.transaction(tx => {
+          tx.executeSql(
+            'UPDATE SellerMainScreenDetails SET syncStatus="done" WHERE clientShipmentReferenceNumber = ?',
+            [row.clientShipmentReferenceNumber],
+            (tx1, results) => {
+              let temp = [];
+              console.log(
+                '===========Local Sync Status Results==========',
+                results.rowsAffected,
+              );
+              if (results.rowsAffected > 0) {
+                console.log('Sync status done in localDB');
+              } else {
+                console.log(
+                  'Sync Status not changed in localDB or already synced',
+                );
+              }
+            },
+          );
+        });
+      })
+      .catch(error => {
+        setIsLoading(false);
+        console.log('sync error', {error});
+      });
   }
 
   async function postSPS(data) {

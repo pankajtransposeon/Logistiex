@@ -576,7 +576,7 @@ const ShipmentBarcode = ({route}) => {
   const getCategories = data => {
     db.transaction(txn => {
       txn.executeSql(
-        'SELECT * FROM SellerMainScreenDetails WHERE status IS NULL AND  consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber = ?) ',
+        'SELECT * FROM SellerMainScreenDetails WHERE status IS NULL AND shipmentAction="Seller Pickup" AND  consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber = ?) ',
         [route.params.consignorCode, data, data, data],
         (sqlTxn, res) => {
           // console.log('categories retrieved successfully', res.rows.length);
@@ -594,7 +594,7 @@ const ShipmentBarcode = ({route}) => {
               console.log('ok3333', data);
 
               tx.executeSql(
-                'Select * FROM SellerMainScreenDetails WHERE status IS NOT NULL And consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?)',
+                'Select * FROM SellerMainScreenDetails WHERE status IS NOT NULL And shipmentAction="Seller Pickup" And consignorCode=? AND (awbNo=? OR clientRefId=? OR clientShipmentReferenceNumber=?)',
                 [route.params.consignorCode, data, data, data],
                 (tx1, results) => {
                   console.log('Results121', results.rows.length);
