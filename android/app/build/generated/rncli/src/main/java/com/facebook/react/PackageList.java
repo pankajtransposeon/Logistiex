@@ -37,6 +37,8 @@ import org.reactnative.camera.RNCameraPackage;
 import com.swmansion.gesturehandler.RNGestureHandlerPackage;
 // react-native-get-location
 import com.github.douglasjunior.reactNativeGetLocation.ReactNativeGetLocationPackage;
+// react-native-haptic-feedback
+import com.mkuczera.RNReactNativeHapticFeedbackPackage;
 // react-native-image-marker
 import com.jimmydaddy.imagemarker.ImageMarkerPackage;
 // react-native-image-picker
@@ -55,6 +57,8 @@ import com.reactnativerestart.RestartPackage;
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 // react-native-screens
 import com.swmansion.rnscreens.RNScreensPackage;
+// react-native-sound
+import com.zmxv.RNSound.RNSoundPackage;
 // react-native-sqlite-storage
 import org.pgsqlite.SQLitePluginPackage;
 // react-native-svg
@@ -119,6 +123,7 @@ public class PackageList {
       new RNCameraPackage(),
       new RNGestureHandlerPackage(),
       new ReactNativeGetLocationPackage(),
+      new RNReactNativeHapticFeedbackPackage(),
       new ImageMarkerPackage(),
       new ImagePickerPackage(),
       new ReactNativeLocalizationPackage(),
@@ -128,6 +133,7 @@ public class PackageList {
       new RestartPackage(),
       new SafeAreaContextPackage(),
       new RNScreensPackage(),
+      new RNSoundPackage(),
       new SQLitePluginPackage(),
       new SvgPackage(),
       new VectorIconsPackage()
